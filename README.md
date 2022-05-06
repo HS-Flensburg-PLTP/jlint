@@ -1,6 +1,7 @@
 # jlint
+Developing
 
-Grundlegendes Setup
+Setup
 
 Compiler: 
 Stack GHCI 
