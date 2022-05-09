@@ -3,39 +3,42 @@ module Main where
 import Lib
 import Options.Applicative
 import Data.Semigroup((<>))
+import Language.Java.Parser (parser, compilationUnit)
+import Language.Java.Pretty(prettyPrint, pretty)
 
 main :: IO ()
-main = greet =<< execParser opts
+main = importJava =<< execParser opts
   where
-    opts = info (sample <**> helper)
+    opts = info (params <**> helper)
       ( fullDesc
-     <> progDesc "Print a greeting for TARGET"
-     <> header "hello - a test for optparse-applicative" )
+     <> progDesc "Parse the Java-File"
+     <> header "Linter for Java-Code" )
 
 
-greet :: Sample -> IO ()
-greet (Sample h False n) = putStrLn $ "Hello, " ++ h ++ replicate n '!'
-greet _ = return ()
+importJava :: Params -> IO ()
+importJava (Params path prettie) = buildAst path prettie
 
-data Sample = Sample
-  { hello      :: String
-  , quiet      :: Bool
-  , enthusiasm :: Int }
+data Params = Params
+  {
+    path       :: String
+  , prettie    :: Bool }
 
 
-sample :: Parser Sample
-sample = Sample
-      <$> strOption
-          ( long "hello"
-         <> metavar "TARGET"
-         <> help "Target for the greeting" )
-      <*> switch
-          ( long "quiet"
-         <> short 'q'
-         <> help "Whether to be quiet" )
-      <*> option auto
-          ( long "enthusiasm"
-         <> help "How enthusiastically to greet"
-         <> showDefault
-         <> value 1
-         <> metavar "INT" )
+params :: Parser Params
+params = Params
+      <$> strOption 
+          ( long "path"
+          <> metavar "SRCPath"
+          <> help "Path to the Java-File")
+      <*> switch 
+          ( long "prettie"
+          <> help "By setting these Param the AST is showing after the Prettier")
+
+
+buildAst path pretty = 
+  do 
+    result <- parser compilationUnit `fmap` readFile path
+    case result of 
+      Left error -> print error
+      Right ast -> 
+        writeFile "./ast.txt" (if pretty then prettyPrint ast else show ast)
