@@ -40,6 +40,36 @@ buildAst path pretty =
     input <- readFile path
     let result = parser compilationUnit input
     case result of 
-      Left error -> print error
+      Left error -> 
+        print error
       Right cUnit -> 
-        if pretty then writeFile "./ast.txt" (prettyPrint cUnit) else print cUnit
+        -- if pretty then writeFile "./ast.txt" (prettyPrint cUnit) else print cUnit
+        print cUnit
+
+-- @ Philipp use "jlint-exe --path ./test/Strings.java" to execute
+-- ignorier mein zeug. kannst du auch rauslöschen sonst.
+
+-- newType Error 
+--   = NonPrivateError String
+
+-- -- find non private Attributes and return them as Error
+-- findAttributes :: CompilationUnit -> Maybe (List Error)
+-- findAttributes (CompilationUnit _ _ [typeDecl]) =
+--   case typeDecl of
+--     ClassDecl ->
+
+-- iterateList :: List a -> List b -> (a -> b) -> Maybe (List b) 
+-- iterateList inputL resultL check= 
+--   case inputL of 
+--     [] ->
+--       resultL
+--     x :: xs ->
+--       iterateList xs (check x :: resultL)
+      
+
+
+
+-- check :: CompilationUnit -> Maybe (List Error)
+-- check ((name word):xs) a =
+--   print name
+--   if word == a then True else check xs a
