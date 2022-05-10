@@ -37,8 +37,9 @@ params = Params
 
 buildAst path pretty = 
   do 
-    result <- parser compilationUnit `fmap` readFile path
+    input <- readFile path
+    let result = parser compilationUnit input
     case result of 
       Left error -> print error
-      Right ast -> 
-        writeFile "./ast.txt" (if pretty then prettyPrint ast else show ast)
+      Right cUnit -> 
+        if pretty then writeFile "./ast.txt" (prettyPrint cUnit) else print cUnit
