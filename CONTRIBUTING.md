@@ -1,6 +1,6 @@
 Namenskonvention für Branches
 
-Es gibt die Branches main, dev und qa für Tests.
+Es gibt die Branches `main`, `dev` und `qa` für Tests.
 Alle weiteren Branches sind nach folgendem Schema definiert.
 Feature Branches zweigen vom dev ab und Beginnen mit dem Keyword Feature, gefolgt 
 von der zugehörigen issue Nummer und einem kurzem Titel.
