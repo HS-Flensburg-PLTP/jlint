@@ -49,27 +49,41 @@ buildAst path pretty =
 -- @ Philipp use "jlint-exe --path ./test/Strings.java" to execute
 -- ignorier mein zeug. kannst du auch rauslöschen sonst.
 
--- newType Error 
+
+-- Grundidee: jede Typvariable eines jeden Konstruktor (bsp. CompilationUnit (Maybe PackageDecl) [ImportDecl] [TypeDecl])
+-- wird in eine liste gewrapped. Filter kann durch diese Listen durchiterrieren und mithilfe einer gegebenen Methode (check) filtern.
+-- zurückgegeben wir eine Liste die alle gesuchen Elemente erhält. Diese Methode muss für jeden "node / typenvariable" wieder mit angepasster
+-- filtermethode aufgerufen werden, bis wir die gewünschten Nodes haben. 
+
+-- filters list using a filteringfunction. Uses a Akkumulator 
+
+filter :: List a -> (a -> Bool) -> List a
+filter inputL check = accFilter inputL [] check
+  where
+    accFilter inputL resultL check =
+      case list of
+        [] ->
+          resultL
+        x :: xs 
+            | check x -> iterate xs (x ::resultL) check
+            | otherwise -> iterate xs resultL check
+
+
+-- Work in progress compares if two values are identical 
+check :: a -> b -> Bool
+check valRef valToCheck =
+  valRef == valToCheck
+
+-- data Error 
 --   = NonPrivateError String
 
+
+-- diese Funktion soll später genutz werden um filter immer wieder mit entsprechender Filterfunktion (check) aufzurufen.
+-- damit diese Funktion weiß wie sie durch den ast navigieren soll bzw. nach welchen Nodes / Name sie filter soll, könnte 
+-- mann ihr eine Art Pfad übergeben. Dies Pfadangabe könnte beispielsweise inform einer Partielle Funktion geschen, wobei 
+-- das jeweils nächste Argument definiert, nach welchem Node als nächstes gefilter werden soll. Ist nur eine Idee.
+-- Keine Ahnung ob das umsetzbar ist. Ist jetzt eh noch egal für den ersten Implementierungsansatz. 
+
 -- -- find non private Attributes and return them as Error
--- findAttributes :: CompilationUnit -> Maybe (List Error)
--- findAttributes (CompilationUnit _ _ [typeDecl]) =
---   case typeDecl of
---     ClassDecl ->
-
--- iterateList :: List a -> List b -> (a -> b) -> Maybe (List b) 
--- iterateList inputL resultL check= 
---   case inputL of 
---     [] ->
---       resultL
---     x :: xs ->
---       iterateList xs (check x :: resultL)
-      
-
-
-
--- check :: CompilationUnit -> Maybe (List Error)
--- check ((name word):xs) a =
---   print name
---   if word == a then True else check xs a
+-- findAttributes :: CompilationUnit -> List Error
+-- findAttributes 
