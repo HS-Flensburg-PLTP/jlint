@@ -5,6 +5,7 @@ import Options.Applicative
 import Data.Semigroup((<>))
 import Language.Java.Parser (parser, compilationUnit)
 import Language.Java.Pretty(prettyPrint, pretty)
+import Language.Java.Syntax
 
 main :: IO ()
 main = importJava =<< execParser opts
@@ -34,7 +35,7 @@ params = Params
           ( long "prettie"
           <> help "By setting these Param the AST is showing after the Prettier")
 
-
+buildAst :: FilePath -> Bool -> IO ()
 buildAst path pretty = 
   do 
     input <- readFile path
@@ -44,46 +45,61 @@ buildAst path pretty =
         print error
       Right cUnit -> 
         -- if pretty then writeFile "./ast.txt" (prettyPrint cUnit) else print cUnit
-        print cUnit
+        check cUnit
 
--- @ Philipp use "jlint-exe --path ./test/Strings.java" to execute
--- ignorier mein zeug. kannst du auch rauslöschen sonst.
+check unit =
+    case unit of
+        CompilationUnit _ _ classtype->
+            checkType classtype
 
+checkType (node:remaininglist) =
+    case node of
+      ClassTypeDecl a ->
+        checkClassType a
+      InterfaceTypeDecl a ->
+        print "Interface"
 
--- Grundidee: jede Typvariable eines jeden Konstruktor (bsp. CompilationUnit (Maybe PackageDecl) [ImportDecl] [TypeDecl])
--- wird in eine liste gewrapped. Filter kann durch diese Listen durchiterrieren und mithilfe einer gegebenen Methode (check) filtern.
--- zurückgegeben wir eine Liste die alle gesuchen Elemente erhält. Diese Methode muss für jeden "node / typenvariable" wieder mit angepasster
--- filtermethode aufgerufen werden, bis wir die gewünschten Nodes haben. 
+checkClassType node =
+    case node of
+      ClassDecl _ _ _ _ _ i ->
+        checkClassBody i
 
--- filters list using a filteringfunction. Uses a Akkumulator 
+checkClassBody node =
+    case node of 
+        ClassBody d ->
+          checkDecl d   
 
-filter :: List a -> (a -> Bool) -> List a
-filter inputL check = accFilter inputL [] check
-  where
-    accFilter inputL resultL check =
-      case list of
-        [] ->
-          resultL
-        x :: xs 
-            | check x -> iterate xs (x ::resultL) check
-            | otherwise -> iterate xs resultL check
+checkDecl (node:remaining) =
+    case node of
+      MemberDecl member ->
+        checkMemberDecl member
+      InitDecl _ _ -> 
+        print "InitDecl"
 
+checkMemberDecl member =
+    case member of
+      FieldDecl m t v ->
+        checkFieldDecl m t v
+      MethodDecl _ _ _ _ _ _ _ _ ->
+        print "Method"
+      ConstructorDecl _ _ _ _ _ _ ->
+        print "Constructor"
+      MemberClassDecl _ ->
+        print "MemberClass"
+      MemberInterfaceDecl _ ->
+        print "MemberInterface"
 
--- Work in progress compares if two values are identical 
-check :: a -> b -> Bool
-check valRef valToCheck =
-  valRef == valToCheck
+checkFieldDecl modifier vartype varname =
+  do
+    print modifier
+    print vartype
+    print varname
 
--- data Error 
---   = NonPrivateError String
-
-
--- diese Funktion soll später genutz werden um filter immer wieder mit entsprechender Filterfunktion (check) aufzurufen.
--- damit diese Funktion weiß wie sie durch den ast navigieren soll bzw. nach welchen Nodes / Name sie filter soll, könnte 
--- mann ihr eine Art Pfad übergeben. Dies Pfadangabe könnte beispielsweise inform einer Partielle Funktion geschen, wobei 
--- das jeweils nächste Argument definiert, nach welchem Node als nächstes gefilter werden soll. Ist nur eine Idee.
--- Keine Ahnung ob das umsetzbar ist. Ist jetzt eh noch egal für den ersten Implementierungsansatz. 
-
--- -- find non private Attributes and return them as Error
--- findAttributes :: CompilationUnit -> List Error
--- findAttributes 
+{-
+@Lukas
+Der Itteriert nun komplett durch die Struktur bis zur Fielddeclaration
+bisher sind alle Funktionen eher IO Funktionen und er gibt jeweils nur die Felder aus
+Als nächste Schritte müsste dann von "unten" also von der FieldDecl hoch das in eine Liste verschachteln in der halt
+alle Variablen sind. Entweder dann oder davor muss natürlich noch nach dem Modifier public gefiltert werden.
+Bisher ist für jede "Ebene" eine eigene Funktion geschrieben.
+-}
