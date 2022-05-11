@@ -3,7 +3,7 @@ module Main where
 import Lib
 import Options.Applicative
 import Data.Semigroup((<>))
-import Language.Java.Parser (parser, compilationUnit)
+import Language.Java.Parser (parser, compilationUnit, modifier)
 import Language.Java.Pretty(prettyPrint, pretty)
 import Language.Java.Syntax
 
@@ -47,58 +47,87 @@ buildAst path pretty =
         -- if pretty then writeFile "./ast.txt" (prettyPrint cUnit) else print cUnit
         check cUnit
 
+check :: CompilationUnit -> IO ()
 check unit =
     case unit of
         CompilationUnit _ _ classtype->
             checkType classtype
 
-checkType (node:remaininglist) =
-    case node of
-      ClassTypeDecl a ->
-        checkClassType a
-      InterfaceTypeDecl a ->
-        print "Interface"
+checkType :: [TypeDecl] -> IO ()
+checkType list =
+  case list of
+    (node:remaininglist) ->
+      case node of
+        ClassTypeDecl a ->
+          do
+            checkClassType a
+            checkType remaininglist
+        InterfaceTypeDecl a ->
+            print "Interface"
+    [] ->
+      print "Empty Node"
 
+checkClassType :: ClassDecl -> IO ()
 checkClassType node =
     case node of
       ClassDecl _ _ _ _ _ i ->
         checkClassBody i
-
+      EnumDecl {} ->
+        print "Enum"
+      
+checkClassBody :: ClassBody -> IO ()
 checkClassBody node =
     case node of 
         ClassBody d ->
           checkDecl d   
 
-checkDecl (node:remaining) =
-    case node of
-      MemberDecl member ->
-        checkMemberDecl member
-      InitDecl _ _ -> 
-        print "InitDecl"
-
+checkDecl :: [Decl] -> IO ()
+checkDecl list =
+  case list of
+    (node:remaininlist) ->
+      case node of
+        MemberDecl member ->
+          do
+            checkMemberDecl member
+            checkDecl remaininlist
+        InitDecl _ _ -> 
+          print "InitDecl"
+    [] ->
+      print "Empty Node"
+      
+checkMemberDecl :: MemberDecl -> IO ()
 checkMemberDecl member =
     case member of
       FieldDecl m t v ->
         checkFieldDecl m t v
-      MethodDecl _ _ _ _ _ _ _ _ ->
+      MethodDecl {} ->
         print "Method"
-      ConstructorDecl _ _ _ _ _ _ ->
+      ConstructorDecl {} ->
         print "Constructor"
       MemberClassDecl _ ->
         print "MemberClass"
       MemberInterfaceDecl _ ->
         print "MemberInterface"
 
+
 checkFieldDecl modifier vartype varname =
-  do
-    print modifier
-    print vartype
-    print varname
+  case modifier of
+    [] ->
+      print "No Modifier"
+    (x:xs) ->
+      if x == Public then
+        do
+          print x
+          print varname
+          checkFieldDecl xs vartype varname
+      else
+        checkFieldDecl xs vartype varname
 
 {-
 @Lukas
 Der Itteriert nun komplett durch die Struktur bis zur Fielddeclaration
-bisher sind alle Funktionen eher IO Funktionen und er gibt jeweils nur die Felder aus
+bisher sind alle Funktionen eher IO Funktionen und er gibt jeweils nur die Felder aus.
+In der Fielddeclaration printet er nun alle public Elemente jeweils aus.
 Als nächste Schritte müsste dann von "unten" also von der FieldDecl hoch das in eine Liste verschachteln in der halt
 alle Variablen sind. Entweder dann oder davor muss natürlich noch nach dem Modifier public gefiltert werden.
 Bisher ist für jede "Ebene" eine eigene Funktion geschrieben.

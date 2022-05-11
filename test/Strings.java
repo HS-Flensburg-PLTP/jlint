@@ -1,7 +1,8 @@
 package de.fuas.algorithms;
 
 public class Strings {
-    static final int ANZ_ASCII_ZEICHEN = 128;
+    public static final int ANZ_ASCII_ZEICHEN = 128;
+    public String hello = "Hello";
 
     static boolean containsDuplicates(final String str) {
         boolean dupFound = false;
