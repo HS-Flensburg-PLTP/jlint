@@ -1,41 +1,50 @@
 module Main where
 
+import Data.Semigroup ((<>))
+import Language.Java.Parser (compilationUnit, parser)
+import Language.Java.Pretty (pretty, prettyPrint)
+import Language.Java.Syntax
 import Lib
 import Options.Applicative
-import Data.Semigroup((<>))
 
 main :: IO ()
-main = greet =<< execParser opts
+main = execParser opts >>= importJava
   where
-    opts = info (sample <**> helper)
-      ( fullDesc
-     <> progDesc "Print a greeting for TARGET"
-     <> header "hello - a test for optparse-applicative" )
+    opts =
+      info
+        (params <**> helper)
+        ( fullDesc
+            <> progDesc "Parse the java file"
+            <> header "Linter for java code"
+        )
 
+importJava :: Params -> IO ()
+importJava (Params path pretty) = buildAst path pretty
 
-greet :: Sample -> IO ()
-greet (Sample h False n) = putStrLn $ "Hello, " ++ h ++ replicate n '!'
-greet _ = return ()
+data Params = Params
+  { path :: String,
+    pretty :: Bool
+  }
 
-data Sample = Sample
-  { hello      :: String
-  , quiet      :: Bool
-  , enthusiasm :: Int }
+params :: Parser Params
+params =
+  Params
+    <$> strOption
+      ( long "path"
+          <> metavar "SRCPath"
+          <> help "Path to the java file"
+      )
+    <*> switch
+      ( long "pretty"
+          <> help "By setting this Parameter the java source representation of the AST is shown"
+      )
 
-
-sample :: Parser Sample
-sample = Sample
-      <$> strOption
-          ( long "hello"
-         <> metavar "TARGET"
-         <> help "Target for the greeting" )
-      <*> switch
-          ( long "quiet"
-         <> short 'q'
-         <> help "Whether to be quiet" )
-      <*> option auto
-          ( long "enthusiasm"
-         <> help "How enthusiastically to greet"
-         <> showDefault
-         <> value 1
-         <> metavar "INT" )
+buildAst :: String -> Bool -> IO ()
+buildAst path pretty =
+  do
+    input <- readFile path
+    let result = parser compilationUnit input
+    case result of
+      Left error -> print error
+      Right cUnit -> do
+        if pretty then print (prettyPrint cUnit) else print cUnit
