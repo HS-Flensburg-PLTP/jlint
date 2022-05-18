@@ -53,11 +53,7 @@ buildAst path pretty =
 checkCU (CompilationUnit a b c) = do
   print (typeDeclFunc c)
 
-arrayContains :: [Modifier] -> String -> Bool
-arrayContains [] sWord = False
-arrayContains (x : xs) sWord = if (show x) == sWord then True else arrayContains xs sWord
-
-data Errors = ClassVarNotFinal {var :: String} | FuncVarNotFinal {func :: String, var :: String}
+data Errors = FuncVarNotFinal {func :: String, var :: String}
   deriving (Show)
 
 typeDeclFunc :: [TypeDecl] -> [Errors]
@@ -80,7 +76,6 @@ classBodyFunc (x : xs) =
 
 memberDeclFunc item =
   case item of
-    FieldDecl modifier typeParam ((VarDecl (VarId (Ident n)) x) : xs) -> ruleThree modifier n
     MethodDecl modifier typeParam mType (Ident ident) formalParam exceptionType mExp methodBody -> formalParamFunc formalParam ident
     _ -> []
 
@@ -90,14 +85,4 @@ formalParamFunc ((FormalParam modifier jType bool (VarId (Ident n))) : xs) fName
 
 ruleTwo :: [Modifier] -> String -> String -> [Errors]
 ruleTwo [] fName vName = [FuncVarNotFinal {func = fName, var = vName}]
-ruleTwo modifier fName vName = if arrayContains modifier "final" then [] else [FuncVarNotFinal {func = fName, var = vName}]
-
-ruleThree :: [Modifier] -> String -> [Errors]
-ruleThree [] vName = if checkUpperLowbarNumber vName then [ClassVarNotFinal {var = vName}] else []
-ruleThree modifier vName = if not (arrayContains modifier "final") && checkUpperLowbarNumber vName then [ClassVarNotFinal {var = vName}] else []
-
-checkUpperLowbarNumber :: String -> Bool
-checkUpperLowbarNumber vName = g vName
-  where
-    g [] = True
-    g (c : restList) = if c `elem` ['A' .. 'Z'] || c `elem` "_" || c `elem` ['0' .. '9'] then g restList else False
+ruleTwo modifier fName vName = if Final `elem` modifier then [] else [FuncVarNotFinal {func = fName, var = vName}]
