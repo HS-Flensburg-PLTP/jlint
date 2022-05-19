@@ -1,6 +1,10 @@
 # jlint
 
-Grundlegendes Setup
+[contributing.md](CONTRIBUTING.md)
+
+## Developing
+
+### Setup
 
 Compiler: 
 Stack GHCI 
