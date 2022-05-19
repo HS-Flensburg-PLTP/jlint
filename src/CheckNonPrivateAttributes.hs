@@ -16,12 +16,10 @@ data Error = ClassVarNotPrivate {var :: String}
   deriving (Show)
 
 check :: CompilationUnit -> [Error]
-check (CompilationUnit _ _ classtype) =
-      checkTypeDecls classtype
+check (CompilationUnit _ _ classtype) = checkTypeDecls classtype
 
 checkTypeDecls :: [TypeDecl] -> [Error]
-checkTypeDecls [] = []
-checkTypeDecls typedecls = concatMap checkTypeDecl typedecls
+checkTypeDecls = concatMap checkTypeDecl
 
 checkTypeDecl :: TypeDecl -> [Error]
 checkTypeDecl (ClassTypeDecl cd) = checkClassType cd
@@ -32,8 +30,7 @@ checkClassType (ClassDecl _ _ _ _ _ (ClassBody body)) = checkDecls body
 checkClassType (EnumDecl {}) = []
 
 checkDecls :: [Decl] -> [Error]
-checkDecls [] = []
-checkDecls decls = concatMap checkDecl decls
+checkDecls = concatMap checkDecl
 
 checkDecl :: Decl -> [Error]
 checkDecl (MemberDecl md) = checkMemberDecl md
