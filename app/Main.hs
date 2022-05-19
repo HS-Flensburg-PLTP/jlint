@@ -20,7 +20,7 @@ main = execParser opts >>= importJava
         )
 
 importJava :: Params -> IO ()
-importJava (Params path pretty) = buildAst path pretty
+importJava (Params path pretty) = parseJava path pretty
 
 data Params = Params
   { path :: String,
