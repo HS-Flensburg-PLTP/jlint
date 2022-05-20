@@ -1,5 +1,6 @@
 module CheckNonFinalMethodAttributes (check) where
 
+import Data.Maybe (maybeToList)
 import Language.Java.Syntax (ClassBody (..), ClassDecl (..), CompilationUnit (..), Decl (..), FormalParam (..), Ident (Ident), MemberDecl (..), Modifier (Final), TypeDecl (..), VarDeclId (VarId))
 
 data Error = FuncVarNotFinal {func :: String, var :: String}
@@ -25,10 +26,10 @@ checkMemberDecl (MethodDecl _ _ _ (Ident ident) formalParam _ _ _) =
   concatMap
     ( \p ->
         let var = checkFormalParam p
-         in if (var) == "" then [] else [FuncVarNotFinal {func = ident, var = var}]
+         in map (\v -> FuncVarNotFinal {func = ident, var = v}) (maybeToList var)
     )
     formalParam
 checkMemberDecl _ = []
 
-checkFormalParam :: FormalParam -> String
-checkFormalParam (FormalParam modifier _ _ (VarId (Ident n))) = if Final `elem` modifier then "" else n
+checkFormalParam :: FormalParam -> Maybe String
+checkFormalParam (FormalParam modifier _ _ (VarId (Ident n))) = if Final `elem` modifier then Nothing else Just n
