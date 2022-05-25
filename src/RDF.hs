@@ -1,8 +1,10 @@
 module RDF (DiagnosticResult, Diagnostic) where
 
+data URL = Maybe String
+
 data Position = Position
-  { line :: Maybe Int,
-    column :: Maybe Int
+  { line :: Int,
+    column :: Int
   }
 
 data Range = Range
@@ -12,39 +14,36 @@ data Range = Range
 
 data Source = Source
   { name :: String,
-    url :: Maybe String
+    sourceUrl :: Maybe String
   }
 
 data Code = Code
   { value :: String,
-    url :: Maybe String
+    codeUrl :: Maybe String
   }
 
 data Suggestion = Suggestion
-  { range :: Range,
+  { suggestionRange :: Range,
     text :: String
   }
 
 data Location = Location
   { path :: String,
-    range :: Maybe Range
+    locationRange :: Maybe Range
   }
 
 data Diagnostic = Diagnostic
   { message :: String,
-    location ::
-      { path :: String,
-        range :: Maybe Range
-      },
-    severity :: Maybe Either String Int,
+    location :: Location,
+    severity :: Maybe (Either String Int),
     source :: Maybe Source,
     code :: Maybe Code,
     suggestions :: Maybe [Suggestion],
-    original_output :: Maybe String
+    originalOutput :: Maybe String
   }
 
 data DiagnosticResult = DiagnosticResult
   { diagnostics :: [Diagnostic],
-    source :: Maybe Source,
-    severity :: Maybe Either String Int
+    resultSource :: Maybe Source,
+    resultSeverity :: Maybe (Either String Int)
   }
