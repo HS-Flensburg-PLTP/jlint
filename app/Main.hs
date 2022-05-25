@@ -1,13 +1,13 @@
 module Main where
 
 import CheckNonFinalMethodAttributes (check)
+import CheckNonPrivateAttributes (check)
 import Data.Semigroup ((<>))
+import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
-import Language.Java.Parser (parser, compilationUnit, modifier)
 import Language.Java.Syntax
 import Lib
 import Options.Applicative
-import CheckNonPrivateAttributes(check)
 
 main :: IO ()
 main = execParser opts >>= importJava
@@ -50,5 +50,4 @@ parseJava path pretty =
       Left error -> print error
       Right cUnit -> do
         if pretty then print (prettyPrint cUnit) else print cUnit
-        print (check cUnit)
-
+        print (CheckNonFinalMethodAttributes.check cUnit)
