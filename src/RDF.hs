@@ -1,23 +1,23 @@
-module RDF where
+module RDF (DiagnosticResult, Diagnostic) where
 
 data Position = Position
-  { line :: Int,
-    column :: Int
+  { line :: Maybe Int,
+    column :: Maybe Int
   }
 
 data Range = Range
   { start :: Position,
-    end :: Position
+    end :: Maybe Position
   }
 
 data Source = Source
   { name :: String,
-    url :: String
+    url :: Maybe String
   }
 
 data Code = Code
   { value :: String,
-    url :: String
+    url :: Maybe String
   }
 
 data Suggestion = Suggestion
@@ -27,24 +27,24 @@ data Suggestion = Suggestion
 
 data Location = Location
   { path :: String,
-    range :: Range
+    range :: Maybe Range
   }
 
 data Diagnostic = Diagnostic
   { message :: String,
     location ::
       { path :: String,
-        range :: Range
+        range :: Maybe Range
       },
-    severity :: oneOf String / Int,
-    source :: Source,
-    code :: Code,
-    suggestions :: [Suggestion],
-    original_output :: String
+    severity :: Maybe Either String Int,
+    source :: Maybe Source,
+    code :: Maybe Code,
+    suggestions :: Maybe [Suggestion],
+    original_output :: Maybe String
   }
 
 data DiagnosticResult = DiagnosticResult
   { diagnostics :: [Diagnostic],
-    source :: Source,
-    severity :: oneOf String / Int
+    source :: Maybe Source,
+    severity :: Maybe Either String Int
   }
