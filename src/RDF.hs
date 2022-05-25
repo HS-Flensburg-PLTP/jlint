@@ -1,7 +1,5 @@
 module RDF (DiagnosticResult (..), Diagnostic (..), Location (..)) where
 
-data URL = Maybe String
-
 data Position = Position
   { line :: Int,
     column :: Int
