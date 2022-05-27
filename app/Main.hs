@@ -53,4 +53,4 @@ parseJava path pretty =
         if pretty then print (prettyPrint cUnit) else print cUnit
         print (CheckNonFinalMethodAttributes.check cUnit)
         print (RDF.encodetojson (RDF.Diagnostic "Geht" (RDF.Location "Location" Nothing)
-         Nothing Nothing Nothing Nothing (Just "String")))
+         (Just (Right 24)) Nothing Nothing Nothing (Just "String")))
