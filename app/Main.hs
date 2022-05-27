@@ -9,8 +9,6 @@ import Language.Java.Syntax
 import Lib
 import Options.Applicative
 import RDF
-import Data.Aeson ( encode )
-import qualified RDF
 
 main :: IO ()
 main = execParser opts >>= importJava
