@@ -1,12 +1,13 @@
 module Main where
 
-import Data.Semigroup((<>))
-import Language.Java.Parser (parser, compilationUnit, modifier)
-import Language.Java.Pretty(prettyPrint, pretty)
+import CheckNonFinalMethodAttributes (check)
+import CheckNonPrivateAttributes (check)
+import Data.Semigroup ((<>))
+import Language.Java.Parser (compilationUnit, modifier, parser)
+import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
 import Lib
 import Options.Applicative
-import CheckNonPrivateAttributes(check)
 
 main :: IO ()
 main = execParser opts >>= importJava
@@ -46,8 +47,7 @@ parseJava path pretty =
     input <- readFile path
     let result = parser compilationUnit input
     case result of
-      Left error ->
-        print error
-      Right cUnit ->
-        -- if pretty then writeFile "./ast.txt" (prettyPrint cUnit) else print cUnit
-       print (check cUnit)
+      Left error -> print error
+      Right cUnit -> do
+        if pretty then print (prettyPrint cUnit) else print cUnit
+        print (CheckNonFinalMethodAttributes.check cUnit)
