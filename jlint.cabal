@@ -37,6 +37,7 @@ library
   build-depends:
       aeson
     , base >=4.7 && <5
+    , bytestring
     , language-java >=0.2.9 && <3
     , optparse-applicative >=0.16.1.0 && <1
   default-language: Haskell2010
@@ -51,6 +52,7 @@ executable jlint-exe
   build-depends:
       aeson
     , base >=4.7 && <5
+    , bytestring
     , jlint
     , language-java >=0.2.9 && <3
     , optparse-applicative >=0.16.1.0 && <1
@@ -67,6 +69,7 @@ test-suite jlint-test
   build-depends:
       aeson
     , base >=4.7 && <5
+    , bytestring
     , jlint
     , language-java >=0.2.9 && <3
     , optparse-applicative >=0.16.1.0 && <1

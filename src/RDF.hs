@@ -4,6 +4,7 @@ module RDF (DiagnosticResult (..), Diagnostic (..), Location (..), encodetojson)
 
 import GHC.Generics ( Generic )
 import Data.Aeson ( ToJSON (toEncoding), genericToEncoding, defaultOptions, encode )
+import Data.ByteString.Lazy.Internal
 
 data Position = Position
   { line :: Int,
@@ -83,5 +84,6 @@ instance ToJSON Diagnostic where
 instance ToJSON DiagnosticResult where
   toEncoding = genericToEncoding defaultOptions
 
+encodetojson :: ToJSON a => a -> Data.ByteString.Lazy.Internal.ByteString
 encodetojson datatype = 
       encode datatype
