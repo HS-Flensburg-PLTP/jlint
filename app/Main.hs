@@ -8,6 +8,7 @@ import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
 import Lib
 import Options.Applicative
+import RDF (DiagnosticResult (..))
 
 main :: IO ()
 main = execParser opts >>= importJava
@@ -50,4 +51,10 @@ parseJava path pretty =
       Left error -> print error
       Right cUnit -> do
         if pretty then print (prettyPrint cUnit) else print cUnit
-        print (CheckNonFinalMethodAttributes.check cUnit)
+        print
+          ( DiagnosticResult
+              { diagnostics = CheckNonFinalMethodAttributes.check cUnit ++ CheckNonPrivateAttributes.check cUnit,
+                resultSource = Nothing,
+                resultSeverity = Nothing
+              }
+          )
