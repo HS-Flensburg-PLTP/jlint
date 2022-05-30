@@ -24,7 +24,7 @@ dependencies:
 - optparse-applicative >= 0.16.1.0 && < 1
 - language-java >= 0.2.9 && < 3
 - aeson >= 2.0.3 && < 2.1
-- bytestring >= 0.11.3.1 && < 0.12.0
+- bytestring >= 0.10.12.1 && < 0.11
 
 library:
   source-dirs: src
