@@ -3,7 +3,11 @@
 
 module RDF (DiagnosticResult (..), Diagnostic (..), Location (..), encodetojson) where
 
-import Data.Aeson (KeyValue ((.=)), ToJSON (toEncoding, toJSON), defaultOptions, encode, genericToEncoding, object)
+import Data.Aeson (KeyValue ((.=)), ToJSON (toEncoding, toJSON), ToJSON1 (liftToJSON), defaultOptions, encode, genericToEncoding, object)
+import Data.Aeson.Types
+  ( Value,
+    listValue,
+  )
 import Data.ByteString.Lazy.Internal (ByteString)
 import GHC.Generics (Generic)
 
@@ -80,60 +84,28 @@ instance ToJSON Location where
   toEncoding = genericToEncoding defaultOptions
 
 instance ToJSON Diagnostic where
-  toJSON (Diagnostic message location severity source code suggestions originalOutput) = case severity of
-    Nothing ->
-      object
-        [ "message" .= message,
-          "location" .= location,
-          "severity" .= severity,
-          "source" .= source,
-          "code" .= code,
-          "suggestions" .= suggestions,
-          "originalOutput" .= originalOutput
-        ]
-    Just either -> case either of
-      Left str ->
-        object
-          [ "message" .= message,
-            "location" .= location,
-            "severity" .= str,
-            "source" .= source,
-            "code" .= code,
-            "suggestions" .= suggestions,
-            "originalOutput" .= originalOutput
-          ]
-      Right num ->
-        object
-          [ "message" .= message,
-            "location" .= location,
-            "severity" .= num,
-            "source" .= source,
-            "code" .= code,
-            "suggestions" .= suggestions,
-            "originalOutput" .= originalOutput
-          ]
+  toJSON (Diagnostic message location severity source code suggestions originalOutput) =
+    object
+      [ "message" .= message,
+        "location" .= location,
+        "severity" .= liftToJSON eitherToJSON (listValue eitherToJSON) severity,
+        "source" .= source,
+        "code" .= code,
+        "suggestions" .= suggestions,
+        "originalOutput" .= originalOutput
+      ]
 
 instance ToJSON DiagnosticResult where
-  toJSON (DiagnosticResult diagnostics resultsource resultseverity) = case resultseverity of
-    Nothing ->
-      object
-        [ "diagnostics" .= diagnostics,
-          "resultSource" .= resultsource,
-          "resultSeverity" .= resultseverity
-        ]
-    Just either -> case either of
-      Left str ->
-        object
-          [ "diagnostics" .= diagnostics,
-            "resultSource" .= resultsource,
-            "resultSeverity" .= str
-          ]
-      Right num ->
-        object
-          [ "diagnostics" .= diagnostics,
-            "resultSource" .= resultsource,
-            "resultSeverity" .= num
-          ]
+  toJSON (DiagnosticResult diagnostics resultsource resultseverity) =
+    object
+      [ "diagnostics" .= diagnostics,
+        "resultSource" .= resultsource,
+        "resultSeverity" .= liftToJSON eitherToJSON (listValue eitherToJSON) resultseverity
+      ]
 
 encodetojson :: ToJSON a => a -> Data.ByteString.Lazy.Internal.ByteString
 encodetojson = encode
+
+eitherToJSON :: (ToJSON v1, ToJSON v2) => Either v1 v2 -> Value
+eitherToJSON (Left v1) = toJSON v1
+eitherToJSON (Right v2) = toJSON v2
