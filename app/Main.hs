@@ -54,7 +54,7 @@ parseJava path pretty =
         print
           ( DiagnosticResult
               { diagnostics = CheckNonFinalMethodAttributes.check cUnit ++ CheckNonPrivateAttributes.check cUnit,
-                resultSource = Nothing,
+                resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
                 resultSeverity = Nothing
               }
           )

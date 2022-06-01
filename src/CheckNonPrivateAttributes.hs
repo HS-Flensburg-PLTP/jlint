@@ -46,7 +46,6 @@ checkMemberDecl (MemberClassDecl {}) = []
 checkMemberDecl (MemberInterfaceDecl {}) = []
 
 checkFieldDecl :: [Modifier] -> String -> [Diagnostic]
--- checkFieldDecl [] varname = [ClassVarNotPrivate {var = varname}]
 checkFieldDecl [] varname =
   [ constructDiagnostic varname
   ]

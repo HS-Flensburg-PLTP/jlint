@@ -27,8 +27,7 @@ checkMemberDecl (MethodDecl _ _ _ (Ident ident) formalParam _ _ _) =
   concatMap
     ( \p ->
         let var = checkFormalParam p
-         in --  in maybeToList (fmap (\v -> FuncVarNotFinal {func = ident, var = v}) var)
-            maybeToList
+         in maybeToList
               ( fmap
                   ( \v ->
                       Diagnostic
