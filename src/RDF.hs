@@ -114,7 +114,26 @@ instance ToJSON Diagnostic where
           ]
 
 instance ToJSON DiagnosticResult where
-  toEncoding = genericToEncoding defaultOptions
+  toJSON (DiagnosticResult diagnostics resultsource resultseverity) = case resultseverity of
+    Nothing ->
+      object
+        [ "diagnostics" .= diagnostics,
+          "resultSource" .= resultsource,
+          "resultSeverity" .= resultseverity
+        ]
+    Just either -> case either of
+      Left str ->
+        object
+          [ "diagnostics" .= diagnostics,
+            "resultSource" .= resultsource,
+            "resultSeverity" .= str
+          ]
+      Right num ->
+        object
+          [ "diagnostics" .= diagnostics,
+            "resultSource" .= resultsource,
+            "resultSeverity" .= num
+          ]
 
 encodetojson :: ToJSON a => a -> Data.ByteString.Lazy.Internal.ByteString
 encodetojson = encode
