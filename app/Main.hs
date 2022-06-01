@@ -8,6 +8,7 @@ import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
 import Lib
 import Options.Applicative
+import RDF
 
 main :: IO ()
 main = execParser opts >>= importJava
@@ -51,3 +52,15 @@ parseJava path pretty =
       Right cUnit -> do
         if pretty then print (prettyPrint cUnit) else print cUnit
         print (CheckNonFinalMethodAttributes.check cUnit)
+        print
+          ( RDF.encodetojson
+              ( RDF.Diagnostic
+                  "Geht"
+                  (RDF.Location "Location" Nothing)
+                  (Just (Right 24))
+                  Nothing
+                  Nothing
+                  Nothing
+                  (Just "String")
+              )
+          )
