@@ -1,10 +1,11 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module RDF (DiagnosticResult (..), Diagnostic (..), Location (..), encodetojson) where
 
-import GHC.Generics ( Generic )
-import Data.Aeson ( ToJSON (toEncoding), genericToEncoding, defaultOptions, encode )
-import Data.ByteString.Lazy.Internal
+import Data.Aeson (KeyValue ((.=)), ToJSON (toEncoding, toJSON), defaultOptions, encode, genericToEncoding, object)
+import Data.ByteString.Lazy.Internal (ByteString)
+import GHC.Generics (Generic)
 
 data Position = Position
   { line :: Int,
@@ -79,11 +80,41 @@ instance ToJSON Location where
   toEncoding = genericToEncoding defaultOptions
 
 instance ToJSON Diagnostic where
-  toEncoding = genericToEncoding defaultOptions
+  toJSON (Diagnostic message location severity source code suggestions originalOutput) = case severity of
+    Nothing ->
+      object
+        [ "message" .= message,
+          "location" .= location,
+          "severity" .= severity,
+          "source" .= source,
+          "code" .= code,
+          "suggestions" .= suggestions,
+          "originalOutput" .= originalOutput
+        ]
+    Just either -> case either of
+      Left str ->
+        object
+          [ "message" .= message,
+            "location" .= location,
+            "severity" .= str,
+            "source" .= source,
+            "code" .= code,
+            "suggestions" .= suggestions,
+            "originalOutput" .= originalOutput
+          ]
+      Right num ->
+        object
+          [ "message" .= message,
+            "location" .= location,
+            "severity" .= num,
+            "source" .= source,
+            "code" .= code,
+            "suggestions" .= suggestions,
+            "originalOutput" .= originalOutput
+          ]
 
 instance ToJSON DiagnosticResult where
   toEncoding = genericToEncoding defaultOptions
 
 encodetojson :: ToJSON a => a -> Data.ByteString.Lazy.Internal.ByteString
-encodetojson datatype = 
-      encode datatype
+encodetojson = encode
