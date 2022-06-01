@@ -31,7 +31,7 @@ checkMemberDecl (MethodDecl _ _ _ (Ident ident) formalParam _ _ _) =
               ( fmap
                   ( \v ->
                       Diagnostic
-                        { message = "FuncVar " ++ v ++ " in " ++ ident ++ " is not deklared as 'final'",
+                        { message = "Argument " ++ v ++ " in " ++ ident ++ " is not declared as 'final'.",
                           location =
                             Location
                               { path = "test/Strings2.java",
