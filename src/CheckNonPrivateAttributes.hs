@@ -58,7 +58,7 @@ checkFieldDecl modifier varname =
 constructDiagnostic :: String -> Diagnostic
 constructDiagnostic varname =
   Diagnostic
-    { message = "Attribute " ++ varname ++ " is not deklared as 'final'",
+    { message = "Attribute " ++ varname ++ " is not declared as 'private'.",
       location =
         Location
           { path = "test/Strings2.java",
