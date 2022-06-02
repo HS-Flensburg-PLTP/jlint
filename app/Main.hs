@@ -60,17 +60,17 @@ parseJava path pretty =
                   }
               )
             print
-          ( RDF.encodetojson
-              ( RDF.Diagnostic
-                  "Geht"
-                  (RDF.Location "Location" Nothing)
-                  (Just (Right 24))
-                  Nothing
-                  Nothing
-                  Nothing
-                  (Just "String")
+              ( RDF.encodetojson
+                  ( RDF.Diagnostic
+                      "Geht"
+                      (RDF.Location "Location" Nothing)
+                      (Just (Right 24))
+                      Nothing
+                      Nothing
+                      Nothing
+                      (Just "String")
+                  )
               )
-          )
 
 checkHighestSeverity :: [Diagnostic] -> Maybe (Either String Int) -> Maybe (Either String Int)
 checkHighestSeverity [] severity = severity
