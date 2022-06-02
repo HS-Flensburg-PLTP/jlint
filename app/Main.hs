@@ -44,7 +44,7 @@ params =
 
 parseJava :: FilePath -> Bool -> IO ()
 parseJava path pretty =
-  let things cUnit = CheckNonFinalMethodAttributes.check cUnit ++ CheckNonPrivateAttributes.check cUnit
+  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit ++ CheckNonPrivateAttributes.check cUnit
    in do
         input <- readFile path
         let result = parser compilationUnit input
@@ -54,9 +54,9 @@ parseJava path pretty =
             if pretty then print (prettyPrint cUnit) else print cUnit
             print
               ( DiagnosticResult
-                  { diagnostics = things cUnit,
+                  { diagnostics = diagnosticsByRules cUnit,
                     resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
-                    resultSeverity = (checkHighestSeverity (things cUnit) Nothing)
+                    resultSeverity = (checkHighestSeverity (diagnosticsByRules cUnit) Nothing)
                   }
               )
 
