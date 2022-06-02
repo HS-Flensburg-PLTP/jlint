@@ -8,7 +8,7 @@ import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
 import Lib
 import Options.Applicative
-import RDF (DiagnosticResult (..))
+import RDF
 
 main :: IO ()
 main = execParser opts >>= importJava
@@ -44,17 +44,27 @@ params =
 
 parseJava :: FilePath -> Bool -> IO ()
 parseJava path pretty =
-  do
-    input <- readFile path
-    let result = parser compilationUnit input
-    case result of
-      Left error -> print error
-      Right cUnit -> do
-        if pretty then print (prettyPrint cUnit) else print cUnit
-        print
-          ( DiagnosticResult
-              { diagnostics = CheckNonFinalMethodAttributes.check cUnit ++ CheckNonPrivateAttributes.check cUnit,
-                resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
-                resultSeverity = Nothing
-              }
-          )
+  let things cUnit = CheckNonFinalMethodAttributes.check cUnit ++ CheckNonPrivateAttributes.check cUnit
+   in do
+        input <- readFile path
+        let result = parser compilationUnit input
+        case result of
+          Left error -> print error
+          Right cUnit -> do
+            if pretty then print (prettyPrint cUnit) else print cUnit
+            print
+              ( DiagnosticResult
+                  { diagnostics = things cUnit,
+                    resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
+                    resultSeverity = (checkHighestSeverity (things cUnit) Nothing)
+                  }
+              )
+
+-- print (checkHighestSeverity (things cUnit) (Just (Left "")))
+
+checkHighestSeverity :: [Diagnostic] -> Maybe (Either String Int) -> Maybe (Either String Int)
+checkHighestSeverity [] severity = severity
+checkHighestSeverity (Diagnostic m _ s _ _ _ _ : xs) severity =
+  if s == Just (Left "ERROR")
+    then s
+    else checkHighestSeverity xs s

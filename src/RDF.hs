@@ -1,4 +1,4 @@
-module RDF (DiagnosticResult (..), Diagnostic (..), Location (..)) where
+module RDF (DiagnosticResult (..), Diagnostic (..), Location (..), Source (..)) where
 
 data Position = Position
   { line :: Int,
