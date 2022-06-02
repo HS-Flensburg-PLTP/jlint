@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module RDF (DiagnosticResult (..), Diagnostic (..), Location (..), encodetojson) where
+module RDF (DiagnosticResult (..), Diagnostic (..), Location (..), Source (..), encodetojson) where
 
 import Data.Aeson (KeyValue ((.=)), ToJSON (toEncoding, toJSON), ToJSON1 (liftToJSON), defaultOptions, encode, genericToEncoding, object)
 import Data.Aeson.Types

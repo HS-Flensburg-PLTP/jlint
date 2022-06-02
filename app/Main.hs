@@ -44,23 +44,37 @@ params =
 
 parseJava :: FilePath -> Bool -> IO ()
 parseJava path pretty =
-  do
-    input <- readFile path
-    let result = parser compilationUnit input
-    case result of
-      Left error -> print error
-      Right cUnit -> do
-        if pretty then print (prettyPrint cUnit) else print cUnit
-        print (CheckNonFinalMethodAttributes.check cUnit)
-        print
-          ( RDF.encodetojson
-              ( RDF.Diagnostic
-                  "Geht"
-                  (RDF.Location "Location" Nothing)
-                  (Just (Right 24))
-                  Nothing
-                  Nothing
-                  Nothing
-                  (Just "String")
+  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit ++ CheckNonPrivateAttributes.check cUnit
+   in do
+        input <- readFile path
+        let result = parser compilationUnit input
+        case result of
+          Left error -> print error
+          Right cUnit -> do
+            if pretty then print (prettyPrint cUnit) else print cUnit
+            print
+              ( DiagnosticResult
+                  { diagnostics = diagnosticsByRules cUnit,
+                    resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
+                    resultSeverity = (checkHighestSeverity (diagnosticsByRules cUnit) Nothing)
+                  }
               )
-          )
+            print
+              ( RDF.encodetojson
+                  ( RDF.Diagnostic
+                      "Geht"
+                      (RDF.Location "Location" Nothing)
+                      (Just (Right 24))
+                      Nothing
+                      Nothing
+                      Nothing
+                      (Just "String")
+                  )
+              )
+
+checkHighestSeverity :: [Diagnostic] -> Maybe (Either String Int) -> Maybe (Either String Int)
+checkHighestSeverity [] severity = severity
+checkHighestSeverity (Diagnostic m _ s _ _ _ _ : xs) severity =
+  if s == Just (Left "ERROR")
+    then s
+    else checkHighestSeverity xs s
