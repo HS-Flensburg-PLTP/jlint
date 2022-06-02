@@ -1,40 +1,51 @@
-module RDF (DiagnosticResult (..), Diagnostic (..), Location (..), Source (..)) where
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE OverloadedStrings #-}
+
+module RDF (DiagnosticResult (..), Diagnostic (..), Location (..), Source (..), encodetojson) where
+
+import Data.Aeson (KeyValue ((.=)), ToJSON (toEncoding, toJSON), ToJSON1 (liftToJSON), defaultOptions, encode, genericToEncoding, object)
+import Data.Aeson.Types
+  ( Value,
+    listValue,
+  )
+import Data.ByteString.Lazy.Internal (ByteString)
+import GHC.Generics (Generic)
 
 data Position = Position
   { line :: Int,
     column :: Int
   }
-  deriving (Show, Eq)
+  deriving (Generic, Show, Eq)
 
 data Range = Range
   { start :: Position,
     end :: Maybe Position
   }
-  deriving (Show, Eq)
+  deriving (Generic, Show, Eq)
 
 data Source = Source
   { name :: String,
     sourceURL :: Maybe String
   }
-  deriving (Show, Eq)
+  deriving (Generic, Show, Eq)
 
 data Code = Code
   { value :: String,
     codeURL :: Maybe String
   }
-  deriving (Show, Eq)
+  deriving (Generic, Show, Eq)
 
 data Suggestion = Suggestion
   { suggestionRange :: Range,
     text :: String
   }
-  deriving (Show, Eq)
+  deriving (Generic, Show, Eq)
 
 data Location = Location
   { path :: String,
     locationRange :: Maybe Range
   }
-  deriving (Show, Eq)
+  deriving (Generic, Show, Eq)
 
 data Diagnostic = Diagnostic
   { message :: String,
@@ -45,11 +56,56 @@ data Diagnostic = Diagnostic
     suggestions :: Maybe [Suggestion],
     originalOutput :: Maybe String
   }
-  deriving (Show, Eq)
+  deriving (Generic, Show, Eq)
 
 data DiagnosticResult = DiagnosticResult
   { diagnostics :: [Diagnostic],
     resultSource :: Maybe Source,
     resultSeverity :: Maybe (Either String Int)
   }
-  deriving (Show)
+  deriving (Generic, Show)
+
+instance ToJSON Position where
+  toEncoding = genericToEncoding defaultOptions
+
+instance ToJSON Range where
+  toEncoding = genericToEncoding defaultOptions
+
+instance ToJSON Source where
+  toEncoding = genericToEncoding defaultOptions
+
+instance ToJSON Code where
+  toEncoding = genericToEncoding defaultOptions
+
+instance ToJSON Suggestion where
+  toEncoding = genericToEncoding defaultOptions
+
+instance ToJSON Location where
+  toEncoding = genericToEncoding defaultOptions
+
+instance ToJSON Diagnostic where
+  toJSON (Diagnostic message location severity source code suggestions originalOutput) =
+    object
+      [ "message" .= message,
+        "location" .= location,
+        "severity" .= liftToJSON eitherToJSON (listValue eitherToJSON) severity,
+        "source" .= source,
+        "code" .= code,
+        "suggestions" .= suggestions,
+        "originalOutput" .= originalOutput
+      ]
+
+instance ToJSON DiagnosticResult where
+  toJSON (DiagnosticResult diagnostics resultsource resultseverity) =
+    object
+      [ "diagnostics" .= diagnostics,
+        "resultSource" .= resultsource,
+        "resultSeverity" .= liftToJSON eitherToJSON (listValue eitherToJSON) resultseverity
+      ]
+
+encodetojson :: ToJSON a => a -> Data.ByteString.Lazy.Internal.ByteString
+encodetojson = encode
+
+eitherToJSON :: (ToJSON v1, ToJSON v2) => Either v1 v2 -> Value
+eitherToJSON (Left v1) = toJSON v1
+eitherToJSON (Right v2) = toJSON v2
