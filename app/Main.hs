@@ -53,22 +53,12 @@ parseJava path pretty =
           Right cUnit -> do
             if pretty then print (prettyPrint cUnit) else print cUnit
             print
-              ( DiagnosticResult
-                  { diagnostics = diagnosticsByRules cUnit,
-                    resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
-                    resultSeverity = (checkHighestSeverity (diagnosticsByRules cUnit) Nothing)
-                  }
-              )
-            print
               ( RDF.encodetojson
-                  ( RDF.Diagnostic
-                      "Geht"
-                      (RDF.Location "Location" Nothing)
-                      (Just (Right 24))
-                      Nothing
-                      Nothing
-                      Nothing
-                      (Just "String")
+                  ( DiagnosticResult
+                      { diagnostics = diagnosticsByRules cUnit,
+                        resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
+                        resultSeverity = (checkHighestSeverity (diagnosticsByRules cUnit) Nothing)
+                      }
                   )
               )
 
