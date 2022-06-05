@@ -20,7 +20,7 @@ checkTypeDecl (InterfaceTypeDecl _) _ = []
 
 checkClassType :: ClassDecl -> FilePath -> [Diagnostic]
 checkClassType (ClassDecl _ _ _ _ _ (ClassBody body)) path = checkDecls body path
-checkClassType (EnumDecl _ _ _ _) _ = []
+checkClassType (EnumDecl {}) _ = []
 
 checkDecls :: [Decl] -> FilePath -> [Diagnostic]
 checkDecls [] _ = []
