@@ -1,0 +1,25 @@
+name: Haskell Test
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  stack-test:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout current repository
+      uses: actions/checkout@v3
+
+    - name: Setup Haskell with Stack
+      uses: haskell/actions/setup@v2
+      with:
+        enable-stack: true
+        stack-no-global: true
+
+    - name: Stack Build Dependencies Only
+      run: stack build --dependencies-only
+
+    - name: Run stack test
+      run: stack test --fast

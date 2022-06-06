@@ -1,0 +1,41 @@
+name: Haskell Format (Ormolu)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  ormolu-stack:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout current repository
+      uses: actions/checkout@v3
+
+    - name: Setup Haskell with Stack
+      uses: haskell/actions/setup@v2
+      with:
+        enable-stack: true
+        stack-no-global: true
+
+    # if not self-hosted: use https://github.com/marketplace/actions/ormolu-action
+    # see "ormolu-action" below, also executed before haskell-build / stack-build
+
+    - name: Add .local/bin to PATH
+      run: echo $HOME/.local/bin >> $GITHUB_PATH
+
+    - name: Install Ormolu
+      run: stack install ormolu
+
+    - name: Ormolu Check Format
+      run: ormolu --color always --check-idempotence --mode check $(find . -name '*.hs')
+
+#  ormolu-action:
+#    runs-on: self-hosted
+#
+#    steps:
+#    - name: Checkout current repository
+#      uses: actions/checkout@v3
+#
+#    - name: Ormolu Check Format
+#      uses: mrkkrp/ormolu-action@v6
