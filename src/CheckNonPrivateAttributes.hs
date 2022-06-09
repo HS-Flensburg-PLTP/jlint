@@ -13,6 +13,7 @@ import Language.Java.Syntax
     VarDeclId (VarId),
   )
 import RDF (Diagnostic (..), Location (..))
+import Control.Monad.Reader
 
 data Error = ClassVarNotPrivate {var :: String}
   deriving (Show)

@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleContexts #-}
 module Main where
 
 import CheckNonFinalMethodAttributes (check)
@@ -9,6 +10,7 @@ import Language.Java.Syntax
 import Lib
 import Options.Applicative
 import RDF
+import Control.Monad.Reader
 
 main :: IO ()
 main = execParser opts >>= importJava
@@ -42,6 +44,11 @@ params =
           <> help "By setting this Parameter the java source representation of the AST is shown"
       )
 
+pathToReader :: Reader FilePath FilePath
+pathToReader = do
+    env <- ask
+    return env
+
 parseJava :: FilePath -> Bool -> IO ()
 parseJava path pretty =
   let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit ++ CheckNonPrivateAttributes.check cUnit
@@ -71,6 +78,8 @@ parseJava path pretty =
                       (Just "String")
                   )
               )
+            let reader = runReader pathToReader path
+            print ("Reader: " ++ reader)
 
 checkHighestSeverity :: [Diagnostic] -> Maybe (Either String Int) -> Maybe (Either String Int)
 checkHighestSeverity [] severity = severity

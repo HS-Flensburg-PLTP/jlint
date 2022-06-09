@@ -29,6 +29,7 @@ library
       CheckNonPrivateAttributes
       Lib
       RDF
+      ReaderMonad
   other-modules:
       Paths_jlint
   hs-source-dirs:
@@ -39,6 +40,7 @@ library
     , base >=4.7 && <5
     , bytestring >=0.10.12.1 && <0.11
     , language-java >=0.2.9 && <3
+    , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
   default-language: Haskell2010
 
@@ -55,6 +57,7 @@ executable jlint-exe
     , bytestring >=0.10.12.1 && <0.11
     , jlint
     , language-java >=0.2.9 && <3
+    , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
   default-language: Haskell2010
 
@@ -72,5 +75,6 @@ test-suite jlint-test
     , bytestring >=0.10.12.1 && <0.11
     , jlint
     , language-java >=0.2.9 && <3
+    , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
   default-language: Haskell2010
