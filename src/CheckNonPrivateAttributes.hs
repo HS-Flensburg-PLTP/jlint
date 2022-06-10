@@ -13,50 +13,58 @@ import Language.Java.Syntax
     VarDeclId (VarId),
   )
 import RDF (Diagnostic (..), Location (..))
+import Control.Monad.Reader
 
 data Error = ClassVarNotPrivate {var :: String}
   deriving (Show)
 
 check :: CompilationUnit -> FilePath -> [Diagnostic]
-check (CompilationUnit _ _ classtype) = checkTypeDecls classtype
+check (CompilationUnit _ _ classtype) = runReader (checkTypeDecls classtype)
 
-checkTypeDecls :: [TypeDecl] -> FilePath -> [Diagnostic]
-checkTypeDecls [] _ = []
-checkTypeDecls (x:xs) path = checkTypeDecl x path ++ checkTypeDecls xs path
+checkTypeDecls :: [TypeDecl] -> Reader FilePath [Diagnostic]
+checkTypeDecls [] = return []
+checkTypeDecls (x:xs) = do
+    td <- checkTypeDecl x
+    ctds <- checkTypeDecls xs
+    return (td ++ ctds)
 
-checkTypeDecl :: TypeDecl -> FilePath -> [Diagnostic]
-checkTypeDecl (ClassTypeDecl cd) path = checkClassType cd path
-checkTypeDecl (InterfaceTypeDecl _) _= []
 
-checkClassType :: ClassDecl -> FilePath -> [Diagnostic]
-checkClassType (ClassDecl _ _ _ _ _ (ClassBody body)) path = checkDecls body path
-checkClassType (EnumDecl {}) _ = []
+checkTypeDecl :: TypeDecl -> Reader FilePath [Diagnostic]
+checkTypeDecl (ClassTypeDecl cd) = checkClassType cd
+checkTypeDecl (InterfaceTypeDecl _) = return []
 
-checkDecls :: [Decl] -> FilePath -> [Diagnostic]
-checkDecls [] _ = []
-checkDecls (x:xs) path = checkDecl x path ++ checkDecls xs path
+checkClassType :: ClassDecl -> Reader FilePath [Diagnostic]
+checkClassType (ClassDecl _ _ _ _ _ (ClassBody body)) = checkDecls body
+checkClassType (EnumDecl {}) = return []
 
-checkDecl :: Decl -> FilePath -> [Diagnostic]
-checkDecl (MemberDecl md) path = checkMemberDecl md path
-checkDecl (InitDecl _ _) _= []
+checkDecls :: [Decl] -> Reader FilePath [Diagnostic]
+checkDecls [] = return []
+checkDecls (x:xs) = do
+    dcl <- checkDecl x
+    cdcls <- checkDecls xs
+    return (dcl ++ cdcls)
 
-checkMemberDecl :: MemberDecl -> FilePath -> [Diagnostic]
-checkMemberDecl (FieldDecl mods _ ((VarDecl (VarId (Ident n)) _) : _)) path = checkFieldDecl mods n path
-checkMemberDecl (MethodDecl {}) _= []
-checkMemberDecl (ConstructorDecl {}) _= []
-checkMemberDecl (MemberClassDecl {}) _= []
-checkMemberDecl (MemberInterfaceDecl {}) _ = []
 
-checkFieldDecl :: [Modifier] -> String -> FilePath -> [Diagnostic]
-checkFieldDecl [] varname path =
-  [ constructDiagnostic varname path
-  ]
-checkFieldDecl modifier varname  path =
-  [ constructDiagnostic varname path
-    | Private `notElem` modifier
-  ]
+checkDecl :: Decl -> Reader FilePath [Diagnostic]
+checkDecl (MemberDecl md) = checkMemberDecl md
+checkDecl (InitDecl _ _) = return []
 
-constructDiagnostic :: String -> FilePath ->Diagnostic
+checkMemberDecl :: MemberDecl -> Reader FilePath [Diagnostic]
+checkMemberDecl (FieldDecl mods _ ((VarDecl (VarId (Ident n)) _) : _)) = checkFieldDecl mods n
+checkMemberDecl (MethodDecl {}) = return []
+checkMemberDecl (ConstructorDecl {}) = return []
+checkMemberDecl (MemberClassDecl {}) = return []
+checkMemberDecl (MemberInterfaceDecl {}) = return []
+
+checkFieldDecl :: [Modifier] -> String -> Reader FilePath [Diagnostic]
+checkFieldDecl [] varname = do
+    path <- ask
+    return [ constructDiagnostic varname path ]
+checkFieldDecl modifier varname = do
+    path <- ask
+    return [ constructDiagnostic varname path | Private `notElem` modifier]
+
+constructDiagnostic :: String -> FilePath -> Diagnostic
 constructDiagnostic varname path =
   Diagnostic
     { message = "Attribute " ++ varname ++ " is not declared as 'private'.",

@@ -1,62 +1,71 @@
 module CheckNonFinalMethodAttributes (check) where
 
-import Data.Maybe (maybeToList)
 import Language.Java.Syntax (ClassBody (..), ClassDecl (..), CompilationUnit (..), Decl (..), FormalParam (..), Ident (Ident), MemberDecl (..), Modifier (Final), TypeDecl (..), VarDeclId (VarId))
 import RDF (Diagnostic (..), Location (..))
+import Control.Monad.Reader
 
 data Error = FuncVarNotFinal {func :: String, var :: String}
   deriving (Show)
 
 check :: CompilationUnit -> FilePath -> [Diagnostic]
-check (CompilationUnit _ _ classtype) = checkTypeDecls classtype
+check (CompilationUnit _ _ classtype) = runReader (checkTypeDecls classtype)
 
-checkTypeDecls :: [TypeDecl] -> FilePath -> [Diagnostic]
-checkTypeDecls [] _ = []
-checkTypeDecls (x:xs) path = checkTypeDecl x path ++ checkTypeDecls xs path
+checkTypeDecls :: [TypeDecl] -> Reader FilePath [Diagnostic]
+checkTypeDecls [] = return []
+checkTypeDecls (x:xs) = do
+    td <- checkTypeDecl x
+    ctds <- checkTypeDecls xs
+    return (td ++ ctds)
 
-checkTypeDecl :: TypeDecl -> FilePath -> [Diagnostic]
-checkTypeDecl (ClassTypeDecl classDecl) path = checkClassType classDecl path
-checkTypeDecl (InterfaceTypeDecl _) _ = []
+checkTypeDecl :: TypeDecl -> Reader FilePath [Diagnostic]
+checkTypeDecl (ClassTypeDecl classDecl) = checkClassType classDecl
+checkTypeDecl (InterfaceTypeDecl _) = return []
 
-checkClassType :: ClassDecl -> FilePath -> [Diagnostic]
-checkClassType (ClassDecl _ _ _ _ _ (ClassBody body)) path = checkDecls body path
-checkClassType (EnumDecl {}) _ = []
+checkClassType :: ClassDecl -> Reader FilePath [Diagnostic]
+checkClassType (ClassDecl _ _ _ _ _ (ClassBody body)) = checkDecls body
+checkClassType (EnumDecl _ _ _ _) = return []
 
-checkDecls :: [Decl] -> FilePath -> [Diagnostic]
-checkDecls [] _ = []
-checkDecls (x:xs) path = checkDecl x path ++ checkDecls xs path
+checkDecls :: [Decl] -> Reader FilePath [Diagnostic]
+checkDecls [] = return []
+checkDecls (x:xs) = do
+    dcl <- checkDecl x
+    cdcls <- checkDecls xs
+    return (dcl ++ cdcls)
 
-checkDecl :: Decl -> FilePath -> [Diagnostic]
-checkDecl (MemberDecl memberDecl) path = checkMemberDecl memberDecl path
-checkDecl (InitDecl _ _) _ = []
+checkDecl :: Decl -> Reader FilePath [Diagnostic]
+checkDecl (MemberDecl memberDecl) = checkMemberDecl memberDecl
+checkDecl (InitDecl _ _) = return []
 
-checkMemberDecl :: MemberDecl -> FilePath -> [Diagnostic]
-checkMemberDecl (MethodDecl _ _ _ (Ident ident) formalParam _ _ _) path =
-  concatMap
-    ( \p ->
-        let var = checkFormalParam p
-         in maybeToList
-              ( fmap
-                  ( \v ->
-                      Diagnostic
-                        { message = "Argument " ++ v ++ " in " ++ ident ++ " is not declared as 'final'.",
-                          location =
-                            Location
-                              { path = path,
-                                locationRange = Nothing
-                              },
-                          severity = Just (Left "WARNING"),
-                          source = Nothing,
-                          code = Nothing,
-                          suggestions = Nothing,
-                          originalOutput = Nothing
-                        }
-                  )
-                  var
-              )
-    )
-    formalParam
-checkMemberDecl _ _ = []
+checkMemberDecl :: MemberDecl -> Reader FilePath [Diagnostic]
+checkMemberDecl (MethodDecl _ _ _ (Ident ident) formalParam _ _ _) = checkMethodDecl ident formalParam
+checkMemberDecl _ = return []
 
-checkFormalParam :: FormalParam -> Maybe String
-checkFormalParam (FormalParam modifier _ _ (VarId (Ident n))) = if Final `elem` modifier then Nothing else Just n
+checkMethodDecl :: String -> [FormalParam] -> Reader FilePath [Diagnostic]
+checkMethodDecl _ [] = return []
+checkMethodDecl ident (x:xs) = do
+    cfp <- checkFormalParam x ident
+    cmd <- checkMethodDecl ident xs
+    return (cfp ++ cmd)
+
+
+
+checkFormalParam :: FormalParam -> String -> Reader FilePath [Diagnostic]
+checkFormalParam (FormalParam modifier _ _ (VarId (Ident n))) ident = do
+      path <- ask
+      return [constructDiagnostic n ident path | Final `notElem` modifier ]
+
+constructDiagnostic :: String -> String -> FilePath -> Diagnostic
+constructDiagnostic fparam ident path =
+  Diagnostic
+      { message = "Argument " ++ fparam ++ " in " ++ ident ++ " is not declared as 'final'.",
+        location =
+          Location
+            { path = path,
+              locationRange = Nothing
+            },
+        severity = Just (Left "WARNING"),
+        source = Nothing,
+        code = Nothing,
+        suggestions = Nothing,
+        originalOutput = Nothing
+      }
