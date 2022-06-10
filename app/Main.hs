@@ -7,6 +7,7 @@ import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
 import Lib
+import NeedBraces
 import Options.Applicative
 import RDF
 
@@ -44,7 +45,7 @@ params =
 
 parseJava :: FilePath -> Bool -> IO ()
 parseJava path pretty =
-  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit ++ CheckNonPrivateAttributes.check cUnit
+  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit ++ CheckNonPrivateAttributes.check cUnit ++ NeedBraces.check cUnit
    in do
         input <- readFile path
         let result = parser compilationUnit input
@@ -58,18 +59,6 @@ parseJava path pretty =
                     resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
                     resultSeverity = (checkHighestSeverity (diagnosticsByRules cUnit) Nothing)
                   }
-              )
-            print
-              ( RDF.encodetojson
-                  ( RDF.Diagnostic
-                      "Geht"
-                      (RDF.Location "Location" Nothing)
-                      (Just (Right 24))
-                      Nothing
-                      Nothing
-                      Nothing
-                      (Just "String")
-                  )
               )
 
 checkHighestSeverity :: [Diagnostic] -> Maybe (Either String Int) -> Maybe (Either String Int)
