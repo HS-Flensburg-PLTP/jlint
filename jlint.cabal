@@ -29,7 +29,6 @@ library
       CheckNonPrivateAttributes
       Lib
       RDF
-      ReaderMonad
   other-modules:
       Paths_jlint
   hs-source-dirs:

@@ -10,7 +10,6 @@ import Language.Java.Syntax
 import Lib
 import Options.Applicative
 import RDF
-import Control.Monad.Reader
 
 main :: IO ()
 main = execParser opts >>= importJava
@@ -44,21 +43,16 @@ params =
           <> help "By setting this Parameter the java source representation of the AST is shown"
       )
 
-pathToReader :: Reader FilePath FilePath
-pathToReader = do
-    env <- ask
-    return env
-
 parseJava :: FilePath -> Bool -> IO ()
 parseJava path pretty =
-  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit ++ CheckNonPrivateAttributes.check cUnit
+  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit path  ++ CheckNonPrivateAttributes.check cUnit path
    in do
         input <- readFile path
         let result = parser compilationUnit input
         case result of
           Left error -> print error
           Right cUnit -> do
-            if pretty then print (prettyPrint cUnit) else print cUnit
+            --if pretty then print (prettyPrint cUnit) else print cUnit
             print
               ( DiagnosticResult
                   { diagnostics = diagnosticsByRules cUnit,
@@ -66,20 +60,6 @@ parseJava path pretty =
                     resultSeverity = (checkHighestSeverity (diagnosticsByRules cUnit) Nothing)
                   }
               )
-            print
-              ( RDF.encodetojson
-                  ( RDF.Diagnostic
-                      "Geht"
-                      (RDF.Location "Location" Nothing)
-                      (Just (Right 24))
-                      Nothing
-                      Nothing
-                      Nothing
-                      (Just "String")
-                  )
-              )
-            let reader = runReader pathToReader path
-            print ("Reader: " ++ reader)
 
 checkHighestSeverity :: [Diagnostic] -> Maybe (Either String Int) -> Maybe (Either String Int)
 checkHighestSeverity [] severity = severity
