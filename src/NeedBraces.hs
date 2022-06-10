@@ -8,19 +8,19 @@ import Data.Generics.Uniplate.Data (Biplate, universeBi)
 import Language.Java.Syntax
 import RDF (simpleDiagnostic, Diagnostic(..))
 
-check :: CompilationUnit -> [Diagnostic]
-check cUnit = 
+check :: CompilationUnit -> FilePath -> [Diagnostic]
+check cUnit path = 
     let 
         fBlocks = grabFunc cUnit
 
         search[] = []
         search ((b,n):xs) = 
-            (checkDoWhile (grabDoBlockStmt b) n) ++ 
-            (checkWhile (grabWhileBlockStmt b) n) ++ 
-            (checkFor (grabForBlockStmt b) n) ++
-            (checkIfThenElse (grabIfThenElseBlockStmt b) n) ++
-            (checkifThen (grabIfThenBlockStmt b) n) ++
-            (checkIfThenElseLast (grabIfThenElseLastBlockStmt b) n) ++
+            (checkDoWhile (grabDoBlockStmt b) n path) ++ 
+            (checkWhile (grabWhileBlockStmt b) n path) ++ 
+            (checkFor (grabForBlockStmt b) n path) ++
+            (checkIfThenElse (grabIfThenElseBlockStmt b) n path) ++
+            (checkifThen (grabIfThenBlockStmt b) n path) ++
+            (checkIfThenElseLast (grabIfThenElseLastBlockStmt b) n path) ++
             search xs
     in
         search fBlocks
@@ -46,34 +46,39 @@ grabIfThenElseBlockStmt b = [y | IfThenElse _ y _ <- universeBi b ]
 grabIfThenElseLastBlockStmt :: Biplate MethodBody BlockStmt => MethodBody -> [Stmt]
 grabIfThenElseLastBlockStmt b = [y | IfThenElse _ _ y <- universeBi b ]
 
-msg :: String -> String
-msg funcName = "IfThen in function " ++ funcName ++ " contains no Braces."
+msg :: String -> String -> String
+msg t funcName = t ++ " in function " ++ funcName ++ " contains no Braces."
 
-checkDoWhile [] n = []
-checkDoWhile ((StmtBlock _):xs) n = [] ++ checkDoWhile xs n
-checkDoWhile (_:xs) n = [simpleDiagnostic "NeedBraces Function " (msg n) " a Do-Part need Braces"] ++ checkDoWhile xs n
+checkDoWhile :: [Stmt] -> String -> FilePath -> [Diagnostic]
+checkDoWhile [] _  _= []
+checkDoWhile ((StmtBlock _):xs) n  path= [] ++ checkDoWhile xs n path
+checkDoWhile (_:xs) n  path= [simpleDiagnostic (msg "A Do-Part" n) path] ++ checkDoWhile xs n path
 
-checkWhile [] n = []
-checkWhile ((StmtBlock _) : xs) n = [] ++ checkWhile xs n
-checkWhile (_:xs) n = [simpleDiagnostic "NeedBraces Function " (msg n) " a While-Part need Braces"] ++ checkWhile xs n
+checkWhile :: [Stmt] -> String -> FilePath -> [Diagnostic]
+checkWhile [] _  _= []
+checkWhile ((StmtBlock _) : xs) n  path= [] ++ checkWhile xs n path
+checkWhile (_:xs) n  path= [simpleDiagnostic (msg "A While-Part" n) path] ++ checkWhile xs n path
 
+checkFor :: [Stmt] -> String -> FilePath -> [Diagnostic]
+checkFor [] _  _= []
+checkFor ((StmtBlock _) : xs) n  path= [] ++ checkFor xs n path
+checkFor (_:xs) n  path= [simpleDiagnostic (msg "A For-Part" n) path] ++ checkFor xs n path
 
-checkFor [] n = []
-checkFor ((StmtBlock _) : xs) n = [] ++ checkFor xs n
-checkFor (_:xs) n = [simpleDiagnostic "NeedBraces Function " (msg n) " a For-Part need Braces"] ++ checkFor xs n
+checkIfThenElse :: [Stmt] -> String -> FilePath -> [Diagnostic]
+checkIfThenElse [] _  _= []
+checkIfThenElse ((StmtBlock _) : xs) n path = [] ++ checkIfThenElse xs n path
+checkIfThenElse (_:xs) n path = [simpleDiagnostic (msg "A IfThenElse-Part" n) path] ++ checkIfThenElse xs n path
 
-checkIfThenElse [] n = []
-checkIfThenElse ((StmtBlock _) : xs) n = [] ++ checkIfThenElse xs n
-checkIfThenElse (_:xs) n = [simpleDiagnostic "NeedBraces Function " (msg n) " a IfThenElse-Part need Braces"] ++ checkIfThenElse xs n
+checkifThen :: [Stmt] -> String -> FilePath -> [Diagnostic]
+checkifThen [] _ _ = []
+checkifThen ((StmtBlock _) : xs) n path = [] ++ checkifThen xs n path
+checkifThen (_:xs) n path = [simpleDiagnostic (msg "A IfThen-Part" n) path] ++ checkifThen xs n path
 
-checkifThen [] n = []
-checkifThen ((StmtBlock _) : xs) n = [] ++ checkifThen xs n
-checkifThen (_:xs) n = [simpleDiagnostic "NeedBraces Function " (msg n) " a IfThen-Part need Braces"] ++ checkifThen xs n
-
-checkIfThenElseLast [] n = []
-checkIfThenElseLast ((StmtBlock _) : xs) n = [] ++ checkIfThenElseLast xs n
-checkIfThenElseLast ((IfThenElse _ _ _) : xs) n = [] ++ checkIfThenElseLast xs n
-checkIfThenElseLast (_:xs) n =  [simpleDiagnostic "NeedBraces Function " (msg n) " a IfThenElse-Last-Part need Braces"] ++ checkIfThenElse xs n
+checkIfThenElseLast :: [Stmt] -> String -> FilePath -> [Diagnostic]
+checkIfThenElseLast [] _ _ = []
+checkIfThenElseLast ((StmtBlock _) : xs) n path = [] ++ checkIfThenElseLast xs n path
+checkIfThenElseLast ((IfThenElse _ _ _) : xs) n path = [] ++ checkIfThenElseLast xs n path
+checkIfThenElseLast (_:xs) n  path=  [simpleDiagnostic (msg "A IfThenElse-Part" n) path] ++ checkIfThenElse xs n path
 
     
      

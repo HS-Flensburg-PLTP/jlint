@@ -110,8 +110,8 @@ eitherToJSON :: (ToJSON v1, ToJSON v2) => Either v1 v2 -> Value
 eitherToJSON (Left v1) = toJSON v1
 eitherToJSON (Right v2) = toJSON v2
 
-simpleDiagnostic :: String -> String -> String -> Diagnostic
-simpleDiagnostic varname message path =
+simpleDiagnostic :: String -> String -> Diagnostic
+simpleDiagnostic message path =
   Diagnostic
     { message = message,
       location =
