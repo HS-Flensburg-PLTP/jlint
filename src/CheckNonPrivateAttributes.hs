@@ -19,11 +19,11 @@ data Error = ClassVarNotPrivate {var :: String}
   deriving (Show)
 
 check :: CompilationUnit -> FilePath -> [Diagnostic]
-check (CompilationUnit _ _ classtype) path = runReader (checkTypeDecls classtype) path
+check (CompilationUnit _ _ classtype) = runReader (checkTypeDecls classtype)
 
 checkTypeDecls :: [TypeDecl] -> Reader FilePath [Diagnostic]
 checkTypeDecls [] = return []
-checkTypeDecls (x:xs) = 
+checkTypeDecls (x:xs) =
     do
       td <- checkTypeDecl x
       ctds <- checkTypeDecls xs

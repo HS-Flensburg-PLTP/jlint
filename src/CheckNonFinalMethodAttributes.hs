@@ -8,12 +8,12 @@ data Error = FuncVarNotFinal {func :: String, var :: String}
   deriving (Show)
 
 check :: CompilationUnit -> FilePath -> [Diagnostic]
-check (CompilationUnit _ _ classtype) path = runReader (checkTypeDecls classtype) path
+check (CompilationUnit _ _ classtype) = runReader (checkTypeDecls classtype)
 
 checkTypeDecls :: [TypeDecl] -> Reader FilePath [Diagnostic]
 checkTypeDecls [] = return []
 checkTypeDecls (x:xs) =
-  do 
+  do
     td <- checkTypeDecl x
     ctds <- checkTypeDecls xs
     return (td ++ ctds)
@@ -45,7 +45,7 @@ checkMemberDecl _ = return []
 checkMethodDecl :: String -> [FormalParam] -> Reader FilePath [Diagnostic]
 checkMethodDecl _ [] = return []
 checkMethodDecl ident (x:xs) =
-  do 
+  do
     cfp <- checkFormalParam x ident
     cmd <- checkMethodDecl ident xs
     return (cfp ++ cmd)
