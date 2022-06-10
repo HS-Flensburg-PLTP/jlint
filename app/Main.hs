@@ -3,6 +3,7 @@ module Main where
 
 import CheckNonFinalMethodAttributes (check)
 import CheckNonPrivateAttributes (check)
+import EmptyLoopBody (check)
 import Data.Semigroup ((<>))
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
@@ -45,7 +46,7 @@ params =
 
 parseJava :: FilePath -> Bool -> IO ()
 parseJava path pretty =
-  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path
+  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ EmptyLoopBody cUnit path
    in do
         input <- readFile path
         let result = parser compilationUnit input
