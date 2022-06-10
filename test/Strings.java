@@ -4,7 +4,7 @@ public class Strings {
     public static final int ANZ_ASCII_ZEICHEN = 128;
     public String hello = "Hello";
 
-    static boolean containsDuplicates(String str) {
+    static boolean containsDuplicates(final String str) {
         boolean dupFound = false;
         for (int i = 0; i < str.length() - 1; i++) {
             char charAtI = str.charAt(i);

@@ -23,11 +23,10 @@ check (CompilationUnit _ _ classtype) = runReader (checkTypeDecls classtype)
 
 checkTypeDecls :: [TypeDecl] -> Reader FilePath [Diagnostic]
 checkTypeDecls [] = return []
-checkTypeDecls (x:xs) =
-    do
-      td <- checkTypeDecl x
-      ctds <- checkTypeDecls xs
-      return (td ++ ctds)
+checkTypeDecls (x:xs) = do
+    td <- checkTypeDecl x
+    ctds <- checkTypeDecls xs
+    return (td ++ ctds)
 
 
 checkTypeDecl :: TypeDecl -> Reader FilePath [Diagnostic]
@@ -40,8 +39,7 @@ checkClassType (EnumDecl {}) = return []
 
 checkDecls :: [Decl] -> Reader FilePath [Diagnostic]
 checkDecls [] = return []
-checkDecls (x:xs) =
-  do
+checkDecls (x:xs) = do
     dcl <- checkDecl x
     cdcls <- checkDecls xs
     return (dcl ++ cdcls)
@@ -59,12 +57,10 @@ checkMemberDecl (MemberClassDecl {}) = return []
 checkMemberDecl (MemberInterfaceDecl {}) = return []
 
 checkFieldDecl :: [Modifier] -> String -> Reader FilePath [Diagnostic]
-checkFieldDecl [] varname =
-  do
+checkFieldDecl [] varname = do
     path <- ask
     return [ constructDiagnostic varname path ]
-checkFieldDecl modifier varname =
-  do
+checkFieldDecl modifier varname = do
     path <- ask
     return [ constructDiagnostic varname path | Private `notElem` modifier]
 

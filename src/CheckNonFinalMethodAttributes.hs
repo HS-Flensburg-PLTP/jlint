@@ -12,8 +12,7 @@ check (CompilationUnit _ _ classtype) = runReader (checkTypeDecls classtype)
 
 checkTypeDecls :: [TypeDecl] -> Reader FilePath [Diagnostic]
 checkTypeDecls [] = return []
-checkTypeDecls (x:xs) =
-  do
+checkTypeDecls (x:xs) = do
     td <- checkTypeDecl x
     ctds <- checkTypeDecls xs
     return (td ++ ctds)
@@ -28,8 +27,7 @@ checkClassType (EnumDecl _ _ _ _) = return []
 
 checkDecls :: [Decl] -> Reader FilePath [Diagnostic]
 checkDecls [] = return []
-checkDecls (x:xs) =
-  do
+checkDecls (x:xs) = do
     dcl <- checkDecl x
     cdcls <- checkDecls xs
     return (dcl ++ cdcls)
@@ -44,8 +42,7 @@ checkMemberDecl _ = return []
 
 checkMethodDecl :: String -> [FormalParam] -> Reader FilePath [Diagnostic]
 checkMethodDecl _ [] = return []
-checkMethodDecl ident (x:xs) =
-  do
+checkMethodDecl ident (x:xs) = do
     cfp <- checkFormalParam x ident
     cmd <- checkMethodDecl ident xs
     return (cfp ++ cmd)
@@ -53,10 +50,9 @@ checkMethodDecl ident (x:xs) =
 
 
 checkFormalParam :: FormalParam -> String -> Reader FilePath [Diagnostic]
-checkFormalParam (FormalParam modifier _ _ (VarId (Ident n))) ident =
-      do
-        path <- ask
-        return [constructDiagnostic n ident path | Final `notElem` modifier ]
+checkFormalParam (FormalParam modifier _ _ (VarId (Ident n))) ident = do
+      path <- ask
+      return [constructDiagnostic n ident path | Final `notElem` modifier ]
 
 constructDiagnostic :: String -> String -> FilePath -> Diagnostic
 constructDiagnostic fparam ident path =
