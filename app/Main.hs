@@ -45,7 +45,7 @@ params =
 
 parseJava :: FilePath -> Bool -> IO ()
 parseJava path pretty =
-  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit path  ++ CheckNonPrivateAttributes.check cUnit path
+  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path
    in do
         input <- readFile path
         let result = parser compilationUnit input
@@ -54,11 +54,13 @@ parseJava path pretty =
           Right cUnit -> do
             --if pretty then print (prettyPrint cUnit) else print cUnit
             print
-              ( DiagnosticResult
-                  { diagnostics = diagnosticsByRules cUnit,
-                    resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
-                    resultSeverity = (checkHighestSeverity (diagnosticsByRules cUnit) Nothing)
-                  }
+              ( RDF.encodetojson
+                  ( DiagnosticResult
+                      { diagnostics = diagnosticsByRules cUnit,
+                        resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
+                        resultSeverity = (checkHighestSeverity (diagnosticsByRules cUnit) Nothing)
+                      }
+                  )
               )
 
 checkHighestSeverity :: [Diagnostic] -> Maybe (Either String Int) -> Maybe (Either String Int)
