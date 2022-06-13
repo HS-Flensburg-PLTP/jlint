@@ -27,6 +27,7 @@ library
   exposed-modules:
       CheckNonFinalMethodAttributes
       CheckNonPrivateAttributes
+      ConcatMapM
       Lib
       RDF
   other-modules:

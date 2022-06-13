@@ -13,21 +13,14 @@ import Language.Java.Syntax
     VarDeclId (VarId),
   )
 import RDF (Diagnostic (..), Location (..))
-import Control.Monad.Reader
-
-data Error = ClassVarNotPrivate {var :: String}
-  deriving (Show)
+import Control.Monad.Reader ( runReader, MonadReader(ask), Reader )
+import ConcatMapM ( concatMapM )
 
 check :: CompilationUnit -> FilePath -> [Diagnostic]
 check (CompilationUnit _ _ classtype) = runReader (checkTypeDecls classtype)
 
 checkTypeDecls :: [TypeDecl] -> Reader FilePath [Diagnostic]
-checkTypeDecls [] = return []
-checkTypeDecls (x:xs) = do
-    td <- checkTypeDecl x
-    ctds <- checkTypeDecls xs
-    return (td ++ ctds)
-
+checkTypeDecls = concatMapM checkTypeDecl
 
 checkTypeDecl :: TypeDecl -> Reader FilePath [Diagnostic]
 checkTypeDecl (ClassTypeDecl cd) = checkClassType cd
@@ -38,12 +31,7 @@ checkClassType (ClassDecl _ _ _ _ _ (ClassBody body)) = checkDecls body
 checkClassType (EnumDecl {}) = return []
 
 checkDecls :: [Decl] -> Reader FilePath [Diagnostic]
-checkDecls [] = return []
-checkDecls (x:xs) = do
-    dcl <- checkDecl x
-    cdcls <- checkDecls xs
-    return (dcl ++ cdcls)
-
+checkDecls = concatMapM checkDecl
 
 checkDecl :: Decl -> Reader FilePath [Diagnostic]
 checkDecl (MemberDecl md) = checkMemberDecl md
