@@ -4,40 +4,36 @@
 
 module EmptyLoopBody where
 
-import Data.Generics.Uniplate.Data (Biplate, universeBi)
+import Control.Monad (MonadPlus (..))
+import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
-import RDF (simpleDiagnostic, Diagnostic(..))
+import RDF (Diagnostic (..), simpleDiagnostic)
 
 check :: CompilationUnit -> FilePath -> [Diagnostic]
-check cUnit path = 
-    let 
-        fBlocks = grabFunc cUnit
+check cUnit path =
+  let fBlocks = extractMethods cUnit
 
-        search[] = []
-        search ((b,n):xs) = 
-            (checkEmptyLoopBody (grabForBlockStmt b) n path "A For-Loop") ++ 
-            (checkEmptyLoopBody (grabWhileBlockStmt b) n path "A While-Loop") ++
-            (checkEmptyLoopBody (grabDoWhileBlockStmt b) n path "A Do-While-Loop") ++
-            search xs
-    in
-        search fBlocks
+      search [] = []
+      search ((n, b) : xs) = extractStatements b n path ++ search xs
+   in search fBlocks
 
-grabFunc :: Biplate CompilationUnit MemberDecl => CompilationUnit -> [(MethodBody , String)]
-grabFunc cUnit = [(b, n) | MethodDecl _ _ _ (Ident n) _ _ _ b <- universeBi cUnit ]
+extractMethods :: CompilationUnit -> [(String, MethodBody)]
+extractMethods cUnit = do
+  membDecl <- universeBi cUnit
+  extractBody membDecl
+  where
+    extractBody (MethodDecl _ _ _ (Ident n) _ _ _ b) = return (n, b)
+    extractBody _ = mzero
 
-grabForBlockStmt :: Biplate MethodBody BlockStmt => MethodBody -> [Stmt]
-grabForBlockStmt b = [y | BasicFor _ _ _ y <- universeBi b]
-
-grabWhileBlockStmt :: Biplate MethodBody BlockStmt => MethodBody -> [Stmt]
-grabWhileBlockStmt b = [y | While _ y <- universeBi b]
-
-grabDoWhileBlockStmt :: Biplate MethodBody BlockStmt => MethodBody -> [Stmt]
-grabDoWhileBlockStmt b = [y | Do y _ <- universeBi b]
+extractStatements :: MethodBody -> String -> FilePath -> [Diagnostic]
+extractStatements methodBody funcName path = do
+  stmt <- universeBi methodBody
+  extractStatement stmt
+  where
+    extractStatement (Do (Empty) _) = return (simpleDiagnostic (msg "A Do-Loop" funcName) path)
+    extractStatement (While _ (Empty)) = return (simpleDiagnostic (msg "A While-Loop" funcName) path)
+    extractStatement (BasicFor _ _ _ (Empty)) = return (simpleDiagnostic (msg "A For-Loop" funcName) path)
+    extractStatement _ = mzero
 
 msg :: String -> String -> String
-msg t funcName = t ++ " in function " ++ funcName ++ " has no Loop-Body."
-
-checkEmptyLoopBody :: [Stmt] -> String -> FilePath -> String -> [Diagnostic]
-checkEmptyLoopBody [] _ _ _ = []
-checkEmptyLoopBody ((Empty) : xs) funcName path msgBegin = [simpleDiagnostic (msg msgBegin funcName) path] ++ checkEmptyLoopBody xs funcName path msgBegin
-checkEmptyLoopBody (_:xs) funcName path msgBegin = [] ++ checkEmptyLoopBody xs funcName path msgBegin
+msg t funcName = t ++ " in function " ++ funcName ++ " contains no braces."
