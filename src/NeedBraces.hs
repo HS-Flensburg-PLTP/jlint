@@ -13,25 +13,25 @@ import RDF (Diagnostic (..), simpleDiagnostic)
 check :: CompilationUnit -> FilePath -> [Diagnostic]
 check cUnit path = do
   methods <- extractMethods cUnit
-  extractDiagnostics methods path
+  checkStatements methods path
 
-extractDiagnostics :: (String, MethodBody) -> FilePath -> [Diagnostic]
-extractDiagnostics (funcName, methodBody) path = do
+checkStatements :: (String, MethodBody) -> FilePath -> [Diagnostic]
+checkStatements (methodName, methodBody) path = do
   stmt <- universeBi methodBody
-  extractDiagnostic stmt
+  checkStatement stmt
   where
-    extractDiagnostic (Do (StmtBlock _) _) = mzero
-    extractDiagnostic (Do _ _) = return (simpleDiagnostic (msg "A Do-Part" funcName) path)
-    extractDiagnostic (While _ (StmtBlock _)) = mzero
-    extractDiagnostic (While _ _) = return (simpleDiagnostic (msg "A While-Part" funcName) path)
-    extractDiagnostic (BasicFor _ _ _ (StmtBlock _)) = mzero
-    extractDiagnostic (BasicFor _ _ _ _) = return (simpleDiagnostic (msg "A For-Part" funcName) path)
-    extractDiagnostic (IfThen _ (StmtBlock _)) = mzero
-    extractDiagnostic (IfThen _ _) = return (simpleDiagnostic (msg "A IfThen-Part" funcName) path)
-    extractDiagnostic (IfThenElse _ (StmtBlock _) (StmtBlock _)) = mzero
-    extractDiagnostic (IfThenElse _ _ (StmtBlock _)) = return (simpleDiagnostic (msg "A IfThenElse-Part" funcName) path)
-    extractDiagnostic (IfThenElse _ (StmtBlock _) _) = return (simpleDiagnostic (msg "A IfThenElse-Part" funcName) path)
-    extractDiagnostic (IfThenElse _ _ _) = return (simpleDiagnostic (msg "A IfThenElse-Part" funcName) path)
-    extractDiagnostic _ = mzero
+    checkStatement (Do (StmtBlock _) _) = mzero
+    checkStatement (Do _ _) = return (simpleDiagnostic (msg "A Do-Part" methodName) path)
+    checkStatement (While _ (StmtBlock _)) = mzero
+    checkStatement (While _ _) = return (simpleDiagnostic (msg "A While-Part" methodName) path)
+    checkStatement (BasicFor _ _ _ (StmtBlock _)) = mzero
+    checkStatement (BasicFor _ _ _ _) = return (simpleDiagnostic (msg "A For-Part" methodName) path)
+    checkStatement (IfThen _ (StmtBlock _)) = mzero
+    checkStatement (IfThen _ _) = return (simpleDiagnostic (msg "A IfThen-Part" methodName) path)
+    checkStatement (IfThenElse _ (StmtBlock _) (StmtBlock _)) = mzero
+    checkStatement (IfThenElse _ _ (StmtBlock _)) = return (simpleDiagnostic (msg "A IfThenElse-Part" methodName) path)
+    checkStatement (IfThenElse _ (StmtBlock _) _) = return (simpleDiagnostic (msg "A IfThenElse-Part" methodName) path)
+    checkStatement (IfThenElse _ _ _) = return (simpleDiagnostic (msg "A IfThenElse-Part" methodName) path)
+    checkStatement _ = mzero
 
-    msg t funcName = t ++ " in function " ++ funcName ++ " contains no braces."
+    msg t methodName = t ++ " in function " ++ methodName ++ " contains no braces."
