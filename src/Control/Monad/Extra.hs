@@ -1,4 +1,4 @@
-module ConcatMapM (concatMapM) where
+module Control.Monad.Extra (concatMapM) where
 
 concatMapM :: Monad m => (a -> m [b]) -> [a] -> m [b]
 concatMapM _ [] = return []

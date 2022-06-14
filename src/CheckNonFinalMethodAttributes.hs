@@ -3,7 +3,7 @@ module CheckNonFinalMethodAttributes (check) where
 import Language.Java.Syntax (ClassBody (..), ClassDecl (..), CompilationUnit (..), Decl (..), FormalParam (..), Ident (Ident), MemberDecl (..), Modifier (Final), TypeDecl (..), VarDeclId (VarId))
 import RDF (Diagnostic (..), Location (..))
 import Control.Monad.Reader ( runReader, MonadReader(ask), Reader )
-import ConcatMapM ( concatMapM )
+import Control.Monad.Extra ( concatMapM )
 
 
 check :: CompilationUnit -> FilePath -> [Diagnostic]
