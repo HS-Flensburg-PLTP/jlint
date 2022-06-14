@@ -27,6 +27,7 @@ library
   exposed-modules:
       CheckNonFinalMethodAttributes
       CheckNonPrivateAttributes
+      Control.Monad.Extra
       Lib
       RDF
   other-modules:
