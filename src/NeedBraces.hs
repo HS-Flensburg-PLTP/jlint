@@ -5,7 +5,7 @@
 module NeedBraces where
 
 import Control.Monad (MonadPlus (..))
-import Data.Generics.Uniplate.Data (Biplate, universeBi)
+import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
 import RDF (Diagnostic (..), simpleDiagnostic)
 
@@ -14,7 +14,7 @@ check cUnit path =
   let fBlocks = extractMethods cUnit
 
       search [] = []
-      search ((n, b) : xs) = extractStatements b n path
+      search ((n, b) : xs) = extractStatements b n path ++ search xs
    in search fBlocks
 
 extractMethods :: CompilationUnit -> [(String, MethodBody)]
