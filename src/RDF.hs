@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module RDF (DiagnosticResult (..), Diagnostic (..), Location (..), Source (..), encodetojson) where
+module RDF (DiagnosticResult (..), Diagnostic (..), Location (..), Source (..), encodetojson, simpleDiagnostic) where
 
 import Data.Aeson (KeyValue ((.=)), ToJSON (toEncoding, toJSON), ToJSON1 (liftToJSON), defaultOptions, encode, genericToEncoding, object)
 import Data.Aeson.Types
@@ -109,3 +109,19 @@ encodetojson = encode
 eitherToJSON :: (ToJSON v1, ToJSON v2) => Either v1 v2 -> Value
 eitherToJSON (Left v1) = toJSON v1
 eitherToJSON (Right v2) = toJSON v2
+
+simpleDiagnostic :: String -> String -> Diagnostic
+simpleDiagnostic message path =
+  Diagnostic
+    { message = message,
+      location =
+        Location
+          { path = path,
+            locationRange = Nothing
+          },
+      severity = Just (Left "WARNING"),
+      source = Nothing,
+      code = Nothing,
+      suggestions = Nothing,
+      originalOutput = Nothing
+    }

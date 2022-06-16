@@ -9,6 +9,7 @@ import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
 import Lib
+import NeedBraces
 import Options.Applicative
 import RDF
 
@@ -46,7 +47,11 @@ params =
 
 parseJava :: FilePath -> Bool -> IO ()
 parseJava path pretty =
+<<<<<<< HEAD
   let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ EmptyLoopBody cUnit path
+=======
+  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ NeedBraces.check cUnit path
+>>>>>>> main
    in do
         input <- readFile path
         let result = parser compilationUnit input

@@ -2,20 +2,15 @@ module CheckNonFinalMethodAttributes (check) where
 
 import Language.Java.Syntax (ClassBody (..), ClassDecl (..), CompilationUnit (..), Decl (..), FormalParam (..), Ident (Ident), MemberDecl (..), Modifier (Final), TypeDecl (..), VarDeclId (VarId))
 import RDF (Diagnostic (..), Location (..))
-import Control.Monad.Reader
+import Control.Monad.Reader ( runReader, MonadReader(ask), Reader )
+import Control.Monad.Extra ( concatMapM )
 
-data Error = FuncVarNotFinal {func :: String, var :: String}
-  deriving (Show)
 
 check :: CompilationUnit -> FilePath -> [Diagnostic]
 check (CompilationUnit _ _ classtype) = runReader (checkTypeDecls classtype)
 
 checkTypeDecls :: [TypeDecl] -> Reader FilePath [Diagnostic]
-checkTypeDecls [] = return []
-checkTypeDecls (x:xs) = do
-    td <- checkTypeDecl x
-    ctds <- checkTypeDecls xs
-    return (td ++ ctds)
+checkTypeDecls = concatMapM checkTypeDecl
 
 checkTypeDecl :: TypeDecl -> Reader FilePath [Diagnostic]
 checkTypeDecl (ClassTypeDecl classDecl) = checkClassType classDecl
@@ -26,11 +21,7 @@ checkClassType (ClassDecl _ _ _ _ _ (ClassBody body)) = checkDecls body
 checkClassType (EnumDecl _ _ _ _) = return []
 
 checkDecls :: [Decl] -> Reader FilePath [Diagnostic]
-checkDecls [] = return []
-checkDecls (x:xs) = do
-    dcl <- checkDecl x
-    cdcls <- checkDecls xs
-    return (dcl ++ cdcls)
+checkDecls = concatMapM checkDecl
 
 checkDecl :: Decl -> Reader FilePath [Diagnostic]
 checkDecl (MemberDecl memberDecl) = checkMemberDecl memberDecl
@@ -46,8 +37,6 @@ checkMethodDecl ident (x:xs) = do
     cfp <- checkFormalParam x ident
     cmd <- checkMethodDecl ident xs
     return (cfp ++ cmd)
-
-
 
 checkFormalParam :: FormalParam -> String -> Reader FilePath [Diagnostic]
 checkFormalParam (FormalParam modifier _ _ (VarId (Ident n))) ident = do
