@@ -21,17 +21,19 @@ checkStatements (methodName, methodBody) path = do
   checkStatement stmt
   where
     checkStatement (Do (StmtBlock _) _) = mzero
-    checkStatement (Do _ _) = return (simpleDiagnostic (msg "A Do-Part" methodName) path)
+    checkStatement (Do {}) = return (simpleDiagnostic (msg "A Do-Part" methodName) path)
     checkStatement (While _ (StmtBlock _)) = mzero
-    checkStatement (While _ _) = return (simpleDiagnostic (msg "A While-Part" methodName) path)
+    checkStatement (While {}) = return (simpleDiagnostic (msg "A While-Part" methodName) path)
     checkStatement (BasicFor _ _ _ (StmtBlock _)) = mzero
-    checkStatement (BasicFor _ _ _ _) = return (simpleDiagnostic (msg "A For-Part" methodName) path)
+    checkStatement (BasicFor {}) = return (simpleDiagnostic (msg "A For-Part" methodName) path)
+    checkStatement (EnhancedFor _ _ _ _ (StmtBlock _)) = mzero
+    checkStatement (EnhancedFor {}) = return (simpleDiagnostic (msg "A ForEach-Part" methodName) path)
     checkStatement (IfThen _ (StmtBlock _)) = mzero
-    checkStatement (IfThen _ _) = return (simpleDiagnostic (msg "A IfThen-Part" methodName) path)
+    checkStatement (IfThen {}) = return (simpleDiagnostic (msg "A IfThen-Part" methodName) path)
     checkStatement (IfThenElse _ (StmtBlock _) (StmtBlock _)) = mzero
     checkStatement (IfThenElse _ _ (StmtBlock _)) = return (simpleDiagnostic (msg "A IfThenElse-Part" methodName) path)
     checkStatement (IfThenElse _ (StmtBlock _) _) = return (simpleDiagnostic (msg "A IfThenElse-Part" methodName) path)
-    checkStatement (IfThenElse _ _ _) = return (simpleDiagnostic (msg "A IfThenElse-Part" methodName) path)
+    checkStatement (IfThenElse {}) = return (simpleDiagnostic (msg "A IfThenElse-Part" methodName) path)
     checkStatement _ = mzero
 
     msg t methodName = t ++ " in function " ++ methodName ++ " contains no braces."
