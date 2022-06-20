@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module RDF (DiagnosticResult (..), Diagnostic (..), Location (..), Source (..), encodetojson, simpleDiagnostic) where
+module RDF (DiagnosticResult (..), Diagnostic (..), Location (..), Source (..), Severity(..), encodetojson, simpleDiagnostic) where
 
 import Data.Aeson (KeyValue ((.=)), ToJSON (toEncoding, toJSON), ToJSON1 (liftToJSON), defaultOptions, encode, genericToEncoding, object)
 import Data.Aeson.Types
@@ -127,8 +127,6 @@ instance Ord Severity where
   (<=) Warning Info = False
   (<=) Unknown _ = False
     
-
-
 encodetojson :: ToJSON a => a -> Data.ByteString.Lazy.Internal.ByteString
 encodetojson = encode
 
@@ -145,7 +143,7 @@ simpleDiagnostic message path =
           { path = path,
             locationRange = Nothing
           },
-      severity = Just (Left "WARNING"),
+      severity = Just (Left (show Warning)),
       source = Nothing,
       code = Nothing,
       suggestions = Nothing,

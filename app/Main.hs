@@ -63,7 +63,7 @@ parseJava path pretty =
                       }
                   )
               )
-
+              
 checkHighestSeverity :: [Diagnostic] -> Maybe (Either String Int) -> Maybe (Either String Int)
 checkHighestSeverity [] severity = severity
 checkHighestSeverity (Diagnostic m _ s _ _ _ _ : xs) severity =
