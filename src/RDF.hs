@@ -65,6 +65,8 @@ data DiagnosticResult = DiagnosticResult
   }
   deriving (Generic, Show)
 
+data Severity = Unknown | Error | Warning | Info deriving Eq
+
 instance ToJSON Position where
   toEncoding = genericToEncoding defaultOptions
 
@@ -102,6 +104,30 @@ instance ToJSON DiagnosticResult where
         "resultSource" .= resultsource,
         "resultSeverity" .= liftToJSON eitherToJSON (listValue eitherToJSON) resultseverity
       ]
+
+instance Show Severity where
+  show Unknown = "Unkown"
+  show Error = "Error"
+  show Warning = "Warning"
+  show Info = "Info"
+
+instance Ord Severity where
+  (<=) Info Info = True
+  (<=) Info Warning = True
+  (<=) Info Error = True
+  (<=) Info Unknown = True
+  (<=) Warning Warning = True
+  (<=) Warning Error = True
+  (<=) Warning Unknown = True
+  (<=) Error Error = True
+  (<=) Error Unknown = True
+  (<=) Unknown Unknown = True
+  (<=) Error Warning = False
+  (<=) Error Info = False
+  (<=) Warning Info = False
+  (<=) Unknown _ = False
+    
+
 
 encodetojson :: ToJSON a => a -> Data.ByteString.Lazy.Internal.ByteString
 encodetojson = encode
