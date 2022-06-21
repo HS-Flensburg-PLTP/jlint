@@ -1,7 +1,7 @@
 module CheckNonFinalMethodAttributes (check) where
 
 import Language.Java.Syntax (ClassBody (..), ClassDecl (..), CompilationUnit (..), Decl (..), FormalParam (..), Ident (Ident), MemberDecl (..), Modifier (Final), TypeDecl (..), VarDeclId (VarId))
-import RDF (Diagnostic (..), Location (..))
+import RDF (Diagnostic (..), Location (..), Severity (..))
 import Control.Monad.Reader ( runReader, MonadReader(ask), Reader )
 import Control.Monad.Extra ( concatMapM )
 
@@ -52,7 +52,7 @@ constructDiagnostic fparam ident path =
             { path = path,
               locationRange = Nothing
             },
-        severity = Just (Left "WARNING"),
+        severity = Warning,
         source = Nothing,
         code = Nothing,
         suggestions = Nothing,

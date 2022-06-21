@@ -12,7 +12,7 @@ import Language.Java.Syntax
     VarDecl (VarDecl),
     VarDeclId (VarId),
   )
-import RDF (Diagnostic (..), Location (..))
+import RDF (Diagnostic (..), Location (..), Severity (..))
 import Control.Monad.Reader ( runReader, MonadReader(ask), Reader )
 import Control.Monad.Extra (concatMapM)
 
@@ -61,7 +61,7 @@ constructDiagnostic varname path =
           { path = path,
             locationRange = Nothing
           },
-      severity = Just (Left "WARNING"),
+      severity = Warning,
       source = Nothing,
       code = Nothing,
       suggestions = Nothing,

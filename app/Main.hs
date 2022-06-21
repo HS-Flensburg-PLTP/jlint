@@ -59,14 +59,8 @@ parseJava path pretty =
                   ( DiagnosticResult
                       { diagnostics = diagnosticsByRules cUnit,
                         resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
-                        resultSeverity = (checkHighestSeverity (diagnosticsByRules cUnit) Nothing)
+                        resultSeverity = if null (RDF.severityToList (diagnosticsByRules cUnit)) then Unknown else
+                           maximum (RDF.severityToList (diagnosticsByRules cUnit))
                       }
                   )
               )
-              
-checkHighestSeverity :: [Diagnostic] -> Maybe (Either String Int) -> Maybe (Either String Int)
-checkHighestSeverity [] severity = severity
-checkHighestSeverity (Diagnostic m _ s _ _ _ _ : xs) severity =
-  if s == Just (Left "ERROR")
-    then s
-    else checkHighestSeverity xs s
