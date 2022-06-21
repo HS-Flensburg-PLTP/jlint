@@ -20,8 +20,8 @@ checkStatements (methodName, methodBody) path = do
   stmt <- universeBi methodBody
   checkStatement stmt
   where
-    checkStatement (Do Empty _) = return (simpleDiagnostic (methodDiagnostic methodName "A Do-Loop has a empty loop body.") path)
-    checkStatement (While _ Empty) = return (simpleDiagnostic (methodDiagnostic methodName "A While-Loop has a empty loop body.") path)
-    checkStatement (BasicFor _ _ _ Empty) = return (simpleDiagnostic (methodDiagnostic methodName "A For-Loop has a empty loop body.") path)
-    checkStatement (EnhancedFor _ _ _ _ Empty) = return (simpleDiagnostic (methodDiagnostic methodName "A ForEach-Lopp has a empty loop body.") path)
+    checkStatement (Do Empty _) = return (methodDiagnostic methodName "A Do-Loop has a empty loop body." path)
+    checkStatement (While _ Empty) = return (methodDiagnostic methodName "A While-Loop has a empty loop body." path)
+    checkStatement (BasicFor _ _ _ Empty) = return (methodDiagnostic methodName "A For-Loop has a empty loop body." path)
+    checkStatement (EnhancedFor _ _ _ _ Empty) = return (methodDiagnostic methodName "A ForEach-Lopp has a empty loop body." path)
     checkStatement _ = mzero

@@ -110,7 +110,7 @@ eitherToJSON :: (ToJSON v1, ToJSON v2) => Either v1 v2 -> Value
 eitherToJSON (Left v1) = toJSON v1
 eitherToJSON (Right v2) = toJSON v2
 
-simpleDiagnostic :: String -> String -> Diagnostic
+simpleDiagnostic :: String -> FilePath -> Diagnostic
 simpleDiagnostic message path =
   Diagnostic
     { message = message,
@@ -126,6 +126,6 @@ simpleDiagnostic message path =
       originalOutput = Nothing
     }
 
-methodDiagnostic :: String -> String -> String
-methodDiagnostic methodName msg =
-  "Method " ++ methodName ++ ": " ++ msg
+methodDiagnostic :: String -> String -> FilePath -> Diagnostic
+methodDiagnostic methodName msg path =
+  simpleDiagnostic ("Method " ++ methodName ++ ": " ++ msg) path
