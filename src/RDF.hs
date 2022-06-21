@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module RDF (DiagnosticResult (..), Diagnostic (..), Location (..), Source (..), encodetojson, simpleDiagnostic) where
+module RDF (DiagnosticResult (..), Diagnostic (..), Location (..), Source (..), encodetojson, simpleDiagnostic, methodDiagnostic) where
 
 import Data.Aeson (KeyValue ((.=)), ToJSON (toEncoding, toJSON), ToJSON1 (liftToJSON), defaultOptions, encode, genericToEncoding, object)
 import Data.Aeson.Types
@@ -125,3 +125,7 @@ simpleDiagnostic message path =
       suggestions = Nothing,
       originalOutput = Nothing
     }
+
+methodDiagnostic :: String -> String -> String
+methodDiagnostic methodName msg =
+  "Method " ++ methodName ++ ": " ++ msg
