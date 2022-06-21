@@ -2,10 +2,10 @@
 
 module Main where
 
-import CheckNonFinalMethodAttributes (check)
-import CheckNonPrivateAttributes (check)
+import CheckNonFinalMethodAttributes
+import CheckNonPrivateAttributes
 import Data.Semigroup ((<>))
-import EmptyLoopBody (check)
+import EmptyLoopBody
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
