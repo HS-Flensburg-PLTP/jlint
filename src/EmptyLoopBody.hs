@@ -8,7 +8,7 @@ import AST (extractMethods)
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
-import RDF (Diagnostic (..), methodDiagnostic, simpleDiagnostic)
+import RDF (Diagnostic (..), methodDiagnostic)
 
 check :: CompilationUnit -> FilePath -> [Diagnostic]
 check cUnit path = do
