@@ -33,5 +33,3 @@ checkStatements (methodName, methodBody) path = do
     checkStatement (IfThenElse _ (StmtBlock _) _) = return (methodDiagnostic methodName "A IfThenElse-Part contains no braces." path)
     checkStatement (IfThenElse _ _ _) = return (methodDiagnostic methodName "A IfThenElse-Part contains no braces." path)
     checkStatement _ = mzero
-
-    msg t methodName = t ++ " in function " ++ methodName ++ " contains no braces."
