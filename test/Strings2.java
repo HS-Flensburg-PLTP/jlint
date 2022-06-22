@@ -15,6 +15,13 @@ public class Strings2 {
             case 10:
                 System.out.println("This should be the first case");
         }
+
+        switch(age) {
+            case 10:
+                System.out.println("This should be the first case");
+            default:
+                System.out.println("This case should be defined last");
+        }
     }
 }
 
