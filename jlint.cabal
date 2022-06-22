@@ -29,6 +29,7 @@ library
       CheckNonFinalMethodAttributes
       CheckNonPrivateAttributes
       Control.Monad.Extra
+      EmptyLoopBody
       Lib
       NeedBraces
       RDF

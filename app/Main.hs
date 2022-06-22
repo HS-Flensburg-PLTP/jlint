@@ -1,9 +1,11 @@
 {-# LANGUAGE FlexibleContexts #-}
+
 module Main where
 
-import CheckNonFinalMethodAttributes (check)
-import CheckNonPrivateAttributes (check)
+import CheckNonFinalMethodAttributes
+import CheckNonPrivateAttributes
 import Data.Semigroup ((<>))
+import EmptyLoopBody
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
@@ -46,14 +48,14 @@ params =
 
 parseJava :: FilePath -> Bool -> IO ()
 parseJava path pretty =
-  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ NeedBraces.check cUnit path
+  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ EmptyLoopBody.check cUnit path ++ NeedBraces.check cUnit path
    in do
         input <- readFile path
         let result = parser compilationUnit input
         case result of
           Left error -> print error
           Right cUnit -> do
-            --if pretty then print (prettyPrint cUnit) else print cUnit
+            if pretty then print (prettyPrint cUnit) else print cUnit
             print
               ( RDF.encodetojson
                   ( DiagnosticResult
