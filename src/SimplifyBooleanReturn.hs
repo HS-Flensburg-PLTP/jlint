@@ -1,17 +1,30 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+
 module SimplifyBooleanReturn where
 
-
-import Data.Generics.Uniplate.Data
+import AST (extractMethods)
+import Control.Monad (MonadPlus (..))
+import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
-import RDF
-import CreateDiagnostic
+import RDF (Diagnostic (..), methodDiagnostic)
 
+check :: CompilationUnit -> FilePath -> [Diagnostic]
+check cUnit path = do
+  methods <- extractMethods cUnit
+  checkStatements methods path
 
-check :: Data.Generics.Uniplate.Data.Biplate β MemberDecl => β -> [Diagnostic]
-check x = [ constructDiagnostic n (msg n) | MethodDecl _ _ _ (Ident n) _ _ _ (MethodBody (Just (Block l))) <- Data.Generics.Uniplate.Data.universeBi x, BlockStmt (IfThenElse _ (Return (Just (Lit (Boolean _)))) (Return (Just (Lit (Boolean _))))) <- l]
-
-msg :: String -> String
-msg funcName = "IfThenElse with boolean return in function " ++ funcName ++ " can be simplified."
+checkStatements :: (String, MethodBody) -> FilePath -> [Diagnostic]
+checkStatements (methodName, methodBody) path = do
+  stmt <- universeBi methodBody
+  checkStatement stmt
+  where
+    checkStatement (IfThenElse _ (StmtBlock _) (StmtBlock _)) = mzero
+    checkStatement (IfThenElse _ (Return (Just (Lit (Boolean _)))) (Return (Just (Lit (Boolean _))))) = return (methodDiagnostic methodName "A IfThenElse-Part with boolean return can be simplified." path)
+    checkStatement (IfThenElse _ (StmtBlock (Block [BlockStmt (Return (Just (Lit (Boolean _))))])) (StmtBlock (Block [BlockStmt (Return (Just (Lit (Boolean _))))]))) = return (methodDiagnostic methodName "A IfThenElse-Part with boolean return can be simplified." path)
+    checkStatement (IfThenElse _ (Return (Just (Lit (Boolean _)))) (StmtBlock (Block [BlockStmt (Return (Just (Lit (Boolean _))))]))) = return (methodDiagnostic methodName "A IfThenElse-Part with boolean return can be simplified." path)
+    checkStatement (IfThenElse _ (StmtBlock (Block [BlockStmt (Return (Just (Lit (Boolean _))))])) (Return (Just (Lit (Boolean _))))) = return (methodDiagnostic methodName "A IfThenElse-Part with boolean return can be simplified." path)
+    checkStatement (IfThen _ (Return (Just (Lit (Boolean _))))) = return (methodDiagnostic methodName "A IfThen-Part with boolean return cann be simplified." path)
+    checkStatement (IfThen _ (StmtBlock (Block [BlockStmt (Return (Just (Lit (Boolean _))))]))) = return (methodDiagnostic methodName "A IfThen-Part with boolean return cann be simplified." path)
+    checkStatement _ = mzero
