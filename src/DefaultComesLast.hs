@@ -17,23 +17,17 @@ check cUnit path = do
 
 checkDefaultComesLast :: (String, MethodBody) -> FilePath -> [Diagnostic]
 checkDefaultComesLast (methodName, methodBody) path = do
-  stmt <- universeBi methodBody
-  checkDefaultComesLast stmt 
-  
+  (Switch _ blocks) <- universeBi methodBody
+  checkDefaultComesLast blocks mzero
   where
-    checkDefaultComesLast (Switch _ blocks) =
-       checkDefaultHelp blocks mzero
-
-    checkDefaultComesLast _ = mzero
-
-    checkDefaultHelp blocks diagnostisList =
+    checkDefaultComesLast blocks diagnostisList =
       case blocks of
         [] -> 
           diagnostisList
         (SwitchBlock (Default) _) : xs@([SwitchBlock _ _]) ->
-          checkDefaultHelp xs ((simpleDiagnostic (msg "'default-case'") path) : diagnostisList)
+          checkDefaultComesLast xs ((simpleDiagnostic (msg "'default-case'") path) : diagnostisList)
         _ : xs -> 
-          checkDefaultHelp xs diagnostisList
+          checkDefaultComesLast xs diagnostisList
       
     msg t = 
       t ++ " of 'switch-case' in function " ++ methodName ++ " is not defined last."
