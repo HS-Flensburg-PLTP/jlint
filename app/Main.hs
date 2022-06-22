@@ -59,8 +59,7 @@ parseJava path pretty =
                   ( DiagnosticResult
                       { diagnostics = diagnosticsByRules cUnit,
                         resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
-                        resultSeverity = if null (RDF.severityToList (diagnosticsByRules cUnit)) then Unknown else
-                           maximum (RDF.severityToList (diagnosticsByRules cUnit))
+                        resultSeverity = RDF.checkSeverityList (RDF.severityToList (diagnosticsByRules cUnit))
                       }
                   )
               )

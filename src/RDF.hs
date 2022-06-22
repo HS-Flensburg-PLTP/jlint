@@ -9,7 +9,8 @@ module RDF
     Severity(..), 
     encodetojson, 
     simpleDiagnostic, 
-    severityToList
+    severityToList,
+    checkSeverityList
   ) where
 
 import Data.Aeson 
@@ -76,7 +77,7 @@ data DiagnosticResult = DiagnosticResult
   }
   deriving (Generic, Show)
 
-data Severity = Unknown | Error | Warning | Info deriving (Generic, Eq)
+data Severity = Unknown | Info | Warning | Error deriving (Generic, Eq, Show , Ord)
 
 instance ToJSON Severity where
   toEncoding = genericToEncoding defaultOptions
@@ -105,27 +106,6 @@ instance ToJSON Diagnostic where
 instance ToJSON DiagnosticResult where
   toEncoding = genericToEncoding defaultOptions
 
-instance Show Severity where
-  show Unknown = "Unkown"
-  show Error = "Error"
-  show Warning = "Warning"
-  show Info = "Info"
-
-instance Ord Severity where
-  (<=) Info Info = True
-  (<=) Info Warning = True
-  (<=) Info Error = True
-  (<=) Info Unknown = True
-  (<=) Warning Warning = True
-  (<=) Warning Error = True
-  (<=) Warning Unknown = True
-  (<=) Error Error = True
-  (<=) Error Unknown = True
-  (<=) Unknown Unknown = True
-  (<=) Error Warning = False
-  (<=) Error Info = False
-  (<=) Warning Info = False
-  (<=) Unknown _ = False
     
 encodetojson :: ToJSON a => a -> Data.ByteString.Lazy.Internal.ByteString
 encodetojson = encode
@@ -150,3 +130,7 @@ severityToList :: [Diagnostic] -> [Severity]
 severityToList [] = []
 severityToList (Diagnostic _ _ s _ _ _ _ : xs) =
   s : severityToList xs
+
+checkSeverityList :: [Severity] -> Severity
+checkSeverityList [] = Unknown
+checkSeverityList list = maximum list
