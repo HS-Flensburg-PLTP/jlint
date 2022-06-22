@@ -1,54 +1,60 @@
 module CheckNonFinalMethodAttributes (check) where
 
-import Data.Maybe (maybeToList)
 import Language.Java.Syntax (ClassBody (..), ClassDecl (..), CompilationUnit (..), Decl (..), FormalParam (..), Ident (Ident), MemberDecl (..), Modifier (Final), TypeDecl (..), VarDeclId (VarId))
 import RDF (Diagnostic (..), Location (..))
+import Control.Monad.Reader ( runReader, MonadReader(ask), Reader )
+import Control.Monad.Extra ( concatMapM )
 
-data Error = FuncVarNotFinal {func :: String, var :: String}
-  deriving (Show)
 
-check :: CompilationUnit -> [Diagnostic]
-check (CompilationUnit _ _ classtype) = concatMap checkTypeDecl classtype
+check :: CompilationUnit -> FilePath -> [Diagnostic]
+check (CompilationUnit _ _ classtype) = runReader (checkTypeDecls classtype)
 
-checkTypeDecl :: TypeDecl -> [Diagnostic]
+checkTypeDecls :: [TypeDecl] -> Reader FilePath [Diagnostic]
+checkTypeDecls = concatMapM checkTypeDecl
+
+checkTypeDecl :: TypeDecl -> Reader FilePath [Diagnostic]
 checkTypeDecl (ClassTypeDecl classDecl) = checkClassType classDecl
-checkTypeDecl (InterfaceTypeDecl _) = []
+checkTypeDecl (InterfaceTypeDecl _) = return []
 
-checkClassType :: ClassDecl -> [Diagnostic]
-checkClassType (ClassDecl _ _ _ _ _ (ClassBody body)) = concatMap checkDecl body
-checkClassType (EnumDecl _ _ _ _) = []
+checkClassType :: ClassDecl -> Reader FilePath [Diagnostic]
+checkClassType (ClassDecl _ _ _ _ _ (ClassBody body)) = checkDecls body
+checkClassType (EnumDecl _ _ _ _) = return []
 
-checkDecl :: Decl -> [Diagnostic]
+checkDecls :: [Decl] -> Reader FilePath [Diagnostic]
+checkDecls = concatMapM checkDecl
+
+checkDecl :: Decl -> Reader FilePath [Diagnostic]
 checkDecl (MemberDecl memberDecl) = checkMemberDecl memberDecl
-checkDecl (InitDecl _ _) = []
+checkDecl (InitDecl _ _) = return []
 
-checkMemberDecl :: MemberDecl -> [Diagnostic]
-checkMemberDecl (MethodDecl _ _ _ (Ident ident) formalParam _ _ _) =
-  concatMap
-    ( \p ->
-        let var = checkFormalParam p
-         in maybeToList
-              ( fmap
-                  ( \v ->
-                      Diagnostic
-                        { message = "Argument " ++ v ++ " in " ++ ident ++ " is not declared as 'final'.",
-                          location =
-                            Location
-                              { path = "test/Strings2.java",
-                                locationRange = Nothing
-                              },
-                          severity = Just (Left "WARNING"),
-                          source = Nothing,
-                          code = Nothing,
-                          suggestions = Nothing,
-                          originalOutput = Nothing
-                        }
-                  )
-                  var
-              )
-    )
-    formalParam
-checkMemberDecl _ = []
+checkMemberDecl :: MemberDecl -> Reader FilePath [Diagnostic]
+checkMemberDecl (MethodDecl _ _ _ (Ident ident) formalParam _ _ _) = checkMethodDecl ident formalParam
+checkMemberDecl _ = return []
 
-checkFormalParam :: FormalParam -> Maybe String
-checkFormalParam (FormalParam modifier _ _ (VarId (Ident n))) = if Final `elem` modifier then Nothing else Just n
+checkMethodDecl :: String -> [FormalParam] -> Reader FilePath [Diagnostic]
+checkMethodDecl _ [] = return []
+checkMethodDecl ident (x:xs) = do
+    cfp <- checkFormalParam x ident
+    cmd <- checkMethodDecl ident xs
+    return (cfp ++ cmd)
+
+checkFormalParam :: FormalParam -> String -> Reader FilePath [Diagnostic]
+checkFormalParam (FormalParam modifier _ _ (VarId (Ident n))) ident = do
+      path <- ask
+      return [constructDiagnostic n ident path | Final `notElem` modifier ]
+
+constructDiagnostic :: String -> String -> FilePath -> Diagnostic
+constructDiagnostic fparam ident path =
+  Diagnostic
+      { message = "Argument " ++ fparam ++ " in " ++ ident ++ " is not declared as 'final'.",
+        location =
+          Location
+            { path = path,
+              locationRange = Nothing
+            },
+        severity = Just (Left "WARNING"),
+        source = Nothing,
+        code = Nothing,
+        suggestions = Nothing,
+        originalOutput = Nothing
+      }
