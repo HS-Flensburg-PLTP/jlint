@@ -10,7 +10,8 @@ module RDF
     encodetojson, 
     simpleDiagnostic, 
     severityToList,
-    checkSeverityList
+    checkSeverityList,
+    methodDiagnostic
   ) where
 
 import Data.Aeson 
@@ -134,3 +135,7 @@ severityToList (Diagnostic _ _ s _ _ _ _ : xs) =
 checkSeverityList :: [Severity] -> Severity
 checkSeverityList [] = Unknown
 checkSeverityList list = maximum list
+
+methodDiagnostic :: String -> String -> FilePath -> Diagnostic
+methodDiagnostic methodName msg path =
+  simpleDiagnostic ("Method " ++ methodName ++ ": " ++ msg) path
