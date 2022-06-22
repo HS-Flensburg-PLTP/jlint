@@ -61,7 +61,7 @@ constructDiagnostic varname path =
           { path = path,
             locationRange = Nothing
           },
-      severity = Error,
+      severity = Warning,
       source = Nothing,
       code = Nothing,
       suggestions = Nothing,
