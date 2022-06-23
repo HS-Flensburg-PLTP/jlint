@@ -9,7 +9,7 @@ module RDF
     Severity(..), 
     encodetojson, 
     simpleDiagnostic, 
-    severityToList,
+    extractSeverity,
     checkSeverityList,
     methodDiagnostic
   ) where
@@ -78,7 +78,12 @@ data DiagnosticResult = DiagnosticResult
   }
   deriving (Generic, Show)
 
-data Severity = Unknown | Info | Warning | Error deriving (Generic, Eq, Show , Ord)
+data Severity = 
+  Unknown 
+  | Info 
+  | Warning 
+  | Error 
+  deriving (Generic, Eq, Show, Ord)
 
 instance ToJSON Severity where
   toEncoding = genericToEncoding defaultOptions
@@ -127,10 +132,8 @@ simpleDiagnostic message path =
       originalOutput = Nothing
     }
 
-severityToList :: [Diagnostic] -> [Severity]
-severityToList [] = []
-severityToList (Diagnostic _ _ s _ _ _ _ : xs) =
-  s : severityToList xs
+extractSeverity :: Diagnostic -> Severity
+extractSeverity (Diagnostic _ _ s _ _ _ _) = s
 
 checkSeverityList :: [Severity] -> Severity
 checkSeverityList [] = Unknown
