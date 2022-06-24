@@ -1,0 +1,38 @@
+name: Haskell Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ormolu:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout current repository
+      uses: actions/checkout@v3
+
+    - name: Ormolu Check Format
+      uses: mrkkrp/ormolu-action@v6
+
+  stack-build:
+    runs-on: self-hosted
+    needs: ormolu
+
+    steps:
+    - name: Checkout current repository
+      uses: actions/checkout@v3
+
+    - name: Setup Haskell with Stack
+      uses: haskell/actions/setup@v2
+      with:
+        enable-stack: true
+        stack-no-global: true
+
+    - name: Stack Build Dependencies Only
+      run: stack build --dependencies-only
+
+    - name: Run stack build
+      run: stack build --fast --pedantic --force-dirty
