@@ -3,6 +3,8 @@ name: Haskell Format (Ormolu)
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   ormolu-stack:
