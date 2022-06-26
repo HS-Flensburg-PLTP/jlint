@@ -54,3 +54,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - jlint
+    - HUnit >= 1.6.2.0 && < 2
+
