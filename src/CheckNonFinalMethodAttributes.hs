@@ -41,6 +41,8 @@ checkFormalParam :: FormalParam -> String -> Reader FilePath [Diagnostic]
 checkFormalParam (FormalParam modifier _ _ (VarId (Ident n))) ident = do
   path <- ask
   return [constructDiagnostic n ident path | Final `notElem` modifier]
+checkFormalParam _ _ = do
+  return []
 
 constructDiagnostic :: String -> String -> FilePath -> Diagnostic
 constructDiagnostic fparam ident path =
