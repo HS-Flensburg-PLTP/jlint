@@ -20,11 +20,10 @@ checkStatements (methodName, methodBody) path = do
   stmt <- universeBi methodBody
   checkStatement stmt
   where
-    checkStatement (IfThenElse _ (StmtBlock _) (StmtBlock _)) = mzero
-    checkStatement (IfThenElse _ (Return (Just (Lit (Boolean _)))) (Return (Just (Lit (Boolean _))))) = return (methodDiagnostic methodName "A IfThenElse-Part with boolean return can be simplified." path)
-    checkStatement (IfThenElse _ (StmtBlock (Block [BlockStmt (Return (Just (Lit (Boolean _))))])) (StmtBlock (Block [BlockStmt (Return (Just (Lit (Boolean _))))]))) = return (methodDiagnostic methodName "A IfThenElse-Part with boolean return can be simplified." path)
-    checkStatement (IfThenElse _ (Return (Just (Lit (Boolean _)))) (StmtBlock (Block [BlockStmt (Return (Just (Lit (Boolean _))))]))) = return (methodDiagnostic methodName "A IfThenElse-Part with boolean return can be simplified." path)
-    checkStatement (IfThenElse _ (StmtBlock (Block [BlockStmt (Return (Just (Lit (Boolean _))))])) (Return (Just (Lit (Boolean _))))) = return (methodDiagnostic methodName "A IfThenElse-Part with boolean return can be simplified." path)
-    checkStatement (IfThen _ (Return (Just (Lit (Boolean _))))) = return (methodDiagnostic methodName "A IfThen-Part with boolean return cann be simplified." path)
-    checkStatement (IfThen _ (StmtBlock (Block [BlockStmt (Return (Just (Lit (Boolean _))))]))) = return (methodDiagnostic methodName "A IfThen-Part with boolean return cann be simplified." path)
+    checkStatement (IfThenElse _ a b) = if isReturnBool a && isReturnBool b then return (methodDiagnostic methodName "A if-then-else part with boolean return can be simplified." path) else mzero
+    checkStatement (IfThen _ a) = if isReturnBool a then return (methodDiagnostic methodName "A if-then part with boolean return can be simplified." path) else mzero
     checkStatement _ = mzero
+
+    isReturnBool (Return (Just (Lit (Boolean _)))) = True
+    isReturnBool (StmtBlock (Block [BlockStmt (Return (Just (Lit (Boolean _))))])) = True
+    isReturnBool _ = False
