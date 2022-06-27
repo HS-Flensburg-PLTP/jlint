@@ -97,7 +97,6 @@ test-suite jlint-test
     , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
     , regex >=1.1.0 && <1.2
-    , rio
     , uniplate >=1.6.11 && <1.7
     , unliftio >=0.2.21.0 && <1
   default-language: Haskell2010
