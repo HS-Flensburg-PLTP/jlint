@@ -1,16 +1,35 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+
 module NeedBraces where
 
-import Data.Generics.Uniplate.Data
+import AST (extractMethods)
+import Control.Monad (MonadPlus (..))
+import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
-import RDF
-import CreateDiagnostic
+import RDF (Diagnostic (..), methodDiagnostic)
 
+check :: CompilationUnit -> FilePath -> [Diagnostic]
+check cUnit path = do
+  methods <- extractMethods cUnit
+  checkStatements methods path
 
-check :: Data.Generics.Uniplate.Data.Biplate β MemberDecl => β -> [Diagnostic]
-check x = [ constructDiagnostic n (msg n) | MethodDecl _ _ _ (Ident n) _ _ _ (MethodBody (Just (Block l))) <- Data.Generics.Uniplate.Data.universeBi x, BlockStmt (IfThen _ (Return _)) <- l]
-
-msg :: String -> String
-msg funcName = "IfThen in function " ++ funcName ++ " contains no Braces."
+checkStatements :: (String, MethodBody) -> FilePath -> [Diagnostic]
+checkStatements (methodName, methodBody) path = do
+  stmt <- universeBi methodBody
+  checkStatement stmt
+  where
+    checkStatement (Do (StmtBlock _) _) = mzero
+    checkStatement (Do _ _) = return (methodDiagnostic methodName "A Do-Part contains no braces." path)
+    checkStatement (While _ (StmtBlock _)) = mzero
+    checkStatement (While _ _) = return (methodDiagnostic methodName "A While-Part contains no braces." path)
+    checkStatement (BasicFor _ _ _ (StmtBlock _)) = mzero
+    checkStatement (BasicFor _ _ _ _) = return (methodDiagnostic methodName "A For-Part contains no braces." path)
+    checkStatement (IfThen _ (StmtBlock _)) = mzero
+    checkStatement (IfThen _ _) = return (methodDiagnostic methodName "A IfThen-Part contains no braces." path)
+    checkStatement (IfThenElse _ (StmtBlock _) (StmtBlock _)) = mzero
+    checkStatement (IfThenElse _ _ (StmtBlock _)) = return (methodDiagnostic methodName "A IfThenElse-Part contains no braces." path)
+    checkStatement (IfThenElse _ (StmtBlock _) _) = return (methodDiagnostic methodName "A IfThenElse-Part contains no braces." path)
+    checkStatement (IfThenElse _ _ _) = return (methodDiagnostic methodName "A IfThenElse-Part contains no braces." path)
+    checkStatement _ = mzero

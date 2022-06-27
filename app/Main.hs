@@ -1,12 +1,16 @@
+{-# LANGUAGE FlexibleContexts #-}
+
 module Main where
 
-import CheckNonFinalMethodAttributes (check)
-import CheckNonPrivateAttributes (check)
+import CheckNonFinalMethodAttributes
+import CheckNonPrivateAttributes
 import Data.Semigroup ((<>))
+import EmptyLoopBody
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
 import Lib
+import NeedBraces
 import Options.Applicative
 import RDF
 
@@ -44,7 +48,7 @@ params =
 
 parseJava :: FilePath -> Bool -> IO ()
 parseJava path pretty =
-  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit ++ CheckNonPrivateAttributes.check cUnit
+  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ EmptyLoopBody.check cUnit path ++ NeedBraces.check cUnit path
    in do
         input <- readFile path
         let result = parser compilationUnit input
@@ -53,22 +57,12 @@ parseJava path pretty =
           Right cUnit -> do
             if pretty then print (prettyPrint cUnit) else print cUnit
             print
-              ( DiagnosticResult
-                  { diagnostics = diagnosticsByRules cUnit,
-                    resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
-                    resultSeverity = (checkHighestSeverity (diagnosticsByRules cUnit) Nothing)
-                  }
-              )
-            print
               ( RDF.encodetojson
-                  ( RDF.Diagnostic
-                      "Geht"
-                      (RDF.Location "Location" Nothing)
-                      (Just (Right 24))
-                      Nothing
-                      Nothing
-                      Nothing
-                      (Just "String")
+                  ( DiagnosticResult
+                      { diagnostics = diagnosticsByRules cUnit,
+                        resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
+                        resultSeverity = (checkHighestSeverity (diagnosticsByRules cUnit) Nothing)
+                      }
                   )
               )
 
