@@ -70,6 +70,7 @@ test-suite jlint-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      RessourceManager
       TestEmptyLoopBody
       Paths_jlint
   hs-source-dirs:
@@ -85,7 +86,6 @@ test-suite jlint-test
     , language-java >=0.2.9 && <3
     , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
-    , rio
     , uniplate >=1.6.11 && <1.7
     , unliftio >=0.2.21.0 && <1
   default-language: Haskell2010
