@@ -1,26 +1,26 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module RDF 
-  ( DiagnosticResult (..), 
-    Diagnostic (..), 
-    Location (..), 
-    Source (..), 
-    Severity(..), 
-    encodetojson, 
-    simpleDiagnostic, 
+module RDF
+  ( DiagnosticResult (..),
+    Diagnostic (..),
+    Location (..),
+    Source (..),
+    Severity (..),
+    encodetojson,
+    simpleDiagnostic,
     extractSeverity,
     checkSeverityList,
-    methodDiagnostic
-  ) where
-
-import Data.Aeson 
-  ( ToJSON (toEncoding), 
-    defaultOptions, 
-    encode, 
-    genericToEncoding
+    methodDiagnostic,
   )
+where
 
+import Data.Aeson
+  ( ToJSON (toEncoding),
+    defaultOptions,
+    encode,
+    genericToEncoding,
+  )
 import Data.ByteString.Lazy.Internal (ByteString)
 import GHC.Generics (Generic)
 
@@ -78,11 +78,11 @@ data DiagnosticResult = DiagnosticResult
   }
   deriving (Generic, Show)
 
-data Severity = 
-  Unknown 
-  | Info 
-  | Warning 
-  | Error 
+data Severity
+  = Unknown
+  | Info
+  | Warning
+  | Error
   deriving (Generic, Eq, Show, Ord)
 
 instance ToJSON Severity where
@@ -112,17 +112,16 @@ instance ToJSON Diagnostic where
 instance ToJSON DiagnosticResult where
   toEncoding = genericToEncoding defaultOptions
 
-    
 encodetojson :: ToJSON a => a -> Data.ByteString.Lazy.Internal.ByteString
 encodetojson = encode
 
 simpleDiagnostic :: String -> String -> Diagnostic
-simpleDiagnostic message path =
+simpleDiagnostic dmessage fpath =
   Diagnostic
-    { message = message,
+    { message = dmessage,
       location =
         Location
-          { path = path,
+          { path = fpath,
             locationRange = Nothing
           },
       severity = Warning,
@@ -140,5 +139,4 @@ checkSeverityList [] = Unknown
 checkSeverityList list = maximum list
 
 methodDiagnostic :: String -> String -> FilePath -> Diagnostic
-methodDiagnostic methodName msg path =
-  simpleDiagnostic ("Method " ++ methodName ++ ": " ++ msg) path
+methodDiagnostic methodName msg = simpleDiagnostic ("Method " ++ methodName ++ ": " ++ msg)

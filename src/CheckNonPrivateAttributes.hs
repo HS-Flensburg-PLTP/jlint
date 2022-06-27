@@ -1,5 +1,7 @@
 module CheckNonPrivateAttributes where
 
+import Control.Monad.Extra (concatMapM)
+import Control.Monad.Reader (MonadReader (ask), Reader, runReader)
 import Language.Java.Syntax
   ( ClassBody (ClassBody),
     ClassDecl (..),
@@ -13,8 +15,6 @@ import Language.Java.Syntax
     VarDeclId (VarId),
   )
 import RDF (Diagnostic (..), Location (..), Severity (..))
-import Control.Monad.Reader ( runReader, MonadReader(ask), Reader )
-import Control.Monad.Extra (concatMapM)
 
 check :: CompilationUnit -> FilePath -> [Diagnostic]
 check (CompilationUnit _ _ classtype) = runReader (checkTypeDecls classtype)
@@ -46,19 +46,19 @@ checkMemberDecl (MemberInterfaceDecl {}) = return []
 
 checkFieldDecl :: [Modifier] -> String -> Reader FilePath [Diagnostic]
 checkFieldDecl [] varname = do
-    path <- ask
-    return [ constructDiagnostic varname path ]
+  fpath <- ask
+  return [constructDiagnostic varname fpath]
 checkFieldDecl modifier varname = do
-    path <- ask
-    return [ constructDiagnostic varname path | Private `notElem` modifier]
+  fpath <- ask
+  return [constructDiagnostic varname fpath | Private `notElem` modifier]
 
 constructDiagnostic :: String -> FilePath -> Diagnostic
-constructDiagnostic varname path =
+constructDiagnostic varname fpath =
   Diagnostic
     { message = "Attribute " ++ varname ++ " is not declared as 'private'.",
       location =
         Location
-          { path = path,
+          { path = fpath,
             locationRange = Nothing
           },
       severity = Warning,
