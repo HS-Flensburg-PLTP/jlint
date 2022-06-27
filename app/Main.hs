@@ -5,7 +5,7 @@ module Main where
 import CheckNonFinalMethodAttributes
 import CheckNonPrivateAttributes
 import Data.Semigroup ((<>))
-import EmptyLoopBody
+import EmptyLoopBody (check)
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
