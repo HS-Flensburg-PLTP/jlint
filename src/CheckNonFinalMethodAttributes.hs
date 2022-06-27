@@ -17,7 +17,7 @@ checkTypeDecl (InterfaceTypeDecl _) = return []
 
 checkClassType :: ClassDecl -> Reader FilePath [Diagnostic]
 checkClassType (ClassDecl _ _ _ _ _ (ClassBody body)) = checkDecls body
-checkClassType (EnumDecl _ _ _ _) = return []
+checkClassType (EnumDecl {}) = return []
 
 checkDecls :: [Decl] -> Reader FilePath [Diagnostic]
 checkDecls = concatMapM checkDecl

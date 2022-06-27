@@ -127,5 +127,5 @@ simpleDiagnostic message path =
     }
 
 methodDiagnostic :: String -> String -> FilePath -> Diagnostic
-methodDiagnostic methodName msg path =
-  simpleDiagnostic ("Method " ++ methodName ++ ": " ++ msg) path
+methodDiagnostic methodName msg =
+  simpleDiagnostic ("Method " ++ methodName ++ ": " ++ msg)

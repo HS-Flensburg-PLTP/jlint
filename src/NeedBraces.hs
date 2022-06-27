@@ -1,4 +1,3 @@
-{-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 
@@ -25,11 +24,11 @@ checkStatements (methodName, methodBody) path = do
     checkStatement (While _ (StmtBlock _)) = mzero
     checkStatement (While _ _) = return (methodDiagnostic methodName "A While-Part contains no braces." path)
     checkStatement (BasicFor _ _ _ (StmtBlock _)) = mzero
-    checkStatement (BasicFor _ _ _ _) = return (methodDiagnostic methodName "A For-Part contains no braces." path)
+    checkStatement (BasicFor {}) = return (methodDiagnostic methodName "A For-Part contains no braces." path)
     checkStatement (IfThen _ (StmtBlock _)) = mzero
     checkStatement (IfThen _ _) = return (methodDiagnostic methodName "A IfThen-Part contains no braces." path)
     checkStatement (IfThenElse _ (StmtBlock _) (StmtBlock _)) = mzero
     checkStatement (IfThenElse _ _ (StmtBlock _)) = return (methodDiagnostic methodName "A IfThenElse-Part contains no braces." path)
     checkStatement (IfThenElse _ (StmtBlock _) _) = return (methodDiagnostic methodName "A IfThenElse-Part contains no braces." path)
-    checkStatement (IfThenElse _ _ _) = return (methodDiagnostic methodName "A IfThenElse-Part contains no braces." path)
+    checkStatement (IfThenElse {}) = return (methodDiagnostic methodName "A IfThenElse-Part contains no braces." path)
     checkStatement _ = mzero
