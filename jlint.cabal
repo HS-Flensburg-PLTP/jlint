@@ -71,6 +71,7 @@ test-suite jlint-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      TestEmptyLoopBody
       Paths_jlint
   hs-source-dirs:
       test
