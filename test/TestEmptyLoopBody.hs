@@ -11,21 +11,31 @@ import Test.HUnit
 
 testEmptyLoopBodies :: IO ()
 testEmptyLoopBodies = do
-  runTestTT testEmptyDoLoop
+  runTestTT (TestList [testEmptyWhileLoop])
   return ()
 
-testEmptyDoLoop =
-  TestList
-    [ "Empty Do Loop"
-        ~: withCUnit
+testEmptyWhileLoop =
+  "Empty While Loop" -- ~: adds label to Test (Testlist)
+    ~: test -- test can be called on List of testables
+      [ withCUnit 
           "/test/EmptyLoopBody.java"
           ( \(path, cUnit) -> do
               let actual = EmptyLoopBody.check cUnit path
-              print actual
-              actual @=? [expected]
+              actual @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+          )
+      ]
+
+{-testEmptyWhileLoop =
+  test -- test can be called on List of testables
+    [ "Empty While Loop"
+        ~: withCUnit -- ~: adds label and applies assertion to Testcase (Testcase . assert) -> this is a testcase
+          "/test/EmptyLoopBody.java"
+          ( \(path, cUnit) -> do
+              let actual = EmptyLoopBody.check cUnit path
+              actual @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
           )
     ]
-
+-}
 expected :: Diagnostic
 expected =
   Diagnostic
@@ -46,4 +56,5 @@ expected =
     1. Find Structure for test: e.g: Folder for each test-, input-, expected- file
     2. Suggest: using balckboxtest, define classes of equivalence ()
         ,define Unit test as well as Integrationtests(to check interaction between parser and jlint)
+    3. Convert RDF.path to work on every device
 -}
