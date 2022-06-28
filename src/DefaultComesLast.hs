@@ -22,12 +22,12 @@ checkDefaultComesLast (methodName, methodBody) path = do
   where
     checkDefaultComesLast blocks diagnostisList =
       case blocks of
-        [] -> 
+        [] ->
           diagnostisList
-        (SwitchBlock (Default) _) : xs@([SwitchBlock _ _]) ->
-          checkDefaultComesLast xs ((simpleDiagnostic (msg "'default-case'") path) : diagnostisList)
-        _ : xs -> 
+        (SwitchBlock Default _) : xs@[SwitchBlock _ _] ->
+          checkDefaultComesLast xs (simpleDiagnostic (msg "'default-case'") path : diagnostisList)
+        _ : xs ->
           checkDefaultComesLast xs diagnostisList
-      
-    msg t = 
+
+    msg t =
       t ++ " of 'switch-case' in function " ++ methodName ++ " is not defined last."
