@@ -8,7 +8,6 @@ import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
 import RDF (Diagnostic (..), methodDiagnostic)
-2b8f92b8f9a4a8
 
 check :: CompilationUnit -> FilePath -> [Diagnostic]
 check cUnit path = do
@@ -18,14 +17,13 @@ check cUnit path = do
 checkDefaultComesLast :: (String, MethodBody) -> FilePath -> [Diagnostic]
 checkDefaultComesLast (methodName, methodBody) path = do
   (Switch _ blocks) <- universeBi methodBody
-  checkDefaultComesLast blocks mzero
+  checkDefaultComesLastHelper blocks mzero
   where
-    checkDefaultComesLast blocks diagnostisList =
+    checkDefaultComesLastHelper blocks diagnostisList =
       case blocks of
         [] ->
           diagnostisList
         (SwitchBlock Default _) : xs@[SwitchBlock _ _] ->
-          checkDefaultComesLast xs (methodDiagnostic methodName "Defaultcase in Switch-Case is not defined last" path : diagnostisList)
+          checkDefaultComesLastHelper xs (methodDiagnostic methodName "Defaultcase in Switch-Case is not defined last" path : diagnostisList)
         _ : xs ->
-          checkDefaultComesLast xs diagnostisList
-
+          checkDefaultComesLastHelper xs diagnostisList
