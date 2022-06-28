@@ -8,6 +8,7 @@ import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
 import RDF (Diagnostic (..), methodDiagnostic)
+2b8f92b8f9a4a8
 
 check :: CompilationUnit -> FilePath -> [Diagnostic]
 check cUnit path = do
@@ -27,3 +28,4 @@ checkDefaultComesLast (methodName, methodBody) path = do
           checkDefaultComesLast xs (methodDiagnostic methodName "Defaultcase in Switch-Case is not defined last" path : diagnostisList)
         _ : xs ->
           checkDefaultComesLast xs diagnostisList
+
