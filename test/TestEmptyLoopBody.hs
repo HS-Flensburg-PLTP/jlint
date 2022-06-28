@@ -17,7 +17,7 @@ testEmptyLoopBodies = do
 testEmptyWhileLoop =
   "Empty While Loop" -- ~: adds label to Test (Testlist)
     ~: test -- test can be called on List of testables
-      [ withCUnit 
+      [ withCUnit
           "/test/EmptyLoopBody.java"
           ( \(path, cUnit) -> do
               let actual = EmptyLoopBody.check cUnit path
