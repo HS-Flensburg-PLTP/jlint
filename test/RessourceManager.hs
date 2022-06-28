@@ -17,7 +17,7 @@ parseJava path = do
 
 withCUnit :: String -> ((FilePath, CompilationUnit) -> IO ()) -> IO ()
 withCUnit fPath =
-    bracket ((setupCUnit fPath)) teardownCunit -- bracket setupCUnit after during
+    bracket (setupCUnit fPath) teardownCunit -- bracket before after during
     where
         setupCUnit :: FilePath -> IO (FilePath, CompilationUnit)
         setupCUnit pathFromRoot = do
