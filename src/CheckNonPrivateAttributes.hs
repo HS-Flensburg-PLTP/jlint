@@ -55,11 +55,11 @@ varDecls strings mods = concatMapM (checkFieldDecl mods) strings
 
 checkFieldDecl :: [Modifier] -> String -> Reader FilePath [Diagnostic]
 checkFieldDecl [] varname = do
-  path <- ask
-  return [constructDiagnostic varname path]
+  fpath <- ask
+  return [constructDiagnostic varname fpath]
 checkFieldDecl modifier varname = do
-  path <- ask
-  return [constructDiagnostic varname path | Private `notElem` modifier]
+  fpath <- ask
+  return [constructDiagnostic varname fpath | Private `notElem` modifier]
 
 constructDiagnostic :: String -> FilePath -> Diagnostic
 constructDiagnostic varname fpath =
