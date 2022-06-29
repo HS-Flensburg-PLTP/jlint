@@ -9,7 +9,6 @@ module RDF
     Severity (..),
     encodetojson,
     simpleDiagnostic,
-    extractSeverity,
     checkSeverityList,
     methodDiagnostic,
   )
@@ -130,9 +129,6 @@ simpleDiagnostic dmessage fpath =
       suggestions = Nothing,
       originalOutput = Nothing
     }
-
-extractSeverity :: Diagnostic -> Severity
-extractSeverity (Diagnostic _ _ s _ _ _ _) = s
 
 checkSeverityList :: [Severity] -> Severity
 checkSeverityList [] = Unknown
