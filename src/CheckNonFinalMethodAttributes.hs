@@ -39,8 +39,8 @@ checkMethodDecl ident (x : xs) = do
 
 checkFormalParam :: FormalParam -> String -> Reader FilePath [Diagnostic]
 checkFormalParam (FormalParam modifier _ _ (VarId (Ident n))) ident = do
-  fpath <- ask
-  return [constructDiagnostic n ident fpath | Final `notElem` modifier]
+  path <- ask
+  return [constructDiagnostic n ident path | Final `notElem` modifier]
 
 constructDiagnostic :: String -> String -> FilePath -> Diagnostic
 constructDiagnostic fparam ident fpath =
@@ -48,10 +48,10 @@ constructDiagnostic fparam ident fpath =
     { message = "Argument " ++ fparam ++ " in " ++ ident ++ " is not declared as 'final'.",
       location =
         Location
-          { path = fpath,
+          { path = path,
             locationRange = Nothing
           },
-      severity = Warning,
+      severity = Just (Left "WARNING"),
       source = Nothing,
       code = Nothing,
       suggestions = Nothing,

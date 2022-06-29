@@ -16,6 +16,7 @@ import Language.Java.Syntax
   )
 import RDF (Diagnostic (..), Location (..), Severity (..))
 
+
 check :: CompilationUnit -> FilePath -> [Diagnostic]
 check (CompilationUnit _ _ classtype) = runReader (checkTypeDecls classtype)
 
@@ -46,11 +47,11 @@ checkMemberDecl (MemberInterfaceDecl {}) = return []
 
 checkFieldDecl :: [Modifier] -> String -> Reader FilePath [Diagnostic]
 checkFieldDecl [] varname = do
-  fpath <- ask
-  return [constructDiagnostic varname fpath]
+  path <- ask
+  return [constructDiagnostic varname path]
 checkFieldDecl modifier varname = do
-  fpath <- ask
-  return [constructDiagnostic varname fpath | Private `notElem` modifier]
+  path <- ask
+  return [constructDiagnostic varname path | Private `notElem` modifier]
 
 constructDiagnostic :: String -> FilePath -> Diagnostic
 constructDiagnostic varname fpath =

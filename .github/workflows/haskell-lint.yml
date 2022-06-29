@@ -1,0 +1,24 @@
+name: Haskell Lint (HLint)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  hlint:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout current repository
+      uses: actions/checkout@v3
+
+    - name: Set up HLint
+      uses: haskell/actions/hlint-setup@v2
+
+    - name: Run HLint
+      uses: haskell/actions/hlint-run@v2
+      with:
+        path: src/
+        fail-on: warning
