@@ -12,9 +12,9 @@ import Language.Java.Syntax
     Modifier (Private),
     TypeDecl (..),
     VarDecl (VarDecl),
-    VarDeclId (VarId),
+    VarDeclId (VarDeclArray, VarId),
   )
-import RDF (Diagnostic (..), Location (..))
+import RDF (Diagnostic (..), Location (..), Severity (..))
 
 check :: CompilationUnit -> FilePath -> [Diagnostic]
 check (CompilationUnit _ _ classtype) = runReader (checkTypeDecls classtype)
@@ -38,30 +38,38 @@ checkDecl (MemberDecl md) = checkMemberDecl md
 checkDecl (InitDecl _ _) = return []
 
 checkMemberDecl :: MemberDecl -> Reader FilePath [Diagnostic]
-checkMemberDecl (FieldDecl mods _ ((VarDecl (VarId (Ident n)) _) : _)) = checkFieldDecl mods n
+checkMemberDecl (FieldDecl _ _ []) = return []
+checkMemberDecl (FieldDecl mods _ vardecl) = varDecls (map (\(VarDecl vardeclId _) -> varId vardeclId) vardecl) mods
 checkMemberDecl (MethodDecl {}) = return []
 checkMemberDecl (ConstructorDecl {}) = return []
 checkMemberDecl (MemberClassDecl {}) = return []
 checkMemberDecl (MemberInterfaceDecl {}) = return []
 
+varId :: VarDeclId -> String
+varId (VarDeclArray varDeclId) = varId varDeclId
+varId (VarId (Ident n)) = n
+
+varDecls :: [String] -> [Modifier] -> Reader FilePath [Diagnostic]
+varDecls strings mods = concatMapM (checkFieldDecl mods) strings
+
 checkFieldDecl :: [Modifier] -> String -> Reader FilePath [Diagnostic]
 checkFieldDecl [] varname = do
-  path <- ask
-  return [constructDiagnostic varname path]
+  fpath <- ask
+  return [constructDiagnostic varname fpath]
 checkFieldDecl modifier varname = do
-  path <- ask
-  return [constructDiagnostic varname path | Private `notElem` modifier]
+  fpath <- ask
+  return [constructDiagnostic varname fpath | Private `notElem` modifier]
 
 constructDiagnostic :: String -> FilePath -> Diagnostic
-constructDiagnostic varname path =
+constructDiagnostic varname fpath =
   Diagnostic
     { message = "Attribute " ++ varname ++ " is not declared as 'private'.",
       location =
         Location
-          { path = path,
+          { path = fpath,
             locationRange = Nothing
           },
-      severity = Just (Left "WARNING"),
+      severity = Warning,
       source = Nothing,
       code = Nothing,
       suggestions = Nothing,
