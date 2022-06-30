@@ -12,6 +12,7 @@ import Language.Java.Syntax
 import Lib
 import NeedBraces
 import Options.Applicative
+import PackageName
 import RDF
 
 main :: IO ()
@@ -48,14 +49,14 @@ params =
 
 parseJava :: FilePath -> Bool -> IO ()
 parseJava path pretty =
-  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ EmptyLoopBody.check cUnit path ++ NeedBraces.check cUnit path
+  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ EmptyLoopBody.check cUnit path ++ NeedBraces.check cUnit path ++ PackageName.check cUnit path
    in do
         input <- readFile path
         let result = parser compilationUnit input
         case result of
           Left error -> print error
           Right cUnit -> do
-            if pretty then print (prettyPrint cUnit) else print cUnit
+            -- if pretty then print (prettyPrint cUnit) else print cUnit
             print
               ( RDF.encodetojson
                   ( DiagnosticResult
