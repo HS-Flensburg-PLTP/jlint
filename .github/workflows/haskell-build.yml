@@ -35,4 +35,4 @@ jobs:
       run: stack build --dependencies-only
 
     - name: Run stack build
-      run: stack build --fast --pedantic --force-dirty
+      run: stack build --fast --force-dirty
