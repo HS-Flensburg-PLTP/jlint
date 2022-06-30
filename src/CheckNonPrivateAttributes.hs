@@ -50,7 +50,6 @@ varId (VarDeclArray varDeclId) = varId varDeclId
 varId (VarId (Ident n)) = n
 
 varDecls :: [String] -> [Modifier] -> Reader FilePath [Diagnostic]
-varDecls [] _ = return []
 varDecls strings mods = concatMapM (checkFieldDecl mods) strings
 
 checkFieldDecl :: [Modifier] -> String -> Reader FilePath [Diagnostic]
