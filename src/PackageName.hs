@@ -6,7 +6,6 @@ module PackageName where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
-import Data.List
 import Language.Java.Syntax
 import RDF (Diagnostic (..), simpleDiagnostic)
 import Text.RE.TDFA.String
@@ -38,4 +37,3 @@ extractNames pDeckl = do
   extractBody packageDecl
   where
     extractBody (Ident n) = return n
-    extractBody _ = mzero
