@@ -31,8 +31,8 @@ library
       Control.Monad.Extra
       EmptyLoopBody
       Lib
+      NamingConventions
       NeedBraces
-      PackageName
       RDF
   other-modules:
       Paths_jlint
