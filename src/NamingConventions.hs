@@ -10,27 +10,29 @@ import Language.Java.Syntax
 import RDF (Diagnostic (..), simpleDiagnostic)
 import Text.RE.TDFA.String
 
-check :: CompilationUnit -> FilePath -> [Diagnostic]
-check (CompilationUnit (Just pDeckl) _ _) = checkTLD (extractNames pDeckl)
-check (CompilationUnit {}) = return []
+{- Package Name -}
+
+checkPackageName :: CompilationUnit -> FilePath -> [Diagnostic]
+checkPackageName (CompilationUnit (Just pDeckl) _ _) = checkTLD (extractPackageNames pDeckl)
+checkPackageName (CompilationUnit {}) = return []
 
 checkTLD :: [String] -> FilePath -> [Diagnostic]
 checkTLD [] _ = mzero
 checkTLD (x : xs) path
-  | matched $ x ?=~ [re|^[a-z]*$|] = checkRest xs path
-  | otherwise = checkNames x path ++ checkRest xs path
+  | matched $ x ?=~ [re|^[a-z]*$|] = checkRestPN xs path
+  | otherwise = packageNameMsg x path ++ checkRestPN xs path
 
-checkRest :: [String] -> FilePath -> [Diagnostic]
-checkRest [] _ = mzero
-checkRest (x : xs) path
-  | matched $ x ?=~ [re|^[a-zA-Z_][a-zA-Z0-9_]*$|] = checkRest xs path
-  | otherwise = checkNames x path ++ checkRest xs path
+checkRestPN :: [String] -> FilePath -> [Diagnostic]
+checkRestPN [] _ = mzero
+checkRestPN (x : xs) path
+  | matched $ x ?=~ [re|^[a-zA-Z_][a-zA-Z0-9_]*$|] = checkRestPN xs path
+  | otherwise = packageNameMsg x path ++ checkRestPN xs path
 
-checkNames :: String -> FilePath -> [Diagnostic]
-checkNames name path = return (simpleDiagnostic ("PackageName element " ++ name ++ " does not match the specifications.") path)
+packageNameMsg :: String -> FilePath -> [Diagnostic]
+packageNameMsg name path = return (simpleDiagnostic ("PackageName element " ++ name ++ " does not match the specifications.") path)
 
-extractNames :: PackageDecl -> [String]
-extractNames pDeckl = do
+extractPackageNames :: PackageDecl -> [String]
+extractPackageNames pDeckl = do
   packageDecl <- universeBi pDeckl
   extractBody packageDecl
   where
