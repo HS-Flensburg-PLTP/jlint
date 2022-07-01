@@ -15,18 +15,16 @@ check (CompilationUnit (Just pDeckl) _ _) = checkTLD (extractNames pDeckl)
 check (CompilationUnit {}) = return []
 
 checkTLD :: [String] -> FilePath -> [Diagnostic]
-checkTLD [] path = mzero
-checkTLD (x : xs) path =
-  if matched $ x ?=~ [re|^[a-z]*$|]
-    then checkRest xs path
-    else checkNames x path ++ checkRest xs path
+checkTLD [] _ = mzero
+checkTLD (x : xs) path
+  | matched $ x ?=~ [re|^[a-z]*$|] = checkRest xs path
+  | otherwise = checkNames x path ++ checkRest xs path
 
 checkRest :: [String] -> FilePath -> [Diagnostic]
-checkRest [] path = mzero
-checkRest (x : xs) path =
-  if matched $ x ?=~ [re|^[a-zA-Z_][a-zA-Z0-9_]*$|]
-    then checkRest xs path
-    else checkNames x path ++ checkRest xs path
+checkRest [] _ = mzero
+checkRest (x : xs) path
+  | matched $ x ?=~ [re|^[a-zA-Z_][a-zA-Z0-9_]*$|] = checkRest xs path
+  | otherwise = checkNames x path ++ checkRest xs path
 
 checkNames :: String -> FilePath -> [Diagnostic]
 checkNames name path = return (simpleDiagnostic ("PackageName element " ++ name ++ " does not match the specifications.") path)
