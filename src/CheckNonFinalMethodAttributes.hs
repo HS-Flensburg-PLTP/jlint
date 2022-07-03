@@ -2,8 +2,8 @@ module CheckNonFinalMethodAttributes (check) where
 
 import Control.Monad.Extra (concatMapM)
 import Control.Monad.Reader (MonadReader (ask), Reader, runReader)
-import Language.Java.Syntax (ClassBody (..), ClassDecl (..), CompilationUnit (..), Decl (..), FormalParam (..), Ident (Ident), MemberDecl (..), Modifier (Final), TypeDecl (..), VarDeclId (VarId))
-import RDF (Diagnostic (..), Location (..))
+import Language.Java.Syntax (ClassBody (..), ClassDecl (..), CompilationUnit (..), Decl (..), FormalParam (..), Ident (Ident), MemberDecl (..), Modifier (Final), TypeDecl (..), VarDeclId (VarDeclArray, VarId))
+import RDF (Diagnostic (..), Location (..), Severity (..))
 
 check :: CompilationUnit -> FilePath -> [Diagnostic]
 check (CompilationUnit _ _ classtype) = runReader (checkTypeDecls classtype)
@@ -17,7 +17,7 @@ checkTypeDecl (InterfaceTypeDecl _) = return []
 
 checkClassType :: ClassDecl -> Reader FilePath [Diagnostic]
 checkClassType (ClassDecl _ _ _ _ _ (ClassBody body)) = checkDecls body
-checkClassType (EnumDecl _ _ _ _) = return []
+checkClassType (EnumDecl {}) = return []
 
 checkDecls :: [Decl] -> Reader FilePath [Diagnostic]
 checkDecls = concatMapM checkDecl
@@ -38,9 +38,16 @@ checkMethodDecl ident (x : xs) = do
   return (cfp ++ cmd)
 
 checkFormalParam :: FormalParam -> String -> Reader FilePath [Diagnostic]
-checkFormalParam (FormalParam modifier _ _ (VarId (Ident n))) ident = do
+checkFormalParam (FormalParam [] _ _ varid) ident = do
   path <- ask
-  return [constructDiagnostic n ident path | Final `notElem` modifier]
+  return [constructDiagnostic (varId varid) ident path]
+checkFormalParam (FormalParam modifier _ _ varid) ident = do
+  path <- ask
+  return [constructDiagnostic (varId varid) ident path | Final `notElem` modifier]
+
+varId :: VarDeclId -> String
+varId (VarDeclArray varDeclId) = varId varDeclId
+varId (VarId (Ident n)) = n
 
 constructDiagnostic :: String -> String -> FilePath -> Diagnostic
 constructDiagnostic fparam ident path =
@@ -51,7 +58,7 @@ constructDiagnostic fparam ident path =
           { path = path,
             locationRange = Nothing
           },
-      severity = Just (Left "WARNING"),
+      severity = Warning,
       source = Nothing,
       code = Nothing,
       suggestions = Nothing,

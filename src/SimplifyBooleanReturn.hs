@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 
-module EmptyLoopBody where
+module SimplifyBooleanReturn where
 
 import AST (extractMethods)
 import Control.Monad (MonadPlus (..))
@@ -19,8 +19,14 @@ checkStatements (methodName, methodBody) path = do
   stmt <- universeBi methodBody
   checkStatement stmt
   where
-    checkStatement (Do Empty _) = return (methodDiagnostic methodName "A Do-Loop has a empty loop body." path)
-    checkStatement (While _ Empty) = return (methodDiagnostic methodName "A While-Loop has a empty loop body." path)
-    checkStatement (BasicFor _ _ _ Empty) = return (methodDiagnostic methodName "A For-Loop has a empty loop body." path)
-    checkStatement (EnhancedFor _ _ _ _ Empty) = return (methodDiagnostic methodName "A ForEach-Lopp has a empty loop body." path)
+    checkStatement (IfThenElse _ a b)
+      | isReturnBool a && isReturnBool b = return (methodDiagnostic methodName "A if-then-else part with literal return can be simplified." path)
+      | otherwise = mzero
+    checkStatement (IfThen _ a)
+      | isReturnBool a = return (methodDiagnostic methodName "A if-then part with literal return can be simplified." path)
+      | otherwise = mzero
     checkStatement _ = mzero
+
+    isReturnBool (Return (Just (Lit (Boolean _)))) = True
+    isReturnBool (StmtBlock (Block [BlockStmt a])) = isReturnBool a
+    isReturnBool _ = False
