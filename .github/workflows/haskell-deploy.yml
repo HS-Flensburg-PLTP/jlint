@@ -49,5 +49,6 @@ jobs:
         OUT_DIR="${WEBROOT}/${GITHUB_REF}"
         mkdir -p "${OUT_DIR}"
         cp -t "${OUT_DIR}" "${DIST_FILE}"
-        sha512sum --tag "${OUT_DIR}/${FILENAME}" > "${OUT_DIR}/sha512sum"
-        echo "${PRIVKEY}" | openssl dgst -sign - -keyform PEM -sha512 -out "${OUT_DIR}/signature" "${OUT_DIR}/${FILENAME}"
+        cd "${OUT_DIR}"
+        sha512sum --tag "${FILENAME}" > sha512sum
+        echo "${PRIVKEY}" | openssl dgst -sign - -keyform PEM -sha512 -out signature "${FILENAME}"
