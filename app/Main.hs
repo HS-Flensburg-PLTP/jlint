@@ -50,13 +50,12 @@ params =
 parseJava :: FilePath -> Bool -> IO ()
 parseJava path pretty =
   let diagnosticsByRules cUnit =
-        ( concat
-            [ CheckNonFinalMethodAttributes.check cUnit path,
-              CheckNonPrivateAttributes.check cUnit path,
-              NeedBraces.check cUnit path,
-              DefaultComesLast.check cUnit path
-            ]
-        )
+        concat
+          [ CheckNonFinalMethodAttributes.check cUnit path,
+            CheckNonPrivateAttributes.check cUnit path,
+            NeedBraces.check cUnit path,
+            DefaultComesLast.check cUnit path
+          ]
    in do
         input <- readFile path
         let result = parser compilationUnit input

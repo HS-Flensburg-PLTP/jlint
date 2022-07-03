@@ -14,7 +14,6 @@ import Language.Java.Syntax
     VarDecl (VarDecl),
     VarDeclId (VarDeclArray, VarId),
   )
-
 import RDF (Diagnostic (..), Location (..), Severity (..))
 
 check :: CompilationUnit -> FilePath -> [Diagnostic]
