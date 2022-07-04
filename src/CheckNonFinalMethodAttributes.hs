@@ -10,13 +10,11 @@ check cUnit path = do
   checkFormalParamList formalparam path
 
 checkFormalParamList :: (String, [FormalParam]) -> FilePath -> [Diagnostic]
-checkFormalParamList (methodName, formalparams) path = checkFormalParam formalparams
+checkFormalParamList (methodName, formalparams) path = concatMap checkFormalParam formalparams
   where
-    checkFormalParam [] = []
-    checkFormalParam (x : xs) = checkFParam x ++ checkFormalParam xs
-    checkFParam (FormalParam [] _ _ varid) =
+    checkFormalParam (FormalParam [] _ _ varid) =
       return (methodDiagnostic methodName (varId varid ++ " is not declared as Final") path)
-    checkFParam (FormalParam modifier _ _ varid) =
+    checkFormalParam (FormalParam modifier _ _ varid) =
       if Final `notElem` modifier
         then return (methodDiagnostic methodName (varId varid ++ " is not declared as Final") path)
         else []
