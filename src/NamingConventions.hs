@@ -23,11 +23,7 @@ checkTLD (x : xs) path
   | otherwise = return (simpleDiagnostic (packageNameMsg x) path) ++ checkRestPN xs path
 
 checkRestPN :: [String] -> FilePath -> [Diagnostic]
-checkRestPN [] _ = mzero
-checkRestPN (x : xs) path
-  | matched $ x ?=~ [re|^[a-zA-Z_][a-zA-Z0-9_]*$|] = checkRestPN xs path
-  -- otherwise = packageNameMsg x path ++ checkRestPN xs path
-  | otherwise = return (simpleDiagnostic (packageNameMsg x) path) ++ checkRestPN xs path
+checkRestPN list path = map (\x -> simpleDiagnostic (packageNameMsg x) path) (filter (\x -> not (matched $ x ?=~ [re|^[a-zA-Z_][a-zA-Z0-9_]*$|])) list)
 
 packageNameMsg :: String -> String
 packageNameMsg name = "PackageName element " ++ name ++ " does not match the specifications."
