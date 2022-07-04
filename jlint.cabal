@@ -52,6 +52,7 @@ library
 executable jlint-exe
   main-is: Main.hs
   other-modules:
+      Rules
       Paths_jlint
   hs-source-dirs:
       app
