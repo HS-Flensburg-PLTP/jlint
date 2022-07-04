@@ -9,7 +9,6 @@ import CheckNonPrivateAttributes
 import Control.Monad (MonadPlus (..), unless)
 import Data.ByteString.Lazy.Internal
 import Data.Semigroup ((<>))
-import EmptyLoopBody (check)
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
@@ -20,6 +19,7 @@ import Options.Applicative
 import RDF
 import System.FilePath.Find
 import Text.Parsec.Error
+import Rules
 
 main :: IO ()
 main = execParser opts >>= importJava
