@@ -20,16 +20,17 @@ checkTLD :: [String] -> FilePath -> [Diagnostic]
 checkTLD [] _ = mzero
 checkTLD (x : xs) path
   | matched $ x ?=~ [re|^[a-z]*$|] = checkRestPN xs path
-  | otherwise = packageNameMsg x path ++ checkRestPN xs path
+  | otherwise = return (simpleDiagnostic (packageNameMsg x) path) ++ checkRestPN xs path
 
 checkRestPN :: [String] -> FilePath -> [Diagnostic]
 checkRestPN [] _ = mzero
 checkRestPN (x : xs) path
   | matched $ x ?=~ [re|^[a-zA-Z_][a-zA-Z0-9_]*$|] = checkRestPN xs path
-  | otherwise = packageNameMsg x path ++ checkRestPN xs path
+  -- otherwise = packageNameMsg x path ++ checkRestPN xs path
+  | otherwise = return (simpleDiagnostic (packageNameMsg x) path) ++ checkRestPN xs path
 
-packageNameMsg :: String -> FilePath -> [Diagnostic]
-packageNameMsg name path = return (simpleDiagnostic ("PackageName element " ++ name ++ " does not match the specifications.") path)
+packageNameMsg :: String -> String
+packageNameMsg name = "PackageName element " ++ name ++ " does not match the specifications."
 
 extractPackageNames :: PackageDecl -> [String]
 extractPackageNames pDeckl = do
