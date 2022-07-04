@@ -22,3 +22,11 @@ extractAttributes cUnit = do
     varId :: VarDeclId -> String
     varId (VarDeclArray varDeclId) = varId varDeclId
     varId (VarId (Ident n)) = n
+
+extractMethodParameters :: CompilationUnit -> [(String, [FormalParam])]
+extractMethodParameters cUnit = do
+  membDecl <- universeBi cUnit
+  extractFormalParam membDecl
+  where
+    extractFormalParam (MethodDecl _ _ _ (Ident ident) formalParam _ _ _) = return (ident, formalParam)
+    extractFormalParam _ = mzero
