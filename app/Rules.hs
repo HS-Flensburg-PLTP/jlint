@@ -18,7 +18,8 @@ import SimplifyBooleanReturn
 
 -}
 
-methods =
+checks :: [CompilationUnit -> FilePath -> [Diagnostic]]
+checks =
   [ NeedBraces.check,
     CheckNonFinalMethodAttributes.check,
     CheckNonPrivateAttributes.check,
@@ -27,5 +28,5 @@ methods =
     NeedBraces.check
   ]
 
-rules :: CompilationUnit -> FilePath -> [Diagnostic]
-rules cUnit path = concatMap (\x -> x cUnit path) methods
+checkAll :: CompilationUnit -> FilePath -> [Diagnostic]
+checkAll cUnit path = concatMap (\f -> f cUnit path) checks
