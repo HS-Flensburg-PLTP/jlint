@@ -45,7 +45,7 @@ params =
 
 parseJava :: FilePath -> Bool -> IO ()
 parseJava path pretty =
-  let diagnosticsByRules cUnit = Rules.rules cUnit path
+  let diagnosticsByRules cUnit = Rules.checkAll cUnit path
    in do
         input <- readFile path
         let result = parser compilationUnit input
