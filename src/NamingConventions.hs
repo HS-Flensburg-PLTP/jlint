@@ -4,8 +4,7 @@
 
 module NamingConventions where
 
-import Control.Monad (MonadPlus (..))
-import Data.Generics.Uniplate.Data (universeBi)
+import Data.Function ((&))
 import Language.Java.Syntax
 import RDF (Diagnostic (..), simpleDiagnostic)
 import Text.RE.TDFA.String
@@ -13,24 +12,29 @@ import Text.RE.TDFA.String
 {- Package Name -}
 
 checkPackageName :: CompilationUnit -> FilePath -> [Diagnostic]
-checkPackageName (CompilationUnit (Just pDeckl) _ _) = checkTLD (extractPackageNames pDeckl)
-checkPackageName (CompilationUnit {}) = return []
+checkPackageName (CompilationUnit (Just pDeckl) _ _) path = checkTLD (extractPackageNames pDeckl) path
+checkPackageName (CompilationUnit {}) _ = []
 
 checkTLD :: [String] -> FilePath -> [Diagnostic]
-checkTLD [] _ = mzero
-checkTLD (x : xs) path
-  | matched $ x ?=~ [re|^[a-z]*$|] = checkRestPN xs path
-  | otherwise = return (simpleDiagnostic (packageNameMsg x) path) ++ checkRestPN xs path
+checkTLD [] _ = []
+checkTLD (ident : idents) path
+  | checkREOne ident = checkRestPN idents path
+  | otherwise = simpleDiagnostic (packageNameMsg ident) path : checkRestPN idents path
 
 checkRestPN :: [String] -> FilePath -> [Diagnostic]
-checkRestPN list path = map (\x -> simpleDiagnostic (packageNameMsg x) path) (filter (\x -> not (matched $ x ?=~ [re|^[a-zA-Z_][a-zA-Z0-9_]*$|])) list)
+checkRestPN idents path =
+  idents
+    & filter (not . checkRETwo)
+    & map (\ident -> simpleDiagnostic (packageNameMsg ident) path)
 
 packageNameMsg :: String -> String
 packageNameMsg name = "PackageName element " ++ name ++ " does not match the specifications."
 
 extractPackageNames :: PackageDecl -> [String]
-extractPackageNames pDeckl = do
-  packageDecl <- universeBi pDeckl
-  extractBody packageDecl
-  where
-    extractBody (Ident n) = return n
+extractPackageNames (PackageDecl (Name packageNames)) = map (\(Ident name) -> name) packageNames
+
+checkREOne :: String -> Bool
+checkREOne ident = matched (ident ?=~ [re|^[a-z]*$|])
+
+checkRETwo :: String -> Bool
+checkRETwo ident = matched (ident ?=~ [re|^[a-zA-Z_][a-zA-Z0-9_]*$|])
