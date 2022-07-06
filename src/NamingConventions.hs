@@ -4,9 +4,12 @@
 
 module NamingConventions where
 
+import AST (extractMethods)
+import Control.Monad (MonadPlus (..))
 import Data.Function ((&))
+import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
-import RDF (Diagnostic (..), simpleDiagnostic)
+import RDF (Diagnostic (..), methodDiagnostic, simpleDiagnostic)
 import Text.RE.TDFA.String
 
 {- Package Name -}
@@ -33,8 +36,117 @@ packageNameMsg name = "PackageName element " ++ name ++ " does not match the spe
 extractPackageNames :: PackageDecl -> [String]
 extractPackageNames (PackageDecl (Name packageNames)) = map (\(Ident name) -> name) packageNames
 
+{- MethodName -}
+
+checkMethodName :: CompilationUnit -> FilePath -> [Diagnostic]
+checkMethodName cUnit path = do
+  (methodName, _) <- extractMethods cUnit
+  checkMethodNames methodName path
+
+checkMethodNames :: String -> FilePath -> [Diagnostic]
+checkMethodNames name path
+  | checkREThree name = mzero
+  | otherwise = return (simpleDiagnostic (methodNameMsg name) path)
+  where
+    methodNameMsg name = "Methodname " ++ name ++ " does not match the specifications."
+
+{- ParameterName -}
+
+checkParameterName :: CompilationUnit -> FilePath -> [Diagnostic]
+checkParameterName cUnit path = do
+  methods <- extractFormalParams cUnit
+  checkParameterNames methods path
+
+extractFormalParams :: CompilationUnit -> [(String, [String])]
+extractFormalParams cUnit = do
+  membDecl <- universeBi cUnit
+  extractBody membDecl
+  where
+    extractBody (MethodDecl _ _ _ (Ident n) formalParams _ _ _) = return (n, extractParamName formalParams)
+    extractBody _ = mzero
+    extractParamName = map (\(FormalParam _ _ _ (VarId (Ident n))) -> n)
+
+checkParameterNames :: (String, [String]) -> FilePath -> [Diagnostic]
+checkParameterNames (methodName, formalParams) path =
+  formalParams
+    & filter (not . checkREThree)
+    & map (\name -> methodDiagnostic methodName ("parameter " ++ name ++ " doesn't match the specifications.") path)
+
+{- StaticVariableName -}
+
+checkStaticVariableName :: CompilationUnit -> FilePath -> [Diagnostic]
+checkStaticVariableName cUnit path = do
+  membDecl <- extractStaticFieldNames cUnit
+  checkStaticVariableNames membDecl path
+
+extractStaticFieldNames :: CompilationUnit -> [String]
+extractStaticFieldNames cUnit = do
+  fieldNames <- universeBi cUnit
+  extractMemberDecl fieldNames
+  where
+    extractMemberDecl (FieldDecl modifier _ varDecl)
+      | Static `elem` modifier = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecl
+      | otherwise = mzero
+    extractMemberDecl _ = mzero
+
+checkStaticVariableNames :: String -> FilePath -> [Diagnostic]
+checkStaticVariableNames name path
+  | checkREThree name = mzero
+  | otherwise = return (simpleDiagnostic ("Static variable " ++ name ++ " doesn't match the specifications.") path)
+
+{- LocalFinalVariableName -}
+
+checkLocalFinalVariableName :: CompilationUnit -> FilePath -> [Diagnostic]
+checkLocalFinalVariableName cUnit path = do
+  (methodName, methodBody) <- extractMethods cUnit
+  variables <- extractLocalFinalVariableNames methodBody
+  checkLocalFinalVariableNames methodName variables path
+
+extractLocalFinalVariableNames :: MethodBody -> [String]
+extractLocalFinalVariableNames cUnit = do
+  fieldNames <- universeBi cUnit
+  extractMemberDecl fieldNames
+  where
+    extractMemberDecl (LocalVars modifier _ varDecl)
+      | Final `elem` modifier = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecl
+      | otherwise = mzero
+    extractMemberDecl _ = mzero
+
+checkLocalFinalVariableNames :: String -> String -> FilePath -> [Diagnostic]
+checkLocalFinalVariableNames methodName name path
+  | checkREThree name = mzero
+  | otherwise = return (methodDiagnostic methodName ("Local final variable " ++ name ++ " doesn't match the specifications") path)
+
+{- LocalVariableName -}
+
+checkLocalVariableName :: CompilationUnit -> FilePath -> [Diagnostic]
+checkLocalVariableName cUnit path = do
+  (methodName, methodBody) <- extractMethods cUnit
+  variables <- extractNonLocalFinalVariableNames methodBody
+  checkLocalNonFinalVariableNames methodName variables path
+
+extractNonLocalFinalVariableNames :: MethodBody -> [String]
+extractNonLocalFinalVariableNames cUnit = do
+  fieldNames <- universeBi cUnit
+  extractMemberDecl fieldNames
+  where
+    extractMemberDecl (ForLocalVars modifier _ varDecl)
+      | Final `notElem` modifier = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecl
+      | otherwise = mzero
+    extractMemberDecl _ = mzero
+
+checkLocalNonFinalVariableNames :: String -> String -> FilePath -> [Diagnostic]
+checkLocalNonFinalVariableNames methodName name path
+  | checkREThree name = mzero
+  | otherwise = return (methodDiagnostic methodName ("Local non-final variable " ++ name ++ " in for-Loop doesn't match the specifications") path)
+
+{- Regular Expressions -}
+
 checkREOne :: String -> Bool
 checkREOne ident = matched (ident ?=~ [re|^[a-z]*$|])
 
 checkRETwo :: String -> Bool
 checkRETwo ident = matched (ident ?=~ [re|^[a-zA-Z_][a-zA-Z0-9_]*$|])
+
+checkREThree :: String -> Bool
+checkREThree x = matched $ x ?=~ [re|^[a-z][a-zA-Z0-9]*$|]
