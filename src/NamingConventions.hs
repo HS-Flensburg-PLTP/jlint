@@ -140,6 +140,28 @@ checkLocalNonFinalVariableNames methodName name path
   | checkREThree name = mzero
   | otherwise = return (methodDiagnostic methodName ("Local non-final variable " ++ name ++ " in for-Loop doesn't match the specifications") path)
 
+{- MemberName -}
+
+checkMemberName :: CompilationUnit -> FilePath -> [Diagnostic]
+checkMemberName cUnit path = do
+  varNames <- extractNonStaticFieldNames cUnit
+  checkMemberNames varNames path
+
+extractNonStaticFieldNames :: CompilationUnit -> [String]
+extractNonStaticFieldNames cUnit = do
+  fieldNames <- universeBi cUnit
+  extractMemberDecl fieldNames
+  where
+    extractMemberDecl (FieldDecl modifier _ varDecl)
+      | Static `notElem` modifier = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecl
+      | otherwise = mzero
+    extractMemberDecl _ = mzero
+
+checkMemberNames :: String -> FilePath -> [Diagnostic]
+checkMemberNames name path
+  | checkREThree name = mzero
+  | otherwise = return (simpleDiagnostic ("Instance variable " ++ name ++ " doesn't match the specifications.") path)
+
 {- Regular Expressions -}
 
 checkREOne :: String -> Bool
