@@ -162,6 +162,34 @@ checkMemberNames name path
   | checkREThree name = mzero
   | otherwise = return (simpleDiagnostic ("Instance variable " ++ name ++ " doesn't match the specifications.") path)
 
+{- TypeName -}
+
+checkTypeName :: CompilationUnit -> FilePath -> [Diagnostic]
+checkTypeName cUnit = checkTypeNames (extractCLassesAndInterfaces cUnit ++ extractInsideEnums cUnit)
+
+extractCLassesAndInterfaces :: CompilationUnit -> [String]
+extractCLassesAndInterfaces cUnit = do
+  classesAndInterfaces <- universeBi cUnit
+  extractCLassAndInterface classesAndInterfaces
+  where
+    extractCLassAndInterface (ClassTypeDecl (ClassDecl _ (Ident n) _ _ _ _)) = return n
+    extractCLassAndInterface (InterfaceTypeDecl (InterfaceDecl _ _ (Ident n) _ _ _)) = return n
+    extractCLassAndInterface _ = mzero
+
+extractInsideEnums :: CompilationUnit -> [String]
+extractInsideEnums cUnit = do
+  enums <- universeBi cUnit
+  extractEnum enums
+  where
+    extractEnum (EnumDecl _ (Ident n) _ _) = return n
+    extractEnum _ = mzero
+
+checkTypeNames :: [String] -> FilePath -> [Diagnostic]
+checkTypeNames names path =
+  names
+    & filter (not . checkREFour)
+    & map (\name -> simpleDiagnostic ("Type name " ++ name ++ " doesn't match the specifications.") path)
+
 {- Regular Expressions -}
 
 checkREOne :: String -> Bool
@@ -172,3 +200,6 @@ checkRETwo ident = matched (ident ?=~ [re|^[a-zA-Z_][a-zA-Z0-9_]*$|])
 
 checkREThree :: String -> Bool
 checkREThree x = matched $ x ?=~ [re|^[a-z][a-zA-Z0-9]*$|]
+
+checkREFour :: String -> Bool
+checkREFour x = matched $ x ?=~ [re|^[A-Z][a-zA-Z0-9]*$|]
