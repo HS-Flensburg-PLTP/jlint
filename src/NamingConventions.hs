@@ -84,8 +84,8 @@ extractStaticFieldNames cUnit = do
   fieldNames <- universeBi cUnit
   extractMemberDecl fieldNames
   where
-    extractMemberDecl (FieldDecl modifier _ varDecl)
-      | Static `elem` modifier = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecl
+    extractMemberDecl (FieldDecl modifier _ varDecls)
+      | Static `elem` modifier = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecls
       | otherwise = mzero
     extractMemberDecl _ = mzero
 
@@ -107,8 +107,8 @@ extractLocalFinalVariableNames cUnit = do
   fieldNames <- universeBi cUnit
   extractMemberDecl fieldNames
   where
-    extractMemberDecl (LocalVars modifier _ varDecl)
-      | Final `elem` modifier = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecl
+    extractMemberDecl (LocalVars modifier _ varDecls)
+      | Final `elem` modifier = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecls
       | otherwise = mzero
     extractMemberDecl _ = mzero
 
@@ -152,8 +152,8 @@ extractNonStaticFieldNames cUnit = do
   fieldNames <- universeBi cUnit
   extractMemberDecl fieldNames
   where
-    extractMemberDecl (FieldDecl modifier _ varDecl)
-      | Static `notElem` modifier = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecl
+    extractMemberDecl (FieldDecl modifier _ varDecls)
+      | Static `notElem` modifier = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecls
       | otherwise = mzero
     extractMemberDecl _ = mzero
 
@@ -165,7 +165,7 @@ checkMemberNames name path
 {- TypeName -}
 
 checkTypeName :: CompilationUnit -> FilePath -> [Diagnostic]
-checkTypeName cUnit = checkTypeNames (extractCLassesAndInterfaces cUnit ++ extractInsideEnums cUnit)
+checkTypeName cUnit = checkTypeNames (extractCLassesAndInterfaces cUnit ++ extractEnums cUnit)
 
 extractCLassesAndInterfaces :: CompilationUnit -> [String]
 extractCLassesAndInterfaces cUnit = do
@@ -176,8 +176,8 @@ extractCLassesAndInterfaces cUnit = do
     extractCLassAndInterface (InterfaceTypeDecl (InterfaceDecl _ _ (Ident n) _ _ _)) = return n
     extractCLassAndInterface _ = mzero
 
-extractInsideEnums :: CompilationUnit -> [String]
-extractInsideEnums cUnit = do
+extractEnums :: CompilationUnit -> [String]
+extractEnums cUnit = do
   enums <- universeBi cUnit
   extractEnum enums
   where
