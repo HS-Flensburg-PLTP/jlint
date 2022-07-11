@@ -8,10 +8,10 @@ import Language.Java.Syntax
 import RDF (Diagnostic (..), simpleDiagnostic)
 
 check :: CompilationUnit -> FilePath -> [Diagnostic]
-check cUnit path = concatMap (\var -> if countMethods (extractMethods cUnit) var == 1 then [simpleDiagnostic ("Scope of variable " ++ var ++ " can be reduced.") path] else mzero) (extractClassVars cUnit)
+check cUnit path = concatMap (\var -> if countMethodsWithCalls (extractMethods cUnit) var == 1 then [simpleDiagnostic ("Scope of variable " ++ var ++ " can be reduced.") path] else mzero) (extractClassVars cUnit)
 
-countMethods :: [(String, MethodBody)] -> String -> Int
-countMethods methods var =
+countMethodsWithCalls :: [(String, MethodBody)] -> String -> Int
+countMethodsWithCalls methods var =
   methods
     & filter (\(_, body) -> checkClassVarUsageInMethod var (extractMethodVariables body) (extractMethodVariableUsages body))
     & length
