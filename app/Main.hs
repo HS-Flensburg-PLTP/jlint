@@ -55,13 +55,15 @@ parseJava path pretty =
         case result of
           Left error -> print error
           Right cUnit -> do
-            if pretty then print (prettyPrint cUnit) else print cUnit
-            print
-              ( RDF.encodetojson
-                  ( DiagnosticResult
-                      { diagnostics = diagnosticsByRules cUnit,
-                        resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
-                        resultSeverity = RDF.checkSeverityList (map RDF.severity (diagnosticsByRules cUnit))
-                      }
+            if pretty
+              then print (prettyPrint cUnit)
+              else
+                print
+                  ( RDF.encodetojson
+                      ( DiagnosticResult
+                          { diagnostics = diagnosticsByRules cUnit,
+                            resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
+                            resultSeverity = RDF.checkSeverityList (map RDF.severity (diagnosticsByRules cUnit))
+                          }
+                      )
                   )
-              )
