@@ -10,8 +10,8 @@ check cUnit path = do
   checkAttributes attributes path
 
 checkAttributes :: ([String], [Modifier]) -> FilePath -> [Diagnostic]
-checkAttributes (varnames, mods) path =
-  concatMap (checkModifier mods) varnames
+checkAttributes (varNames, mods) path =
+  concatMap (checkModifier mods) varNames
   where
     checkModifier modifier varname =
       if Private `notElem` modifier then return (methodDiagnostic varname "Is not declared as private" path) else []
