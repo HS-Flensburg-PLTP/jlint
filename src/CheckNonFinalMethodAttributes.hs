@@ -6,8 +6,8 @@ import RDF (Diagnostic (..), methodDiagnostic)
 
 check :: CompilationUnit -> FilePath -> [Diagnostic]
 check cUnit path = do
-  formalparam <- extractMethodParameters cUnit
-  checkFormalParamList formalparam path
+  formalParam <- extractMethodParameters cUnit
+  checkFormalParamList formalParam path
 
 checkFormalParamList :: (String, [FormalParam]) -> FilePath -> [Diagnostic]
 checkFormalParamList (methodName, formalParams) path = concatMap checkFormalParam formalParams
