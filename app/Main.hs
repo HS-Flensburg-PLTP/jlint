@@ -4,6 +4,8 @@ module Main where
 
 import CheckNonFinalMethodAttributes
 import CheckNonPrivateAttributes
+-- import qualified Data.ByteString
+import Data.ByteString.Lazy.Internal
 import Data.Semigroup ((<>))
 import EmptyLoopBody (check)
 import Language.Java.Parser (compilationUnit, modifier, parser)
@@ -14,6 +16,7 @@ import NamingConventions
 import NeedBraces
 import Options.Applicative
 import RDF
+import System.FilePath.Find
 
 main :: IO ()
 main = execParser opts >>= importJava
@@ -47,6 +50,10 @@ params =
           <> help "By setting this Parameter the java source representation of the AST is shown"
       )
 
+findAllJavaFiles :: FilePath -> IO [FilePath]
+findAllJavaFiles =
+  find always (extension ==? ".java")
+
 parseJava :: FilePath -> Bool -> IO ()
 parseJava path pretty =
   let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ EmptyLoopBody.check cUnit path ++ NeedBraces.check cUnit path ++ NamingConventions.checkPackageName cUnit path
@@ -56,13 +63,17 @@ parseJava path pretty =
         case result of
           Left error -> print error
           Right cUnit -> do
-            -- if pretty then print (prettyPrint cUnit) else print cUnit
-            print
-              ( RDF.encodetojson
-                  ( DiagnosticResult
-                      { diagnostics = diagnosticsByRules cUnit,
-                        resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
-                        resultSeverity = RDF.checkSeverityList (map RDF.severity (diagnosticsByRules cUnit))
-                      }
+            if pretty
+              then print (prettyPrint cUnit)
+              else
+                putStrLn
+                  ( Data.ByteString.Lazy.Internal.unpackChars
+                      ( RDF.encodetojson
+                          ( DiagnosticResult
+                              { diagnostics = diagnosticsByRules cUnit,
+                                resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
+                                resultSeverity = RDF.checkSeverityList (map RDF.severity (diagnosticsByRules cUnit))
+                              }
+                          )
+                      )
                   )
-              )
