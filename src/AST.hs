@@ -17,11 +17,11 @@ extractAttributes cUnit = do
   membDecl <- universeBi cUnit
   extractField membDecl
   where
-    extractField (FieldDecl mods _ vardecl) = return (map (\(VarDecl vardeclId _) -> varId vardeclId) vardecl, mods)
+    extractField (FieldDecl mods _ vardecl) = return (map (\(VarDecl vardeclId _) -> extractVarName vardeclId) vardecl, mods)
     extractField _ = mzero
-    varId :: VarDeclId -> String
-    varId (VarDeclArray varDeclId) = varId varDeclId
-    varId (VarId (Ident n)) = n
+    extractVarName :: VarDeclId -> String
+    extractVarName (VarDeclArray varDeclId) = extractVarName varDeclId
+    extractVarName (VarId (Ident n)) = n
 
 extractMethodParameters :: CompilationUnit -> [(String, [FormalParam])]
 extractMethodParameters cUnit = do

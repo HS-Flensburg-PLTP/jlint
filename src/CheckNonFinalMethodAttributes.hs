@@ -13,10 +13,10 @@ checkFormalParamList :: (String, [FormalParam]) -> FilePath -> [Diagnostic]
 checkFormalParamList (methodName, formalParams) path = concatMap checkFormalParam formalParams
   where
     checkFormalParam (FormalParam [] _ _ varid) =
-      return (methodDiagnostic methodName (varId varid ++ " is not declared as Final") path)
+      return (methodDiagnostic methodName (extractVarName varid ++ " is not declared as Final") path)
     checkFormalParam (FormalParam modifier _ _ varid) =
       if Final `notElem` modifier
-        then return (methodDiagnostic methodName (varId varid ++ " is not declared as Final") path)
+        then return (methodDiagnostic methodName (extractVarName varid ++ " is not declared as Final") path)
         else []
-    varId (VarDeclArray varDeclId) = varId varDeclId
-    varId (VarId (Ident n)) = n
+    extractVarName (VarDeclArray varDeclId) = extractVarName varDeclId
+    extractVarName (VarId (Ident n)) = n
