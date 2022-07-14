@@ -17,6 +17,9 @@ import NeedBraces
 import Options.Applicative
 import RDF
 import System.FilePath.Find
+import Text.Parsec.Error
+import Control.Monad (MonadPlus (..))
+
 
 main :: IO ()
 main = execParser opts >>= importJava
@@ -54,26 +57,45 @@ findAllJavaFiles :: FilePath -> IO [FilePath]
 findAllJavaFiles =
   find always (extension ==? ".java")
 
+
+readAllFiles :: [FilePath] -> IO [(String, FilePath)]
+readAllFiles =
+  map (\path -> do (readFile path, path))
+
+parseAllFiles :: [String] -> ([(Text.Parsec.Error.ParseError, path)],[(CompilationUnit, path)])
+parseAllFiles files =
+  let 
+    parseAllfilesHelp fileList (errorList, cUnitList) =
+      case fileList of
+        [] ->
+          parsedFileList
+        (file, path) : restFiles ->
+          case parse compilationUnit file of
+            Left error ->
+              parseAllfilesHelp restFiles ((error, path) : errorList, cUnitList)
+            Right cUnit ->
+              parseAllfilesHelp restFiles (errorList, (cUnit, path) : cUnitList)
+    in parseAllfilesHelp files (mzero, mzero)
+
+
+
+
 parseJava :: FilePath -> Bool -> IO ()
-parseJava path pretty =
-  let diagnosticsByRules cUnit = CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ EmptyLoopBody.check cUnit path ++ NeedBraces.check cUnit path ++ NamingConventions.checkPackageName cUnit path
-   in do
-        input <- readFile path
-        let result = parser compilationUnit input
-        case result of
-          Left error -> print error
-          Right cUnit -> do
-            if pretty
-              then print (prettyPrint cUnit)
-              else
-                putStrLn
-                  ( Data.ByteString.Lazy.Internal.unpackChars
-                      ( RDF.encodetojson
-                          ( DiagnosticResult
-                              { diagnostics = diagnosticsByRules cUnit,
-                                resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
-                                resultSeverity = RDF.checkSeverityList (map RDF.severity (diagnosticsByRules cUnit))
-                              }
-                          )
-                      )
-                  )
+parseJava rootDir pretty =
+  do
+    pathList <- findAllJavaFiles rootDir
+    fileList <- readAllFiles pathList
+    let (errorResults, cUnitResults) = parseAllFiles fileList
+    let diagnostics = map (\(cUnit, path) -> CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ EmptyLoopBody.check cUnit path ++ NeedBraces.check cUnit path ++ NamingConventions.checkPackageName cUnit path) cUnitResults
+
+    print
+      ( Data.ByteString.Lazy.Internal.unpackChars
+          ( RDF.encodetojson
+              ( DiagnosticResult
+                  { diagnostics = diagnostics,
+                    resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
+                    resultSeverity = RDF.checkSeverityList (map RDF.severity diagnostics) -- emmits highest severity of all results in all files
+                  }
+              )
+          )
+      )
