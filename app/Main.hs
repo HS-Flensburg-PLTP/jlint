@@ -57,7 +57,7 @@ findAllJavaFiles :: FilePath -> IO [FilePath]
 findAllJavaFiles =
   find always (extension ==? ".java")
 
--- can be done with map
+-- can be done with map, does not continue when one file fails to be found
 readAllFiles :: [FilePath] -> IO [(String, FilePath)]
 readAllFiles paths =
   let readAllFilesHelp :: [FilePath] -> [(String, FilePath)] -> IO [(String, FilePath)]
