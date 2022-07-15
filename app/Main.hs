@@ -59,18 +59,30 @@ findAllJavaFiles =
 
 
 readAllFiles :: [FilePath] -> IO [(String, FilePath)]
-readAllFiles =
-  map (\path -> do (readFile path, path))
+readAllFiles paths =
+  let
+    readAllFilesHelp :: [FilePath] -> [(String, FilePath)] -> IO [(String, FilePath)]
+    readAllFilesHelp pathList fileList =
+      case pathList of 
+        [] ->
+          return fileList
+        path : restPaths -> do
+          file <- readFile path
+          let fileres = (file, path)
+          readAllFilesHelp restPaths (return fileres)
+    in
+      readAllFilesHelp paths mzero
 
-parseAllFiles :: [String] -> ([(Text.Parsec.Error.ParseError, path)],[(CompilationUnit, path)])
+parseAllFiles :: [(String, FilePath)] -> ([(Text.Parsec.Error.ParseError, FilePath)],[(CompilationUnit, FilePath)])
 parseAllFiles files =
   let 
+    parseAllfilesHelp :: [(String, FilePath)] -> ([(Text.Parsec.Error.ParseError, FilePath)],[(CompilationUnit, FilePath)]) -> ([(Text.Parsec.Error.ParseError, FilePath)],[(CompilationUnit, FilePath)])
     parseAllfilesHelp fileList (errorList, cUnitList) =
       case fileList of
         [] ->
-          parsedFileList
+          (errorList, cUnitList)
         (file, path) : restFiles ->
-          case parse compilationUnit file of
+          case parser compilationUnit file of
             Left error ->
               parseAllfilesHelp restFiles ((error, path) : errorList, cUnitList)
             Right cUnit ->
@@ -86,9 +98,8 @@ parseJava rootDir pretty =
     pathList <- findAllJavaFiles rootDir
     fileList <- readAllFiles pathList
     let (errorResults, cUnitResults) = parseAllFiles fileList
-    let diagnostics = map (\(cUnit, path) -> CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ EmptyLoopBody.check cUnit path ++ NeedBraces.check cUnit path ++ NamingConventions.checkPackageName cUnit path) cUnitResults
-
-    print
+    let diagnostics = concatMap (\(cUnit, path) -> CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ EmptyLoopBody.check cUnit path ++ NeedBraces.check cUnit path ++ NamingConventions.checkPackageName cUnit path) cUnitResults
+    putStrLn
       ( Data.ByteString.Lazy.Internal.unpackChars
           ( RDF.encodetojson
               ( DiagnosticResult
