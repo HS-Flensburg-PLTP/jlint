@@ -55,10 +55,18 @@ parseJava path pretty =
             if pretty then print (prettyPrint cUnit) else print cUnit
             print
               ( RDF.encodetojson
+<<<<<<< HEAD
                   ( DiagnosticResult
                       { diagnostics = diagnosticsByRules cUnit,
                         resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
                         resultSeverity = RDF.checkSeverityList (map RDF.severity (diagnosticsByRules cUnit))
                       }
                   )
+=======
+                  DiagnosticResult
+                    { diagnostics = diagnosticsByRules cUnit,
+                      resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
+                      resultSeverity = checkHighestSeverity (diagnosticsByRules cUnit) Nothing
+                    }
+>>>>>>> ba0eff7 (Apply ormulo to all files and remove fractured code from merging error)
               )
