@@ -58,12 +58,11 @@ parseJava path pretty =
             if pretty then print (prettyPrint cUnit) else print cUnit
             print
               ( RDF.encodetojson
-                  ( DiagnosticResult
-                      { diagnostics = diagnosticsByRules cUnit,
-                        resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
-                        resultSeverity = (checkHighestSeverity (diagnosticsByRules cUnit) Nothing)
-                      }
-                  )
+                  DiagnosticResult
+                    { diagnostics = diagnosticsByRules cUnit,
+                      resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
+                      resultSeverity = checkHighestSeverity (diagnosticsByRules cUnit) Nothing
+                    }
               )
 
 checkHighestSeverity :: [Diagnostic] -> Maybe (Either String Int) -> Maybe (Either String Int)
