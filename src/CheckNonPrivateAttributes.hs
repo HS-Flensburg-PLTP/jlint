@@ -1,6 +1,7 @@
 module CheckNonPrivateAttributes where
 
 import AST (extractAttributes)
+import Control.Monad (MonadPlus (..))
 import Language.Java.Syntax (CompilationUnit (..), Modifier (Private))
 import RDF (Diagnostic (..), methodDiagnostic)
 
@@ -13,5 +14,7 @@ checkAttributes :: ([String], [Modifier]) -> FilePath -> [Diagnostic]
 checkAttributes (varNames, mods) path =
   concatMap (checkModifier mods) varNames
   where
-    checkModifier modifier varname =
-      if Private `notElem` modifier then return (methodDiagnostic varname "Is not declared as private" path) else []
+    checkModifier modifier varname = do
+      if Private `notElem` modifier
+        then return (methodDiagnostic varname "Is not declared as private" path)
+        else mzero

@@ -19,7 +19,6 @@ extractAttributes cUnit = do
   where
     extractField (FieldDecl mods _ vardecl) = return (map (\(VarDecl vardeclId _) -> extractVarName vardeclId) vardecl, mods)
     extractField _ = mzero
-    extractVarName :: VarDeclId -> String
     extractVarName (VarDeclArray varDeclId) = extractVarName varDeclId
     extractVarName (VarId (Ident n)) = n
 
