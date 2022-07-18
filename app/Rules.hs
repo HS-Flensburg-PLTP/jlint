@@ -26,8 +26,8 @@ checks =
     CheckNonPrivateAttributes.check,
     EmptyLoopBody.check,
     SimplifyBooleanReturn.check,
+    NoLoopBreak.check,
     NeedBraces.check
-      NoLoopBreak.check
   ]
 
 checkAll :: CompilationUnit -> FilePath -> [Diagnostic]
