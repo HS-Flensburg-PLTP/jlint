@@ -21,13 +21,18 @@ checkPackageName (CompilationUnit {}) _ = []
 checkTLD :: [String] -> FilePath -> [Diagnostic]
 checkTLD [] _ = []
 checkTLD (ident : idents) path
-  | checkREOne ident = checkRestPN idents path
+  | matched (ident ?=~ reTopLevelDomain) = checkRestPN idents path
   | otherwise = simpleDiagnostic (packageNameMsg ident) path : checkRestPN idents path
 
 checkRestPN :: [String] -> FilePath -> [Diagnostic]
 checkRestPN idents path =
   idents
-    & filter (not . checkRETwo)
+    & filter
+      ( \ident ->
+          not
+            ( matched (ident ?=~ reRestDomain)
+            )
+      )
     & map (\ident -> simpleDiagnostic (packageNameMsg ident) path)
 
 packageNameMsg :: String -> String
@@ -45,7 +50,7 @@ checkMethodName cUnit path = do
 
 checkMethodNames :: String -> FilePath -> [Diagnostic]
 checkMethodNames name path
-  | checkREThree name = mzero
+  | matched (name ?=~ reCamelCase) = mzero
   | otherwise = return (simpleDiagnostic (methodNameMsg name) path)
   where
     methodNameMsg name = "Methodname " ++ name ++ " does not match the specifications."
@@ -54,22 +59,21 @@ checkMethodNames name path
 
 checkParameterName :: CompilationUnit -> FilePath -> [Diagnostic]
 checkParameterName cUnit path = do
-  methods <- extractFormalParams cUnit
-  checkParameterNames methods path
+  method <- extractFormalParams cUnit
+  checkParameterNames method path
 
 extractFormalParams :: CompilationUnit -> [(String, [String])]
 extractFormalParams cUnit = do
   membDecl <- universeBi cUnit
   extractBody membDecl
   where
-    extractBody (MethodDecl _ _ _ (Ident n) formalParams _ _ _) = return (n, extractParamName formalParams)
+    extractBody (MethodDecl _ _ _ (Ident n) formalParams _ _ _) = return (n, map (\(FormalParam _ _ _ varDeclIds) -> extractFormalParamName varDeclIds) formalParams)
     extractBody _ = mzero
-    extractParamName = map (\(FormalParam _ _ _ (VarId (Ident n))) -> n)
 
 checkParameterNames :: (String, [String]) -> FilePath -> [Diagnostic]
 checkParameterNames (methodName, formalParams) path =
   formalParams
-    & filter (not . checkREThree)
+    & filter (\name -> not (matched (name ?=~ reCamelCase)))
     & map (\name -> methodDiagnostic methodName ("parameter " ++ name ++ " doesn't match the specifications.") path)
 
 {- StaticVariableName -}
@@ -85,60 +89,37 @@ extractStaticFieldNames cUnit = do
   extractMemberDecl fieldNames
   where
     extractMemberDecl (FieldDecl modifier _ varDecls)
-      | Static `elem` modifier = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecls
+      | Static `elem` modifier = map extractVarName varDecls
       | otherwise = mzero
     extractMemberDecl _ = mzero
 
 checkStaticVariableNames :: String -> FilePath -> [Diagnostic]
 checkStaticVariableNames name path
-  | checkREThree name = mzero
+  | matched (name ?=~ reCamelCase) = mzero
   | otherwise = return (simpleDiagnostic ("Static variable " ++ name ++ " doesn't match the specifications.") path)
 
-{- LocalFinalVariableName -}
+{- LocalFinalVariableName & LocalVariableName -}
 
-checkLocalFinalVariableName :: CompilationUnit -> FilePath -> [Diagnostic]
-checkLocalFinalVariableName cUnit path = do
-  (methodName, methodBody) <- extractMethods cUnit
-  variables <- extractLocalFinalVariableNames methodBody
-  checkLocalFinalVariableNames methodName variables path
+checkLocalName :: CompilationUnit -> FilePath -> [Diagnostic]
+checkLocalName cUnit path = do
+  method <- extractMethods cUnit
+  extractLocalFinalVariableNames2 method path
 
-extractLocalFinalVariableNames :: MethodBody -> [String]
-extractLocalFinalVariableNames cUnit = do
-  fieldNames <- universeBi cUnit
+extractLocalFinalVariableNames2 :: (String, MethodBody) -> FilePath -> [Diagnostic]
+extractLocalFinalVariableNames2 (methodName, methodBody) path = do
+  fieldNames <- universeBi methodBody
   extractMemberDecl fieldNames
   where
     extractMemberDecl (LocalVars modifier _ varDecls)
-      | Final `elem` modifier = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecls
-      | otherwise = mzero
+      | Final `elem` modifier =
+        map extractVarName varDecls
+          & filter (\name -> not (matched (name ?=~ reCamelCase)))
+          & map (\name -> methodDiagnostic methodName ("Local final variable " ++ name ++ " doesn't match the specifications") path)
+      | otherwise =
+        map extractVarName varDecls
+          & filter (\name -> not (matched (name ?=~ reCamelCase)))
+          & map (\name -> methodDiagnostic methodName ("Local non-final variable " ++ name ++ " in for-Loop doesn't match the specifications") path)
     extractMemberDecl _ = mzero
-
-checkLocalFinalVariableNames :: String -> String -> FilePath -> [Diagnostic]
-checkLocalFinalVariableNames methodName name path
-  | checkREThree name = mzero
-  | otherwise = return (methodDiagnostic methodName ("Local final variable " ++ name ++ " doesn't match the specifications") path)
-
-{- LocalVariableName -}
-
-checkLocalVariableName :: CompilationUnit -> FilePath -> [Diagnostic]
-checkLocalVariableName cUnit path = do
-  (methodName, methodBody) <- extractMethods cUnit
-  variables <- extractNonLocalFinalVariableNames methodBody
-  checkLocalNonFinalVariableNames methodName variables path
-
-extractNonLocalFinalVariableNames :: MethodBody -> [String]
-extractNonLocalFinalVariableNames cUnit = do
-  fieldNames <- universeBi cUnit
-  extractMemberDecl fieldNames
-  where
-    extractMemberDecl (ForLocalVars modifier _ varDecl)
-      | Final `notElem` modifier = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecl
-      | otherwise = mzero
-    extractMemberDecl _ = mzero
-
-checkLocalNonFinalVariableNames :: String -> String -> FilePath -> [Diagnostic]
-checkLocalNonFinalVariableNames methodName name path
-  | checkREThree name = mzero
-  | otherwise = return (methodDiagnostic methodName ("Local non-final variable " ++ name ++ " in for-Loop doesn't match the specifications") path)
 
 {- MemberName -}
 
@@ -153,13 +134,13 @@ extractNonStaticFieldNames cUnit = do
   extractMemberDecl fieldNames
   where
     extractMemberDecl (FieldDecl modifier _ varDecls)
-      | Static `notElem` modifier = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecls
+      | Static `notElem` modifier = map extractVarName varDecls
       | otherwise = mzero
     extractMemberDecl _ = mzero
 
 checkMemberNames :: String -> FilePath -> [Diagnostic]
 checkMemberNames name path
-  | checkREThree name = mzero
+  | matched (name ?=~ reCamelCase) = mzero
   | otherwise = return (simpleDiagnostic ("Instance variable " ++ name ++ " doesn't match the specifications.") path)
 
 {- TypeName -}
@@ -187,19 +168,28 @@ extractEnums cUnit = do
 checkTypeNames :: [String] -> FilePath -> [Diagnostic]
 checkTypeNames names path =
   names
-    & filter (not . checkREFour)
+    & filter (\name -> not (matched (name ?=~ rePascalCase)))
     & map (\name -> simpleDiagnostic ("Type name " ++ name ++ " doesn't match the specifications.") path)
 
 {- Regular Expressions -}
 
-checkREOne :: String -> Bool
-checkREOne ident = matched (ident ?=~ [re|^[a-z]*$|])
+reTopLevelDomain :: RE
+reTopLevelDomain = [re|^[a-z]*$|]
 
-checkRETwo :: String -> Bool
-checkRETwo ident = matched (ident ?=~ [re|^[a-zA-Z_][a-zA-Z0-9_]*$|])
+reRestDomain :: RE
+reRestDomain = [re|^[a-zA-Z_][a-zA-Z0-9_]*$|]
 
-checkREThree :: String -> Bool
-checkREThree x = matched $ x ?=~ [re|^[a-z][a-zA-Z0-9]*$|]
+reCamelCase :: RE
+reCamelCase = [re|^[a-z][a-zA-Z0-9]*$|]
 
-checkREFour :: String -> Bool
-checkREFour x = matched $ x ?=~ [re|^[A-Z][a-zA-Z0-9]*$|]
+rePascalCase :: RE
+rePascalCase = [re|^[A-Z][a-zA-Z0-9]*$|]
+
+{- Helper -}
+
+extractVarName :: VarDecl -> String
+extractVarName (VarDecl id _) = extractFormalParamName id
+
+extractFormalParamName :: VarDeclId -> String
+extractFormalParamName (VarId (Ident name)) = name
+extractFormalParamName (VarDeclArray varDeclId) = extractFormalParamName varDeclId
