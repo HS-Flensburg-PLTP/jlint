@@ -2,19 +2,14 @@
 
 module Main where
 
-import CheckNonFinalMethodAttributes
-import CheckNonPrivateAttributes
-import CheckScope
 import Data.Semigroup ((<>))
-import EmptyLoopBody (check)
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
 import Lib
-import NamingConventions
-import NeedBraces
 import Options.Applicative
 import RDF
+import Rules
 
 main :: IO ()
 main = execParser opts >>= importJava
@@ -50,7 +45,7 @@ params =
 
 parseJava :: FilePath -> Bool -> IO ()
 parseJava path pretty =
-  let diagnosticsByRules cUnit = CheckScope.check cUnit path
+  let diagnosticsByRules cUnit = Rules.checkAll cUnit path
    in do
         input <- readFile path
         let result = parser compilationUnit input
