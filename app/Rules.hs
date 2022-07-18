@@ -5,6 +5,7 @@ import CheckNonPrivateAttributes
 import EmptyLoopBody
 import Language.Java.Syntax
 import NeedBraces
+import NoLoopBreak
 import RDF
 import SimplifyBooleanReturn
 
@@ -26,6 +27,7 @@ checks =
     EmptyLoopBody.check,
     SimplifyBooleanReturn.check,
     NeedBraces.check
+      NoLoopBreak.check
   ]
 
 checkAll :: CompilationUnit -> FilePath -> [Diagnostic]

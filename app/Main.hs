@@ -7,12 +7,6 @@ import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
 import Lib
-<<<<<<< HEAD
-import NamingConventions
-import NeedBraces
-import NoLoopBreak
-=======
->>>>>>> main
 import Options.Applicative
 import RDF
 import Rules
