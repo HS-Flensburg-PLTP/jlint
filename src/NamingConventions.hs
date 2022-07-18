@@ -118,7 +118,7 @@ extractLocalFinalVariableNames2 (methodName, methodBody) path = do
       | otherwise =
         map extractVarName varDecls
           & filter (\name -> not (matched (name ?=~ reCamelCase)))
-          & map (\name -> methodDiagnostic methodName ("Local non-final variable " ++ name ++ " in for-Loop doesn't match the specifications") path)
+          & map (\name -> methodDiagnostic methodName ("Local non-final variable " ++ name ++ " doesn't match the specifications") path)
     extractMemberDecl _ = mzero
 
 {- MemberName -}
