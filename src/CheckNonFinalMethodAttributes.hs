@@ -56,7 +56,7 @@ constructDiagnostic fparam ident path =
       location =
         Location
           { path = path,
-            locationRange = Nothing
+            range = Nothing
           },
       severity = WARNING,
       source = Nothing,

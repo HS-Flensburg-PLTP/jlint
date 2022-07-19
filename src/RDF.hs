@@ -57,7 +57,7 @@ data Suggestion = Suggestion
 
 data Location = Location
   { path :: String,
-    locationRange :: Maybe Range
+    range :: Maybe Range
   }
   deriving (Generic, Show, Eq)
 
@@ -136,7 +136,7 @@ simpleDiagnostic dmessage fpath =
       location =
         Location
           { path = fpath,
-            locationRange = Nothing
+            range = Nothing
           },
       severity = WARNING
   ,
