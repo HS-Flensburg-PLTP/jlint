@@ -138,8 +138,7 @@ simpleDiagnostic dmessage fpath =
           { path = fpath,
             range = Nothing
           },
-      severity = WARNING
-  ,
+      severity = WARNING,
       source = Nothing,
       code = Nothing,
       suggestions = Nothing,
