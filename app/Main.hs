@@ -4,22 +4,22 @@ module Main where
 
 import CheckNonFinalMethodAttributes
 import CheckNonPrivateAttributes
-import EmptyLoopBody
-import NamingConventions
-import NeedBraces
 -- import qualified Data.ByteString
 import Control.Monad (MonadPlus (..), unless)
 import Data.ByteString.Lazy.Internal
 import Data.Semigroup ((<>))
+import EmptyLoopBody
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
 import Lib
+import NamingConventions
+import NeedBraces
 import Options.Applicative
 import RDF
+import Rules
 import System.FilePath.Find
 import Text.Parsec.Error
-import Rules
 
 main :: IO ()
 main = execParser opts >>= importJava
@@ -102,7 +102,7 @@ parseJava rootDir pretty =
               ( RDF.encodetojson
                   ( DiagnosticResult
                       { diagnostics = diagnostics,
-                        resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
+                        resultSource = Just (Source {name = "jlint", url = Nothing}),
                         resultSeverity = RDF.checkSeverityList (map RDF.severity diagnostics) -- emmits highest severity of all results in all files
                       }
                   )
