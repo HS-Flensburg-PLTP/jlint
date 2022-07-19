@@ -18,6 +18,8 @@ import Data.Aeson
   ( ToJSON (toEncoding),
     defaultOptions,
     encode,
+    pairs,
+    (.=),
     genericToEncoding,
   )
 import Data.ByteString.Lazy.Internal (ByteString)
@@ -109,7 +111,7 @@ instance ToJSON Diagnostic where
   toEncoding = genericToEncoding defaultOptions
 
 instance ToJSON DiagnosticResult where
-  toEncoding = genericToEncoding defaultOptions
+  toEncoding (DiagnosticResult diagnostics resultSource resultSeverity) = pairs ("diagnostics" .= diagnostics  <> "source" .= resultSource  <> "severity" .= resultSeverity)
 
 encodetojson :: ToJSON a => a -> Data.ByteString.Lazy.Internal.ByteString
 encodetojson = encode

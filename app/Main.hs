@@ -4,6 +4,7 @@ module Main where
 
 import CheckNonFinalMethodAttributes
 import CheckNonPrivateAttributes
+import EmptyLoopBody
 -- import qualified Data.ByteString
 
 import Control.Monad (MonadPlus (..), unless)
