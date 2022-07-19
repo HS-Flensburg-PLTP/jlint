@@ -80,10 +80,10 @@ data DiagnosticResult = DiagnosticResult
   deriving (Generic, Show)
 
 data Severity
-  = Unknown
-  | Info
-  | Warning
-  | Error
+  = UNKNOWN
+  | INFO
+  | WARNING
+  | ERROR
   deriving (Generic, Eq, Show, Ord)
 
 instance ToJSON Severity where
@@ -139,7 +139,8 @@ simpleDiagnostic dmessage fpath =
           { path = fpath,
             locationRange = Nothing
           },
-      severity = Warning,
+      severity = WARNING
+  ,
       source = Nothing,
       code = Nothing,
       suggestions = Nothing,
@@ -147,7 +148,7 @@ simpleDiagnostic dmessage fpath =
     }
 
 checkSeverityList :: [Severity] -> Severity
-checkSeverityList [] = Unknown
+checkSeverityList [] = UNKNOWN
 checkSeverityList list = maximum list
 
 methodDiagnostic :: String -> String -> FilePath -> Diagnostic

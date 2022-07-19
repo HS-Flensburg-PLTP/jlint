@@ -69,7 +69,7 @@ constructDiagnostic varname fpath =
           { path = fpath,
             locationRange = Nothing
           },
-      severity = Warning,
+      severity = WARNING,
       source = Nothing,
       code = Nothing,
       suggestions = Nothing,

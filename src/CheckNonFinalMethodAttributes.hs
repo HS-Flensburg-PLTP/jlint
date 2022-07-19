@@ -58,7 +58,7 @@ constructDiagnostic fparam ident path =
           { path = path,
             locationRange = Nothing
           },
-      severity = Warning,
+      severity = WARNING,
       source = Nothing,
       code = Nothing,
       suggestions = Nothing,
