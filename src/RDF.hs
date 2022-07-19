@@ -18,9 +18,9 @@ import Data.Aeson
   ( ToJSON (toEncoding),
     defaultOptions,
     encode,
+    genericToEncoding,
     pairs,
     (.=),
-    genericToEncoding,
   )
 import Data.ByteString.Lazy.Internal (ByteString)
 import GHC.Generics (Generic)
@@ -39,7 +39,7 @@ data Range = Range
 
 data Source = Source
   { name :: String,
-    sourceURL :: Maybe String
+    url :: Maybe String
   }
   deriving (Generic, Show, Eq)
 
@@ -108,10 +108,24 @@ instance ToJSON Location where
   toEncoding = genericToEncoding defaultOptions
 
 instance ToJSON Diagnostic where
-  toEncoding = genericToEncoding defaultOptions
+  toEncoding (Diagnostic message location severity source code suggestions originalOutput) =
+    pairs
+      ( "message" .= message
+          <> "location" .= location
+          <> "severity" .= severity
+          <> "source" .= source
+          <> "code" .= code
+          <> "suggestions" .= suggestions
+          <> "original_output" .= originalOutput
+      )
 
 instance ToJSON DiagnosticResult where
-  toEncoding (DiagnosticResult diagnostics resultSource resultSeverity) = pairs ("diagnostics" .= diagnostics  <> "source" .= resultSource  <> "severity" .= resultSeverity)
+  toEncoding (DiagnosticResult diagnostics resultSource resultSeverity) =
+    pairs
+      ( "diagnostics" .= diagnostics
+          <> "source" .= resultSource
+          <> "severity" .= resultSeverity
+      )
 
 encodetojson :: ToJSON a => a -> Data.ByteString.Lazy.Internal.ByteString
 encodetojson = encode
