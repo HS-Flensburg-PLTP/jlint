@@ -80,8 +80,7 @@ data DiagnosticResult = DiagnosticResult
   deriving (Generic, Show)
 
 data Severity
-  = UNKNOWN
-  | INFO
+  = INFO
   | WARNING
   | ERROR
   deriving (Generic, Eq, Show, Ord)
@@ -148,7 +147,7 @@ simpleDiagnostic dmessage fpath =
     }
 
 checkSeverityList :: [Severity] -> Severity
-checkSeverityList [] = UNKNOWN
+checkSeverityList [] = INFO
 checkSeverityList list = maximum list
 
 methodDiagnostic :: String -> String -> FilePath -> Diagnostic
