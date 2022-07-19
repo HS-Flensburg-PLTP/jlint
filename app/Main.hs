@@ -67,8 +67,7 @@ readAllFiles paths =
             return fileList
           path : restPaths -> do
             file <- readFile path
-            let fileres = (file, path)
-            readAllFilesHelp restPaths (return fileres)
+            readAllFilesHelp restPaths ((file, path) : fileList)
    in readAllFilesHelp paths mzero
 
 parseAllFiles :: [(String, FilePath)] -> ([(Text.Parsec.Error.ParseError, FilePath)], [(CompilationUnit, FilePath)])
