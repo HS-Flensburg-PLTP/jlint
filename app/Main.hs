@@ -4,22 +4,22 @@ module Main where
 
 import CheckNonFinalMethodAttributes
 import CheckNonPrivateAttributes
+import EmptyLoopBody
+import NamingConventions
+import NeedBraces
 -- import qualified Data.ByteString
-
 import Control.Monad (MonadPlus (..), unless)
 import Data.ByteString.Lazy.Internal
 import Data.Semigroup ((<>))
-import EmptyLoopBody (check)
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
 import Lib
-import NamingConventions
-import NeedBraces
 import Options.Applicative
 import RDF
 import System.FilePath.Find
 import Text.Parsec.Error
+import Rules
 
 main :: IO ()
 main = execParser opts >>= importJava
