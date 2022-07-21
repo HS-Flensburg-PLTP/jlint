@@ -33,6 +33,7 @@ library
       Lib
       NamingConventions
       NeedBraces
+      NoNegation
       RDF
       SimplifyBooleanReturn
   other-modules:
