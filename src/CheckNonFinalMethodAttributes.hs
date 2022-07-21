@@ -1,7 +1,6 @@
 module CheckNonFinalMethodAttributes (check) where
 
 import AST (extractMethodParameters)
-import Control.Monad (MonadPlus (..))
 import Language.Java.Syntax (CompilationUnit (..), FormalParam (..), Ident (Ident), Modifier (Final), VarDeclId (VarDeclArray, VarId))
 import RDF (Diagnostic (..), methodDiagnostic)
 
@@ -13,9 +12,7 @@ check cUnit path = do
 checkFormalParamList :: (String, [FormalParam]) -> FilePath -> [Diagnostic]
 checkFormalParamList (methodName, formalParams) path = concatMap checkFormalParam formalParams
   where
-    checkFormalParam (FormalParam modifier _ _ varid) = do
-      if Final `notElem` modifier
-        then return (methodDiagnostic methodName (extractVarName varid ++ " is not declared as Final") path)
-        else mzero
+    checkFormalParam (FormalParam modifier _ _ varid) =
+      [methodDiagnostic methodName (extractVarName varid ++ " is not declared as Final") path | Final `notElem` modifier]
     extractVarName (VarDeclArray varDeclId) = extractVarName varDeclId
     extractVarName (VarId (Ident n)) = n
