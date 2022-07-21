@@ -9,10 +9,10 @@ import RDF (Diagnostic (..), methodDiagnostic)
 check :: CompilationUnit -> FilePath -> [Diagnostic]
 check cUnit path = do
   method <- extractMethods cUnit
-  checkMethods method path (mapVars (extractMethodVars method) (extractClassVars cUnit))
+  checkIfThenElseStatements method path (concatFittingMethodAndClassVars (extractMethodVars method) (extractClassVars cUnit))
 
-checkMethods :: (String, MethodBody) -> FilePath -> [(String, Bool)] -> [Diagnostic]
-checkMethods (methodName, methodBody) path varList = do
+checkIfThenElseStatements :: (String, MethodBody) -> FilePath -> [(String, Bool)] -> [Diagnostic]
+checkIfThenElseStatements (methodName, methodBody) path varList = do
   stmt <- universeBi methodBody
   checkStatement stmt
   where
@@ -32,13 +32,11 @@ extractClassVars cUnit = do
     extractNameAndType _ = mzero
 
 extractVarName :: VarDeclId -> Bool -> (String, Bool)
-extractVarName var b =
-  case var of
-    (VarId (Ident varName)) -> (varName, b)
-    (VarDeclArray varDecl) -> extractVarName varDecl b
+extractVarName (VarId (Ident varName)) b = (varName, b)
+extractVarName (VarDeclArray varDecl) b = extractVarName varDecl b
 
 extractMethodVars :: (String, MethodBody) -> [(String, Bool)]
-extractMethodVars (methodName, methodBody) = do
+extractMethodVars (_, methodBody) = do
   var <- universeBi methodBody
   extractNameAndBool var
   where
@@ -46,5 +44,5 @@ extractMethodVars (methodName, methodBody) = do
     extractNameAndBool (LocalVars [] _ var) = map (\(VarDecl v _) -> extractVarName v False) var
     extractNameAndBool _ = mzero
 
-mapVars :: [(String, Bool)] -> [(String, Bool)] -> [(String, Bool)]
-mapVars methodVars classVars = methodVars ++ filter (\(name, _) -> (name, True) `notElem` methodVars && (name, False) `notElem` methodVars) classVars
+concatFittingMethodAndClassVars :: [(String, Bool)] -> [(String, Bool)] -> [(String, Bool)]
+concatFittingMethodAndClassVars methodVars classVars = methodVars ++ filter (\(name, _) -> (name, True) `notElem` methodVars && (name, False) `notElem` methodVars) classVars
