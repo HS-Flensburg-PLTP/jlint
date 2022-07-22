@@ -11,7 +11,7 @@ extractMethodVariables methodBody = do
   names <- universeBi methodBody
   extractNames names
   where
-    extractNames (LocalVars _ _ varDecls) = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecls
+    extractNames (LocalVars _ _ varDecls) = map (\(VarDecl varId _) -> extractVarName varId) varDecls
     extractNames _ = mzero
 
 extractMethodStatements :: MethodBody -> [Stmt]
@@ -47,3 +47,7 @@ checkIfElement stmt var = do
   checkStatement elements var
   where
     checkStatement (Name varList) var = [Ident var `elem` varList]
+
+extractVarName :: VarDeclId -> String
+extractVarName (VarDeclArray varDeclId) = extractVarName varDeclId
+extractVarName (VarId (Ident n)) = n
