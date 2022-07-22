@@ -36,6 +36,7 @@ library
       NamingConventions
       NeedBraces
       RDF
+      SameExecutionsInIf
       SimplifyBooleanReturn
       UnusedLocalVariable
   other-modules:
