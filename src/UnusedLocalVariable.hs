@@ -17,7 +17,7 @@ extractMethodVariables methodBody = do
   names <- universeBi methodBody
   extractNames names
   where
-    extractNames (LocalVars _ _ varDecls) = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecls
+    extractNames (LocalVars _ _ varDecls) = map (\(VarDecl varId _) -> extractVarName varId) varDecls
     extractNames _ = mzero
 
 extractMethodVariableUsages :: MethodBody -> [String]
@@ -56,9 +56,13 @@ extractClassVars cUnit = do
   variables <- universeBi cUnit
   extractVars variables
   where
-    extractVars (FieldDecl _ _ varDecls) = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecls
+    extractVars (FieldDecl _ _ varDecls) = map (\(VarDecl varId _) -> extractVarName varId) varDecls
     extractVars _ = mzero
 
 checkClassVarUsageInMethod :: String -> [String] -> [String] -> Bool
 checkClassVarUsageInMethod var methodVars methodVarUsages =
   notElem var methodVars && elem var methodVarUsages
+
+extractVarName :: VarDeclId -> String
+extractVarName (VarDeclArray varDeclId) = extractVarName varDeclId
+extractVarName (VarId (Ident n)) = n
