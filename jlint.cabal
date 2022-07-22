@@ -39,6 +39,7 @@ library
       RDF
       SameExecutionsInIf
       SimplifyBooleanReturn
+      UnnecessaryVariables
       UnusedLocalVariable
   other-modules:
       Paths_jlint
