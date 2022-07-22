@@ -35,6 +35,7 @@ library
       NeedBraces
       RDF
       SimplifyBooleanReturn
+      UnnecessaryVariables
   other-modules:
       Paths_jlint
   hs-source-dirs:
