@@ -32,6 +32,7 @@ library
       DefaultComesLast
       EmptyLoopBody
       Lib
+      NamingConventions
       NeedBraces
       RDF
       SimplifyBooleanReturn
@@ -47,12 +48,14 @@ library
     , language-java >=0.2.9 && <3
     , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
+    , regex >=1.1.0 && <1.2
     , uniplate >=1.6.11 && <1.7
   default-language: Haskell2010
 
 executable jlint-exe
   main-is: Main.hs
   other-modules:
+      Rules
       Paths_jlint
   hs-source-dirs:
       app
@@ -65,6 +68,7 @@ executable jlint-exe
     , language-java >=0.2.9 && <3
     , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
+    , regex >=1.1.0 && <1.2
     , uniplate >=1.6.11 && <1.7
   default-language: Haskell2010
 
@@ -85,5 +89,6 @@ test-suite jlint-test
     , language-java >=0.2.9 && <3
     , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
+    , regex >=1.1.0 && <1.2
     , uniplate >=1.6.11 && <1.7
   default-language: Haskell2010
