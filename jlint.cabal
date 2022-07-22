@@ -35,6 +35,7 @@ library
       Lib
       NamingConventions
       NeedBraces
+      NoNegation
       RDF
       SameExecutionsInIf
       SimplifyBooleanReturn
