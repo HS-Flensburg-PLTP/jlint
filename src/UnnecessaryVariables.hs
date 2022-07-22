@@ -16,8 +16,10 @@ extractMethodVars methodBody = do
   names <- universeBi methodBody
   extractNames names
   where
-    extractNames (LocalVars _ _ varDecls) = map (\(VarDecl (VarId (Ident n)) _) -> n) varDecls
+    extractNames (LocalVars _ _ varDecls) = map (\(VarDecl varDeclId _) -> extractVarNames varDeclId) varDecls
     extractNames _ = mzero
+    extractVarNames (VarId (Ident n)) = n
+    extractVarNames (VarDeclArray varDeclId) = extractVarNames varDeclId
 
 extractMethodVarUsage :: MethodBody -> [String]
 extractMethodVarUsage methodBody = do
