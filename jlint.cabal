@@ -28,6 +28,7 @@ library
       AST
       CheckNonFinalMethodAttributes
       CheckNonPrivateAttributes
+      CheckScope
       Control.Monad.Extra
       DefaultComesLast
       EmptyLoopBody
