@@ -1,4 +1,3 @@
-
 module TestEmptyLoopBody where
 
 import EmptyLoopBody (check)
