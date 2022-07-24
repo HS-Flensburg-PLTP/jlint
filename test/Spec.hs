@@ -1,5 +1,5 @@
-import TestEmptyLoopBody
+import EmptyLoopBody.Tests
 
 main :: IO ()
 main = do
-    testEmptyLoopBodies
+  testAllEmptyLoopBodies
