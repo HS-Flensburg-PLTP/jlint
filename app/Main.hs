@@ -85,7 +85,6 @@ parseAllFiles files =
                 parseAllfilesHelp restFiles (errorList, (cUnit, path) : cUnitList)
    in parseAllfilesHelp files (mzero, mzero)
 
-
 -- missing pretty option and does not print errors
 parseJava :: FilePath -> Bool -> IO ()
 parseJava rootDir pretty = do
@@ -108,4 +107,3 @@ parseJava rootDir pretty = do
             )
         )
       unless (null parsingErrors) $ print parsingErrors
-      
