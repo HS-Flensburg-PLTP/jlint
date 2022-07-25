@@ -15,3 +15,4 @@ checkAttributes (varNames, mods) path =
   where
     checkModifier modifier varname =
       [methodDiagnostic varname "Is not declared as private" path | Private `notElem` modifier]
+      
