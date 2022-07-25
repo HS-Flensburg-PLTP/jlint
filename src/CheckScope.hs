@@ -1,6 +1,6 @@
 module CheckScope where
 
-import AST (extractMethods)
+import AST (extractMethods, extractVarNames)
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
@@ -11,7 +11,7 @@ extractMethodVariables methodBody = do
   names <- universeBi methodBody
   extractNames names
   where
-    extractNames (LocalVars _ _ varDecls) = map (\(VarDecl varId _) -> extractVarName varId) varDecls
+    extractNames (LocalVars _ _ varDecls) = map (\(VarDecl varId _) -> extractVarNames varId) varDecls
     extractNames _ = mzero
 
 extractMethodStatements :: MethodBody -> [Stmt]
@@ -47,7 +47,3 @@ checkIfElement stmt var = do
   checkStatement elements var
   where
     checkStatement (Name varList) var = [Ident var `elem` varList]
-
-extractVarName :: VarDeclId -> String
-extractVarName (VarDeclArray varDeclId) = extractVarName varDeclId
-extractVarName (VarId (Ident n)) = n
