@@ -17,55 +17,55 @@ testAllEmptyLoopBodies = do
 testEmptyWhileLoop =
   "Empty While Loop" -- ~: adds label to Test (Testlist)
     ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/emptyLoopBody/EmptyWhileLoop.java"
-          (\inputList -> map (\input -> do
-              (path, cUnit) <- input
-              let diagResults = EmptyLoopBody.check cUnit path
-              checkPath diagResults path
-              checkMessage diagResults "Method testFunc: A While-Loop has a empty loop body."
-              -- diagResults @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )inputList)
-      ]
+      withCUnit
+      "/test/emptyLoopBody/EmptyWhileLoop.java"
+      map
+      ( \input -> do
+          (path, cUnit) <- input
+          let diagResults = EmptyLoopBody.check cUnit path
+          checkPath diagResults path
+          checkMessage diagResults "Method testFunc: A While-Loop has a empty loop body."
+          -- diagResults @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+      )
 
 testEmptyDoLoop =
   "Empty Do Loop"
     ~: test
-      [ withCUnit
-          "/test/emptyLoopBody/EmptyDoLoop.java"
-          (\inputList -> map (\input -> do
-              (path, cUnit) <- input
-              let diagResults = EmptyLoopBody.check cUnit path
-              checkPath diagResults path
-              checkMessage diagResults "Method testFunc: A Do-Loop has a empty loop body."
-          )inputList)
-      ]
+      withCUnit
+      "/test/emptyLoopBody/EmptyDoLoop.java"
+      map
+      ( \input -> do
+          (cUnit, path) <- input
+          let diagResults = EmptyLoopBody.check cUnit path
+          checkPath diagResults path
+          checkMessage diagResults "Method testFunc: A Do-Loop has a empty loop body."
+      )
 
 testEmptyBasicForLoop =
   "Empty Basic For Loop"
     ~: test
-      [ withCUnit
-          "/test/emptyLoopBody/EmptyBasicForLoop.java"
-          (\inputList -> map (\input -> do
-              (path, cUnit) <- input
-              let diagResults = EmptyLoopBody.check cUnit path
-              checkPath diagResults path
-              checkMessage diagResults "Method testFunc: A For-Loop has a empty loop body."
-          ) inputList)
-      ]
+      withCUnit
+      "/test/emptyLoopBody/EmptyBasicForLoop.java"
+      map
+      ( \input -> do
+          (cUnit, path) <- input
+          let diagResults = EmptyLoopBody.check cUnit path
+          checkPath diagResults path
+          checkMessage diagResults "Method testFunc: A For-Loop has a empty loop body."
+      )
 
 testEmptEnhancedForLoop =
   "Empty ForEach Loop"
     ~: test
-      [ withCUnit
-          "/test/emptyLoopBody/EmptyEnhancedForLoop.java"
-          (\inputList -> map (\input -> do
-              (path, cUnit) <- input
-              let diagResults = EmptyLoopBody.check cUnit path
-              checkPath diagResults path
-              checkMessage diagResults "Method testFunc: A ForEach-Lopp has a empty loop body."
-          )inputList)
-      ]
+      withCUnit
+      "/test/emptyLoopBody/EmptyEnhancedForLoop.java"
+      map
+      ( \input -> do
+          (cUnit, path) <- input
+          let diagResults = EmptyLoopBody.check cUnit path
+          checkPath diagResults path
+          checkMessage diagResults "Method testFunc: A ForEach-Lopp has a empty loop body."
+      )
 
 {-testEmptyWhileLoop =
   test -- test can be called on List of testables
