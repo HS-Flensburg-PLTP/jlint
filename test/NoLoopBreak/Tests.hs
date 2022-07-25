@@ -27,7 +27,7 @@ testAllNoLoopBreaks = do
   return ()
 
 testBreakDoWhileLoop =
-  "Break Do-While-Loop with Break" ~: 
+  "Break Do-While-Loop with Break" ~:
     test
       [ withCUnit
           "/test/noLoopBreak/JavaFiles/BreakDoWhileLoop.java"
@@ -37,6 +37,7 @@ testBreakDoWhileLoop =
               checkMessage diagResult "Method testFunc: Exit Loop with break"
           )
       ]
+
 
 testBreakEnhancedForLoop =
   "Break Enhanced-For-Loop with Break" ~:
