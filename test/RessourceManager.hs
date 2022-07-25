@@ -6,6 +6,8 @@ import Language.Java.Syntax
 import System.Directory
 import Text.Parsec.Error
 import UnliftIO.Exception
+import Control.Monad (MonadPlus (..))
+
 
 -- divide input
 
@@ -20,7 +22,7 @@ puts together name and sourcecode of each fragment, where the input has to be fo
 
 subDivideInput :: String -> FilePath -> [(String, FilePath)]
 subDivideInput input rootDir =
-  composeOutput False (splitInput input) []
+  composeOutput False (splitInput input) mzero
   where
     splitInput :: String -> [String]
     splitInput =
@@ -33,23 +35,21 @@ subDivideInput input rootDir =
           fileList
         fragmentName : restFragA@(_ : (fragmentCode : restFragB)) ->
           if startFlag
-            then composeOutput True restFragB ((fragmentCode, fragmentName) : fileList)
+            then composeOutput False restFragB ((fragmentCode, fragmentName) : fileList)
             else composeOutput True restFragA fileList
-        fragmentName : restFragA@(_ : (fragmentCode : [])) ->
-          if startFlag
-            then composeOutput False restFragA ((fragmentCode, rootDir ++ fragmentName) : fileList)
-            else fileList
+        fragmentName : _ ->
+         ("" , fragmentName) : fileList
 
-filterParsingResults :: [(Either ParseError CompilationUnit, FilePath)] -> [(CompilationUnit, FilePath)]
+filterParsingResults :: [(Either ParseError CompilationUnit, FilePath)] -> [IO(CompilationUnit, FilePath)]
 filterParsingResults =
   map
     ( \(paringResult, corresPath) -> case paringResult of
         Left error -> throwString (show error)
-        Right cUnit -> (cUnit, corresPath)
+        Right cUnit -> return (cUnit, corresPath)
     )
 
 -- parse Java if fail
-parseJava :: String -> IO [(CompilationUnit, FilePath)] -- [IO CompilationUnit]
+parseJava :: String -> IO [IO(CompilationUnit, FilePath)] -- [IO CompilationUnit]
 parseJava path = do
   input <- readFile path
   let formatedInput = subDivideInput input path
@@ -63,15 +63,15 @@ parseJava path = do
 
   return (filterParsingResults result)
 
-withCUnit :: FilePath -> ([(CompilationUnit, FilePath)] -> [IO ()]) -> [IO ()]
+withCUnit :: FilePath -> ([IO (CompilationUnit, FilePath)] -> IO [IO ()]) -> IO [IO ()]
 withCUnit relativePath =
   bracket setupCUnit teardownCunit -- bracket before after during
   where
-    setupCUnit :: IO [(CompilationUnit, FilePath)]
+    setupCUnit :: IO [IO (CompilationUnit, FilePath)]
     setupCUnit =
       do
         path <- getCurrentDirectory
         parseJava (path ++ relativePath)
 
-    teardownCunit :: [(CompilationUnit, FilePath)] -> [IO ()]
-    teardownCunit _ = [return ()]
+    teardownCunit :: [IO (CompilationUnit, FilePath)] -> IO [IO ()]
+    teardownCunit _ = return [return ()]
