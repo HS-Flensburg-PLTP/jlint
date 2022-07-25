@@ -1,4 +1,4 @@
-package test.noLoopBreak.JavaFiles;
+package test.NoLoopBreak.JavaFiles;
 
 public class BreakDoWhileLoop {
 
