@@ -75,7 +75,7 @@ data Diagnostic = Diagnostic
 data DiagnosticResult = DiagnosticResult
   { diagnostics :: [Diagnostic],
     resultSource :: Maybe Source,
-    resultSeverity :: Severity
+    resultSeverity :: Maybe Severity
   }
   deriving (Generic, Show)
 
@@ -119,12 +119,19 @@ instance ToJSON Diagnostic where
       )
 
 instance ToJSON DiagnosticResult where
-  toEncoding (DiagnosticResult diagnostics resultSource resultSeverity) =
-    pairs
-      ( "diagnostics" .= diagnostics
-          <> "source" .= resultSource
-          <> "severity" .= resultSeverity
-      )
+  toEncoding (DiagnosticResult diagnostics resultSource maybeSeverity) =
+    case maybeSeverity of
+      Just resSeverity ->
+        pairs
+          ( "diagnostics" .= diagnostics
+              <> "source" .= resultSource
+              <> "severity" .= resSeverity
+          )
+      Nothing ->
+        pairs
+          ( "diagnostics" .= diagnostics
+              <> "source" .= resultSource
+          )
 
 encodetojson :: ToJSON a => a -> Data.ByteString.Lazy.Internal.ByteString
 encodetojson = encode
@@ -138,16 +145,16 @@ simpleDiagnostic dmessage fpath =
           { path = fpath,
             range = Nothing
           },
-      severity = WARNING,
+      severity = ERROR,
       source = Nothing,
       code = Nothing,
       suggestions = Nothing,
       originalOutput = Nothing
     }
 
-checkSeverityList :: [Severity] -> Severity
-checkSeverityList [] = INFO
-checkSeverityList list = maximum list
+checkSeverityList :: [Severity] -> Maybe Severity
+checkSeverityList [] = Nothing
+checkSeverityList list = Just (maximum list)
 
 methodDiagnostic :: String -> String -> FilePath -> Diagnostic
 methodDiagnostic methodName msg = simpleDiagnostic ("Method " ++ methodName ++ ": " ++ msg)
