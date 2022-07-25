@@ -28,7 +28,10 @@ testAll = do
           testParameterNameThree,
           testStaticVarNameOne,
           testStaticVarNameTwo,
-          testStaticVarNameThree
+          testStaticVarNameThree,
+          testLocalFinalVarOne,
+          testLocalFinalVarTwo,
+          testLocalFinalVarThree
         ]
     )
   return ()
@@ -180,6 +183,47 @@ testStaticVarNameThree =
               let diagResult = checkStaticVariableName cUnit path
               checkPath diagResult path
               checkMessage diagResult "Static variable test_var doesn't match the specifications."
+              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+          )
+      ]
+
+{- Local Final Variable -}
+
+testLocalFinalVarOne =
+  "Test LocalFinalVariable begin with capital letter" -- ~: adds label to Test (Testlist)
+    ~: test -- test can be called on List of testables
+      [ withCUnit
+          "/test/NamingConventions/LocalFinalVarNameCapitalStart.java"
+          ( \(path, cUnit) -> do
+              let diagResult = checkLocalName cUnit path
+              checkPath diagResult path
+              checkMessage diagResult "Method test: Local final variable Testvar doesn't match the specifications"
+              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+          )
+      ]
+
+testLocalFinalVarTwo =
+  "Test LocalFinalVariable begin with underscore" -- ~: adds label to Test (Testlist)
+    ~: test -- test can be called on List of testables
+      [ withCUnit
+          "/test/NamingConventions/LocalFinalVarNameUnderscoreStart.java"
+          ( \(path, cUnit) -> do
+              let diagResult = checkLocalName cUnit path
+              checkPath diagResult path
+              checkMessage diagResult "Method test: Local final variable _testvar doesn't match the specifications"
+              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+          )
+      ]
+
+testLocalFinalVarThree =
+  "Test LocalFinalVariable contain underscore after first letter" -- ~: adds label to Test (Testlist)
+    ~: test -- test can be called on List of testables
+      [ withCUnit
+          "/test/NamingConventions/LocalFinalVarNameUnderscoreLater.java"
+          ( \(path, cUnit) -> do
+              let diagResult = checkLocalName cUnit path
+              checkPath diagResult path
+              checkMessage diagResult "Method test: Local final variable test_var doesn't match the specifications"
               -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
           )
       ]
