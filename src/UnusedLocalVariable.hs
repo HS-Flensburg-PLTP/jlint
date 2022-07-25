@@ -1,6 +1,6 @@
 module UnusedLocalVariable where
 
-import AST (extractMethods, extractVarNames)
+import AST (extractMethods, extractVarName)
 import Control.Monad (MonadPlus (..))
 import Data.Function ((&))
 import Data.Generics.Uniplate.Data (universeBi)
@@ -17,7 +17,7 @@ extractMethodVariables methodBody = do
   names <- universeBi methodBody
   extractNames names
   where
-    extractNames (LocalVars _ _ varDecls) = map (\(VarDecl varId _) -> extractVarNames varId) varDecls
+    extractNames (LocalVars _ _ varDecls) = map (\(VarDecl varId _) -> extractVarName varId) varDecls
     extractNames _ = mzero
 
 extractMethodVariableUsages :: MethodBody -> [String]
@@ -56,7 +56,7 @@ extractClassVars cUnit = do
   variables <- universeBi cUnit
   extractVars variables
   where
-    extractVars (FieldDecl _ _ varDecls) = map (\(VarDecl varId _) -> extractVarNames varId) varDecls
+    extractVars (FieldDecl _ _ varDecls) = map (\(VarDecl varId _) -> extractVarName varId) varDecls
     extractVars _ = mzero
 
 checkClassVarUsageInMethod :: String -> [String] -> [String] -> Bool

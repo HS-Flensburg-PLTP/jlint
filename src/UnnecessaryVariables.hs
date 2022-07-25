@@ -1,6 +1,6 @@
 module UnnecessaryVariables where
 
-import AST (extractMethods, extractVarNames)
+import AST (extractMethods, extractVarName)
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax (BlockStmt (LocalVars), CompilationUnit, Exp (..), Ident (..), MethodBody, Name (..), Stmt (..), VarDecl (..))
@@ -16,7 +16,7 @@ extractMethodVars methodBody = do
   names <- universeBi methodBody
   extractNames names
   where
-    extractNames (LocalVars _ _ varDecls) = map (\(VarDecl varDeclId _) -> extractVarNames varDeclId) varDecls
+    extractNames (LocalVars _ _ varDecls) = map (\(VarDecl varDeclId _) -> extractVarName varDeclId) varDecls
     extractNames _ = mzero
 
 extractMethodVarUsage :: MethodBody -> [String]

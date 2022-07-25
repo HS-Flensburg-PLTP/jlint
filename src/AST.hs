@@ -28,8 +28,6 @@ extractAttributes cUnit = do
   where
     extractField (FieldDecl mods _ vardecl) = return (map (\(VarDecl vardeclId _) -> extractVarName vardeclId) vardecl, mods)
     extractField _ = mzero
-    extractVarName (VarDeclArray varDeclId) = extractVarName varDeclId
-    extractVarName (VarId (Ident n)) = n
 
 extractMethodParameters :: CompilationUnit -> [(String, [FormalParam])]
 extractMethodParameters cUnit = do
@@ -39,6 +37,6 @@ extractMethodParameters cUnit = do
     extractFormalParam (MethodDecl _ _ _ (Ident ident) formalParam _ _ _) = return (ident, formalParam)
     extractFormalParam _ = mzero
 
-extractVarNames :: VarDeclId -> String
-extractVarNames (VarDeclArray varDeclId) = extractVarNames varDeclId
-extractVarNames (VarId (Ident n)) = n
+extractVarName :: VarDeclId -> String
+extractVarName (VarDeclArray varDeclId) = extractVarName varDeclId
+extractVarName (VarId (Ident n)) = n
