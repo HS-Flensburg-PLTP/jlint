@@ -19,12 +19,13 @@ testEmptyWhileLoop =
     ~: test -- test can be called on List of testables
       [ withCUnit
           "/test/emptyLoopBody/EmptyWhileLoop.java"
-          ( \(path, cUnit) -> do
-              let diagResult = EmptyLoopBody.check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: A While-Loop has a empty loop body."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
+          (\inputList -> map (\input -> do
+              (path, cUnit) <- input
+              let diagResults = EmptyLoopBody.check cUnit path
+              checkPath diagResults path
+              checkMessage diagResults "Method testFunc: A While-Loop has a empty loop body."
+              -- diagResults @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+          )inputList)
       ]
 
 testEmptyDoLoop =
@@ -32,11 +33,12 @@ testEmptyDoLoop =
     ~: test
       [ withCUnit
           "/test/emptyLoopBody/EmptyDoLoop.java"
-          ( \(path, cUnit) -> do
-              let diagResult = EmptyLoopBody.check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: A Do-Loop has a empty loop body."
-          )
+          (\inputList -> map (\input -> do
+              (path, cUnit) <- input
+              let diagResults = EmptyLoopBody.check cUnit path
+              checkPath diagResults path
+              checkMessage diagResults "Method testFunc: A Do-Loop has a empty loop body."
+          )inputList)
       ]
 
 testEmptyBasicForLoop =
@@ -44,11 +46,12 @@ testEmptyBasicForLoop =
     ~: test
       [ withCUnit
           "/test/emptyLoopBody/EmptyBasicForLoop.java"
-          ( \(path, cUnit) -> do
-              let diagResult = EmptyLoopBody.check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: A For-Loop has a empty loop body."
-          )
+          (\inputList -> map (\input -> do
+              (path, cUnit) <- input
+              let diagResults = EmptyLoopBody.check cUnit path
+              checkPath diagResults path
+              checkMessage diagResults "Method testFunc: A For-Loop has a empty loop body."
+          ) inputList)
       ]
 
 testEmptEnhancedForLoop =
@@ -56,11 +59,12 @@ testEmptEnhancedForLoop =
     ~: test
       [ withCUnit
           "/test/emptyLoopBody/EmptyEnhancedForLoop.java"
-          ( \(path, cUnit) -> do
-              let diagResult = EmptyLoopBody.check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: A ForEach-Lopp has a empty loop body."
-          )
+          (\inputList -> map (\input -> do
+              (path, cUnit) <- input
+              let diagResults = EmptyLoopBody.check cUnit path
+              checkPath diagResults path
+              checkMessage diagResults "Method testFunc: A ForEach-Lopp has a empty loop body."
+          )inputList)
       ]
 
 {-testEmptyWhileLoop =
