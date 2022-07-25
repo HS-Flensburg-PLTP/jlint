@@ -1,2 +1,5 @@
+import EmptyLoopBody.Tests
+
 main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = do
+  testAllEmptyLoopBodies
