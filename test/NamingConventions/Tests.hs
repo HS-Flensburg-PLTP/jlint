@@ -37,7 +37,16 @@ testAll = do
           testLocalVarNameThree,
           testMemberNameOne,
           testMemberNameTwo,
-          testMemberNameThree
+          testMemberNameThree,
+          testTypeNameOne,
+          testTypeNameTwo,
+          testTypeNameThree,
+          testTypeNameFour,
+          testTypeNameFive,
+          testTypeNameSix,
+          testTypeNameSeven,
+          testTypeNameEight,
+          testTypeNameNine
         ]
     )
   return ()
@@ -312,6 +321,125 @@ testMemberNameThree =
               let diagResult = checkMemberName cUnit path
               checkPath diagResult path
               checkMessage diagResult "Instance variable test_var doesn't match the specifications."
+              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+          )
+      ]
+
+{- Type Name -}
+
+testTypeNameOne =
+  "Test Class begin with lowercase" -- ~: adds label to Test (Testlist)
+    ~: test -- test can be called on List of testables
+      [ withCUnit
+          "/test/NamingConventions/TypeNameLowercaseStart.java"
+          ( \(path, cUnit) -> do
+              let diagResult = checkTypeName cUnit path
+              checkPath diagResult path
+              checkMessage diagResult "Type name testClass doesn't match the specifications."
+              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+          )
+      ]
+
+testTypeNameTwo =
+  "Test Class begin with underscore" -- ~: adds label to Test (Testlist)
+    ~: test -- test can be called on List of testables
+      [ withCUnit
+          "/test/NamingConventions/TypeNameUnderscoreStart.java"
+          ( \(path, cUnit) -> do
+              let diagResult = checkTypeName cUnit path
+              checkPath diagResult path
+              checkMessage diagResult "Type name _TestClass doesn't match the specifications."
+              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+          )
+      ]
+
+testTypeNameThree =
+  "Test Class contain underscore after first letter" -- ~: adds label to Test (Testlist)
+    ~: test -- test can be called on List of testables
+      [ withCUnit
+          "/test/NamingConventions/TypeNameUnderscoreLater.java"
+          ( \(path, cUnit) -> do
+              let diagResult = checkTypeName cUnit path
+              checkPath diagResult path
+              checkMessage diagResult "Type name Test_Class doesn't match the specifications."
+              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+          )
+      ]
+
+testTypeNameFour =
+  "Test Interface begin with lowercase" -- ~: adds label to Test (Testlist)
+    ~: test -- test can be called on List of testables
+      [ withCUnit
+          "/test/NamingConventions/TypeNameInterfaceLowercaseStart.java"
+          ( \(path, cUnit) -> do
+              let diagResult = checkTypeName cUnit path
+              checkPath diagResult path
+              checkMessage diagResult "Type name testClass doesn't match the specifications."
+              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+          )
+      ]
+
+testTypeNameFive =
+  "Test Interface begin with underscore" -- ~: adds label to Test (Testlist)
+    ~: test -- test can be called on List of testables
+      [ withCUnit
+          "/test/NamingConventions/TypeNameInterfaceUnderscoreStart.java"
+          ( \(path, cUnit) -> do
+              let diagResult = checkTypeName cUnit path
+              checkPath diagResult path
+              checkMessage diagResult "Type name _TestClass doesn't match the specifications."
+              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+          )
+      ]
+
+testTypeNameSix =
+  "Test Interface contain underscore after first letter" -- ~: adds label to Test (Testlist)
+    ~: test -- test can be called on List of testables
+      [ withCUnit
+          "/test/NamingConventions/TypeNameInterfaceUnderscoreLater.java"
+          ( \(path, cUnit) -> do
+              let diagResult = checkTypeName cUnit path
+              checkPath diagResult path
+              checkMessage diagResult "Type name Test_Class doesn't match the specifications."
+              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+          )
+      ]
+
+testTypeNameSeven =
+  "Test Enum begin with lowercase" -- ~: adds label to Test (Testlist)
+    ~: test -- test can be called on List of testables
+      [ withCUnit
+          "/test/NamingConventions/TypeNameEnumLowercaseStart.java"
+          ( \(path, cUnit) -> do
+              let diagResult = checkTypeName cUnit path
+              checkPath diagResult path
+              checkMessage diagResult "Type name testClass doesn't match the specifications."
+              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+          )
+      ]
+
+testTypeNameEight =
+  "Test Enum begin with underscore" -- ~: adds label to Test (Testlist)
+    ~: test -- test can be called on List of testables
+      [ withCUnit
+          "/test/NamingConventions/TypeNameEnumUnderscoreStart.java"
+          ( \(path, cUnit) -> do
+              let diagResult = checkTypeName cUnit path
+              checkPath diagResult path
+              checkMessage diagResult "Type name _TestClass doesn't match the specifications."
+              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+          )
+      ]
+
+testTypeNameNine =
+  "Test Enum contain underscore after first letter" -- ~: adds label to Test (Testlist)
+    ~: test -- test can be called on List of testables
+      [ withCUnit
+          "/test/NamingConventions/TypeNameEnumUnderscoreLater.java"
+          ( \(path, cUnit) -> do
+              let diagResult = checkTypeName cUnit path
+              checkPath diagResult path
+              checkMessage diagResult "Type name Test_Class doesn't match the specifications."
               -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
           )
       ]
