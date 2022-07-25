@@ -32,10 +32,10 @@ checkLoop (IfThenElse _ stmt1 stmt2) = do
   return (stm1 ++ stm2)
 checkLoop (Return _) = do
   (methodName, path) <- ask
-  return [methodDiagnostic methodName "Exit Loop with return." path]
+  return [methodDiagnostic methodName "Exit Loop with return" path]
 checkLoop (Break _) = do
   (methodName, path) <- ask
-  return [methodDiagnostic methodName "Exit Loop with break." path]
+  return [methodDiagnostic methodName "Exit Loop with break" path]
 checkLoop stmt = checkStatement stmt
 
 extractLoopBody :: [BlockStmt] -> Reader (String, FilePath) [Diagnostic]
