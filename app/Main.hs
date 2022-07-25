@@ -52,7 +52,7 @@ parseJava path pretty =
         case result of
           Left error -> print error
           Right cUnit -> do
-            -- if pretty then print (prettyPrint cUnit) else print cUnit
+            if pretty then print (prettyPrint cUnit) else print cUnit
             print
               ( RDF.encodetojson
                   ( DiagnosticResult

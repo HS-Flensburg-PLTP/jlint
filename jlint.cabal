@@ -28,14 +28,20 @@ library
       AST
       CheckNonFinalMethodAttributes
       CheckNonPrivateAttributes
+      CheckScope
       Control.Monad.Extra
+      DefaultComesLast
       EmptyLoopBody
       Lib
       NamingConventions
       NeedBraces
       NoLoopBreak
+      NoNegation
       RDF
+      SameExecutionsInIf
       SimplifyBooleanReturn
+      UnnecessaryVariables
+      UnusedLocalVariable
   other-modules:
       Paths_jlint
   hs-source-dirs:
@@ -78,6 +84,7 @@ test-suite jlint-test
   other-modules:
       CheckResults
       RessourceManager
+      TestEmptyLoopBody
       Paths_jlint
   hs-source-dirs:
       test

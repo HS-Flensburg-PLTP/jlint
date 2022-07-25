@@ -8,6 +8,7 @@ import NeedBraces
 import NoLoopBreak
 import RDF
 import SimplifyBooleanReturn
+import UnnecessaryVariables
 
 {- possible rules
 
@@ -27,6 +28,7 @@ checks =
     EmptyLoopBody.check,
     SimplifyBooleanReturn.check,
     NoLoopBreak.check,
+    UnnecessaryVariables.checkMethodVars,
     NeedBraces.check
   ]
 
