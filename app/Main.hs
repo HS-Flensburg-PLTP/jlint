@@ -5,11 +5,10 @@ module Main where
 import CheckNonFinalMethodAttributes
 import CheckNonPrivateAttributes
 -- import qualified Data.ByteString
-
 import Control.Monad (MonadPlus (..), unless)
 import Data.ByteString.Lazy.Internal
 import Data.Semigroup ((<>))
-import EmptyLoopBody (check)
+import EmptyLoopBody
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
@@ -18,6 +17,7 @@ import NamingConventions
 import NeedBraces
 import Options.Applicative
 import RDF
+import Rules
 import System.FilePath.Find
 import Text.Parsec.Error
 
@@ -85,26 +85,27 @@ parseAllFiles files =
                 parseAllfilesHelp restFiles (errorList, (cUnit, path) : cUnitList)
    in parseAllfilesHelp files (mzero, mzero)
 
---missing pretty option and does not print errors
+
+-- missing pretty option and does not print errors
 parseJava :: FilePath -> Bool -> IO ()
-parseJava rootDir pretty =
-  do
-    pathList <- findAllJavaFiles rootDir
-    fileList <- readAllFiles pathList
-    let (parsingErrors, cUnitResults) = parseAllFiles fileList
-    if pretty
-      then putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
-      else do
-        let diagnostics = concatMap (\(cUnit, path) -> CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ EmptyLoopBody.check cUnit path ++ NeedBraces.check cUnit path ++ NamingConventions.checkPackageName cUnit path) cUnitResults
-        putStrLn
-          ( Data.ByteString.Lazy.Internal.unpackChars
-              ( RDF.encodetojson
-                  ( DiagnosticResult
-                      { diagnostics = diagnostics,
-                        resultSource = Just (Source {name = "jlint", sourceURL = Nothing}),
-                        resultSeverity = RDF.checkSeverityList (map RDF.severity diagnostics) -- emmits highest severity of all results in all files
-                      }
-                  )
-              )
-          )
-        unless (null parsingErrors) $ print parsingErrors
+parseJava rootDir pretty = do
+  pathList <- findAllJavaFiles rootDir
+  fileList <- readAllFiles pathList
+  let (parsingErrors, cUnitResults) = parseAllFiles fileList
+  if pretty
+    then putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
+    else do
+      let diagnostics = concatMap (\(cUnit, path) -> CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ EmptyLoopBody.check cUnit path ++ NeedBraces.check cUnit path ++ NamingConventions.checkPackageName cUnit path) cUnitResults
+      putStrLn
+        ( Data.ByteString.Lazy.Internal.unpackChars
+            ( RDF.encodetojson
+                ( DiagnosticResult
+                    { diagnostics = diagnostics,
+                      resultSource = Just (Source {name = "jlint", url = Nothing}),
+                      resultSeverity = RDF.checkSeverityList (map RDF.severity diagnostics) -- emmits highest severity of all results in all files
+                    }
+                )
+            )
+        )
+      unless (null parsingErrors) $ print parsingErrors
+      
