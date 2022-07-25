@@ -25,41 +25,35 @@ nameMarker = "-------------------------"
 codeMarker :: String
 codeMarker = "+++++++++++++++++++++++++"
 
-data FileName a
-  = SetName a
-  | EmptyName a
+type FileName = String
 
-data Code a 
-  = SoureCode a
-  | EmptyCode a
+setFileName :: Maybe String -> FileName
+setFileName maybeName =
+ case maybeName of
+    Just name ->
+      name
+    Nothing ->
+      "NameIsMissing"
 
+type Code = String
 
-instance Monad FileName where
-  (>>=) m f = case m of
-                SetName a ->
-                  f a
-                EmptyName a->
-                  f a 
-  return = SetName 
+setCode :: Maybe String -> Code
+setCode maybeName =
+ case maybeName of
+    Just code ->
+      code
+    Nothing ->
+      "CodeIsMissing"
 
-instance Monad Code where
-  (>>=) m f = case m of
-                SoureCode a ->
-                  f a
-                EmptyCode a ->
-                  f a
-  return = SoureCode
                   
-
-
 
 fileLexer :: String -> FilePath -> [(String, FilePath)]
 fileLexer input rootDir =
   firstStageLexer (splitInput input) mzero
   where
     splitInput :: String -> [String]
-    splitInput =
-      split (onSublist "-------------------------" )
+    splitInput input =
+      concat (map (\inputSeg -> split (onSublist nameMarker) inputSeg) (split (onSublist codeMarker) input))
     
 
     firstStageLexer :: [String] -> [(String, FilePath)] -> [(String, FilePath)]
@@ -69,28 +63,28 @@ fileLexer input rootDir =
           restults
         x : rest@(xs : xss) ->
           if x == nameMarker then
-            secondStageLexer xss (mergeNameCode (Right xs)) restults
+            secondStageLexer xss (mergeNameCode (setFileName (Just xs))) restults
           else if x == codeMarker then
-            firstStageLexer xss (mergeNameCode xs (EmptyName "Missing Testfilename"): restults)
+            firstStageLexer xss (mergeNameCode xs (setCode Nothing): restults)
           else 
-            firstStageLexer rest 
+            firstStageLexer rest restults
 
-    secondStageLexer :: [String] -> (Monad m => m String -> [(String, FilePath)]) -> [(String, FilePath)] -> [(String, FilePath)]
+    secondStageLexer :: [String] -> (String -> (String, FilePath)) -> [(String, FilePath)] -> [(String, FilePath)]
     secondStageLexer input emitResultFunc restults =
       case input of
         [] ->
-          emitResultFunc (EmptyCode "Code must have fallen off the page"): restults
+          emitResultFunc (setCode Nothing): restults
         x : rest@(xs : xss) ->
           if x == nameMarker then
-            secondStageLexer xss (mergeNameCode (SetName xs)) (emitResultFunc (EmptyCode "Code could not be found") : restults)
+            secondStageLexer xss (mergeNameCode (setFileName (Just xs))) (emitResultFunc (setCode Nothing) : restults)
           else if x == codeMarker then
-            firstStageLexer xss (emitResultFunc (SoureCode xs): restults)
+            firstStageLexer xss (emitResultFunc (setCode (Just xs)) : restults)
           else 
             secondStageLexer rest emitResultFunc restults
 
-    mergeNameCode :: Monad m => m String -> m String -> (String, FilePath)
-    mergeNameCode maybeName maybeCode =
-      maybeName >>=(\name -> maybeName >>= (\code -> (code, name)))
+    mergeNameCode :: String -> String -> (String, FilePath)
+    mergeNameCode fName sCode =
+      (sCode, fName)
 
 
 filterParsingResults :: [(Either ParseError CompilationUnit, FilePath)] -> [IO(CompilationUnit, FilePath)]
