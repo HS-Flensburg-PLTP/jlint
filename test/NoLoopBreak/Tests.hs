@@ -27,8 +27,8 @@ testAllNoLoopBreaks = do
   return ()
 
 testBreakDoWhileLoop =
-  "Break Do-While-Loop with Break" ~:
-    test
+  "Break Do-While-Loop with Break"
+    ~: test
       [ withCUnit
           "/test/noLoopBreak/JavaFiles/BreakDoWhileLoop.java"
           ( \(path, cUnit) -> do
@@ -38,10 +38,9 @@ testBreakDoWhileLoop =
           )
       ]
 
-
 testBreakEnhancedForLoop =
-  "Break Enhanced-For-Loop with Break" ~:
-    test
+  "Break Enhanced-For-Loop with Break"
+    ~: test
       [ withCUnit
           "/test/noLoopBreak/JavaFiles/BreakEnhancedForLoop.java"
           ( \(path, cUnit) -> do
@@ -52,8 +51,8 @@ testBreakEnhancedForLoop =
       ]
 
 testBreakForLoop =
-  "Break For-Loop with Break" ~:
-    test
+  "Break For-Loop with Break"
+    ~: test
       [ withCUnit
           "/test/noLoopBreak/JavaFiles/BreakForLoop.java"
           ( \(path, cUnit) -> do
@@ -64,8 +63,8 @@ testBreakForLoop =
       ]
 
 testBreakNestedForLoop =
-  "Break Nested-For-Loop with Break" ~:
-    test
+  "Break Nested-For-Loop with Break"
+    ~: test
       [ withCUnit
           "/test/noLoopBreak/JavaFiles/BreakNestedForLoop.java"
           ( \(path, cUnit) -> do
@@ -76,8 +75,8 @@ testBreakNestedForLoop =
       ]
 
 testBreakNestedWhileLoop =
-  "Break Nested-While-Loop with Break" ~:
-    test
+  "Break Nested-While-Loop with Break"
+    ~: test
       [ withCUnit
           "/test/noLoopBreak/JavaFiles/BreakNestedWhileLoop.java"
           ( \(path, cUnit) -> do
@@ -88,8 +87,8 @@ testBreakNestedWhileLoop =
       ]
 
 testBreakWhileLoop =
-  "Break While-Loop with Break" ~:
-    test
+  "Break While-Loop with Break"
+    ~: test
       [ withCUnit
           "/test/noLoopBreak/JavaFiles/BreakWhileLoop.java"
           ( \(path, cUnit) -> do
@@ -100,8 +99,8 @@ testBreakWhileLoop =
       ]
 
 testReturnDoWhileLoop =
-  "Break Do-While-Loop with Return" ~:
-    test
+  "Break Do-While-Loop with Return"
+    ~: test
       [ withCUnit
           "/test/noLoopBreak/JavaFiles/ReturnDoWhileLoop.java"
           ( \(path, cUnit) -> do
@@ -112,8 +111,8 @@ testReturnDoWhileLoop =
       ]
 
 testReturnEnhancedForLoop =
-  "Break Enhanced-For-Loop with Return" ~:
-    test
+  "Break Enhanced-For-Loop with Return"
+    ~: test
       [ withCUnit
           "/test/noLoopBreak/JavaFiles/ReturnEnhancedForLoop.java"
           ( \(path, cUnit) -> do
@@ -124,8 +123,8 @@ testReturnEnhancedForLoop =
       ]
 
 testReturnForLoop =
-  "Break For-Loop with Return" ~:
-    test
+  "Break For-Loop with Return"
+    ~: test
       [ withCUnit
           "/test/noLoopBreak/JavaFiles/ReturnForLoop.java"
           ( \(path, cUnit) -> do
@@ -136,8 +135,8 @@ testReturnForLoop =
       ]
 
 testReturnNestedForLoop =
-  "Break Nested-For-Loop with Return" ~:
-    test
+  "Break Nested-For-Loop with Return"
+    ~: test
       [ withCUnit
           "/test/noLoopBreak/JavaFiles/ReturnNestedForLoop.java"
           ( \(path, cUnit) -> do
@@ -148,8 +147,8 @@ testReturnNestedForLoop =
       ]
 
 testReturnNestedWhileLoop =
-  "Break Nested-While-Loop with Return" ~:
-    test
+  "Break Nested-While-Loop with Return"
+    ~: test
       [ withCUnit
           "/test/noLoopBreak/JavaFiles/ReturnNestedWhileLoop.java"
           ( \(path, cUnit) -> do
@@ -160,8 +159,8 @@ testReturnNestedWhileLoop =
       ]
 
 testReturnWhileLoop =
-  "Break While-Loop with Return" ~:
-    test
+  "Break While-Loop with Return"
+    ~: test
       [ withCUnit
           "/test/noLoopBreak/JavaFiles/ReturnWhileLoop.java"
           ( \(path, cUnit) -> do
