@@ -86,6 +86,7 @@ test-suite jlint-test
   other-modules:
       CheckResults
       EmptyLoopBody.Tests
+      NamingConventions.Tests
       RessourceManager
       Paths_jlint
   hs-source-dirs:
