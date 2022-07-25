@@ -32,7 +32,6 @@ library
       Control.Monad.Extra
       DefaultComesLast
       EmptyLoopBody
-      Lib
       NamingConventions
       NeedBraces
       NoNegation
