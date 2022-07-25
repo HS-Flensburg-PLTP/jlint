@@ -7,6 +7,7 @@ import Language.Java.Syntax
 import NeedBraces
 import RDF
 import SimplifyBooleanReturn
+import UnnecessaryVariables
 
 {- possible rules
 
@@ -25,6 +26,7 @@ checks =
     CheckNonPrivateAttributes.check,
     EmptyLoopBody.check,
     SimplifyBooleanReturn.check,
+    UnnecessaryVariables.checkMethodVars,
     NeedBraces.check
   ]
 
