@@ -34,7 +34,10 @@ testAll = do
           testLocalFinalVarThree,
           testLocalVarNameOne,
           testLocalVarNameTwo,
-          testLocalVarNameThree
+          testLocalVarNameThree,
+          testMemberNameOne,
+          testMemberNameTwo,
+          testMemberNameThree
         ]
     )
   return ()
@@ -268,6 +271,47 @@ testLocalVarNameThree =
               let diagResult = checkLocalName cUnit path
               checkPath diagResult path
               checkMessage diagResult "Method test: Local non-final variable test_var doesn't match the specifications"
+              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+          )
+      ]
+
+{- Member Name -}
+
+testMemberNameOne =
+  "Test MemberName begin with capital letter" -- ~: adds label to Test (Testlist)
+    ~: test -- test can be called on List of testables
+      [ withCUnit
+          "/test/NamingConventions/MemberNameCapitalStart.java"
+          ( \(path, cUnit) -> do
+              let diagResult = checkMemberName cUnit path
+              checkPath diagResult path
+              checkMessage diagResult "Instance variable Testvar doesn't match the specifications."
+              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+          )
+      ]
+
+testMemberNameTwo =
+  "Test MemberName begin with underscore" -- ~: adds label to Test (Testlist)
+    ~: test -- test can be called on List of testables
+      [ withCUnit
+          "/test/NamingConventions/MemberNameUnderscoreStart.java"
+          ( \(path, cUnit) -> do
+              let diagResult = checkMemberName cUnit path
+              checkPath diagResult path
+              checkMessage diagResult "Instance variable _testvar doesn't match the specifications."
+              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
+          )
+      ]
+
+testMemberNameThree =
+  "Test MemberName contain underscore after first letter" -- ~: adds label to Test (Testlist)
+    ~: test -- test can be called on List of testables
+      [ withCUnit
+          "/test/NamingConventions/MemberNameUnderscoreLater.java"
+          ( \(path, cUnit) -> do
+              let diagResult = checkMemberName cUnit path
+              checkPath diagResult path
+              checkMessage diagResult "Instance variable test_var doesn't match the specifications."
               -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
           )
       ]
