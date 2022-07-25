@@ -51,9 +51,11 @@ library
       aeson >=2.0.3 && <2.1
     , base >=4.7 && <5
     , bytestring >=0.10.12.1 && <0.11
+    , filemanip >=0.3.6.3 && <0.4
     , language-java >=0.2.9 && <3
     , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
+    , parsec >=3.1.14.0 && <3.2
     , regex >=1.1.0 && <1.2
     , uniplate >=1.6.11 && <1.7
   default-language: Haskell2010
@@ -70,10 +72,12 @@ executable jlint-exe
       aeson >=2.0.3 && <2.1
     , base >=4.7 && <5
     , bytestring >=0.10.12.1 && <0.11
+    , filemanip >=0.3.6.3 && <0.4
     , jlint
     , language-java >=0.2.9 && <3
     , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
+    , parsec >=3.1.14.0 && <3.2
     , regex >=1.1.0 && <1.2
     , uniplate >=1.6.11 && <1.7
   default-language: Haskell2010
@@ -96,10 +100,12 @@ test-suite jlint-test
     , base >=4.7 && <5
     , bytestring >=0.10.12.1 && <0.11
     , directory >=1.3.6.2 && <2
+    , filemanip >=0.3.6.3 && <0.4
     , jlint
     , language-java >=0.2.9 && <3
     , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
+    , parsec >=3.1.14.0 && <3.2
     , regex >=1.1.0 && <1.2
     , uniplate >=1.6.11 && <1.7
     , unliftio >=0.2.21 && <1

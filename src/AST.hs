@@ -3,6 +3,15 @@ module AST where
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
+  ( CompilationUnit,
+    FormalParam,
+    Ident (Ident),
+    MemberDecl (FieldDecl, MethodDecl),
+    MethodBody,
+    Modifier,
+    VarDecl (VarDecl),
+    VarDeclId (..),
+  )
 
 extractMethods :: CompilationUnit -> [(String, MethodBody)]
 extractMethods cUnit = do
@@ -19,8 +28,6 @@ extractAttributes cUnit = do
   where
     extractField (FieldDecl mods _ vardecl) = return (map (\(VarDecl vardeclId _) -> extractVarName vardeclId) vardecl, mods)
     extractField _ = mzero
-    extractVarName (VarDeclArray varDeclId) = extractVarName varDeclId
-    extractVarName (VarId (Ident n)) = n
 
 extractMethodParameters :: CompilationUnit -> [(String, [FormalParam])]
 extractMethodParameters cUnit = do
@@ -29,3 +36,7 @@ extractMethodParameters cUnit = do
   where
     extractFormalParam (MethodDecl _ _ _ (Ident ident) formalParam _ _ _) = return (ident, formalParam)
     extractFormalParam _ = mzero
+
+extractVarName :: VarDeclId -> String
+extractVarName (VarDeclArray varDeclId) = extractVarName varDeclId
+extractVarName (VarId (Ident n)) = n
