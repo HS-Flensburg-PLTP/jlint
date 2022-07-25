@@ -1,6 +1,6 @@
 module CheckScope where
 
-import AST (extractMethods)
+import AST (extractMethods, extractVarName)
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
@@ -47,7 +47,3 @@ checkIfElement stmt var = do
   checkStatement elements var
   where
     checkStatement (Name varList) var = [Ident var `elem` varList]
-
-extractVarName :: VarDeclId -> String
-extractVarName (VarDeclArray varDeclId) = extractVarName varDeclId
-extractVarName (VarId (Ident n)) = n
