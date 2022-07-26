@@ -87,6 +87,7 @@ test-suite jlint-test
       CheckResults
       EmptyLoopBody.Tests
       RessourceManager
+      UnnecessaryVariables.Tests
       Paths_jlint
   hs-source-dirs:
       test

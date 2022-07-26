@@ -36,13 +36,13 @@ extractReturnedVars methodBody = do
 
 checkNecessaryVars :: [String] -> [String] -> [String] -> String -> FilePath -> [Diagnostic]
 checkNecessaryVars declaredVars usedVars returnedVars methodName path =
-  if checkLengthofFilterUsedVars declaredVars usedVars == 1 && checkLenghtofFilterReturnedVars declaredVars returnedVars <= 1
+  if checkLengthofFilterUsedVars declaredVars usedVars >= 1 && checkLenghtofFilterReturnedVars declaredVars returnedVars <= 1
     then map (\var -> methodDiagnostic methodName ("Variable " ++ var ++ " is unnecessary") path) declaredVars
     else []
 
 checkLenghtofFilterReturnedVars :: [String] -> [String] -> Int
 checkLenghtofFilterReturnedVars declaredVars returnedVars =
-  length (map (`elem` returnedVars) declaredVars)
+  length (filter (`elem` returnedVars) declaredVars)
 
 checkLengthofFilterUsedVars :: [String] -> [String] -> Int
 checkLengthofFilterUsedVars declaredVars usedVars =
