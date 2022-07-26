@@ -8,6 +8,7 @@ import Language.Java.Syntax
 import System.Directory
 import Text.Parsec.Error
 import UnliftIO.Exception
+import System.FilePath.Posix ((</>))
 
 -- testsetup and lexer for dividing test sourcefils into fragments
 {-
@@ -29,13 +30,6 @@ type FileName = String
 
 type Code = String
 
-setFileName :: Maybe String -> FileName
-setFileName =
-  fromMaybe "NameIsMissing"
-
-setCode :: Maybe String -> Code
-setCode =
-  fromMaybe "CodeIsMissing"
 
 fileLexer :: String -> FilePath -> [(String, FilePath)]
 fileLexer input rootDir =
@@ -44,6 +38,18 @@ fileLexer input rootDir =
     splitInput :: String -> [String]
     splitInput input =
       concatMap (split (onSublist nameMarker)) (split (onSublist codeMarker) input)
+
+    setFileName :: Maybe FileName -> FileName
+    setFileName maybeName=
+      case maybeName of
+        Just name ->
+          rootDir </> name
+        Nothing -> 
+          rootDir </> "NameNotDefined"
+
+    setCode :: Maybe String -> Code
+    setCode =
+      fromMaybe "CodeIsMissing" 
 
     firstStageLexer :: [String] -> [(String, FilePath)] -> [(String, FilePath)]
     firstStageLexer input restults =
@@ -55,7 +61,7 @@ fileLexer input rootDir =
             then secondStageLexer xss (mergeNameCode (setFileName (Just xs))) restults
             else
               if x == codeMarker
-                then firstStageLexer xss (mergeNameCode xs (setCode Nothing) : restults)
+                then firstStageLexer xss (mergeNameCode (setFileName Nothing) xs : restults)
                 else firstStageLexer rest restults
 
     secondStageLexer :: [String] -> (String -> (String, FilePath)) -> [(String, FilePath)] -> [(String, FilePath)]
@@ -83,7 +89,7 @@ filterParsingResults =
         Right cUnit -> return (cUnit, corresPath)
     )
 
-parseJava :: String -> IO [IO (CompilationUnit, FilePath)]
+parseJava :: FilePath -> IO [IO (CompilationUnit, FilePath)]
 parseJava path = do
   input <- readFile path
   let formatedInput = fileLexer input path

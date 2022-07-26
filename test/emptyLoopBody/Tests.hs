@@ -8,50 +8,36 @@ import RDF
 import RessourceManager
 import Test.HUnit
 
--- {-# LANGUAGE NoImplicitPrelude #-}
--- {-# LANGUAGE OverloadedStrings #-}
-
---------------
+-- data Test = TestCase Assertion
+--           | TestList [Test]
+--           | TestLabel String Test
 
 testAllEmptyLoopBodies :: IO ()
 testAllEmptyLoopBodies = do
-  emptyWhileLoopResults <- testEmptyWhileLoopIO
-  let resutls = "Empty While Loop" ~: emptyWhileLoopResults
-
-  runTestTT (TestList [resutls])
+  testEmptywhileLoop <- testEmptyWhileLoopIO
+  runTestTT testEmptywhileLoop
   return ()
 
-------------
-testEmptyWhileLoopIO :: IO [IO ()]
+{-
+lamdafunction defines how a single testcase is structured. Each testcase can be defined using mutliple assertions (Assertion = IO ()).
+If any of constituent assertions is executed and fails it terminates execution of the collective assertion / the testcase.
+withCunit creates a testcase for each of the corresponding java - testcode - files. This Way it is possilbe to run the same
+test for multiple inputs.
+-}
+testEmptyWhileLoopIO :: IO Test
 testEmptyWhileLoopIO =
-  withCUnit
-    "/test/emptyLoopBody/EmptyWhileLoop.java"
-    ( return .
-           map
-              ( \inputCode -> do
-                  (cUnit, path) <- inputCode
-                  let diagResults = EmptyLoopBody.check cUnit path
-                  checkPath diagResults path
-                  checkMessage diagResults "Method testFunc: A While-Loop has a empty loop body."
-              )
-    )
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/emptyLoopBody/EmptyWhileLoop.java"
+        ( return .
+             map -- lamdafunction will be used to create a testcase for each testfile.
+                ( \inputCode -> do
+                    (cUnit, path) <- inputCode
+                    let diagResults = EmptyLoopBody.check cUnit path
+                    checkPath diagResults path -- asserition, can do multiple in each testcase, the latter will only be exuted if the former succeded ->
+                    checkMessage diagResults "Method testFunc: A While-Loop has a empty loop body."
+                )
+        )
 
--- OLD
--- testAllEmptyLoopBodies :: IO ()
--- testAllEmptyLoopBodies = do
---   runTestTT (TestList [testEmptyWhileLoop, testEmptyDoLoop, testEmptyBasicForLoop, testEmptEnhancedForLoop])
---   return ()
-
--- testEmptyWhileLoop =
---   "Empty While Loop" -- ~: adds label to Test (Testlist)
---     ~: test -- test can be called on List of testables
---       withCUnit
---       "/test/emptyLoopBody/EmptyWhileLoop.java"
---       map
---       ( \input -> do
---           (path, cUnit) <- input
---           let diagResults = EmptyLoopBody.check cUnit path
---           checkPath diagResults path
---           checkMessage diagResults "Method testFunc: A While-Loop has a empty loop body."
---           -- diagResults @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
---       )
+    return ("Empty While Loop" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test. 
