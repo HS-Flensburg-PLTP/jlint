@@ -1,6 +1,6 @@
-"-------------------------"
+-------------------------
 HierStehteinName
-"-------------------------"
++++++++++++++++++++++++++
 package de.fuas.algorithms;
 
 public class Strings2 {
@@ -14,9 +14,9 @@ public class Strings2 {
     }
 }
 
-"-------------------------"
+-------------------------
 HierStehteinName
-"-------------------------"
++++++++++++++++++++++++++
 package de.fuas.algorithms;
 
 public class Strings2 {
@@ -31,9 +31,10 @@ public class Strings2 {
 }
 
 
-"-------------------------"
+-------------------------
 HierStehteinName
-"-------------------------"
++++++++++++++++++++++++++
+
 package de.fuas.algorithms;
 
 public class Strings2 {
