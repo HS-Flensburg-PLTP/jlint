@@ -2,11 +2,11 @@ module EmptyLoopBody.Tests (testAllEmptyLoopBodies) where
 
 import CheckResults
 import EmptyLoopBody (check)
+import Language.Java.Parser (compilationUnit, parser)
+import Language.Java.Syntax
 import RDF
 import RessourceManager
 import Test.HUnit
-import Language.Java.Syntax
-import Language.Java.Parser (compilationUnit, parser)
 
 -- {-# LANGUAGE NoImplicitPrelude #-}
 -- {-# LANGUAGE OverloadedStrings #-}
@@ -20,18 +20,15 @@ testAllEmptyLoopBodies = do
   return ()
 
 whileTest :: [IO (CompilationUnit, FilePath)] -> IO [IO ()]
-whileTest testInputList=
+whileTest testInputList =
   return (map mapfunc testInputList)
   where
     mapfunc :: IO (CompilationUnit, FilePath) -> IO ()
     mapfunc testInput = do
-        (cUnit, path) <- testInput
-        let diagResults = EmptyLoopBody.check cUnit path
-        checkPath diagResults path
-        checkMessage diagResults "Method testFunc: A While-Loop has a empty loop body."
-
+      (cUnit, path) <- testInput
+      let diagResults = EmptyLoopBody.check cUnit path
+      checkPath diagResults path
+      checkMessage diagResults "Method testFunc: A While-Loop has a empty loop body."
 
 testEmptyWhileLoopIO =
   withCUnit "/test/emptyLoopBody/EmptyWhileLoop.java" whileTest
-
-
