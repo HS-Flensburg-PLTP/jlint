@@ -32,7 +32,6 @@ library
       Control.Monad.Extra
       DefaultComesLast
       EmptyLoopBody
-      Lib
       NamingConventions
       NeedBraces
       NoLoopBreak
@@ -87,9 +86,9 @@ test-suite jlint-test
   main-is: Spec.hs
   other-modules:
       CheckResults
+      EmptyLoopBody.Tests
       NoLoopBreak.Tests
       RessourceManager
-      TestEmptyLoopBody
       Paths_jlint
   hs-source-dirs:
       test
@@ -108,5 +107,5 @@ test-suite jlint-test
     , parsec >=3.1.14.0 && <3.2
     , regex >=1.1.0 && <1.2
     , uniplate >=1.6.11 && <1.7
-    , unliftio >=0.2.21 && <1
+    , unliftio >=0.2.21.0 && <1
   default-language: Haskell2010
