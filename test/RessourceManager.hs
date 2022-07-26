@@ -1,16 +1,16 @@
 module RessourceManager where
 
 import Control.Monad (MonadPlus (..))
+import Data.Char (toLower)
 import Data.List.Split
 import Data.Maybe
+import Data.String.Utils (strip)
 import Language.Java.Parser (compilationUnit, parser)
 import Language.Java.Syntax
 import System.Directory
+import System.FilePath.Posix (addExtension, combine, dropExtension, takeExtension, (</>))
 import Text.Parsec.Error
 import UnliftIO.Exception
-import System.FilePath.Posix ((</>), dropExtension, addExtension, takeExtension, combine)
-import Data.String.Utils (strip)
-import Data.Char(toLower)
 
 -- testsetup and lexer for dividing test sourcefils into fragments
 {-
@@ -32,7 +32,6 @@ type FileName = String
 
 type Code = String
 
-
 fileLexer :: String -> FilePath -> [(String, FilePath)]
 fileLexer input rootDir =
   firstStageLexer (splitInput input) mzero
@@ -42,50 +41,44 @@ fileLexer input rootDir =
       concatMap (split (dropInitBlank $ onSublist nameMarker)) (split (dropInitBlank $ onSublist codeMarker) input)
 
     setFileName :: Maybe FileName -> FileName
-    setFileName maybeName=
+    setFileName maybeName =
       case maybeName of
         Just name ->
           addExtension (dropExtension rootDir </> strip name) (takeExtension rootDir)
-        Nothing -> 
+        Nothing ->
           addExtension (dropExtension rootDir </> "NameNotDefined") (takeExtension rootDir)
-
-    -- setFileName :: Maybe FileName -> FileName
-    -- setFileName maybeName=
-    --   case maybeName of
-    --     Just name ->
-    --       addExtension (dropExtension rootDir </> name) (takeExtension rootDir)
-    --     Nothing -> 
-    --       addExtension (dropExtension rootDir </> "NameNotDefined") (takeExtension rootDir)
 
     setCode :: Maybe String -> Code
     setCode =
-      fromMaybe "CodeIsMissing" 
+      fromMaybe "CodeIsMissing"
 
+    -- code without flags is interpreted as code input. This is for reasons of convience, in case there is only one inputfile
     firstStageLexer :: [String] -> [(String, FilePath)] -> [(String, FilePath)]
-    firstStageLexer input restults =
+    firstStageLexer input results =
       case input of
         [] ->
-          restults
+          results
         x : rest@(xs : xss) ->
-          if x == nameMarker
-            then secondStageLexer xss (mergeNameCode (setFileName (Just xs))) restults
-            else
-              if x == codeMarker
-                then firstStageLexer xss (mergeNameCode (setFileName Nothing) xs : restults)
-                else firstStageLexer rest restults
+          if x == nameMarker then secondStageLexer xss (mergeNameCode (setFileName (Just xs))) results
+          else if x == codeMarker then firstStageLexer xss (mergeNameCode (setFileName Nothing) xs : results)
+          else firstStageLexer rest results
+        x : _ ->
+          if x /= nameMarker && x /= codeMarker then mergeNameCode (setFileName (Just "Testfile")) (setCode (Just x)) : results
+          else results
+
 
     secondStageLexer :: [String] -> (String -> (String, FilePath)) -> [(String, FilePath)] -> [(String, FilePath)]
-    secondStageLexer input emitResultFunc restults =
+    secondStageLexer input emitResultFunc results =
       case input of
         [] ->
-          emitResultFunc (setCode Nothing) : restults
+          emitResultFunc (setCode Nothing) : results
         x : rest@(xs : xss) ->
-          if x == nameMarker
-            then secondStageLexer xss (mergeNameCode (setFileName (Just xs))) (emitResultFunc (setCode Nothing) : restults)
-            else
-              if x == codeMarker
-                then firstStageLexer xss (emitResultFunc (setCode (Just xs)) : restults)
-                else secondStageLexer rest emitResultFunc restults
+          if x == nameMarker then secondStageLexer xss (mergeNameCode (setFileName (Just xs))) (emitResultFunc (setCode Nothing) : results)
+          else if x == codeMarker then firstStageLexer xss (emitResultFunc (setCode (Just xs)) : results)
+          else secondStageLexer rest emitResultFunc results
+        x : _ ->
+          if x /= nameMarker && x /= codeMarker then emitResultFunc (setCode (Just x)) : results
+          else results
 
     mergeNameCode :: String -> String -> (String, FilePath)
     mergeNameCode fName sCode =
@@ -95,7 +88,7 @@ filterParsingResults :: [(Either ParseError CompilationUnit, FilePath)] -> [IO (
 filterParsingResults =
   map
     ( \(paringResult, corresPath) -> case paringResult of
-        Left error -> throwString (show error)
+        Left error -> throwString (show error ++ "\n" ++ corresPath)
         Right cUnit -> return (cUnit, corresPath)
     )
 
