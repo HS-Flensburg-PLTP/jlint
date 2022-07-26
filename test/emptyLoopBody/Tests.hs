@@ -35,8 +35,8 @@ testEmptyWhileLoopIO =
                 ( \inputCode -> do
                     (cUnit, path) <- inputCode
                     let diagResults = EmptyLoopBody.check cUnit path
-                    checkPath diagResults path -- asserition, can do multiple in each testcase, the latter will only be exuted if the former succeded ->
                     checkMessage diagResults "Method testFunc: A While-Loop has a empty loop body."
+                    checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
                 )
         )
 

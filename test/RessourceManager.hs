@@ -8,7 +8,9 @@ import Language.Java.Syntax
 import System.Directory
 import Text.Parsec.Error
 import UnliftIO.Exception
-import System.FilePath.Posix ((</>))
+import System.FilePath.Posix ((</>), dropExtension, addExtension, takeExtension, combine)
+import Data.String.Utils (strip)
+import Data.Char(toLower)
 
 -- testsetup and lexer for dividing test sourcefils into fragments
 {-
@@ -37,15 +39,23 @@ fileLexer input rootDir =
   where
     splitInput :: String -> [String]
     splitInput input =
-      concatMap (split (onSublist nameMarker)) (split (onSublist codeMarker) input)
+      concatMap (split (dropInitBlank $ onSublist nameMarker)) (split (dropInitBlank $ onSublist codeMarker) input)
 
     setFileName :: Maybe FileName -> FileName
     setFileName maybeName=
       case maybeName of
         Just name ->
-          rootDir </> name
+          addExtension (dropExtension rootDir </> strip name) (takeExtension rootDir)
         Nothing -> 
-          rootDir </> "NameNotDefined"
+          addExtension (dropExtension rootDir </> "NameNotDefined") (takeExtension rootDir)
+
+    -- setFileName :: Maybe FileName -> FileName
+    -- setFileName maybeName=
+    --   case maybeName of
+    --     Just name ->
+    --       addExtension (dropExtension rootDir </> name) (takeExtension rootDir)
+    --     Nothing -> 
+    --       addExtension (dropExtension rootDir </> "NameNotDefined") (takeExtension rootDir)
 
     setCode :: Maybe String -> Code
     setCode =

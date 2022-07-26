@@ -12,9 +12,10 @@ compareLists :: Show a => Eq a => (Diagnostic -> a) -> [Diagnostic] -> a -> IO (
 compareLists attrField diags expected =
   [expected] @=? map attrField diags
 
-checkPath :: [Diagnostic] -> String -> IO ()
-checkPath =
-  compareLists (path . location)
+checkPath :: [Diagnostic] -> FilePath -> IO ()
+checkPath diag patht = do
+  print (head diag)
+  compareLists (path . location) diag patht
 
 checkMessage :: [Diagnostic] -> String -> IO ()
 checkMessage =
