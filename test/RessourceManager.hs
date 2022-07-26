@@ -88,7 +88,13 @@ filterParsingResults :: [(Either ParseError CompilationUnit, FilePath)] -> [IO (
 filterParsingResults =
   map
     ( \(paringResult, corresPath) -> case paringResult of
-        Left error -> throwString (show error ++ "\n" ++ corresPath)
+        Left error -> throwString 
+          ( show error 
+          ++ " :This error might correlate to an input parsing error\n"
+          ++ "Check the Java - testfile at: "
+          ++ corresPath
+          )
+
         Right cUnit -> return (cUnit, corresPath)
     )
 
