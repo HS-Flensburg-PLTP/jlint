@@ -9,8 +9,7 @@ import System.Directory
 import Text.Parsec.Error
 import UnliftIO.Exception
 
--- divide input
-
+-- testsetup and lexer for dividing test sourcefils into fragments
 {-
 puts together name and sourcecode of each fragment, where the input has to be formated like:
   -------------------------

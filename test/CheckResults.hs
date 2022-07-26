@@ -5,7 +5,7 @@ import System.Directory
 import Test.HUnit hiding (path)
 
 {-
-Purpose of this script is to execute the actuall asserion.
+This script is dedicated to the actuall execution of assertions.
 Each function expects a list of diagnostic Results as well as the expected value.
 -}
 compareLists :: Show a => Eq a => (Diagnostic -> a) -> [Diagnostic] -> a -> IO ()
