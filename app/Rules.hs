@@ -9,6 +9,7 @@ import Language.Java.Syntax
 import NamingConventions
 import NeedBraces
 import NoNegation
+import NoLoopBreak
 import RDF
 import SameExecutionsInIf
 import SimplifyBooleanReturn
@@ -22,6 +23,7 @@ checks =
     CheckNonPrivateAttributes.check,
     EmptyLoopBody.check,
     SimplifyBooleanReturn.check,
+    NoLoopBreak.check,
     UnnecessaryVariables.checkMethodVars,
     NeedBraces.check,
     CheckScope.check,
