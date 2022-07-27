@@ -12,7 +12,6 @@ import EmptyLoopBody
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
-import Lib
 import NamingConventions
 import NeedBraces
 import Options.Applicative
