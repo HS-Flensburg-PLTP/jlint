@@ -92,7 +92,7 @@ parseJava rootDir pretty =
     fileList <- readAllFiles pathList
     let (parsingErrors, cUnitResults) = parseAllFiles fileList
     let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
-    let diagnostics = concatMap (\(cUnit, path) -> CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ EmptyLoopBody.check cUnit path ++ NeedBraces.check cUnit path ++ NamingConventions.checkPackageName cUnit path) cUnitResults
+    let diagnostics = concatMap (uncurry checkAll) cUnitResults
     let diagnosticResults = diagnostics ++ parseErrors
     putStrLn
       ( Data.ByteString.Lazy.Internal.unpackChars
