@@ -92,28 +92,15 @@ parseJava rootDir pretty =
     fileList <- readAllFiles pathList
     let (parsingErrors, cUnitResults) = parseAllFiles fileList
     let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
-    if parseErrors /= []
-      then
-        putStrLn
-          ( Data.ByteString.Lazy.Internal.unpackChars
-              ( RDF.encodetojson
-                  ( DiagnosticResult
-                      { diagnostics = parseErrors,
-                        resultSource = Just (Source {name = "jlint", url = Nothing}),
-                        resultSeverity = RDF.checkSeverityList (map RDF.severity parseErrors) -- emmits highest severity of all results in all files
-                      }
-                  )
-              )
-          )
-      else putStrLn ""
     let diagnostics = concatMap (\(cUnit, path) -> CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ EmptyLoopBody.check cUnit path ++ NeedBraces.check cUnit path ++ NamingConventions.checkPackageName cUnit path) cUnitResults
+    let diagnosticResults = diagnostics ++ parseErrors
     putStrLn
       ( Data.ByteString.Lazy.Internal.unpackChars
           ( RDF.encodetojson
               ( DiagnosticResult
-                  { diagnostics = diagnostics,
+                  { diagnostics = diagnosticResults,
                     resultSource = Just (Source {name = "jlint", url = Nothing}),
-                    resultSeverity = RDF.checkSeverityList (map RDF.severity diagnostics) -- emmits highest severity of all results in all files
+                    resultSeverity = RDF.checkSeverityList (map RDF.severity diagnosticResults) -- emmits highest severity of all results in all files
                   }
               )
           )
