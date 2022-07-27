@@ -1,6 +1,8 @@
 module NamingConventions.Tests where
 
 import CheckResults
+import Language.Java.Parser (compilationUnit, parser)
+import Language.Java.Syntax
 import NamingConventions
   ( checkLocalName,
     checkMemberName,
@@ -16,44 +18,73 @@ import Test.HUnit
 
 testAll :: IO ()
 testAll = do
+  testPackageNameTLDOne <- testPackageNameTLDOneIO
+  testPackageNameTLDTwo <- testPackageNameTLDTwoIO
+  testMethodNameOne <- testMethodNameOneIO
+  testMethodNameTwo <- testMethodNameTwoIO
+  testMethodNameThree <- testMethodNameThreeIO
+  testParameterNameOne <- testParameterNameOneIO
+  testParameterNameTwo <- testParameterNameTwoIO
+  testParameterNameThree <- testParameterNameThreeIO
+  testStaticVarNameOne <- testStaticVarNameOneIO
+  testStaticVarNameTwo <- testStaticVarNameTwoIO
+  testStaticVarNameThree <- testStaticVarNameThreeIO
+  testLocalFinalVarOne <- testLocalFinalVarOneIO
+  testLocalFinalVarTwo <- testLocalFinalVarTwoIO
+  testLocalFinalVarThree <- testLocalFinalVarThreeIO
+  testLocalVarNameOne <- testLocalVarNameOneIO
+  testLocalVarNameTwo <- testLocalVarNameTwoIO
+  testLocalVarNameThree <- testLocalVarNameThreeIO
+  testMemberNameOne <- testMemberNameOneIO
+  testMemberNameTwo <- testMemberNameTwoIO
+  testMemberNameThree <- testMemberNameThreeIO
+  testTypeNameOne <- testTypeNameOneIO
+  testTypeNameTwo <- testTypeNameTwoIO
+  testTypeNameThree <- testTypeNameThreeIO
+  testTypeNameFour <- testTypeNameFourIO
+  testTypeNameFive <- testTypeNameFiveIO
+  testTypeNameSix <- testTypeNameSixIO
+  testTypeNameSeven <- testTypeNameSevenIO
+  testTypeNameEight <- testTypeNameEightIO
+  testTypeNameNine <- testTypeNameNineIO
   runTestTT
-    ( TestList
-        [ testPackageNameTLDOne,
-          testPackageNameTLDTwo,
-          testMethodNameOne,
-          testMethodNameTwo,
-          testMethodNameThree,
-          testParameterNameOne,
-          testParameterNameTwo,
-          testParameterNameThree,
-          testStaticVarNameOne,
-          testStaticVarNameTwo,
-          testStaticVarNameThree,
-          testLocalFinalVarOne,
-          testLocalFinalVarTwo,
-          testLocalFinalVarThree,
-          testLocalVarNameOne,
-          testLocalVarNameTwo,
-          testLocalVarNameThree,
-          testMemberNameOne,
-          testMemberNameTwo,
-          testMemberNameThree,
-          testTypeNameOne,
-          testTypeNameTwo,
-          testTypeNameThree,
-          testTypeNameFour,
-          testTypeNameFive,
-          testTypeNameSix,
-          testTypeNameSeven,
-          testTypeNameEight,
-          testTypeNameNine
-        ]
+    ( "NamingConventions"
+        ~: [ testPackageNameTLDOne,
+             testPackageNameTLDTwo,
+             testMethodNameOne,
+             testMethodNameTwo,
+             testMethodNameThree,
+             testParameterNameOne,
+             testParameterNameTwo,
+             testParameterNameThree,
+             testStaticVarNameOne,
+             testStaticVarNameTwo,
+             testStaticVarNameThree,
+             testLocalFinalVarOne,
+             testLocalFinalVarTwo,
+             testLocalFinalVarThree,
+             testLocalVarNameOne,
+             testLocalVarNameTwo,
+             testLocalVarNameThree,
+             testMemberNameOne,
+             testMemberNameTwo,
+             testMemberNameThree,
+             testTypeNameOne,
+             testTypeNameTwo,
+             testTypeNameThree,
+             testTypeNameFour,
+             testTypeNameFive,
+             testTypeNameSix,
+             testTypeNameSeven,
+             testTypeNameEight,
+             testTypeNameNine
+           ]
     )
   return ()
 
 {- Package Name -}
-testPackageNameTLDOne :: IO Test
-testPackageNameTLDOne =
+testPackageNameTLDOneIO :: IO Test
+testPackageNameTLDOneIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -70,8 +101,8 @@ testPackageNameTLDOne =
 
     return ("PackageName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testPackageNameTLDTwo :: IO Test
-testPackageNameTLDTwo =
+testPackageNameTLDTwoIO :: IO Test
+testPackageNameTLDTwoIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -90,8 +121,8 @@ testPackageNameTLDTwo =
 
 {- Method Name -}
 
-testMethodNameOne :: IO Test
-testMethodNameOne =
+testMethodNameOneIO :: IO Test
+testMethodNameOneIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -108,8 +139,8 @@ testMethodNameOne =
 
     return ("MethodName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testMethodNameTwo :: IO Test
-testMethodNameTwo =
+testMethodNameTwoIO :: IO Test
+testMethodNameTwoIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -126,8 +157,8 @@ testMethodNameTwo =
 
     return ("MethodName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testMethodNameThree :: IO Test
-testMethodNameThree =
+testMethodNameThreeIO :: IO Test
+testMethodNameThreeIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -146,8 +177,8 @@ testMethodNameThree =
 
 {- Parameter Name -}
 
-testParameterNameOne :: IO Test
-testParameterNameOne =
+testParameterNameOneIO :: IO Test
+testParameterNameOneIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -164,8 +195,8 @@ testParameterNameOne =
 
     return ("ParameterName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testParameterNameTwo :: IO Test
-testParameterNameTwo =
+testParameterNameTwoIO :: IO Test
+testParameterNameTwoIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -182,8 +213,8 @@ testParameterNameTwo =
 
     return ("ParameterName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testParameterNameThree :: IO Test
-testParameterNameThree =
+testParameterNameThreeIO :: IO Test
+testParameterNameThreeIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -202,8 +233,8 @@ testParameterNameThree =
 
 {- Static Variable Name -}
 
-testStaticVarNameOne :: IO Test
-testStaticVarNameOne =
+testStaticVarNameOneIO :: IO Test
+testStaticVarNameOneIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -220,8 +251,8 @@ testStaticVarNameOne =
 
     return ("StaticVariableName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testStaticVarNameTwo :: IO Test
-testStaticVarNameTwo =
+testStaticVarNameTwoIO :: IO Test
+testStaticVarNameTwoIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -238,8 +269,8 @@ testStaticVarNameTwo =
 
     return ("StaticVariableName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testStaticVarNameThree :: IO Test
-testStaticVarNameThree =
+testStaticVarNameThreeIO :: IO Test
+testStaticVarNameThreeIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -258,8 +289,8 @@ testStaticVarNameThree =
 
 {- Local Final Variable -}
 
-testLocalFinalVarOne :: IO Test
-testLocalFinalVarOne =
+testLocalFinalVarOneIO :: IO Test
+testLocalFinalVarOneIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -276,8 +307,8 @@ testLocalFinalVarOne =
 
     return ("LocalFinalVariable" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testLocalFinalVarTwo :: IO Test
-testLocalFinalVarTwo =
+testLocalFinalVarTwoIO :: IO Test
+testLocalFinalVarTwoIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -294,8 +325,8 @@ testLocalFinalVarTwo =
 
     return ("LocalFinalVariable" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testLocalFinalVarThree :: IO Test
-testLocalFinalVarThree =
+testLocalFinalVarThreeIO :: IO Test
+testLocalFinalVarThreeIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -314,8 +345,8 @@ testLocalFinalVarThree =
 
 {- Local Variable Name -}
 
-testLocalVarNameOne :: IO Test
-testLocalVarNameOne =
+testLocalVarNameOneIO :: IO Test
+testLocalVarNameOneIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -332,8 +363,8 @@ testLocalVarNameOne =
 
     return ("LocalVariableName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testLocalVarNameTwo :: IO Test
-testLocalVarNameTwo =
+testLocalVarNameTwoIO :: IO Test
+testLocalVarNameTwoIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -350,8 +381,8 @@ testLocalVarNameTwo =
 
     return ("LocalVariableName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testLocalVarNameThree :: IO Test
-testLocalVarNameThree =
+testLocalVarNameThreeIO :: IO Test
+testLocalVarNameThreeIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -370,8 +401,8 @@ testLocalVarNameThree =
 
 {- Member Name -}
 
-testMemberNameOne :: IO Test
-testMemberNameOne =
+testMemberNameOneIO :: IO Test
+testMemberNameOneIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -388,8 +419,8 @@ testMemberNameOne =
 
     return ("MemberName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testMemberNameTwo :: IO Test
-testMemberNameTwo =
+testMemberNameTwoIO :: IO Test
+testMemberNameTwoIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -406,8 +437,8 @@ testMemberNameTwo =
 
     return ("MemberName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testMemberNameThree :: IO Test
-testMemberNameThree =
+testMemberNameThreeIO :: IO Test
+testMemberNameThreeIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -426,8 +457,8 @@ testMemberNameThree =
 
 {- Type Name -}
 
-testTypeNameOne :: IO Test
-testTypeNameOne =
+testTypeNameOneIO :: IO Test
+testTypeNameOneIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -444,8 +475,8 @@ testTypeNameOne =
 
     return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testTypeNameTwo :: IO Test
-testTypeNameTwo =
+testTypeNameTwoIO :: IO Test
+testTypeNameTwoIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -462,8 +493,8 @@ testTypeNameTwo =
 
     return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testTypeNameThree :: IO Test
-testTypeNameThree =
+testTypeNameThreeIO :: IO Test
+testTypeNameThreeIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -480,8 +511,8 @@ testTypeNameThree =
 
     return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testTypeNameFour :: IO Test
-testTypeNameFour =
+testTypeNameFourIO :: IO Test
+testTypeNameFourIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -498,8 +529,8 @@ testTypeNameFour =
 
     return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testTypeNameFive :: IO Test
-testTypeNameFive =
+testTypeNameFiveIO :: IO Test
+testTypeNameFiveIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -516,8 +547,8 @@ testTypeNameFive =
 
     return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testTypeNameSix :: IO Test
-testTypeNameSix =
+testTypeNameSixIO :: IO Test
+testTypeNameSixIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -534,8 +565,8 @@ testTypeNameSix =
 
     return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testTypeNameSeven :: IO Test
-testTypeNameSeven =
+testTypeNameSevenIO :: IO Test
+testTypeNameSevenIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -552,8 +583,8 @@ testTypeNameSeven =
 
     return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testTypeNameEight :: IO Test
-testTypeNameEight =
+testTypeNameEightIO :: IO Test
+testTypeNameEightIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
@@ -570,8 +601,8 @@ testTypeNameEight =
 
     return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testTypeNameNine :: IO Test
-testTypeNameNine =
+testTypeNameNineIO :: IO Test
+testTypeNameNineIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
