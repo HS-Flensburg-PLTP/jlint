@@ -1,6 +1,8 @@
 module NamingConventions.Tests where
 
 import CheckResults
+import Language.Java.Parser (compilationUnit, parser)
+import Language.Java.Syntax
 import NamingConventions
   ( checkLocalName,
     checkMemberName,
@@ -16,430 +18,603 @@ import Test.HUnit
 
 testAll :: IO ()
 testAll = do
+  testPackageNameTLDOne <- testPackageNameTLDOneIO
+  testPackageNameTLDTwo <- testPackageNameTLDTwoIO
+  testMethodNameOne <- testMethodNameOneIO
+  testMethodNameTwo <- testMethodNameTwoIO
+  testMethodNameThree <- testMethodNameThreeIO
+  testParameterNameOne <- testParameterNameOneIO
+  testParameterNameTwo <- testParameterNameTwoIO
+  testParameterNameThree <- testParameterNameThreeIO
+  testStaticVarNameOne <- testStaticVarNameOneIO
+  testStaticVarNameTwo <- testStaticVarNameTwoIO
+  testStaticVarNameThree <- testStaticVarNameThreeIO
+  testLocalFinalVarOne <- testLocalFinalVarOneIO
+  testLocalFinalVarTwo <- testLocalFinalVarTwoIO
+  testLocalFinalVarThree <- testLocalFinalVarThreeIO
+  testLocalVarNameOne <- testLocalVarNameOneIO
+  testLocalVarNameTwo <- testLocalVarNameTwoIO
+  testLocalVarNameThree <- testLocalVarNameThreeIO
+  testMemberNameOne <- testMemberNameOneIO
+  testMemberNameTwo <- testMemberNameTwoIO
+  testMemberNameThree <- testMemberNameThreeIO
+  testTypeNameOne <- testTypeNameOneIO
+  testTypeNameTwo <- testTypeNameTwoIO
+  testTypeNameThree <- testTypeNameThreeIO
+  testTypeNameFour <- testTypeNameFourIO
+  testTypeNameFive <- testTypeNameFiveIO
+  testTypeNameSix <- testTypeNameSixIO
+  testTypeNameSeven <- testTypeNameSevenIO
+  testTypeNameEight <- testTypeNameEightIO
+  testTypeNameNine <- testTypeNameNineIO
   runTestTT
-    ( TestList
-        [ testPackageNameTLDOne,
-          testPackageNameTLDTwo,
-          testMethodNameOne,
-          testMethodNameTwo,
-          testMethodNameThree,
-          testParameterNameOne,
-          testParameterNameTwo,
-          testParameterNameThree,
-          testStaticVarNameOne,
-          testStaticVarNameTwo,
-          testStaticVarNameThree,
-          testLocalFinalVarOne,
-          testLocalFinalVarTwo,
-          testLocalFinalVarThree,
-          testLocalVarNameOne,
-          testLocalVarNameTwo,
-          testLocalVarNameThree,
-          testMemberNameOne,
-          testMemberNameTwo,
-          testMemberNameThree,
-          testTypeNameOne,
-          testTypeNameTwo,
-          testTypeNameThree,
-          testTypeNameFour,
-          testTypeNameFive,
-          testTypeNameSix,
-          testTypeNameSeven,
-          testTypeNameEight,
-          testTypeNameNine
-        ]
+    ( "NamingConventions"
+        ~: [ testPackageNameTLDOne,
+             testPackageNameTLDTwo,
+             testMethodNameOne,
+             testMethodNameTwo,
+             testMethodNameThree,
+             testParameterNameOne,
+             testParameterNameTwo,
+             testParameterNameThree,
+             testStaticVarNameOne,
+             testStaticVarNameTwo,
+             testStaticVarNameThree,
+             testLocalFinalVarOne,
+             testLocalFinalVarTwo,
+             testLocalFinalVarThree,
+             testLocalVarNameOne,
+             testLocalVarNameTwo,
+             testLocalVarNameThree,
+             testMemberNameOne,
+             testMemberNameTwo,
+             testMemberNameThree,
+             testTypeNameOne,
+             testTypeNameTwo,
+             testTypeNameThree,
+             testTypeNameFour,
+             testTypeNameFive,
+             testTypeNameSix,
+             testTypeNameSeven,
+             testTypeNameEight,
+             testTypeNameNine
+           ]
     )
   return ()
 
 {- Package Name -}
+testPackageNameTLDOneIO :: IO Test
+testPackageNameTLDOneIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/TLDcapitalLetter.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkPackageName cUnit path
+                  checkMessage diagResults "PackageName element Dde does not match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
 
-testPackageNameTLDOne =
-  "Test TopLevelDomain begin with capital letter" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/TLDcapitalLetter.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkPackageName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "PackageName element Dde does not match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+    return ("PackageName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testPackageNameTLDTwo =
-  "Test TopLevelDomain contain capital letter after first letter" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/TLDcapitalLetterSecond.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkPackageName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "PackageName element dDe does not match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testPackageNameTLDTwoIO :: IO Test
+testPackageNameTLDTwoIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/TLDcapitalLetterSecond.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkPackageName cUnit path
+                  checkMessage diagResults "PackageName element dDe does not match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("PackageName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
 {- Method Name -}
 
-testMethodNameOne =
-  "Test MethodName begin with capital letter" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/MethodNameCapitalStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkMethodName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Methodname Test does not match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testMethodNameOneIO :: IO Test
+testMethodNameOneIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/MethodNameCapitalStart.java"
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkMethodName cUnit path
+                  checkMessage diagResults "Methodname Test does not match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
 
-testMethodNameTwo =
-  "Test MethodName begin with underscore" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/MethodNameUnderscoreStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkMethodName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Methodname _Test does not match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+    return ("MethodName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testMethodNameThree =
-  "Test MethodName contain underscore after first letter" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/MethodNameUnderscoreLater.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkMethodName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Methodname te_st does not match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testMethodNameTwoIO :: IO Test
+testMethodNameTwoIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/MethodNameUnderscoreStart.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkMethodName cUnit path
+                  checkMessage diagResults "Methodname _Test does not match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("MethodName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
+
+testMethodNameThreeIO :: IO Test
+testMethodNameThreeIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/MethodNameUnderscoreLater.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkMethodName cUnit path
+                  checkMessage diagResults "Methodname te_st does not match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("MethodName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
 {- Parameter Name -}
 
-testParameterNameOne =
-  "Test ParameterName begin with capital letter" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/ParameterNameCapitalStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkParameterName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method test: parameter TestVar doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testParameterNameOneIO :: IO Test
+testParameterNameOneIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/ParameterNameCapitalStart.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkParameterName cUnit path
+                  checkMessage diagResults "Method test: parameter TestVar doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
 
-testParameterNameTwo =
-  "Test ParameterName begin with underscore" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/ParameterNameUnderscoreStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkParameterName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method test: parameter _testVar doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+    return ("ParameterName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testParameterNameThree =
-  "Test ParameterName contain underscore after first letter" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/ParameterNameUnderscoreLater.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkParameterName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method test: parameter test_Var doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testParameterNameTwoIO :: IO Test
+testParameterNameTwoIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/ParameterNameUnderscoreStart.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkParameterName cUnit path
+                  checkMessage diagResults "Method test: parameter _testVar doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("ParameterName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
+
+testParameterNameThreeIO :: IO Test
+testParameterNameThreeIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/ParameterNameUnderscoreLater.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkParameterName cUnit path
+                  checkMessage diagResults "Method test: parameter test_Var doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("ParameterName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
 {- Static Variable Name -}
 
-testStaticVarNameOne =
-  "Test StaticVariableName begin with capital letter" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/StaticVarNameCapitalStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkStaticVariableName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Static variable Testvar doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testStaticVarNameOneIO :: IO Test
+testStaticVarNameOneIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/StaticVarNameCapitalStart.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkStaticVariableName cUnit path
+                  checkMessage diagResults "Static variable Testvar doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
 
-testStaticVarNameTwo =
-  "Test StaticVariableName begin with underscore" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/StaticVarNameUnderscoreStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkStaticVariableName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Static variable _testvar doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+    return ("StaticVariableName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testStaticVarNameThree =
-  "Test StaticVariableName contain underscore after first letter" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/StaticVarNameUnderscoreLater.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkStaticVariableName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Static variable test_var doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testStaticVarNameTwoIO :: IO Test
+testStaticVarNameTwoIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/StaticVarNameUnderscoreStart.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkStaticVariableName cUnit path
+                  checkMessage diagResults "Static variable _testvar doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("StaticVariableName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
+
+testStaticVarNameThreeIO :: IO Test
+testStaticVarNameThreeIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/StaticVarNameUnderscoreLater.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkStaticVariableName cUnit path
+                  checkMessage diagResults "Static variable test_var doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("StaticVariableName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
 {- Local Final Variable -}
 
-testLocalFinalVarOne =
-  "Test LocalFinalVariable begin with capital letter" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/LocalFinalVarNameCapitalStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkLocalName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method test: Local final variable Testvar doesn't match the specifications"
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testLocalFinalVarOneIO :: IO Test
+testLocalFinalVarOneIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/LocalFinalVarNameCapitalStart.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkLocalName cUnit path
+                  checkMessage diagResults "Method test: Local final variable Testvar doesn't match the specifications" path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
 
-testLocalFinalVarTwo =
-  "Test LocalFinalVariable begin with underscore" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/LocalFinalVarNameUnderscoreStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkLocalName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method test: Local final variable _testvar doesn't match the specifications"
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+    return ("LocalFinalVariable" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testLocalFinalVarThree =
-  "Test LocalFinalVariable contain underscore after first letter" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/LocalFinalVarNameUnderscoreLater.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkLocalName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method test: Local final variable test_var doesn't match the specifications"
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testLocalFinalVarTwoIO :: IO Test
+testLocalFinalVarTwoIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/LocalFinalVarNameUnderscoreStart.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkLocalName cUnit path
+                  checkMessage diagResults "Method test: Local final variable _testvar doesn't match the specifications" path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("LocalFinalVariable" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
+
+testLocalFinalVarThreeIO :: IO Test
+testLocalFinalVarThreeIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/LocalFinalVarNameUnderscoreLater.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkLocalName cUnit path
+                  checkMessage diagResults "Method test: Local final variable test_var doesn't match the specifications" path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("LocalFinalVariable" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
 {- Local Variable Name -}
 
-testLocalVarNameOne =
-  "Test LocalVariableName begin with capital letter" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/LocalVarNameCapitalStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkLocalName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method test: Local non-final variable Testvar doesn't match the specifications"
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testLocalVarNameOneIO :: IO Test
+testLocalVarNameOneIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/LocalVarNameCapitalStart.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkLocalName cUnit path
+                  checkMessage diagResults "Method test: Local non-final variable Testvar doesn't match the specifications" path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
 
-testLocalVarNameTwo =
-  "Test LocalVariableName begin with underscore" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/LocalVarNameUnderscoreStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkLocalName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method test: Local non-final variable _testvar doesn't match the specifications"
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+    return ("LocalVariableName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testLocalVarNameThree =
-  "Test LocalVariableName contain underscore after first letter" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/LocalVarNameUnderscoreLater.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkLocalName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method test: Local non-final variable test_var doesn't match the specifications"
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testLocalVarNameTwoIO :: IO Test
+testLocalVarNameTwoIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/LocalVarNameUnderscoreStart.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkLocalName cUnit path
+                  checkMessage diagResults "Method test: Local non-final variable _testvar doesn't match the specifications" path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("LocalVariableName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
+
+testLocalVarNameThreeIO :: IO Test
+testLocalVarNameThreeIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/LocalVarNameUnderscoreLater.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkLocalName cUnit path
+                  checkMessage diagResults "Method test: Local non-final variable test_var doesn't match the specifications" path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("LocalVariableName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
 {- Member Name -}
 
-testMemberNameOne =
-  "Test MemberName begin with capital letter" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/MemberNameCapitalStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkMemberName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Instance variable Testvar doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testMemberNameOneIO :: IO Test
+testMemberNameOneIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/MemberNameCapitalStart.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkMemberName cUnit path
+                  checkMessage diagResults "Instance variable Testvar doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
 
-testMemberNameTwo =
-  "Test MemberName begin with underscore" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/MemberNameUnderscoreStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkMemberName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Instance variable _testvar doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+    return ("MemberName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testMemberNameThree =
-  "Test MemberName contain underscore after first letter" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/MemberNameUnderscoreLater.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkMemberName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Instance variable test_var doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testMemberNameTwoIO :: IO Test
+testMemberNameTwoIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/MemberNameUnderscoreStart.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkMemberName cUnit path
+                  checkMessage diagResults "Instance variable _testvar doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("MemberName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
+
+testMemberNameThreeIO :: IO Test
+testMemberNameThreeIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/MemberNameUnderscoreLater.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkMemberName cUnit path
+                  checkMessage diagResults "Instance variable test_var doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("MemberName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
 {- Type Name -}
 
-testTypeNameOne =
-  "Test Class begin with lowercase" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/TypeNameLowercaseStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkTypeName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Type name testClass doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testTypeNameOneIO :: IO Test
+testTypeNameOneIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/TypeNameLowercaseStart.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkTypeName cUnit path
+                  checkMessage diagResults "Type name testClass doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
 
-testTypeNameTwo =
-  "Test Class begin with underscore" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/TypeNameUnderscoreStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkTypeName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Type name _TestClass doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+    return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testTypeNameThree =
-  "Test Class contain underscore after first letter" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/TypeNameUnderscoreLater.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkTypeName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Type name Test_Class doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testTypeNameTwoIO :: IO Test
+testTypeNameTwoIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/TypeNameUnderscoreStart.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkTypeName cUnit path
+                  checkMessage diagResults "Type name _TestClass doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
 
-testTypeNameFour =
-  "Test Interface begin with lowercase" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/TypeNameInterfaceLowercaseStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkTypeName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Type name testClass doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+    return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testTypeNameFive =
-  "Test Interface begin with underscore" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/TypeNameInterfaceUnderscoreStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkTypeName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Type name _TestClass doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testTypeNameThreeIO :: IO Test
+testTypeNameThreeIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/TypeNameUnderscoreLater.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkTypeName cUnit path
+                  checkMessage diagResults "Type name Test_Class doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
 
-testTypeNameSix =
-  "Test Interface contain underscore after first letter" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/TypeNameInterfaceUnderscoreLater.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkTypeName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Type name Test_Class doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+    return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testTypeNameSeven =
-  "Test Enum begin with lowercase" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/TypeNameEnumLowercaseStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkTypeName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Type name testClass doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testTypeNameFourIO :: IO Test
+testTypeNameFourIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/TypeNameInterfaceLowercaseStart.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkTypeName cUnit path
+                  checkMessage diagResults "Type name testClass doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
 
-testTypeNameEight =
-  "Test Enum begin with underscore" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/TypeNameEnumUnderscoreStart.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkTypeName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Type name _TestClass doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+    return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-testTypeNameNine =
-  "Test Enum contain underscore after first letter" -- ~: adds label to Test (Testlist)
-    ~: test -- test can be called on List of testables
-      [ withCUnit
-          "/test/NamingConventions/TypeNameEnumUnderscoreLater.java"
-          ( \(path, cUnit) -> do
-              let diagResult = checkTypeName cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Type name Test_Class doesn't match the specifications."
-              -- diagResult @=? [expected] -- asserition, can do multiple in one Test, which would only be exuted if the forme succeded
-          )
-      ]
+testTypeNameFiveIO :: IO Test
+testTypeNameFiveIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/TypeNameInterfaceUnderscoreStart.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkTypeName cUnit path
+                  checkMessage diagResults "Type name _TestClass doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
+
+testTypeNameSixIO :: IO Test
+testTypeNameSixIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/TypeNameInterfaceUnderscoreLater.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkTypeName cUnit path
+                  checkMessage diagResults "Type name Test_Class doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
+
+testTypeNameSevenIO :: IO Test
+testTypeNameSevenIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/TypeNameEnumLowercaseStart.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkTypeName cUnit path
+                  checkMessage diagResults "Type name testClass doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
+
+testTypeNameEightIO :: IO Test
+testTypeNameEightIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/TypeNameEnumUnderscoreStart.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkTypeName cUnit path
+                  checkMessage diagResults "Type name _TestClass doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
+
+testTypeNameNineIO :: IO Test
+testTypeNameNineIO =
+  do
+    assertionList <-
+      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
+        "/test/NamingConventions/TypeNameEnumUnderscoreLater.java" -- path to testfile
+        ( return
+            . map -- lamdafunction will be used to create a testcase for each testfile.
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = checkTypeName cUnit path
+                  checkMessage diagResults "Type name Test_Class doesn't match the specifications." path
+                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
+              )
+        )
+
+    return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
