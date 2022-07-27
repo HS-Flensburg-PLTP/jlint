@@ -16,39 +16,39 @@ import Test.HUnit
 
 testAll :: IO ()
 testAll = do
-  runTestTT
-    ( TestList
-        [ testPackageNameTLDOne,
-          testPackageNameTLDTwo,
-          testMethodNameOne,
-          testMethodNameTwo,
-          testMethodNameThree,
-          testParameterNameOne,
-          testParameterNameTwo,
-          testParameterNameThree,
-          testStaticVarNameOne,
-          testStaticVarNameTwo,
-          testStaticVarNameThree,
-          testLocalFinalVarOne,
-          testLocalFinalVarTwo,
-          testLocalFinalVarThree,
-          testLocalVarNameOne,
-          testLocalVarNameTwo,
-          testLocalVarNameThree,
-          testMemberNameOne,
-          testMemberNameTwo,
-          testMemberNameThree,
-          testTypeNameOne,
-          testTypeNameTwo,
-          testTypeNameThree,
-          testTypeNameFour,
-          testTypeNameFive,
-          testTypeNameSix,
-          testTypeNameSeven,
-          testTypeNameEight,
-          testTypeNameNine
-        ]
-    )
+  -- runTestTT
+  --   ( TestList
+  --       [ testPackageNameTLDOne,
+  --         testPackageNameTLDTwo,
+  --         testMethodNameOne,
+  --         testMethodNameTwo,
+  --         testMethodNameThree,
+  --         testParameterNameOne,
+  --         testParameterNameTwo,
+  --         testParameterNameThree,
+  --         testStaticVarNameOne,
+  --         testStaticVarNameTwo,
+  --         testStaticVarNameThree,
+  --         testLocalFinalVarOne,
+  --         testLocalFinalVarTwo,
+  --         testLocalFinalVarThree,
+  --         testLocalVarNameOne,
+  --         testLocalVarNameTwo,
+  --         testLocalVarNameThree,
+  --         testMemberNameOne,
+  --         testMemberNameTwo,
+  --         testMemberNameThree,
+  --         testTypeNameOne,
+  --         testTypeNameTwo,
+  --         testTypeNameThree,
+  --         testTypeNameFour,
+  --         testTypeNameFive,
+  --         testTypeNameSix,
+  --         testTypeNameSeven,
+  --         testTypeNameEight,
+  --         testTypeNameNine
+  --       ]
+  --   )
   return ()
 
 {- Package Name -}
