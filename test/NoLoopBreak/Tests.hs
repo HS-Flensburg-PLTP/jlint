@@ -1,7 +1,7 @@
-module NoLoopBreak.Tests (testAllEmptyLoopBodies) where
+module NoLoopBreak.Tests (testAllNoLoopBreaks) where
 
 import CheckResults
-import EmptyLoopBody (check)
+import NoLoopBreak (check)
 import Language.Java.Parser (compilationUnit, parser)
 import Language.Java.Syntax
 import RDF
@@ -19,9 +19,8 @@ withCunit creates a testcase for each of the corresponding java - testcode - fil
 test for multiple inputs.
 -}
 
-testAllEmptyLoopBodies :: IO ()
-testAllEmptyLoopBodies = do
-  testBreakDoWhileLoop <- testBreakDoWhileLoopIO
+testAllNoLoopBreaks :: IO ()
+testAllNoLoopBreaks = do
   testBreakEnhancedForLoop <- testBreakEnhancedForLoopIO
   testBreakForLoop <- testBreakForLoopIO
   testBreakNestedForLoop <- testBreakNestedForLoopIO
@@ -32,12 +31,12 @@ testAllEmptyLoopBodies = do
   testReturnForLoop <- testReturnForLoopIO
   testReturnNestedForLoop <- testReturnNestedForLoopIO
   testReturnNestedWhileLoop <- testReturnNestedWhileLoopIO
-  testReturnWhileLoop <- testReturnWhileLoopOP
+  testReturnWhileLoop <- testReturnWhileLoopIO
   
   runTestTT 
     ("EmptyLoop" 
       ~: 
-        [ testBreakDoWhileLoop,
+        [ 
           testBreakEnhancedForLoop,
           testBreakForLoop,
           testBreakNestedForLoop,
@@ -178,7 +177,7 @@ testReturnDoWhileLoopIO =
               ( \inputCode -> do
                   (cUnit, path) <- inputCode
                   let diagResults = NoLoopBreak.check cUnit path
-                  checkMessage diagResults "Method testFunc: Exit Loop with break" path
+                  checkMessage diagResults "Method testFunc: Exit Loop with return" path
                   checkPath diagResults path 
               )
         )
@@ -196,7 +195,7 @@ testReturnEnhancedForLoopIO =
               ( \inputCode -> do
                   (cUnit, path) <- inputCode
                   let diagResults = NoLoopBreak.check cUnit path
-                  checkMessage diagResults "Method testFunc: Exit Loop with break" path
+                  checkMessage diagResults "Method testFunc: Exit Loop with return" path
                   checkPath diagResults path 
               )
         )
@@ -214,7 +213,7 @@ testReturnForLoopIO =
               ( \inputCode -> do
                   (cUnit, path) <- inputCode
                   let diagResults = NoLoopBreak.check cUnit path
-                  checkMessage diagResults "Method testFunc: Exit Loop with break" path
+                  checkMessage diagResults "Method testFunc: Exit Loop with return" path
                   checkPath diagResults path 
               )
         )
@@ -232,7 +231,7 @@ testReturnNestedForLoopIO =
               ( \inputCode -> do
                   (cUnit, path) <- inputCode
                   let diagResults = NoLoopBreak.check cUnit path
-                  checkMessage diagResults "Method testFunc: Exit Loop with break" path
+                  checkMessage diagResults "Method testFunc: Exit Loop with return" path
                   checkPath diagResults path 
               )
         )
@@ -250,7 +249,7 @@ testReturnNestedWhileLoopIO =
               ( \inputCode -> do
                   (cUnit, path) <- inputCode
                   let diagResults = NoLoopBreak.check cUnit path
-                  checkMessage diagResults "Method testFunc: Exit Loop with break" path
+                  checkMessage diagResults "Method testFunc: Exit Loop with return" path
                   checkPath diagResults path 
               )
         )
@@ -268,7 +267,7 @@ testReturnWhileLoopIO =
               ( \inputCode -> do
                   (cUnit, path) <- inputCode
                   let diagResults = NoLoopBreak.check cUnit path
-                  checkMessage diagResults "Method testFunc: Exit Loop with break" path
+                  checkMessage diagResults "Method testFunc: Exit Loop with return" path
                   checkPath diagResults path 
               )
         )

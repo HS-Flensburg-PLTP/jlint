@@ -1,9 +1,10 @@
 import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
-import NamingConventions.Tests
 import NoLoopBreak.Tests (testAllNoLoopBreaks)
+import NamingConventions.Tests
+
 
 main :: IO ()
 main = do
-  testAllNoLoopBreaks
   testAllEmptyLoopBodies
+  testAllNoLoopBreaks
   NamingConventions.Tests.testAll
