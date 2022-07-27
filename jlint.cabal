@@ -34,6 +34,7 @@ library
       EmptyLoopBody
       NamingConventions
       NeedBraces
+      NoLoopBreak
       NoNegation
       RDF
       SameExecutionsInIf
@@ -86,6 +87,8 @@ test-suite jlint-test
   other-modules:
       CheckResults
       EmptyLoopBody.Tests
+      NamingConventions.Tests
+      NoLoopBreak.Tests
       RessourceManager
       UnnecessaryVariables.Tests
       Paths_jlint

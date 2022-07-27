@@ -1,0 +1,3 @@
+enum Test_Class {
+
+}
