@@ -91,8 +91,8 @@ parseJava rootDir pretty =
     pathList <- findAllJavaFiles rootDir
     fileList <- readAllFiles pathList
     let (parsingErrors, cUnitResults) = parseAllFiles fileList
-    let parseerrors = map (\(parseerror, path) -> RDF.simpleDiagnostic (show parseerror) path) parsingErrors
-    if parseerrors /= []
+    let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
+    if parseErrors /= []
       then
         putStrLn
           ( Data.ByteString.Lazy.Internal.unpackChars
