@@ -28,7 +28,7 @@ testBreakLoopIO =
   do
     assertionList <-
       withCUnit
-        "/test/noLoopBreak/JavaFiles/BreakLoop.java"
+        "/test/NoLoopBreak/JavaFiles/BreakLoop.java"
         ( return
             . map
               ( \inputCode -> do
@@ -48,7 +48,7 @@ testReturnLoopIO =
   do
     assertionList <-
       withCUnit
-        "/test/noLoopBreak/JavaFiles/ReturnLoop.java"
+        "/test/NoLoopBreak/JavaFiles/ReturnLoop.java"
         ( return
             . map
               ( \inputCode -> do
