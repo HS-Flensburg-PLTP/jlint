@@ -5,6 +5,7 @@ import CheckNonPrivateAttributes
 import EmptyLoopBody
 import Language.Java.Syntax
 import NeedBraces
+import NoLoopBreak
 import RDF
 import SimplifyBooleanReturn
 import UnnecessaryVariables
@@ -26,6 +27,7 @@ checks =
     CheckNonPrivateAttributes.check,
     EmptyLoopBody.check,
     SimplifyBooleanReturn.check,
+    NoLoopBreak.check,
     UnnecessaryVariables.checkMethodVars,
     NeedBraces.check
   ]
