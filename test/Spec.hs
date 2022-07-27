@@ -1,2 +1,9 @@
+import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
+import NamingConventions.Tests
+import NoLoopBreak.Tests (testAllNoLoopBreaks)
+
 main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = do
+  testAllNoLoopBreaks
+  testAllEmptyLoopBodies
+  NamingConventions.Tests.testAll

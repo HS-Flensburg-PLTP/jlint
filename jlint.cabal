@@ -34,6 +34,7 @@ library
       EmptyLoopBody
       NamingConventions
       NeedBraces
+      NoLoopBreak
       NoNegation
       RDF
       SameExecutionsInIf
@@ -84,15 +85,21 @@ test-suite jlint-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      TestEmptyLoopBody
+      CheckResults
+      EmptyLoopBody.Tests
+      NamingConventions.Tests
+      NoLoopBreak.Tests
+      RessourceManager
       Paths_jlint
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aeson >=2.0.3 && <2.1
+      HUnit >=1.6.2.0 && <2
+    , aeson >=2.0.3 && <2.1
     , base >=4.7 && <5
     , bytestring >=0.10.12.1 && <0.11
+    , directory >=1.3.6.2 && <2
     , filemanip >=0.3.6.3 && <0.4
     , jlint
     , language-java >=0.2.9 && <3
@@ -101,4 +108,5 @@ test-suite jlint-test
     , parsec >=3.1.14.0 && <3.2
     , regex >=1.1.0 && <1.2
     , uniplate >=1.6.11 && <1.7
+    , unliftio >=0.2.21.0 && <1
   default-language: Haskell2010
