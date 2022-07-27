@@ -1,6 +1,6 @@
 module UnusedLocalVariable where
 
-import AST (extractMethods)
+import AST (extractMethods, extractVarName)
 import Control.Monad (MonadPlus (..))
 import Data.Function ((&))
 import Data.Generics.Uniplate.Data (universeBi)
@@ -62,7 +62,3 @@ extractClassVars cUnit = do
 checkClassVarUsageInMethod :: String -> [String] -> [String] -> Bool
 checkClassVarUsageInMethod var methodVars methodVarUsages =
   notElem var methodVars && elem var methodVarUsages
-
-extractVarName :: VarDeclId -> String
-extractVarName (VarDeclArray varDeclId) = extractVarName varDeclId
-extractVarName (VarId (Ident n)) = n

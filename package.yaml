@@ -28,6 +28,9 @@ dependencies:
 - uniplate >=1.6.11 && <1.7
 - mtl >= 2.2.2 && < 2.3
 - regex >= 1.1.0 && < 1.2
+- filemanip >= 0.3.6.3 && < 0.4
+- parsec >= 3.1.14.0 && < 3.2
+
 
 library:
   source-dirs: src

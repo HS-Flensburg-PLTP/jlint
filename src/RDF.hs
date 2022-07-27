@@ -19,6 +19,8 @@ import Data.Aeson
     defaultOptions,
     encode,
     genericToEncoding,
+    pairs,
+    (.=),
   )
 import Data.ByteString.Lazy.Internal (ByteString)
 import GHC.Generics (Generic)
@@ -37,7 +39,7 @@ data Range = Range
 
 data Source = Source
   { name :: String,
-    sourceURL :: Maybe String
+    url :: Maybe String
   }
   deriving (Generic, Show, Eq)
 
@@ -55,7 +57,7 @@ data Suggestion = Suggestion
 
 data Location = Location
   { path :: String,
-    locationRange :: Maybe Range
+    range :: Maybe Range
   }
   deriving (Generic, Show, Eq)
 
@@ -73,15 +75,14 @@ data Diagnostic = Diagnostic
 data DiagnosticResult = DiagnosticResult
   { diagnostics :: [Diagnostic],
     resultSource :: Maybe Source,
-    resultSeverity :: Severity
+    resultSeverity :: Maybe Severity
   }
   deriving (Generic, Show)
 
 data Severity
-  = Unknown
-  | Info
-  | Warning
-  | Error
+  = INFO
+  | WARNING
+  | ERROR
   deriving (Generic, Eq, Show, Ord)
 
 instance ToJSON Severity where
@@ -106,10 +107,31 @@ instance ToJSON Location where
   toEncoding = genericToEncoding defaultOptions
 
 instance ToJSON Diagnostic where
-  toEncoding = genericToEncoding defaultOptions
+  toEncoding (Diagnostic message location severity source code suggestions originalOutput) =
+    pairs
+      ( "message" .= message
+          <> "location" .= location
+          <> "severity" .= severity
+          <> "source" .= source
+          <> "code" .= code
+          <> "suggestions" .= suggestions
+          <> "original_output" .= originalOutput
+      )
 
 instance ToJSON DiagnosticResult where
-  toEncoding = genericToEncoding defaultOptions
+  toEncoding (DiagnosticResult diagnostics resultSource maybeSeverity) =
+    case maybeSeverity of
+      Just resSeverity ->
+        pairs
+          ( "diagnostics" .= diagnostics
+              <> "source" .= resultSource
+              <> "severity" .= resSeverity
+          )
+      Nothing ->
+        pairs
+          ( "diagnostics" .= diagnostics
+              <> "source" .= resultSource
+          )
 
 encodetojson :: ToJSON a => a -> Data.ByteString.Lazy.Internal.ByteString
 encodetojson = encode
@@ -121,18 +143,18 @@ simpleDiagnostic dmessage fpath =
       location =
         Location
           { path = fpath,
-            locationRange = Nothing
+            range = Nothing
           },
-      severity = Warning,
+      severity = ERROR,
       source = Nothing,
       code = Nothing,
       suggestions = Nothing,
       originalOutput = Nothing
     }
 
-checkSeverityList :: [Severity] -> Severity
-checkSeverityList [] = Unknown
-checkSeverityList list = maximum list
+checkSeverityList :: [Severity] -> Maybe Severity
+checkSeverityList [] = Nothing
+checkSeverityList list = Just (maximum list)
 
 methodDiagnostic :: String -> String -> FilePath -> Diagnostic
 methodDiagnostic methodName msg = simpleDiagnostic ("Method " ++ methodName ++ ": " ++ msg)
