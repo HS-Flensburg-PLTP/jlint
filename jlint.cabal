@@ -85,6 +85,7 @@ test-suite jlint-test
   main-is: Spec.hs
   other-modules:
       CheckResults
+      EmptyLoopBody.Tests
       RessourceManager
       Paths_jlint
   hs-source-dirs:
