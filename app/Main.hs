@@ -2,21 +2,16 @@
 
 module Main where
 
-import CheckNonFinalMethodAttributes
-import CheckNonPrivateAttributes
 -- import qualified Data.ByteString
 import Control.Monad (MonadPlus (..), unless)
 import Data.ByteString.Lazy.Internal
 import Data.Semigroup ((<>))
-import EmptyLoopBody
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Syntax
-import NamingConventions
-import NeedBraces
 import Options.Applicative
 import RDF
-import Rules
+import Rules (checkAll)
 import System.FilePath.Find
 import Text.Parsec.Error
 
@@ -93,7 +88,7 @@ parseJava rootDir pretty = do
   if pretty
     then putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
     else do
-      let diagnostics = concatMap (\(cUnit, path) -> CheckNonFinalMethodAttributes.check cUnit path ++ CheckNonPrivateAttributes.check cUnit path ++ EmptyLoopBody.check cUnit path ++ NeedBraces.check cUnit path ++ NamingConventions.checkPackageName cUnit path) cUnitResults
+      let diagnostics = concatMap (uncurry checkAll) cUnitResults
       putStrLn
         ( Data.ByteString.Lazy.Internal.unpackChars
             ( RDF.encodetojson
