@@ -98,9 +98,9 @@ parseJava rootDir pretty =
           ( Data.ByteString.Lazy.Internal.unpackChars
               ( RDF.encodetojson
                   ( DiagnosticResult
-                      { diagnostics = parseerrors,
+                      { diagnostics = parseErrors,
                         resultSource = Just (Source {name = "jlint", url = Nothing}),
-                        resultSeverity = RDF.checkSeverityList (map RDF.severity parseerrors) -- emmits highest severity of all results in all files
+                        resultSeverity = RDF.checkSeverityList (map RDF.severity parseErrors) -- emmits highest severity of all results in all files
                       }
                   )
               )
