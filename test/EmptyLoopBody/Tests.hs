@@ -33,7 +33,7 @@ testEmptyWhileLoopIO =
   do
     assertionList <-
       withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
-        "/test/emptyLoopBody/EmptyWhileLoop.java" -- path to testfile
+        "/test/EmptyLoopBody/EmptyWhileLoop.java" -- path to testfile
         ( return
             . map -- lamdafunction will be used to create a testcase for each testfile.
               ( \inputCode -> do
@@ -51,7 +51,7 @@ testEmptyEnhancedForLoopIO =
   do
     assertionList <-
       withCUnit
-        "/test/emptyLoopBody/EmptyEnhancedForLoop.java"
+        "/test/EmptyLoopBody/EmptyEnhancedForLoop.java"
         ( return
             . map
               ( \inputCode -> do
@@ -69,7 +69,7 @@ testEmptyBasicForLoopIO =
   do
     assertionList <-
       withCUnit
-        "/test/emptyLoopBody/EmptyBasicForLoop.java"
+        "/test/EmptyLoopBody/EmptyBasicForLoop.java"
         ( return
             . map
               ( \inputCode -> do
@@ -87,7 +87,7 @@ testEmptyDoLoopIO =
   do
     assertionList <-
       withCUnit
-        "/test/emptyLoopBody/EmptyDoLoop.java"
+        "/test/EmptyLoopBody/EmptyDoLoop.java"
         ( return
             . map
               ( \inputCode -> do
