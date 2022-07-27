@@ -8,8 +8,8 @@ import EmptyLoopBody
 import Language.Java.Syntax
 import NamingConventions
 import NeedBraces
-import NoNegation
 import NoLoopBreak
+import NoNegation
 import RDF
 import SameExecutionsInIf
 import SimplifyBooleanReturn
