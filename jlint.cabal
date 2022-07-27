@@ -87,6 +87,7 @@ test-suite jlint-test
   other-modules:
       CheckResults
       EmptyLoopBody.Tests
+      NamingConventions.Tests
       NoLoopBreak.Tests
       RessourceManager
       Paths_jlint
