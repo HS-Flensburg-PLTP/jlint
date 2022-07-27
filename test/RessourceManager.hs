@@ -59,13 +59,16 @@ fileLexer input rootDir =
         [] ->
           results
         x : rest@(xs : xss) ->
-          if x == nameMarker then secondStageLexer xss (mergeNameCode (setFileName (Just xs))) results
-          else if x == codeMarker then firstStageLexer xss (mergeNameCode (setFileName Nothing) xs : results)
-          else firstStageLexer rest results
+          if x == nameMarker
+            then secondStageLexer xss (mergeNameCode (setFileName (Just xs))) results
+            else
+              if x == codeMarker
+                then firstStageLexer xss (mergeNameCode (setFileName Nothing) xs : results)
+                else firstStageLexer rest results
         x : _ ->
-          if x /= nameMarker && x /= codeMarker then mergeNameCode (setFileName (Just "Testfile")) (setCode (Just x)) : results
-          else results
-
+          if x /= nameMarker && x /= codeMarker
+            then mergeNameCode (setFileName (Just "Testfile")) (setCode (Just x)) : results
+            else results
 
     secondStageLexer :: [String] -> (String -> (String, FilePath)) -> [(String, FilePath)] -> [(String, FilePath)]
     secondStageLexer input emitResultFunc results =
@@ -73,12 +76,16 @@ fileLexer input rootDir =
         [] ->
           emitResultFunc (setCode Nothing) : results
         x : rest@(xs : xss) ->
-          if x == nameMarker then secondStageLexer xss (mergeNameCode (setFileName (Just xs))) (emitResultFunc (setCode Nothing) : results)
-          else if x == codeMarker then firstStageLexer xss (emitResultFunc (setCode (Just xs)) : results)
-          else secondStageLexer rest emitResultFunc results
+          if x == nameMarker
+            then secondStageLexer xss (mergeNameCode (setFileName (Just xs))) (emitResultFunc (setCode Nothing) : results)
+            else
+              if x == codeMarker
+                then firstStageLexer xss (emitResultFunc (setCode (Just xs)) : results)
+                else secondStageLexer rest emitResultFunc results
         x : _ ->
-          if x /= nameMarker && x /= codeMarker then emitResultFunc (setCode (Just x)) : results
-          else results
+          if x /= nameMarker && x /= codeMarker
+            then emitResultFunc (setCode (Just x)) : results
+            else results
 
     mergeNameCode :: String -> String -> (String, FilePath)
     mergeNameCode fName sCode =
@@ -88,13 +95,13 @@ filterParsingResults :: [(Either ParseError CompilationUnit, FilePath)] -> [IO (
 filterParsingResults =
   map
     ( \(paringResult, corresPath) -> case paringResult of
-        Left error -> throwString 
-          ( show error 
-          ++ " :This error might correlate to an input parsing error\n"
-          ++ "Check the Java - testfile at: "
-          ++ corresPath
-          )
-
+        Left error ->
+          throwString
+            ( show error
+                ++ " :This error might correlate to an input parsing error\n"
+                ++ "Check the Java - testfile at: "
+                ++ corresPath
+            )
         Right cUnit -> return (cUnit, corresPath)
     )
 

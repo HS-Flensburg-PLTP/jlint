@@ -46,7 +46,6 @@ testEmptyWhileLoopIO =
 
     return ("While" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
 
-
 testEmptyEnhancedForLoopIO :: IO Test
 testEmptyEnhancedForLoopIO =
   do
@@ -59,11 +58,11 @@ testEmptyEnhancedForLoopIO =
                   (cUnit, path) <- inputCode
                   let diagResults = EmptyLoopBody.check cUnit path
                   checkMessage diagResults "Method testFunc: A ForEach-Lopp has a empty loop body." path
-                  checkPath diagResults path 
+                  checkPath diagResults path
               )
         )
 
-    return ("ForEach" ~: test (map TestCase assertionList)) 
+    return ("ForEach" ~: test (map TestCase assertionList))
 
 testEmptyBasicForLoopIO :: IO Test
 testEmptyBasicForLoopIO =
@@ -77,11 +76,11 @@ testEmptyBasicForLoopIO =
                   (cUnit, path) <- inputCode
                   let diagResults = EmptyLoopBody.check cUnit path
                   checkMessage diagResults "Method testFunc: A For-Loop has a empty loop body." path
-                  checkPath diagResults path 
+                  checkPath diagResults path
               )
         )
 
-    return ("For" ~: test (map TestCase assertionList)) 
+    return ("For" ~: test (map TestCase assertionList))
 
 testEmptyDoLoopIO :: IO Test
 testEmptyDoLoopIO =
@@ -95,8 +94,8 @@ testEmptyDoLoopIO =
                   (cUnit, path) <- inputCode
                   let diagResults = EmptyLoopBody.check cUnit path
                   checkMessage diagResults "Method testFunc: A Do-Loop has a empty loop body." path
-                  checkPath diagResults path 
+                  checkPath diagResults path
               )
         )
 
-    return ("Do" ~: test (map TestCase assertionList)) 
+    return ("Do" ~: test (map TestCase assertionList))
