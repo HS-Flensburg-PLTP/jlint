@@ -1,171 +1,62 @@
 module NoLoopBreak.Tests (testAllNoLoopBreaks) where
 
 import CheckResults
-import NoLoopBreak
+import Language.Java.Parser (compilationUnit, parser)
+import Language.Java.Syntax
+import NoLoopBreak (check)
 import RDF
 import RessourceManager
 import Test.HUnit
 
 testAllNoLoopBreaks :: IO ()
 testAllNoLoopBreaks = do
+  testBreakLoop <- testBreakLoopIO
+  testReturnLoop <- testReturnLoopIO
+
   runTestTT
-    ( TestList
-        [ testBreakDoWhileLoop,
-          testBreakEnhancedForLoop,
-          testBreakForLoop,
-          testBreakNestedForLoop,
-          testBreakNestedWhileLoop,
-          testBreakWhileLoop,
-          testReturnDoWhileLoop,
-          testReturnEnhancedForLoop,
-          testReturnForLoop,
-          testReturnNestedForLoop,
-          testReturnNestedWhileLoop,
-          testReturnWhileLoop
-        ]
+    ( "EmptyLoop"
+        ~: [ testBreakLoop,
+             testReturnLoop
+           ]
     )
   return ()
 
-testBreakDoWhileLoop =
-  "Break Do-While-Loop with Break"
-    ~: test
-      [ withCUnit
-          "/test/noLoopBreak/JavaFiles/BreakDoWhileLoop.java"
-          ( \(path, cUnit) -> do
-              let diagResult = NoLoopBreak.check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: Exit Loop with break"
-          )
-      ]
+-- Break Loop using break
 
-testBreakEnhancedForLoop =
-  "Break Enhanced-For-Loop with Break"
-    ~: test
-      [ withCUnit
-          "/test/noLoopBreak/JavaFiles/BreakEnhancedForLoop.java"
-          ( \(path, cUnit) -> do
-              let diagResult = NoLoopBreak.check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: Exit Loop with break"
-          )
-      ]
+testBreakLoopIO :: IO Test
+testBreakLoopIO =
+  do
+    assertionList <-
+      withCUnit
+        "/test/noLoopBreak/JavaFiles/BreakLoop.java"
+        ( return
+            . map
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = NoLoopBreak.check cUnit path
+                  checkMessage diagResults "Method testFunc: Exit Loop with break" path
+                  checkPath diagResults path
+              )
+        )
 
-testBreakForLoop =
-  "Break For-Loop with Break"
-    ~: test
-      [ withCUnit
-          "/test/noLoopBreak/JavaFiles/BreakForLoop.java"
-          ( \(path, cUnit) -> do
-              let diagResult = NoLoopBreak.check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: Exit Loop with break"
-          )
-      ]
+    return ("Do-While-Loop" ~: test (map TestCase assertionList))
 
-testBreakNestedForLoop =
-  "Break Nested-For-Loop with Break"
-    ~: test
-      [ withCUnit
-          "/test/noLoopBreak/JavaFiles/BreakNestedForLoop.java"
-          ( \(path, cUnit) -> do
-              let diagResult = NoLoopBreak.check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: Exit Loop with break"
-          )
-      ]
+-- Break Loop using return
 
-testBreakNestedWhileLoop =
-  "Break Nested-While-Loop with Break"
-    ~: test
-      [ withCUnit
-          "/test/noLoopBreak/JavaFiles/BreakNestedWhileLoop.java"
-          ( \(path, cUnit) -> do
-              let diagResult = NoLoopBreak.check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: Exit Loop with break"
-          )
-      ]
+testReturnLoopIO :: IO Test
+testReturnLoopIO =
+  do
+    assertionList <-
+      withCUnit
+        "/test/noLoopBreak/JavaFiles/ReturnLoop.java"
+        ( return
+            . map
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = NoLoopBreak.check cUnit path
+                  checkMessage diagResults "Method testFunc: Exit Loop with return" path
+                  checkPath diagResults path
+              )
+        )
 
-testBreakWhileLoop =
-  "Break While-Loop with Break"
-    ~: test
-      [ withCUnit
-          "/test/noLoopBreak/JavaFiles/BreakWhileLoop.java"
-          ( \(path, cUnit) -> do
-              let diagResult = NoLoopBreak.check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: Exit Loop with break"
-          )
-      ]
-
-testReturnDoWhileLoop =
-  "Break Do-While-Loop with Return"
-    ~: test
-      [ withCUnit
-          "/test/noLoopBreak/JavaFiles/ReturnDoWhileLoop.java"
-          ( \(path, cUnit) -> do
-              let diagResult = NoLoopBreak.check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: Exit Loop with return"
-          )
-      ]
-
-testReturnEnhancedForLoop =
-  "Break Enhanced-For-Loop with Return"
-    ~: test
-      [ withCUnit
-          "/test/noLoopBreak/JavaFiles/ReturnEnhancedForLoop.java"
-          ( \(path, cUnit) -> do
-              let diagResult = NoLoopBreak.check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: Exit Loop with return"
-          )
-      ]
-
-testReturnForLoop =
-  "Break For-Loop with Return"
-    ~: test
-      [ withCUnit
-          "/test/noLoopBreak/JavaFiles/ReturnForLoop.java"
-          ( \(path, cUnit) -> do
-              let diagResult = NoLoopBreak.check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: Exit Loop with return"
-          )
-      ]
-
-testReturnNestedForLoop =
-  "Break Nested-For-Loop with Return"
-    ~: test
-      [ withCUnit
-          "/test/noLoopBreak/JavaFiles/ReturnNestedForLoop.java"
-          ( \(path, cUnit) -> do
-              let diagResult = NoLoopBreak.check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: Exit Loop with return"
-          )
-      ]
-
-testReturnNestedWhileLoop =
-  "Break Nested-While-Loop with Return"
-    ~: test
-      [ withCUnit
-          "/test/noLoopBreak/JavaFiles/ReturnNestedWhileLoop.java"
-          ( \(path, cUnit) -> do
-              let diagResult = NoLoopBreak.check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: Exit Loop with return"
-          )
-      ]
-
-testReturnWhileLoop =
-  "Break While-Loop with Return"
-    ~: test
-      [ withCUnit
-          "/test/noLoopBreak/JavaFiles/ReturnWhileLoop.java"
-          ( \(path, cUnit) -> do
-              let diagResult = NoLoopBreak.check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: Exit Loop with return"
-          )
-      ]
+    return ("Do-While-Loop" ~: test (map TestCase assertionList))
