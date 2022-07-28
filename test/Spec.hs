@@ -7,10 +7,12 @@ import NonFinalMethodAttributes.Tests (testAllNonFinalMethodAttributes)
 import NonPrivateAttributes.Tests (testAllNonPrivateAttributes)
 import SameExecutionsInIf.Tests
 import SimplifyBooleanReturn.Tests
+import UnnecessaryVariables.Tests (testAllUnnecessaryVariables)
 
 main :: IO ()
 main = do
   testAllEmptyLoopBodies
+  testAllUnnecessaryVariables
   testAllNoLoopBreaks
   NamingConventions.Tests.testAll
   testAllNonFinalMethodAttributes

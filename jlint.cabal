@@ -94,6 +94,7 @@ test-suite jlint-test
       NonFinalMethodAttributes.Tests
       NonPrivateAttributes.Tests
       RessourceManager
+      UnnecessaryVariables.Tests
       SameExecutionsInIf.Tests
       SimplifyBooleanReturn.Tests
       Paths_jlint
