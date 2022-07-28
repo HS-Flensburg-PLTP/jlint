@@ -88,6 +88,7 @@ test-suite jlint-test
       CheckResults
       EmptyLoopBody.Tests
       NamingConventions.Tests
+      NeedBraces.Tests
       NoLoopBreak.Tests
       RessourceManager
       SimplifyBooleanReturn.Tests
