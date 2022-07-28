@@ -90,6 +90,7 @@ test-suite jlint-test
       NamingConventions.Tests
       NoLoopBreak.Tests
       RessourceManager
+      SameExecutionsInIf.Tests
       Paths_jlint
   hs-source-dirs:
       test
