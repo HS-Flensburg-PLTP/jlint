@@ -86,11 +86,17 @@ test-suite jlint-test
   main-is: Spec.hs
   other-modules:
       CheckResults
+      DefaultComesLast.Tests
       EmptyLoopBody.Tests
       NamingConventions.Tests
+      NeedBraces.Tests
       NoLoopBreak.Tests
+      NonFinalMethodAttributes.Tests
+      NonPrivateAttributes.Tests
       RessourceManager
       UnnecessaryVariables.Tests
+      SameExecutionsInIf.Tests
+      SimplifyBooleanReturn.Tests
       Paths_jlint
   hs-source-dirs:
       test
