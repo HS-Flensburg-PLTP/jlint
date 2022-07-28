@@ -1,4 +1,6 @@
+import CheckScope.Tests
 import DefaultComesLast.Tests
+import EmptyLoopBody.Tests
 import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
 import NamingConventions.Tests
 import NeedBraces.Tests
@@ -12,6 +14,7 @@ import UnnecessaryVariables.Tests (testAllUnnecessaryVariables)
 main :: IO ()
 main = do
   testAllEmptyLoopBodies
+  CheckScope.Tests.testAll
   testAllUnnecessaryVariables
   testAllNoLoopBreaks
   NamingConventions.Tests.testAll
