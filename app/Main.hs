@@ -3,7 +3,7 @@
 module Main where
 
 -- import qualified Data.ByteString
-import Control.Monad (MonadPlus (..), unless)
+import Control.Monad (MonadPlus (..), unless, when)
 import Data.ByteString.Lazy.Internal
 import Data.Semigroup ((<>))
 import Language.Java.Parser (compilationUnit, modifier, parser)
@@ -81,23 +81,24 @@ parseAllFiles files =
 
 -- missing pretty option and does not print errors
 parseJava :: FilePath -> Bool -> IO ()
-parseJava rootDir pretty = do
-  pathList <- findAllJavaFiles rootDir
-  fileList <- readAllFiles pathList
-  let (parsingErrors, cUnitResults) = parseAllFiles fileList
-  if pretty
-    then putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
-    else do
-      let diagnostics = concatMap (uncurry checkAll) cUnitResults
-      putStrLn
-        ( Data.ByteString.Lazy.Internal.unpackChars
-            ( RDF.encodetojson
-                ( DiagnosticResult
-                    { diagnostics = diagnostics,
-                      resultSource = Just (Source {name = "jlint", url = Nothing}),
-                      resultSeverity = RDF.checkSeverityList (map RDF.severity diagnostics) -- emmits highest severity of all results in all files
-                    }
-                )
-            )
-        )
-      unless (null parsingErrors) $ print parsingErrors
+parseJava rootDir pretty =
+  do
+    pathList <- findAllJavaFiles rootDir
+    fileList <- readAllFiles pathList
+    let (parsingErrors, cUnitResults) = parseAllFiles fileList
+    let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
+    let diagnostics = concatMap (uncurry checkAll) cUnitResults
+    let diagnosticResults = diagnostics ++ parseErrors
+    putStrLn
+      ( Data.ByteString.Lazy.Internal.unpackChars
+          ( RDF.encodetojson
+              ( DiagnosticResult
+                  { diagnostics = diagnosticResults,
+                    resultSource = Just (Source {name = "jlint", url = Nothing}),
+                    resultSeverity = RDF.checkSeverityList (map RDF.severity diagnosticResults) -- emmits highest severity of all results in all files
+                  }
+              )
+          )
+      )
+    unless (null parsingErrors) $ print parsingErrors
+    when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))

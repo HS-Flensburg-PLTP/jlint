@@ -88,6 +88,7 @@ test-suite jlint-test
       CheckResults
       DefaultComesLast.Tests
       EmptyLoopBody.Tests
+      InputHandler
       NamingConventions.Tests
       NeedBraces.Tests
       NoLoopBreak.Tests
