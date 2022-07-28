@@ -89,6 +89,7 @@ test-suite jlint-test
       EmptyLoopBody.Tests
       NamingConventions.Tests
       NoLoopBreak.Tests
+      NonFinalMethodAttributes.Tests
       RessourceManager
       Paths_jlint
   hs-source-dirs:
