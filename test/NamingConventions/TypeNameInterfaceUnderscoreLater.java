@@ -1,3 +1,0 @@
-interface Test_Class {
-
-}
