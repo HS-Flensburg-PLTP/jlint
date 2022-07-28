@@ -3,7 +3,7 @@
 module Main where
 
 -- import qualified Data.ByteString
-import Control.Monad (MonadPlus (..), unless)
+import Control.Monad (MonadPlus (..), unless, when)
 import Data.ByteString.Lazy.Internal
 import Data.Semigroup ((<>))
 import Language.Java.Parser (compilationUnit, modifier, parser)
@@ -101,4 +101,4 @@ parseJava rootDir pretty =
           )
       )
     unless (null parsingErrors) $ print parsingErrors
-    if pretty then putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults)) else putStrLn ""
+    when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
