@@ -92,6 +92,7 @@ test-suite jlint-test
       NeedBraces.Tests
       NoLoopBreak.Tests
       RessourceManager
+      SameExecutionsInIf.Tests
       SimplifyBooleanReturn.Tests
       Paths_jlint
   hs-source-dirs:
