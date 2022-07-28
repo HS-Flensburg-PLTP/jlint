@@ -2,83 +2,127 @@ module CheckScope.Tests where
 
 import CheckResults
 import CheckScope (check)
+import Language.Java.Parser (compilationUnit, parser)
+import Language.Java.Syntax
 import RDF
 import RessourceManager
 import Test.HUnit
 
 testAll :: IO ()
 testAll = do
-  runTestTT (TestList [ifElseTest, ifThenElseTest, enhancedForTest, doTest, forTest, whileTest])
+  testIfThen <- testIfThenIO
+  testIfThenElse <- testIfThenElseIO
+  testEnhancedFor <- testEnhancedForIO
+  testDo <- testDoIO
+  testFor <- testFor
+  testWhile <- testWhileIO
+  runTestTT ("SimplifyBooleanReturn" ~: [testIfThen, testIfThenElse, testEnhancedFor, testDo, testFor, testWhile])
   return ()
 
-ifElseTest =
-  "Var belong in if-else scope"
-    ~: test
-      [ withCUnit
-          "/test/checkScope/IfThenScope.java"
-          ( \(path, cUnit) -> do
-              let diagResult = check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: The scope of variable i can be reduced."
-          )
-      ]
+testIfThenIO :: IO Test
+testIfThenIO =
+  do
+    assertionList <-
+      withCUnit
+        "/test/checkScope/IfThenScope.java"
+        ( return
+            . map
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = check cUnit path
+                  checkMessage diagResults "Method testFunc: The scope of variable i can be reduced." path
+                  checkPath diagResults path
+              )
+        )
 
-ifThenElseTest =
-  "Var i belong in if-then-else scope"
-    ~: test
-      [ withCUnit
-          "/test/checkScope/IfThenElseScope.java"
-          ( \(path, cUnit) -> do
-              let diagResult = check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: The scope of variable i can be reduced."
-          )
-      ]
+    return ("IfThen" ~: test (map TestCase assertionList))
 
-enhancedForTest =
-  "Var i belong in EnhancedFor scope"
-    ~: test
-      [ withCUnit
-          "/test/checkScope/EnhancedForScope.java"
-          ( \(path, cUnit) -> do
-              let diagResult = check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: The scope of variable i can be reduced."
-          )
-      ]
+testIfThenElseIO :: IO Test
+testIfThenElseIO =
+  do
+    assertionList <-
+      withCUnit
+        "/test/checkScope/IfThenElseScope.java"
+        ( return
+            . map
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = check cUnit path
+                  checkMessage diagResults "Method testFunc: The scope of variable i can be reduced." path
+                  checkPath diagResults path
+              )
+        )
 
-doTest =
-  "Var i belong in Do scope"
-    ~: test
-      [ withCUnit
-          "/test/checkScope/DoScope.java"
-          ( \(path, cUnit) -> do
-              let diagResult = check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: The scope of variable i can be reduced."
-          )
-      ]
+    return ("IfThen" ~: test (map TestCase assertionList))
 
-forTest =
-  "Var i belong in For scope"
-    ~: test
-      [ withCUnit
-          "/test/checkScope/ForScope.java"
-          ( \(path, cUnit) -> do
-              let diagResult = check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: The scope of variable i can be reduced."
-          )
-      ]
+testEnhancedForIO :: IO Test
+testEnhancedForIO =
+  do
+    assertionList <-
+      withCUnit
+        "/test/checkScope/EnhancedForScope.java"
+        ( return
+            . map
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = check cUnit path
+                  checkMessage diagResults "Method testFunc: The scope of variable i can be reduced." path
+                  checkPath diagResults path
+              )
+        )
 
-whileTest =
-  "Var i belong in While scope"
-    ~: test
-      [ withCUnit
-          "/test/checkScope/WhileScope.java"
-          ( \(path, cUnit) -> do
-              let diagResult = check cUnit path
-              checkPath diagResult path
-              checkMessage diagResult "Method testFunc: The scope of variable i can be reduced."
-          )
-      ]
+    return ("IfThenElse" ~: test (map TestCase assertionList))
+
+testDoIO :: IO Test
+testDoIO =
+  do
+    assertionList <-
+      withCUnit
+        "/test/checkScope/DoScope.java"
+        ( return
+            . map
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = check cUnit path
+                  checkMessage diagResults "Method testFunc: The scope of variable i can be reduced." path
+                  checkPath diagResults path
+              )
+        )
+
+    return ("Do" ~: test (map TestCase assertionList))
+
+testForIO :: IO Test
+testForIO =
+  do
+    assertionList <-
+      withCUnit
+        "/test/checkScope/ForScope.java"
+        ( return
+            . map
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = check cUnit path
+                  checkMessage diagResults "Method testFunc: The scope of variable i can be reduced." path
+                  checkPath diagResults path
+              )
+        )
+
+    return ("For" ~: test (map TestCase assertionList))
+
+testWhileIO :: IO Test
+testWhileIO =
+  do
+    assertionList <-
+      withCUnit
+        "/test/checkScope/WhileScope.java"
+        ( return
+            . map
+              ( \inputCode -> do
+                  (cUnit, path) <- inputCode
+                  let diagResults = check cUnit path
+                  checkMessage diagResults "Method testFunc: The scope of variable i can be reduced." path
+                  checkPath diagResults path
+              )
+        )
+
+    return ("While" ~: test (map TestCase assertionList))
