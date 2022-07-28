@@ -5,7 +5,7 @@ import UnnecessaryVariables.Tests (testAllUnnecessaryVariables)
 
 main :: IO ()
 main = do
-  testAllNoLoopBreaks
   testAllEmptyLoopBodies
   testAllUnnecessaryVariables
+  testAllNoLoopBreaks
   NamingConventions.Tests.testAll
