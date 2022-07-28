@@ -1,3 +1,4 @@
+import DefaultComesLast.Tests
 import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
 import NamingConventions.Tests
 import NeedBraces.Tests
@@ -9,5 +10,6 @@ main = do
   testAllEmptyLoopBodies
   testAllNoLoopBreaks
   NamingConventions.Tests.testAll
+  DefaultComesLast.Tests.testAll
   SimplifyBooleanReturn.Tests.testAll
   NeedBraces.Tests.testAll
