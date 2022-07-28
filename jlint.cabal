@@ -34,6 +34,7 @@ library
       EmptyLoopBody
       NamingConventions
       NeedBraces
+      NoLoopBreak
       NoNegation
       RDF
       SameExecutionsInIf
@@ -86,25 +87,38 @@ test-suite jlint-test
   other-modules:
       CheckResults
       CheckScope.Tests
+      DefaultComesLast.Tests
       EmptyLoopBody.Tests
+      InputHandler
+      NamingConventions.Tests
+      NeedBraces.Tests
+      NoLoopBreak.Tests
+      NonFinalMethodAttributes.Tests
+      NonPrivateAttributes.Tests
       RessourceManager
+      UnnecessaryVariables.Tests
+      SameExecutionsInIf.Tests
+      SimplifyBooleanReturn.Tests
       Paths_jlint
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       HUnit >=1.6.2.0 && <2
+    , MissingH >=1.5.0.1 && <1.6
     , aeson >=2.0.3 && <2.1
     , base >=4.7 && <5
     , bytestring >=0.10.12.1 && <0.11
     , directory >=1.3.6.2 && <2
     , filemanip >=0.3.6.3 && <0.4
+    , filepath >=1.4.2.1 && <1.5
     , jlint
     , language-java >=0.2.9 && <3
     , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
     , parsec >=3.1.14.0 && <3.2
     , regex >=1.1.0 && <1.2
+    , split >=0.2.3.4 && <0.3
     , uniplate >=1.6.11 && <1.7
     , unliftio >=0.2.21.0 && <1
   default-language: Haskell2010

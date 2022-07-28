@@ -42,7 +42,7 @@ checkNecessaryVars declaredVars usedVars returnedVars methodName path =
 
 checkLenghtofFilterReturnedVars :: [String] -> [String] -> Int
 checkLenghtofFilterReturnedVars declaredVars returnedVars =
-  length (map (`elem` returnedVars) declaredVars)
+  length (filter (`elem` returnedVars) declaredVars)
 
 checkLengthofFilterUsedVars :: [String] -> [String] -> Int
 checkLengthofFilterUsedVars declaredVars usedVars =
