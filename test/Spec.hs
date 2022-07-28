@@ -1,7 +1,6 @@
-
 import CheckScope.Tests
-import EmptyLoopBody.Tests
 import DefaultComesLast.Tests
+import EmptyLoopBody.Tests
 import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
 import NamingConventions.Tests
 import NeedBraces.Tests
