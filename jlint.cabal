@@ -89,8 +89,10 @@ test-suite jlint-test
       DefaultComesLast.Tests
       EmptyLoopBody.Tests
       NamingConventions.Tests
+      NeedBraces.Tests
       NoLoopBreak.Tests
       RessourceManager
+      SimplifyBooleanReturn.Tests
       Paths_jlint
   hs-source-dirs:
       test

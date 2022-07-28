@@ -41,12 +41,6 @@ testAll = do
   testTypeNameOne <- testTypeNameOneIO
   testTypeNameTwo <- testTypeNameTwoIO
   testTypeNameThree <- testTypeNameThreeIO
-  testTypeNameFour <- testTypeNameFourIO
-  testTypeNameFive <- testTypeNameFiveIO
-  testTypeNameSix <- testTypeNameSixIO
-  testTypeNameSeven <- testTypeNameSevenIO
-  testTypeNameEight <- testTypeNameEightIO
-  testTypeNameNine <- testTypeNameNineIO
   runTestTT
     ( "NamingConventions"
         ~: [ testPackageNameTLDOne,
@@ -71,13 +65,7 @@ testAll = do
              testMemberNameThree,
              testTypeNameOne,
              testTypeNameTwo,
-             testTypeNameThree,
-             testTypeNameFour,
-             testTypeNameFive,
-             testTypeNameSix,
-             testTypeNameSeven,
-             testTypeNameEight,
-             testTypeNameNine
+             testTypeNameThree
            ]
     )
   return ()
@@ -468,7 +456,7 @@ testTypeNameOneIO =
               ( \inputCode -> do
                   (cUnit, path) <- inputCode
                   let diagResults = checkTypeName cUnit path
-                  checkMessage diagResults "Type name testClass doesn't match the specifications." path
+                  checkMessage diagResults "Type name test doesn't match the specifications." path
                   checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
               )
         )
@@ -486,7 +474,7 @@ testTypeNameTwoIO =
               ( \inputCode -> do
                   (cUnit, path) <- inputCode
                   let diagResults = checkTypeName cUnit path
-                  checkMessage diagResults "Type name _TestClass doesn't match the specifications." path
+                  checkMessage diagResults "Type name _Test doesn't match the specifications." path
                   checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
               )
         )
@@ -504,115 +492,7 @@ testTypeNameThreeIO =
               ( \inputCode -> do
                   (cUnit, path) <- inputCode
                   let diagResults = checkTypeName cUnit path
-                  checkMessage diagResults "Type name Test_Class doesn't match the specifications." path
-                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
-              )
-        )
-
-    return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
-
-testTypeNameFourIO :: IO Test
-testTypeNameFourIO =
-  do
-    assertionList <-
-      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
-        "/test/NamingConventions/TypeNameInterfaceLowercaseStart.java" -- path to testfile
-        ( return
-            . map -- lamdafunction will be used to create a testcase for each testfile.
-              ( \inputCode -> do
-                  (cUnit, path) <- inputCode
-                  let diagResults = checkTypeName cUnit path
-                  checkMessage diagResults "Type name testClass doesn't match the specifications." path
-                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
-              )
-        )
-
-    return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
-
-testTypeNameFiveIO :: IO Test
-testTypeNameFiveIO =
-  do
-    assertionList <-
-      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
-        "/test/NamingConventions/TypeNameInterfaceUnderscoreStart.java" -- path to testfile
-        ( return
-            . map -- lamdafunction will be used to create a testcase for each testfile.
-              ( \inputCode -> do
-                  (cUnit, path) <- inputCode
-                  let diagResults = checkTypeName cUnit path
-                  checkMessage diagResults "Type name _TestClass doesn't match the specifications." path
-                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
-              )
-        )
-
-    return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
-
-testTypeNameSixIO :: IO Test
-testTypeNameSixIO =
-  do
-    assertionList <-
-      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
-        "/test/NamingConventions/TypeNameInterfaceUnderscoreLater.java" -- path to testfile
-        ( return
-            . map -- lamdafunction will be used to create a testcase for each testfile.
-              ( \inputCode -> do
-                  (cUnit, path) <- inputCode
-                  let diagResults = checkTypeName cUnit path
-                  checkMessage diagResults "Type name Test_Class doesn't match the specifications." path
-                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
-              )
-        )
-
-    return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
-
-testTypeNameSevenIO :: IO Test
-testTypeNameSevenIO =
-  do
-    assertionList <-
-      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
-        "/test/NamingConventions/TypeNameEnumLowercaseStart.java" -- path to testfile
-        ( return
-            . map -- lamdafunction will be used to create a testcase for each testfile.
-              ( \inputCode -> do
-                  (cUnit, path) <- inputCode
-                  let diagResults = checkTypeName cUnit path
-                  checkMessage diagResults "Type name testClass doesn't match the specifications." path
-                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
-              )
-        )
-
-    return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
-
-testTypeNameEightIO :: IO Test
-testTypeNameEightIO =
-  do
-    assertionList <-
-      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
-        "/test/NamingConventions/TypeNameEnumUnderscoreStart.java" -- path to testfile
-        ( return
-            . map -- lamdafunction will be used to create a testcase for each testfile.
-              ( \inputCode -> do
-                  (cUnit, path) <- inputCode
-                  let diagResults = checkTypeName cUnit path
-                  checkMessage diagResults "Type name _TestClass doesn't match the specifications." path
-                  checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
-              )
-        )
-
-    return ("TypeName" ~: test (map TestCase assertionList)) -- create testcase from each Assertion. Merges all testCases into a single test.
-
-testTypeNameNineIO :: IO Test
-testTypeNameNineIO =
-  do
-    assertionList <-
-      withCUnit -- provides compilation unit for each test - file - fragment. Manages test - setup and teardown
-        "/test/NamingConventions/TypeNameEnumUnderscoreLater.java" -- path to testfile
-        ( return
-            . map -- lamdafunction will be used to create a testcase for each testfile.
-              ( \inputCode -> do
-                  (cUnit, path) <- inputCode
-                  let diagResults = checkTypeName cUnit path
-                  checkMessage diagResults "Type name Test_Class doesn't match the specifications." path
+                  checkMessage diagResults "Type name Te_st doesn't match the specifications." path
                   checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
               )
         )
