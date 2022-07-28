@@ -3,11 +3,11 @@ import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
 import NamingConventions.Tests
 import NeedBraces.Tests
 import NoLoopBreak.Tests (testAllNoLoopBreaks)
-import UnnecessaryVariables.Tests (testAllUnnecessaryVariables)
 import NonFinalMethodAttributes.Tests (testAllNonFinalMethodAttributes)
 import NonPrivateAttributes.Tests (testAllNonPrivateAttributes)
 import SameExecutionsInIf.Tests
 import SimplifyBooleanReturn.Tests
+import UnnecessaryVariables.Tests (testAllUnnecessaryVariables)
 
 main :: IO ()
 main = do
