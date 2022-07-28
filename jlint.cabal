@@ -91,6 +91,7 @@ test-suite jlint-test
       NamingConventions.Tests
       NeedBraces.Tests
       NoLoopBreak.Tests
+      NonPrivateAttributes.Tests
       RessourceManager
       SameExecutionsInIf.Tests
       SimplifyBooleanReturn.Tests
