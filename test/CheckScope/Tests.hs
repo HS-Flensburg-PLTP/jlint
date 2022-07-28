@@ -14,7 +14,7 @@ testAll = do
   testIfThenElse <- testIfThenElseIO
   testEnhancedFor <- testEnhancedForIO
   testDo <- testDoIO
-  testFor <- testFor
+  testFor <- testForIO
   testWhile <- testWhileIO
   runTestTT ("SimplifyBooleanReturn" ~: [testIfThen, testIfThenElse, testEnhancedFor, testDo, testFor, testWhile])
   return ()
