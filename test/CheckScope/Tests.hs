@@ -24,7 +24,7 @@ testIfThenIO =
   do
     assertionList <-
       withCUnit
-        "/test/checkScope/IfThenScope.java"
+        "/test/CheckScope/IfThenScope.java"
         ( return
             . map
               ( \inputCode -> do
@@ -42,7 +42,7 @@ testIfThenElseIO =
   do
     assertionList <-
       withCUnit
-        "/test/checkScope/IfThenElseScope.java"
+        "/test/CheckScope/IfThenElseScope.java"
         ( return
             . map
               ( \inputCode -> do
@@ -60,7 +60,7 @@ testEnhancedForIO =
   do
     assertionList <-
       withCUnit
-        "/test/checkScope/EnhancedForScope.java"
+        "/test/CheckScope/EnhancedForScope.java"
         ( return
             . map
               ( \inputCode -> do
@@ -78,7 +78,7 @@ testDoIO =
   do
     assertionList <-
       withCUnit
-        "/test/checkScope/DoScope.java"
+        "/test/CheckScope/DoScope.java"
         ( return
             . map
               ( \inputCode -> do
@@ -96,7 +96,7 @@ testForIO =
   do
     assertionList <-
       withCUnit
-        "/test/checkScope/ForScope.java"
+        "/test/CheckScope/ForScope.java"
         ( return
             . map
               ( \inputCode -> do
@@ -114,7 +114,7 @@ testWhileIO =
   do
     assertionList <-
       withCUnit
-        "/test/checkScope/WhileScope.java"
+        "/test/CheckScope/WhileScope.java"
         ( return
             . map
               ( \inputCode -> do
