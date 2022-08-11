@@ -89,16 +89,15 @@ test-suite jlint-test
       CheckScope.Tests
       DefaultComesLast.Tests
       EmptyLoopBody.Tests
-      InputHandler
       NamingConventions.Tests
       NeedBraces.Tests
       NoLoopBreak.Tests
       NonFinalMethodAttributes.Tests
       NonPrivateAttributes.Tests
       RessourceManager
-      UnnecessaryVariables.Tests
       SameExecutionsInIf.Tests
       SimplifyBooleanReturn.Tests
+      UnnecessaryVariables.Tests
       Paths_jlint
   hs-source-dirs:
       test

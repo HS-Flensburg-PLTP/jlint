@@ -8,7 +8,7 @@ import Data.String.Utils (strip)
 import Language.Java.Parser (compilationUnit, parser)
 import Language.Java.Syntax
 import System.Directory
-import System.FilePath.Posix (addExtension, combine, dropExtension, takeBaseName, takeExtension, (</>))
+import System.FilePath.Posix (addExtension, combine, dropExtension, takeExtension, (</>))
 import Text.Parsec.Error
 import UnliftIO.Exception
 
