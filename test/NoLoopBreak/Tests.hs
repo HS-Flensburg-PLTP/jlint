@@ -14,8 +14,8 @@ testAllNoLoopBreaks = do
   testReturnLoop <- testReturnLoopIO
 
   runTestTT
-    ( "EmptyLoop" ~:
-         [ testBreakLoop,
+    ( "EmptyLoop"
+        ~: [ testBreakLoop,
              testReturnLoop
            ]
     )
