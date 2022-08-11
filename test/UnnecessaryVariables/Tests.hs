@@ -12,8 +12,8 @@ testAllUnnecessaryVariables :: IO ()
 testAllUnnecessaryVariables = do
   testUnnecessaryVariables <- testUnnecessaryVariablesIO
   runTestTT
-    ( "Unnecessary Variables"
-        ~: [testUnnecessaryVariables]
+    ( "Unnecessary Variables" ~:
+         [testUnnecessaryVariables]
     )
   return ()
 
