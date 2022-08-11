@@ -2,7 +2,6 @@ module CheckResults where
 
 import RDF
 import System.Directory
-import System.FilePath.Posix (takeBaseName)
 import Test.HUnit hiding (path)
 
 {-
