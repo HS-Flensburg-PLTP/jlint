@@ -91,8 +91,9 @@ fileLexer input rootDir =
     mergeNameCode fName sCode =
       (sCode, fName)
 
-filterParsingResults :: [(Either ParseError CompilationUnit, FilePath)] -> [IO (CompilationUnit, FilePath)]
-filterParsingResults =
+
+filterJavaParsingResults :: [(Either ParseError CompilationUnit, FilePath)] -> [IO (CompilationUnit, FilePath)]
+filterJavaParsingResults =
   map
     ( \(paringResult, corresPath) -> case paringResult of
         Left error ->
@@ -117,7 +118,7 @@ parseJava path = do
           )
           formatedInput
 
-  return (filterParsingResults result)
+  return (filterJavaParsingResults result)
 
 withCUnit :: FilePath -> ([IO (CompilationUnit, FilePath)] -> IO [IO ()]) -> IO [IO ()]
 withCUnit relativePath =

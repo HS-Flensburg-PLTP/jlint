@@ -34,6 +34,7 @@ library
       EmptyLoopBody
       NamingConventions
       NeedBraces
+      NoLoopBreak
       NoNegation
       RDF
       SameExecutionsInIf
@@ -85,8 +86,19 @@ test-suite jlint-test
   main-is: Spec.hs
   other-modules:
       CheckResults
+      CheckScope.Tests
+      DefaultComesLast.Tests
       EmptyLoopBody.Tests
+      InputHandler
+      NamingConventions.Tests
+      NeedBraces.Tests
+      NoLoopBreak.Tests
+      NonFinalMethodAttributes.Tests
+      NonPrivateAttributes.Tests
       RessourceManager
+      UnnecessaryVariables.Tests
+      SameExecutionsInIf.Tests
+      SimplifyBooleanReturn.Tests
       Paths_jlint
   hs-source-dirs:
       test
