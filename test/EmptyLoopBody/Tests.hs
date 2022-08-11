@@ -57,7 +57,7 @@ testEmptyEnhancedForLoopIO =
               ( \inputCode -> do
                   (cUnit, path) <- inputCode
                   let diagResults = EmptyLoopBody.check cUnit path
-                  checkMessage diagResults "Method testFunc: A ForEach-Lopp has a empty loop body." path
+                  checkMessage diagResults "Method testFunc: A ForEach-Loop has a empty loop body." path
                   checkPath diagResults path
               )
         )

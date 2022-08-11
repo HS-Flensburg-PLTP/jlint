@@ -7,7 +7,7 @@ public class Strings2 {
 
     public void testFunc(String name, final int age) {
         String[] arr = {"a", "b", "c"};
-        TODO: do {} while(true);
+        for(String elem : arr){};
     }
 }
 
