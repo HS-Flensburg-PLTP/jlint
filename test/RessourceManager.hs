@@ -91,7 +91,6 @@ fileLexer input rootDir =
     mergeNameCode fName sCode =
       (sCode, fName)
 
-
 filterJavaParsingResults :: [(Either ParseError CompilationUnit, FilePath)] -> [IO (CompilationUnit, FilePath)]
 filterJavaParsingResults =
   map
