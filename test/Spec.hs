@@ -1,3 +1,4 @@
+import Test.HUnit (runTestTT)
 import CheckScope.Tests
 import DefaultComesLast.Tests
 import EmptyLoopBody.Tests
@@ -10,6 +11,7 @@ import NonPrivateAttributes.Tests (testAllNonPrivateAttributes)
 import SameExecutionsInIf.Tests
 import SimplifyBooleanReturn.Tests
 import UnnecessaryVariables.Tests (testAllUnnecessaryVariables)
+import qualified UseElseTests
 
 main :: IO ()
 main = do
@@ -24,3 +26,5 @@ main = do
   DefaultComesLast.Tests.testAll
   SimplifyBooleanReturn.Tests.testAll
   NeedBraces.Tests.testAll
+  _ <- runTestTT UseElseTests.tests
+  return ()

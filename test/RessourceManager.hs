@@ -112,7 +112,7 @@ parseJava path = do
   let result =
         map
           ( \(inputCode, corresPath) -> do
-              let eitherCUnit = parser compilationUnit inputCode
+              let eitherCUnit = parser compilationUnit corresPath inputCode
               (eitherCUnit, corresPath)
           )
           formatedInput
