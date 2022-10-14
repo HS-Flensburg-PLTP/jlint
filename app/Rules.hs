@@ -15,30 +15,32 @@ import SameExecutionsInIf
 import SimplifyBooleanReturn
 import UnnecessaryVariables
 import UnusedLocalVariable
+import UseElse
 
 checks :: [CompilationUnit -> FilePath -> [Diagnostic]]
-checks =
-  [ NeedBraces.check,
-    CheckNonFinalMethodAttributes.check,
-    CheckNonPrivateAttributes.check,
-    EmptyLoopBody.check,
-    SimplifyBooleanReturn.check,
-    NoLoopBreak.check,
-    UnnecessaryVariables.checkMethodVars,
-    NeedBraces.check,
-    CheckScope.check,
-    DefaultComesLast.check,
-    NamingConventions.checkPackageName,
-    NamingConventions.checkMethodName,
-    NamingConventions.checkParameterName,
-    NamingConventions.checkStaticVariableName,
-    NamingConventions.checkLocalName,
-    NamingConventions.checkMemberName,
-    NamingConventions.checkTypeName,
-    NoNegation.check,
-    SameExecutionsInIf.check,
-    UnusedLocalVariable.checkMethodVars
-  ]
+checks = [UseElse.check]
+
+-- [ NeedBraces.check,
+--   CheckNonFinalMethodAttributes.check,
+--   CheckNonPrivateAttributes.check,
+--   EmptyLoopBody.check,
+--   SimplifyBooleanReturn.check,
+--   NoLoopBreak.check,
+--   UnnecessaryVariables.checkMethodVars,
+--   NeedBraces.check,
+--   CheckScope.check,
+--   DefaultComesLast.check,
+--   NamingConventions.checkPackageName,
+--   NamingConventions.checkMethodName,
+--   NamingConventions.checkParameterName,
+--   NamingConventions.checkStaticVariableName,
+--   NamingConventions.checkLocalName,
+--   NamingConventions.checkMemberName,
+--   NamingConventions.checkTypeName,
+--   NoNegation.check,
+--   SameExecutionsInIf.check,
+--   UnusedLocalVariable.checkMethodVars
+-- ]
 
 checkAll :: CompilationUnit -> FilePath -> [Diagnostic]
 checkAll cUnit path = concatMap (\f -> f cUnit path) checks
