@@ -1,13 +1,13 @@
 module UseElseTests where
 
 import CheckResults
-import Language.Java.Syntax (CompilationUnit)
 import Language.Java.Parser (compilationUnit, parser)
+import Language.Java.Syntax (CompilationUnit)
 import RDF
 import RessourceManager
+import System.Directory (getCurrentDirectory)
 import Test.HUnit
 import UseElse (check)
-import System.Directory (getCurrentDirectory)
 
 withFile :: FilePath -> (CompilationUnit -> FilePath -> Assertion) -> Assertion
 withFile relativePath check = do
@@ -15,16 +15,15 @@ withFile relativePath check = do
   let file = path ++ relativePath
   content <- readFile file
   case parser compilationUnit file content of
-      Left error ->
-        assertFailure ("Parsing " ++ file ++ " failed with error:" ++ show error)
-      Right cUnit ->
-        check cUnit path
+    Left error ->
+      assertFailure ("Parsing " ++ file ++ " failed with error:" ++ show error)
+    Right cUnit ->
+      check cUnit path
 
 tests :: Test
 tests =
   let file = "/test/UseElse.java"
-  in
-  test [ file ~: withFile file useElse ]
+   in test [file ~: withFile file useElse]
 
 useElse :: CompilationUnit -> FilePath -> Assertion
 useElse cUnit path = do

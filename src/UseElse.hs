@@ -1,20 +1,20 @@
 module UseElse (check) where
 
-import Language.Java.Syntax (CompilationUnit (..), Stmt(..), Block(..), BlockStmt(..))
-import qualified RDF as RDF
-import Control.Monad (MonadPlus(..))
+import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
+import Language.Java.Syntax (Block (..), BlockStmt (..), CompilationUnit (..), Stmt (..))
+import qualified RDF as RDF
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   stmt <- universeBi cUnit
   checkStmt stmt
- where
-  checkStmt (IfThen range _ stmt) = do
-    if doesAlwaysExit stmt
+  where
+    checkStmt (IfThen range _ stmt) = do
+      if doesAlwaysExit stmt
         then return (RDF.rangeDiagnostic "Always use an `else` if the code in the then branch always exits." range path)
         else mzero
-  checkStmt _ = mzero
+    checkStmt _ = mzero
 
 doesAlwaysExit :: Stmt -> Bool
 doesAlwaysExit (Return _) = True

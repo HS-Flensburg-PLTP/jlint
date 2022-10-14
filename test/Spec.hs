@@ -1,4 +1,3 @@
-import Test.HUnit (runTestTT)
 import CheckScope.Tests
 import DefaultComesLast.Tests
 import EmptyLoopBody.Tests
@@ -10,6 +9,7 @@ import NonFinalMethodAttributes.Tests (testAllNonFinalMethodAttributes)
 import NonPrivateAttributes.Tests (testAllNonPrivateAttributes)
 import SameExecutionsInIf.Tests
 import SimplifyBooleanReturn.Tests
+import Test.HUnit (runTestTT)
 import UnnecessaryVariables.Tests (testAllUnnecessaryVariables)
 import qualified UseElseTests
 

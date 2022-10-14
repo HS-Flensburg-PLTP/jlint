@@ -8,7 +8,7 @@ module RDF
     Source (..),
     Severity (..),
     Position (..),
-    Range(..),
+    Range (..),
     encodetojson,
     simpleDiagnostic,
     checkSeverityList,
@@ -16,7 +16,6 @@ module RDF
     rangeDiagnostic,
   )
 where
-
 
 import Data.Aeson
   ( ToJSON (toEncoding),
@@ -166,14 +165,14 @@ methodDiagnostic methodName msg = simpleDiagnostic ("Method " ++ methodName ++ "
 
 rangeFromSourceSpan :: Java.SourceSpan -> Range
 rangeFromSourceSpan (start, end) =
-  Range {
-    start = Position { line = Java.loc_line start , column = Java.loc_column start },
-    end = Just (Position { line = Java.loc_line end, column = Java.loc_column end })
-  }
+  Range
+    { start = Position {line = Java.loc_line start, column = Java.loc_column start},
+      end = Just (Position {line = Java.loc_line end, column = Java.loc_column end})
+    }
 
 rangeDiagnostic :: String -> Java.SourceSpan -> FilePath -> Diagnostic
 rangeDiagnostic msg range fPath =
-    Diagnostic
+  Diagnostic
     { message = msg,
       location =
         Location
