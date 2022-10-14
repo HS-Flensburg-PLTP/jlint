@@ -27,8 +27,8 @@ extractClassVars cUnit = do
   var <- universeBi cUnit
   extractNameAndType var
   where
-    extractNameAndType (FieldDecl _ (PrimType BooleanT) var) = map (\(VarDecl v _) -> extractVarName v True) var
-    extractNameAndType (FieldDecl _ _ var) = map (\(VarDecl v _) -> extractVarName v False) var
+    extractNameAndType (FieldDecl _ _ (PrimType BooleanT) var) = map (\(VarDecl v _) -> extractVarName v True) var
+    extractNameAndType (FieldDecl _ _ _ var) = map (\(VarDecl v _) -> extractVarName v False) var
     extractNameAndType _ = mzero
 
 extractVarName :: VarDeclId -> Bool -> (String, Bool)

@@ -22,7 +22,7 @@ checkStatements (methodName, methodBody) classVars path = do
     checkStatement (IfThenElse _ a b)
       | isReturnBool a && isReturnBool b = return (methodDiagnostic methodName "A if-then-else part with literal return can be simplified." path)
       | otherwise = mzero
-    checkStatement (IfThen _ a)
+    checkStatement (IfThen _ _ a)
       | isReturnBool a = return (methodDiagnostic methodName "A if-then part with literal return can be simplified." path)
       | otherwise = mzero
     checkStatement _ = mzero
@@ -54,6 +54,6 @@ extractClassVars cUnit = do
   classDecl <- universeBi cUnit
   checkVars classDecl
   where
-    checkVars (FieldDecl _ (PrimType BooleanT) varDecl) = concatMap (\(VarDecl varDeclId _) -> [(extractVarName varDeclId, True)]) varDecl
-    checkVars (FieldDecl _ _ varDecl) = concatMap (\(VarDecl varDeclId _) -> [(extractVarName varDeclId, False)]) varDecl
+    checkVars (FieldDecl _ _ (PrimType BooleanT) varDecl) = concatMap (\(VarDecl varDeclId _) -> [(extractVarName varDeclId, True)]) varDecl
+    checkVars (FieldDecl _ _ _ varDecl) = concatMap (\(VarDecl varDeclId _) -> [(extractVarName varDeclId, False)]) varDecl
     checkVars _ = []

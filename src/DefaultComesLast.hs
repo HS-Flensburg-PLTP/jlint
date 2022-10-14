@@ -16,7 +16,7 @@ check cUnit path = do
 
 checkDefaultComesLast :: (String, MethodBody) -> FilePath -> [Diagnostic]
 checkDefaultComesLast (methodName, methodBody) path = do
-  (Switch _ blocks) <- universeBi methodBody
+  (Switch _ _ blocks) <- universeBi methodBody
   checkSwitch blocks mzero
   where
     checkSwitch blocks diagnosticList =

@@ -41,6 +41,7 @@ library
       SimplifyBooleanReturn
       UnnecessaryVariables
       UnusedLocalVariable
+      UseElse
   other-modules:
       Paths_jlint
   hs-source-dirs:
@@ -98,6 +99,7 @@ test-suite jlint-test
       SameExecutionsInIf.Tests
       SimplifyBooleanReturn.Tests
       UnnecessaryVariables.Tests
+      UseElseTests
       Paths_jlint
   hs-source-dirs:
       test

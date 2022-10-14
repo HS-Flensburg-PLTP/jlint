@@ -72,7 +72,7 @@ parseAllFiles files =
           [] ->
             (errorList, cUnitList)
           (file, path) : restFiles ->
-            case parser compilationUnit file of
+            case parser compilationUnit path file of
               Left error ->
                 parseAllfilesHelp restFiles ((error, path) : errorList, cUnitList)
               Right cUnit ->

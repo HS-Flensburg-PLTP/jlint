@@ -67,7 +67,7 @@ extractFormalParams cUnit = do
   membDecl <- universeBi cUnit
   extractBody membDecl
   where
-    extractBody (MethodDecl _ _ _ (Ident n) formalParams _ _ _) = return (n, map (\(FormalParam _ _ _ varDeclIds) -> extractFormalParamName varDeclIds) formalParams)
+    extractBody (MethodDecl _ _ _ _ (Ident n) formalParams _ _ _) = return (n, map (\(FormalParam _ _ _ varDeclIds) -> extractFormalParamName varDeclIds) formalParams)
     extractBody _ = mzero
 
 checkParameterNames :: (String, [String]) -> FilePath -> [Diagnostic]
@@ -88,7 +88,7 @@ extractStaticFieldNames cUnit = do
   fieldNames <- universeBi cUnit
   extractMemberDecl fieldNames
   where
-    extractMemberDecl (FieldDecl modifier _ varDecls)
+    extractMemberDecl (FieldDecl _ modifier _ varDecls)
       | Static `elem` modifier = map extractVarName varDecls
       | otherwise = mzero
     extractMemberDecl _ = mzero
@@ -133,7 +133,7 @@ extractNonStaticFieldNames cUnit = do
   fieldNames <- universeBi cUnit
   extractMemberDecl fieldNames
   where
-    extractMemberDecl (FieldDecl modifier _ varDecls)
+    extractMemberDecl (FieldDecl _ modifier _ varDecls)
       | Static `notElem` modifier = map extractVarName varDecls
       | otherwise = mzero
     extractMemberDecl _ = mzero
@@ -153,8 +153,8 @@ extractCLassesAndInterfaces cUnit = do
   classesAndInterfaces <- universeBi cUnit
   extractCLassAndInterface classesAndInterfaces
   where
-    extractCLassAndInterface (ClassTypeDecl (ClassDecl _ (Ident n) _ _ _ _)) = return n
-    extractCLassAndInterface (InterfaceTypeDecl (InterfaceDecl _ _ (Ident n) _ _ _)) = return n
+    extractCLassAndInterface (ClassTypeDecl (ClassDecl _ _ (Ident n) _ _ _ _)) = return n
+    extractCLassAndInterface (InterfaceTypeDecl (InterfaceDecl _ _ _ (Ident n) _ _ _ _)) = return n
     extractCLassAndInterface _ = mzero
 
 extractEnums :: CompilationUnit -> [String]
@@ -162,7 +162,7 @@ extractEnums cUnit = do
   enums <- universeBi cUnit
   extractEnum enums
   where
-    extractEnum (EnumDecl _ (Ident n) _ _) = return n
+    extractEnum (EnumDecl _ _ (Ident n) _ _) = return n
     extractEnum _ = mzero
 
 checkTypeNames :: [String] -> FilePath -> [Diagnostic]

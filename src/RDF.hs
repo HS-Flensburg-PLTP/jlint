@@ -7,12 +7,16 @@ module RDF
     Location (..),
     Source (..),
     Severity (..),
+    Position (..),
+    Range(..),
     encodetojson,
     simpleDiagnostic,
     checkSeverityList,
     methodDiagnostic,
+    rangeDiagnostic,
   )
 where
+
 
 import Data.Aeson
   ( ToJSON (toEncoding),
@@ -24,6 +28,7 @@ import Data.Aeson
   )
 import Data.ByteString.Lazy.Internal (ByteString)
 import GHC.Generics (Generic)
+import qualified Language.Java.Syntax as Java
 
 data Position = Position
   { line :: Int,
@@ -158,3 +163,26 @@ checkSeverityList list = Just (maximum list)
 
 methodDiagnostic :: String -> String -> FilePath -> Diagnostic
 methodDiagnostic methodName msg = simpleDiagnostic ("Method " ++ methodName ++ ": " ++ msg)
+
+rangeFromSourceSpan :: Java.SourceSpan -> Range
+rangeFromSourceSpan (start, end) =
+  Range {
+    start = Position { line = Java.loc_line start , column = Java.loc_column start },
+    end = Just (Position { line = Java.loc_line end, column = Java.loc_column end })
+  }
+
+rangeDiagnostic :: String -> Java.SourceSpan -> FilePath -> Diagnostic
+rangeDiagnostic msg range fPath =
+    Diagnostic
+    { message = msg,
+      location =
+        Location
+          { path = fPath,
+            range = Just (rangeFromSourceSpan range)
+          },
+      severity = ERROR,
+      source = Nothing,
+      code = Nothing,
+      suggestions = Nothing,
+      originalOutput = Nothing
+    }

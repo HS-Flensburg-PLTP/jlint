@@ -25,7 +25,7 @@ checkStatement _ = return []
 
 checkLoop :: Stmt -> Reader (String, FilePath) [Diagnostic]
 checkLoop (StmtBlock (Block block)) = extractLoopBody block
-checkLoop (IfThen _ stmt) = checkLoop stmt
+checkLoop (IfThen _ _ stmt) = checkLoop stmt
 checkLoop (IfThenElse _ stmt1 stmt2) = do
   stm1 <- checkLoop stmt1
   stm2 <- checkLoop stmt2

@@ -56,7 +56,7 @@ extractClassVars cUnit = do
   variables <- universeBi cUnit
   extractVars variables
   where
-    extractVars (FieldDecl _ _ varDecls) = map (\(VarDecl varId _) -> extractVarName varId) varDecls
+    extractVars (FieldDecl _ _ _ varDecls) = map (\(VarDecl varId _) -> extractVarName varId) varDecls
     extractVars _ = mzero
 
 checkClassVarUsageInMethod :: String -> [String] -> [String] -> Bool
