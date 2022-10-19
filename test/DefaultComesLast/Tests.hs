@@ -1,8 +1,8 @@
 module DefaultComesLast.Tests where
 
 import CheckResults
-import DefaultComesLast (check)
 import Language.Java.Parser (compilationUnit, parser)
+import Language.Java.Rules.DefaultComesLast (check)
 import Language.Java.Syntax
 import RDF
 import RessourceManager

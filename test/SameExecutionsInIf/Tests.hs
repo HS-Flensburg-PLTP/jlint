@@ -2,10 +2,10 @@ module SameExecutionsInIf.Tests where
 
 import CheckResults
 import Language.Java.Parser (compilationUnit, parser)
+import Language.Java.Rules.SameExecutionsInIf (check)
 import Language.Java.Syntax
 import RDF
 import RessourceManager
-import SameExecutionsInIf (check)
 import Test.HUnit
 
 testAll :: IO ()

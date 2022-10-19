@@ -2,8 +2,8 @@ module NoLoopBreak.Tests (testAllNoLoopBreaks) where
 
 import CheckResults
 import Language.Java.Parser (compilationUnit, parser)
+import Language.Java.Rules.NoLoopBreak (check)
 import Language.Java.Syntax
-import NoLoopBreak (check)
 import RDF
 import RessourceManager
 import Test.HUnit
@@ -14,10 +14,10 @@ testAllNoLoopBreaks = do
   testReturnLoop <- testReturnLoopIO
 
   runTestTT
-    ( "EmptyLoop"
-        ~: [ testBreakLoop,
-             testReturnLoop
-           ]
+    ( "EmptyLoop" ~:
+        [ testBreakLoop,
+          testReturnLoop
+        ]
     )
   return ()
 
@@ -33,7 +33,7 @@ testBreakLoopIO =
             . map
               ( \inputCode -> do
                   (cUnit, path) <- inputCode
-                  let diagResults = NoLoopBreak.check cUnit path
+                  let diagResults = check cUnit path
                   checkMessage diagResults "Method testFunc: Exit Loop with break" path
                   checkPath diagResults path
               )
@@ -53,7 +53,7 @@ testReturnLoopIO =
             . map
               ( \inputCode -> do
                   (cUnit, path) <- inputCode
-                  let diagResults = NoLoopBreak.check cUnit path
+                  let diagResults = check cUnit path
                   checkMessage diagResults "Method testFunc: Exit Loop with return" path
                   checkPath diagResults path
               )

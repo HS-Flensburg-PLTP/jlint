@@ -2,12 +2,12 @@ module UseElseTests where
 
 import CheckResults
 import Language.Java.Parser (compilationUnit, parser)
+import Language.Java.Rules.UseElse (check)
 import Language.Java.Syntax (CompilationUnit)
 import RDF
 import RessourceManager
 import System.Directory (getCurrentDirectory)
 import Test.HUnit
-import UseElse (check)
 
 withFile :: FilePath -> (CompilationUnit -> FilePath -> Assertion) -> Assertion
 withFile relativePath check = do
@@ -27,7 +27,7 @@ tests =
 
 useElse :: CompilationUnit -> FilePath -> Assertion
 useElse cUnit path = do
-  let diagnostic = UseElse.check cUnit path
+  let diagnostic = check cUnit path
   let expectedMsg = "Always use an `else` if the code in the then branch always exits."
   assertEqual "Check message" [expectedMsg] (map message diagnostic)
   -- This source span should be exclusive -> adapt language-java

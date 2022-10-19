@@ -2,8 +2,8 @@ module NeedBraces.Tests where
 
 import CheckResults
 import Language.Java.Parser (compilationUnit, parser)
+import Language.Java.Rules.NeedBraces (check)
 import Language.Java.Syntax
-import NeedBraces (check)
 import RDF
 import RessourceManager
 import Test.HUnit

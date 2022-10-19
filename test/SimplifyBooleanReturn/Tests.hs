@@ -2,10 +2,10 @@ module SimplifyBooleanReturn.Tests where
 
 import CheckResults
 import Language.Java.Parser (compilationUnit, parser)
+import Language.Java.Rules.SimplifyBooleanReturn (check)
 import Language.Java.Syntax
 import RDF
 import RessourceManager
-import SimplifyBooleanReturn (check)
 import Test.HUnit
 
 testAll :: IO ()

@@ -1,8 +1,8 @@
 module CheckScope.Tests where
 
 import CheckResults
-import CheckScope (check)
 import Language.Java.Parser (compilationUnit, parser)
+import Language.Java.Rules.CheckScope (check)
 import Language.Java.Syntax
 import RDF
 import RessourceManager

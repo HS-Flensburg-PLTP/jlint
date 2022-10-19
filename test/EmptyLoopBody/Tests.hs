@@ -1,8 +1,8 @@
 module EmptyLoopBody.Tests (testAllEmptyLoopBodies) where
 
 import CheckResults
-import EmptyLoopBody (check)
 import Language.Java.Parser (compilationUnit, parser)
+import Language.Java.Rules.EmptyLoopBody (check)
 import Language.Java.Syntax
 import RDF
 import RessourceManager
@@ -38,7 +38,7 @@ testEmptyWhileLoopIO =
             . map -- lamdafunction will be used to create a testcase for each testfile.
               ( \inputCode -> do
                   (cUnit, path) <- inputCode
-                  let diagResults = EmptyLoopBody.check cUnit path
+                  let diagResults = check cUnit path
                   checkMessage diagResults "Method testFunc: A While-Loop has a empty loop body." path
                   checkPath diagResults path -- assertion will only be executed if first does succed. this is importend, cause ther will be no path returned when there is no result
               )
@@ -56,7 +56,7 @@ testEmptyEnhancedForLoopIO =
             . map
               ( \inputCode -> do
                   (cUnit, path) <- inputCode
-                  let diagResults = EmptyLoopBody.check cUnit path
+                  let diagResults = check cUnit path
                   checkMessage diagResults "Method testFunc: A ForEach-Loop has a empty loop body." path
                   checkPath diagResults path
               )
@@ -74,7 +74,7 @@ testEmptyBasicForLoopIO =
             . map
               ( \inputCode -> do
                   (cUnit, path) <- inputCode
-                  let diagResults = EmptyLoopBody.check cUnit path
+                  let diagResults = check cUnit path
                   checkMessage diagResults "Method testFunc: A For-Loop has a empty loop body." path
                   checkPath diagResults path
               )
@@ -92,7 +92,7 @@ testEmptyDoLoopIO =
             . map
               ( \inputCode -> do
                   (cUnit, path) <- inputCode
-                  let diagResults = EmptyLoopBody.check cUnit path
+                  let diagResults = check cUnit path
                   checkMessage diagResults "Method testFunc: A Do-Loop has a empty loop body." path
                   checkPath diagResults path
               )

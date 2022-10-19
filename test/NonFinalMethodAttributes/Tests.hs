@@ -1,8 +1,8 @@
 module NonFinalMethodAttributes.Tests (testAllNonFinalMethodAttributes) where
 
-import CheckNonFinalMethodAttributes (check)
 import CheckResults
 import Language.Java.Parser (compilationUnit, parser)
+import Language.Java.Rules.CheckNonFinalMethodAttributes (check)
 import Language.Java.Syntax
 import RDF
 import RessourceManager
@@ -13,9 +13,9 @@ testAllNonFinalMethodAttributes = do
   testNonFinalMethodAttributes <- testNonFinalMethodAttributesIO
 
   runTestTT
-    ( "Non Final Method Attributes"
-        ~: [ testNonFinalMethodAttributes
-           ]
+    ( "Non Final Method Attributes" ~:
+        [ testNonFinalMethodAttributes
+        ]
     )
   return ()
 
@@ -29,7 +29,7 @@ testNonFinalMethodAttributesIO =
             . map
               ( \inputCode -> do
                   (cUnit, path) <- inputCode
-                  let diagResults = CheckNonFinalMethodAttributes.check cUnit path
+                  let diagResults = check cUnit path
                   checkMessage diagResults "Method testFunc: age is not declared as Final" path
                   checkPath diagResults path
               )

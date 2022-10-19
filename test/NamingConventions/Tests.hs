@@ -2,8 +2,7 @@ module NamingConventions.Tests where
 
 import CheckResults
 import Language.Java.Parser (compilationUnit, parser)
-import Language.Java.Syntax
-import NamingConventions
+import Language.Java.Rules.NamingConventions
   ( checkLocalName,
     checkMemberName,
     checkMethodName,
@@ -12,6 +11,7 @@ import NamingConventions
     checkStaticVariableName,
     checkTypeName,
   )
+import Language.Java.Syntax
 import RDF
 import RessourceManager
 import Test.HUnit
@@ -42,31 +42,31 @@ testAll = do
   testTypeNameTwo <- testTypeNameTwoIO
   testTypeNameThree <- testTypeNameThreeIO
   runTestTT
-    ( "NamingConventions"
-        ~: [ testPackageNameTLDOne,
-             testPackageNameTLDTwo,
-             testMethodNameOne,
-             testMethodNameTwo,
-             testMethodNameThree,
-             testParameterNameOne,
-             testParameterNameTwo,
-             testParameterNameThree,
-             testStaticVarNameOne,
-             testStaticVarNameTwo,
-             testStaticVarNameThree,
-             testLocalFinalVarOne,
-             testLocalFinalVarTwo,
-             testLocalFinalVarThree,
-             testLocalVarNameOne,
-             testLocalVarNameTwo,
-             testLocalVarNameThree,
-             testMemberNameOne,
-             testMemberNameTwo,
-             testMemberNameThree,
-             testTypeNameOne,
-             testTypeNameTwo,
-             testTypeNameThree
-           ]
+    ( "NamingConventions" ~:
+        [ testPackageNameTLDOne,
+          testPackageNameTLDTwo,
+          testMethodNameOne,
+          testMethodNameTwo,
+          testMethodNameThree,
+          testParameterNameOne,
+          testParameterNameTwo,
+          testParameterNameThree,
+          testStaticVarNameOne,
+          testStaticVarNameTwo,
+          testStaticVarNameThree,
+          testLocalFinalVarOne,
+          testLocalFinalVarTwo,
+          testLocalFinalVarThree,
+          testLocalVarNameOne,
+          testLocalVarNameTwo,
+          testLocalVarNameThree,
+          testMemberNameOne,
+          testMemberNameTwo,
+          testMemberNameThree,
+          testTypeNameOne,
+          testTypeNameTwo,
+          testTypeNameThree
+        ]
     )
   return ()
 
