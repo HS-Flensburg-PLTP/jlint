@@ -3,7 +3,8 @@ module CheckstyleXML (toRDF) where
 import Data.Either (isLeft, lefts, rights)
 import Data.List (intercalate)
 import RDF
-  ( Diagnostic (..),
+  ( Code (..),
+    Diagnostic (..),
     Location (..),
     Position (..),
     Range (..),
@@ -66,8 +67,8 @@ parseError path (Elem (N "error") attributes []) = do
                     )
               },
           severity = severity,
-          source = Just (Source {name = source, url = Nothing}),
-          code = Nothing,
+          source = Just (Source {name = "checkstyle", url = Nothing}),
+          code = Just (Code {value = source, codeURL = Nothing}),
           suggestions = Nothing,
           originalOutput = Nothing
         }
