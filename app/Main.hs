@@ -3,6 +3,8 @@
 module Main where
 
 -- import qualified Data.ByteString
+
+import CheckstyleXML
 import Control.Monad (MonadPlus (..), unless, when)
 import Data.ByteString.Lazy.Internal
 import Data.Semigroup ((<>))
@@ -14,6 +16,7 @@ import RDF
 import Rules (checkAll)
 import System.FilePath.Find
 import Text.Parsec.Error
+import Text.XML.HaXml.Parse (xmlParse')
 
 main :: IO ()
 main = execParser opts >>= importJava
@@ -27,11 +30,25 @@ main = execParser opts >>= importJava
         )
 
 importJava :: Params -> IO ()
-importJava (Params path pretty) = parseJava path pretty
+importJava (Params path pretty Nothing) = do
+  parseJava path pretty []
+importJava (Params path pretty (Just checkstyleFile)) = do
+  content <- readFile checkstyleFile
+  diags <- case xmlParse' "" content of
+    Left error -> do
+      putStrLn ("Parsing checkstyle XML failed with error " ++ error)
+      return []
+    Right xml -> case CheckstyleXML.toRDF xml of
+      Left error -> do
+        putStrLn ("Import of checkstyle XML failed with error " ++ error)
+        return []
+      Right diags -> return diags
+  parseJava path pretty diags
 
 data Params = Params
   { path :: String,
-    pretty :: Bool
+    pretty :: Bool,
+    checkstyleFile :: Maybe String
   }
 
 params :: Parser Params
@@ -45,6 +62,13 @@ params =
     <*> switch
       ( long "pretty"
           <> help "By setting this Parameter the java source representation of the AST is shown"
+      )
+    <*> optional
+      ( strOption
+          ( long "checkstyle"
+              <> metavar "CheckstyleXMLFile"
+              <> help "File with result of checkstyle application"
+          )
       )
 
 findAllJavaFiles :: FilePath -> IO [FilePath]
@@ -80,15 +104,15 @@ parseAllFiles files =
    in parseAllfilesHelp files (mzero, mzero)
 
 -- missing pretty option and does not print errors
-parseJava :: FilePath -> Bool -> IO ()
-parseJava rootDir pretty =
+parseJava :: FilePath -> Bool -> [Diagnostic] -> IO ()
+parseJava rootDir pretty checkstyleDiags =
   do
     pathList <- findAllJavaFiles rootDir
     fileList <- readAllFiles pathList
     let (parsingErrors, cUnitResults) = parseAllFiles fileList
     let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
     let diagnostics = concatMap (uncurry checkAll) cUnitResults
-    let diagnosticResults = diagnostics ++ parseErrors
+    let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
     putStrLn
       ( Data.ByteString.Lazy.Internal.unpackChars
           ( RDF.encodetojson
