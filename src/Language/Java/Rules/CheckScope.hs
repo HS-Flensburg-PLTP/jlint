@@ -1,8 +1,8 @@
-module CheckScope where
+module Language.Java.Rules.CheckScope where
 
-import AST (extractMethods, extractVarName)
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
+import Language.Java.AST (extractMethods, extractVarName)
 import Language.Java.Syntax
 import RDF (Diagnostic (..), methodDiagnostic)
 

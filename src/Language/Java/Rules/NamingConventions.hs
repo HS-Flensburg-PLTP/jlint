@@ -2,12 +2,12 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE QuasiQuotes #-}
 
-module NamingConventions where
+module Language.Java.Rules.NamingConventions where
 
-import AST (extractMethods)
 import Control.Monad (MonadPlus (..))
 import Data.Function ((&))
 import Data.Generics.Uniplate.Data (universeBi)
+import Language.Java.AST (extractMethods)
 import Language.Java.Syntax
 import RDF (Diagnostic (..), methodDiagnostic, simpleDiagnostic)
 import Text.RE.TDFA.String
@@ -112,13 +112,13 @@ extractLocalFinalVariableNames2 (methodName, methodBody) path = do
   where
     extractMemberDecl (LocalVars modifier _ varDecls)
       | Final `elem` modifier =
-        map extractVarName varDecls
-          & filter (\name -> not (matched (name ?=~ reCamelCase)))
-          & map (\name -> methodDiagnostic methodName ("Local final variable " ++ name ++ " doesn't match the specifications") path)
+          map extractVarName varDecls
+            & filter (\name -> not (matched (name ?=~ reCamelCase)))
+            & map (\name -> methodDiagnostic methodName ("Local final variable " ++ name ++ " doesn't match the specifications") path)
       | otherwise =
-        map extractVarName varDecls
-          & filter (\name -> not (matched (name ?=~ reCamelCase)))
-          & map (\name -> methodDiagnostic methodName ("Local non-final variable " ++ name ++ " doesn't match the specifications") path)
+          map extractVarName varDecls
+            & filter (\name -> not (matched (name ?=~ reCamelCase)))
+            & map (\name -> methodDiagnostic methodName ("Local non-final variable " ++ name ++ " doesn't match the specifications") path)
     extractMemberDecl _ = mzero
 
 {- MemberName -}

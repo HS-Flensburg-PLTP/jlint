@@ -25,24 +25,25 @@ source-repository head
 
 library
   exposed-modules:
-      AST
-      CheckNonFinalMethodAttributes
-      CheckNonPrivateAttributes
-      CheckScope
       CheckstyleXML
       Control.Monad.Extra
-      DefaultComesLast
-      EmptyLoopBody
-      NamingConventions
-      NeedBraces
-      NoLoopBreak
-      NoNegation
+      Language.Java.AST
+      Language.Java.Rules
+      Language.Java.Rules.CheckNonFinalMethodAttributes
+      Language.Java.Rules.CheckNonPrivateAttributes
+      Language.Java.Rules.CheckScope
+      Language.Java.Rules.DefaultComesLast
+      Language.Java.Rules.EmptyLoopBody
+      Language.Java.Rules.NamingConventions
+      Language.Java.Rules.NeedBraces
+      Language.Java.Rules.NoLoopBreak
+      Language.Java.Rules.NoNegation
+      Language.Java.Rules.SameExecutionsInIf
+      Language.Java.Rules.SimplifyBooleanReturn
+      Language.Java.Rules.UnnecessaryVariables
+      Language.Java.Rules.UnusedLocalVariable
+      Language.Java.Rules.UseElse
       RDF
-      SameExecutionsInIf
-      SimplifyBooleanReturn
-      UnnecessaryVariables
-      UnusedLocalVariable
-      UseElse
   other-modules:
       Paths_jlint
   hs-source-dirs:
@@ -65,7 +66,6 @@ library
 executable jlint-exe
   main-is: Main.hs
   other-modules:
-      Rules
       Paths_jlint
   hs-source-dirs:
       app

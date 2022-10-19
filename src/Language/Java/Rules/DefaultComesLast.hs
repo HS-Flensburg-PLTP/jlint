@@ -1,11 +1,11 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 
-module DefaultComesLast (check) where
+module Language.Java.Rules.DefaultComesLast (check) where
 
-import AST (extractMethods)
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
+import Language.Java.AST (extractMethods)
 import Language.Java.Syntax
 import RDF (Diagnostic (..), methodDiagnostic)
 

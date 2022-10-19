@@ -1,21 +1,23 @@
-module Rules where
+module Language.Java.Rules where
 
-import CheckNonFinalMethodAttributes
-import CheckNonPrivateAttributes
-import CheckScope
-import DefaultComesLast
-import EmptyLoopBody
+-- import Language.Java.Rules.CheckNonFinalMethodAttributes
+-- import Language.Java.Rules.CheckNonPrivateAttributes
+-- import Language.Java.Rules.CheckScope
+-- import Language.Java.Rules.DefaultComesLast
+-- import Language.Java.Rules.EmptyLoopBody
+
+-- import Language.Java.Rules.NamingConventions
+-- import Language.Java.Rules.NeedBraces
+-- import Language.Java.Rules.NoLoopBreak
+-- import Language.Java.Rules.NoNegation
+
+-- import Language.Java.Rules.SameExecutionsInIf
+-- import Language.Java.Rules.SimplifyBooleanReturn
+-- import Language.Java.Rules.UnnecessaryVariables
+-- import Language.Java.Rules.UnusedLocalVariable
+import Language.Java.Rules.UseElse as UseElse
 import Language.Java.Syntax
-import NamingConventions
-import NeedBraces
-import NoLoopBreak
-import NoNegation
 import RDF
-import SameExecutionsInIf
-import SimplifyBooleanReturn
-import UnnecessaryVariables
-import UnusedLocalVariable
-import UseElse
 
 checks :: [CompilationUnit -> FilePath -> [Diagnostic]]
 checks = [UseElse.check]

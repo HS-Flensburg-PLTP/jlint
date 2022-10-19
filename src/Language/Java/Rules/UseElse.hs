@@ -1,4 +1,4 @@
-module UseElse (check) where
+module Language.Java.Rules.UseElse (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
@@ -12,7 +12,7 @@ check cUnit path = do
   where
     checkStmt (IfThen range _ stmt) = do
       if doesAlwaysExit stmt
-        then return (RDF.rangeDiagnostic "Always use an `else` if the code in the then branch always exits." range path)
+        then return (RDF.rangeDiagnostic "Language.Java.Rules.UseElse" "Always use an `else` if the code in the then branch always exits." range path)
         else mzero
     checkStmt _ = mzero
 

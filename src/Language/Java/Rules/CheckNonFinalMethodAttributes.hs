@@ -1,6 +1,6 @@
-module CheckNonFinalMethodAttributes (check) where
+module Language.Java.Rules.CheckNonFinalMethodAttributes (check) where
 
-import AST (extractMethodParameters, extractVarName)
+import Language.Java.AST (extractMethodParameters, extractVarName)
 import Language.Java.Syntax (CompilationUnit (..), FormalParam (..), Modifier (Final))
 import RDF (Diagnostic (..), methodDiagnostic)
 

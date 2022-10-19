@@ -1,9 +1,9 @@
-module UnusedLocalVariable where
+module Language.Java.Rules.UnusedLocalVariable where
 
-import AST (extractMethods, extractVarName)
 import Control.Monad (MonadPlus (..))
 import Data.Function ((&))
 import Data.Generics.Uniplate.Data (universeBi)
+import Language.Java.AST (extractMethods, extractVarName)
 import Language.Java.Syntax
 import RDF (Diagnostic (..), methodDiagnostic, simpleDiagnostic)
 

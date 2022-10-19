@@ -1,4 +1,4 @@
-module AST where
+module Language.Java.AST where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)

@@ -8,10 +8,10 @@ import Data.ByteString.Lazy.Internal
 import Data.Semigroup ((<>))
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
+import Language.Java.Rules (checkAll)
 import Language.Java.Syntax
 import Options.Applicative
 import RDF
-import Rules (checkAll)
 import System.FilePath.Find
 import System.IO (hPutStrLn, stderr)
 import Text.Parsec.Error

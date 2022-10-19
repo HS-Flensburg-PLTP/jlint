@@ -1,8 +1,8 @@
-module NoLoopBreak where
+module Language.Java.Rules.NoLoopBreak where
 
-import AST (extractMethods)
 import Control.Monad.Reader
 import Data.Generics.Uniplate.Data (universeBi)
+import Language.Java.AST (extractMethods)
 import Language.Java.Syntax
 import RDF (Diagnostic (..), methodDiagnostic)
 

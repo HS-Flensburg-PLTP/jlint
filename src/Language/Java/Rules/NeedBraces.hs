@@ -1,11 +1,11 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 
-module NeedBraces where
+module Language.Java.Rules.NeedBraces where
 
-import AST (extractMethods)
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
+import Language.Java.AST (extractMethods)
 import Language.Java.Syntax
 import RDF (Diagnostic (..), methodDiagnostic)
 

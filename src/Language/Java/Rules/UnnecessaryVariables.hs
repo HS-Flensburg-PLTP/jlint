@@ -1,8 +1,8 @@
-module UnnecessaryVariables where
+module Language.Java.Rules.UnnecessaryVariables where
 
-import AST (extractMethods, extractVarName)
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
+import Language.Java.AST (extractMethods, extractVarName)
 import Language.Java.Syntax (BlockStmt (LocalVars), CompilationUnit, Exp (..), Ident (..), MethodBody, Name (..), Stmt (..), VarDecl (..))
 import RDF (Diagnostic, methodDiagnostic)
 

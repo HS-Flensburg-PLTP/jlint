@@ -1,6 +1,6 @@
-module CheckNonPrivateAttributes where
+module Language.Java.Rules.CheckNonPrivateAttributes where
 
-import AST (extractAttributes)
+import Language.Java.AST (extractAttributes)
 import Language.Java.Syntax (CompilationUnit (..), Modifier (Private))
 import RDF (Diagnostic (..), methodDiagnostic)
 

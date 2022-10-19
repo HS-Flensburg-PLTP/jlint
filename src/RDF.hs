@@ -5,6 +5,7 @@ module RDF
   ( DiagnosticResult (..),
     Diagnostic (..),
     Location (..),
+    Code (..),
     Source (..),
     Severity (..),
     Position (..),
@@ -170,8 +171,8 @@ rangeFromSourceSpan (start, end) =
       end = Just (Position {line = Java.loc_line end, column = Java.loc_column end})
     }
 
-rangeDiagnostic :: String -> Java.SourceSpan -> FilePath -> Diagnostic
-rangeDiagnostic msg range fPath =
+rangeDiagnostic :: String -> String -> Java.SourceSpan -> FilePath -> Diagnostic
+rangeDiagnostic rule msg range fPath =
   Diagnostic
     { message = msg,
       location =
@@ -181,7 +182,7 @@ rangeDiagnostic msg range fPath =
           },
       severity = ERROR,
       source = Nothing,
-      code = Nothing,
+      code = Just (Code {value = rule, codeURL = Nothing}),
       suggestions = Nothing,
       originalOutput = Nothing
     }
