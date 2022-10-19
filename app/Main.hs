@@ -2,8 +2,6 @@
 
 module Main where
 
--- import qualified Data.ByteString
-
 import CheckstyleXML
 import Control.Monad (MonadPlus (..), unless, when)
 import Data.ByteString.Lazy.Internal
@@ -15,6 +13,7 @@ import Options.Applicative
 import RDF
 import Rules (checkAll)
 import System.FilePath.Find
+import System.IO (hPutStrLn, stderr)
 import Text.Parsec.Error
 import Text.XML.HaXml.Parse (xmlParse')
 
@@ -36,11 +35,11 @@ importJava (Params path pretty (Just checkstyleFile)) = do
   content <- readFile checkstyleFile
   diags <- case xmlParse' "" content of
     Left error -> do
-      putStrLn ("Parsing checkstyle XML failed with error " ++ error)
+      hPutStrLn stderr ("Parsing checkstyle XML failed with error " ++ error)
       return []
     Right xml -> case CheckstyleXML.toRDF xml of
       Left error -> do
-        putStrLn ("Import of checkstyle XML failed with error " ++ error)
+        hPutStrLn stderr ("Import of checkstyle XML failed with error " ++ error)
         return []
       Right diags -> return diags
   parseJava path pretty diags

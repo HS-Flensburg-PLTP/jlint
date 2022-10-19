@@ -2,21 +2,22 @@ module CheckstyleXML (toRDF) where
 
 import Data.Either (isLeft, lefts, rights)
 import Data.List (intercalate)
-import GHC.Base (absentErr)
-import RDF (Diagnostic (..), Location (..), Position (..), Range (..), Severity (..))
-import qualified RDF
-import System.Environment (getArgs)
+import RDF
+  ( Diagnostic (..),
+    Location (..),
+    Position (..),
+    Range (..),
+    Severity (..),
+    Source (..),
+  )
 import Text.Read (readMaybe)
 import Text.XML.HaXml
-  ( AttValue (..),
-    Attribute (..),
+  ( Attribute,
     Content (..),
     Document (..),
     Element (..),
     QName (..),
   )
-import qualified Text.XML.HaXml as XML
-import Text.XML.HaXml.Parse (xmlParse)
 
 toRDF :: Show i => Document i -> Either String [Diagnostic]
 toRDF (Document _ _ (Elem (N "checkstyle") _ children) _) = do
@@ -31,6 +32,7 @@ withCElem f (CElem elem _) = f elem
 withCElem _ _ = Left "Expecting CElem"
 
 parseFile :: Show i => Element i -> Either String [Diagnostic]
+parseFile (Elem (N "file") _ []) = return []
 parseFile (Elem (N "file") attributes children) = do
   path <- lookupAttr "name" attributes
   let res = map (withCElem (parseError path)) children
@@ -48,6 +50,7 @@ parseError path (Elem (N "error") attributes []) = do
   severityStr <- lookupAttr "severity" attributes
   severity <- severityFromString severityStr
   message <- lookupAttr "message" attributes
+  source <- lookupAttr "source" attributes
   return
     ( Diagnostic
         { message = message,
@@ -63,7 +66,7 @@ parseError path (Elem (N "error") attributes []) = do
                     )
               },
           severity = severity,
-          source = Nothing,
+          source = Just (Source {name = source, url = Nothing}),
           code = Nothing,
           suggestions = Nothing,
           originalOutput = Nothing
@@ -86,8 +89,8 @@ severityFromString str = Left (str ++ " is not a valid severity")
 lookupAttr :: String -> [Attribute] -> Either String String
 lookupAttr name attributes =
   case map snd (filter (isName name . fst) attributes) of
-    [AttValue [Left value]] -> Right value
-    _ -> Left ("No atttribute " ++ name ++ " found")
+    [value] -> Right (show value)
+    _ -> Left ("No atttribute " ++ name ++ " found in " ++ show attributes)
 
 isName :: String -> QName -> Bool
 isName name' (N name) = name == name'
