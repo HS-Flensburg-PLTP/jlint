@@ -42,7 +42,7 @@ jobs:
       env:
         PRIVKEY: ${{ secrets.SigningKey }}
         WEBROOT: "/srv/http/jlint"
-        FILENAME: "jlint-exe"
+        FILENAME: "jlint"
       run: |
         DIST_DIR=$(stack path --dist-dir)
         DIST_FILE="${DIST_DIR}/build/${FILENAME}/${FILENAME}"
