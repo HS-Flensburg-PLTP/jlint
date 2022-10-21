@@ -15,4 +15,4 @@ jobs:
      uses: actions/checkout@v5
 
    - name: Ormolu Check Format
-     uses: mrkkrp/ormolu-action@v6
+     uses: mrkkrp/ormolu-action@v5
