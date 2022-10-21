@@ -40,7 +40,7 @@ library:
   - -Wno-name-shadowing
 
 executables:
-  jlint-exe:
+  jlint:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
