@@ -13,9 +13,9 @@ testAllNonFinalMethodAttributes = do
   testNonFinalMethodAttributes <- testNonFinalMethodAttributesIO
 
   runTestTT
-    ( "Non Final Method Attributes" ~:
-        [ testNonFinalMethodAttributes
-        ]
+    ( "Non Final Method Attributes"
+        ~: [ testNonFinalMethodAttributes
+           ]
     )
   return ()
 

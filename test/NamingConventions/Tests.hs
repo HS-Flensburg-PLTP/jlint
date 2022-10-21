@@ -42,31 +42,31 @@ testAll = do
   testTypeNameTwo <- testTypeNameTwoIO
   testTypeNameThree <- testTypeNameThreeIO
   runTestTT
-    ( "NamingConventions" ~:
-        [ testPackageNameTLDOne,
-          testPackageNameTLDTwo,
-          testMethodNameOne,
-          testMethodNameTwo,
-          testMethodNameThree,
-          testParameterNameOne,
-          testParameterNameTwo,
-          testParameterNameThree,
-          testStaticVarNameOne,
-          testStaticVarNameTwo,
-          testStaticVarNameThree,
-          testLocalFinalVarOne,
-          testLocalFinalVarTwo,
-          testLocalFinalVarThree,
-          testLocalVarNameOne,
-          testLocalVarNameTwo,
-          testLocalVarNameThree,
-          testMemberNameOne,
-          testMemberNameTwo,
-          testMemberNameThree,
-          testTypeNameOne,
-          testTypeNameTwo,
-          testTypeNameThree
-        ]
+    ( "NamingConventions"
+        ~: [ testPackageNameTLDOne,
+             testPackageNameTLDTwo,
+             testMethodNameOne,
+             testMethodNameTwo,
+             testMethodNameThree,
+             testParameterNameOne,
+             testParameterNameTwo,
+             testParameterNameThree,
+             testStaticVarNameOne,
+             testStaticVarNameTwo,
+             testStaticVarNameThree,
+             testLocalFinalVarOne,
+             testLocalFinalVarTwo,
+             testLocalFinalVarThree,
+             testLocalVarNameOne,
+             testLocalVarNameTwo,
+             testLocalVarNameThree,
+             testMemberNameOne,
+             testMemberNameTwo,
+             testMemberNameThree,
+             testTypeNameOne,
+             testTypeNameTwo,
+             testTypeNameThree
+           ]
     )
   return ()
 

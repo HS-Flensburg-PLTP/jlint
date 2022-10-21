@@ -14,10 +14,10 @@ testAllNoLoopBreaks = do
   testReturnLoop <- testReturnLoopIO
 
   runTestTT
-    ( "EmptyLoop" ~:
-        [ testBreakLoop,
-          testReturnLoop
-        ]
+    ( "EmptyLoop"
+        ~: [ testBreakLoop,
+             testReturnLoop
+           ]
     )
   return ()
 

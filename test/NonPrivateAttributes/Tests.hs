@@ -13,8 +13,8 @@ testAllNonPrivateAttributes = do
   testNonPrivateAttributes <- testNonPrivateAttributesIO
 
   runTestTT
-    ( "Non Private Attributes" ~:
-        [testNonPrivateAttributes]
+    ( "Non Private Attributes"
+        ~: [testNonPrivateAttributes]
     )
   return ()
 
