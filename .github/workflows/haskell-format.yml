@@ -7,40 +7,12 @@ on:
     branches: [ main ]
 
 jobs:
-  ormolu-stack:
-    runs-on: self-hosted
+ ormolu-action:
+   runs-on: self-hosted
 
-    steps:
-    - name: Checkout current repository
-      uses: actions/checkout@v3
+   steps:
+   - name: Checkout current repository
+     uses: actions/checkout@v5
 
-    - name: Setup Haskell with Stack
-      uses: haskell/actions/setup@v2
-      with:
-        enable-stack: true
-        stack-no-global: true
-        ghc-version: '9.2.4'
-        cabal-version: '3.8.1.0'
-        stack-version: '2.9.1'
-
-    # if not self-hosted: use https://github.com/marketplace/actions/ormolu-action
-    # see "ormolu-action" below, also executed before haskell-build / stack-build
-
-    - name: Add .local/bin to PATH
-      run: echo $HOME/.local/bin >> $GITHUB_PATH
-
-    - name: Install Ormolu
-      run: stack --resolver nightly-2022-10-18 install ormolu-0.5.0.1
-
-    - name: Ormolu Check Format
-      run: ormolu --color always --check-idempotence --mode check $(find . -name '*.hs')
-
-#  ormolu-action:
-#    runs-on: self-hosted
-#
-#    steps:
-#    - name: Checkout current repository
-#      uses: actions/checkout@v3
-#
-#    - name: Ormolu Check Format
-#      uses: mrkkrp/ormolu-action@v6
+   - name: Ormolu Check Format
+     uses: mrkkrp/ormolu-action@v6
