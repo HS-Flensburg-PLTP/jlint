@@ -36,11 +36,17 @@ data Position = Position
   }
   deriving (Generic, Show, Eq)
 
+instance ToJSON Position where
+  toEncoding = genericToEncoding defaultOptions
+
 data Range = Range
   { start :: Position,
     end :: Maybe Position
   }
   deriving (Generic, Show, Eq)
+
+instance ToJSON Range where
+  toEncoding = genericToEncoding defaultOptions
 
 data Source = Source
   { name :: String,
@@ -48,11 +54,17 @@ data Source = Source
   }
   deriving (Generic, Show, Eq)
 
+instance ToJSON Source where
+  toEncoding = genericToEncoding defaultOptions
+
 data Code = Code
   { value :: String,
     codeURL :: Maybe String
   }
   deriving (Generic, Show, Eq)
+
+instance ToJSON Code where
+  toEncoding = genericToEncoding defaultOptions
 
 data Suggestion = Suggestion
   { suggestionRange :: Range,
@@ -60,11 +72,17 @@ data Suggestion = Suggestion
   }
   deriving (Generic, Show, Eq)
 
+instance ToJSON Suggestion where
+  toEncoding = genericToEncoding defaultOptions
+
 data Location = Location
   { path :: String,
     range :: Maybe Range
   }
   deriving (Generic, Show, Eq)
+
+instance ToJSON Location where
+  toEncoding = genericToEncoding defaultOptions
 
 data Diagnostic = Diagnostic
   { message :: String,
@@ -77,12 +95,51 @@ data Diagnostic = Diagnostic
   }
   deriving (Generic, Show, Eq)
 
+instance ToJSON Diagnostic where
+  toEncoding (Diagnostic message location severity source code suggestions originalOutput) =
+    pairs
+      ( "message"
+          .= message
+          <> "location"
+          .= location
+          <> "severity"
+          .= severity
+          <> "source"
+          .= source
+          <> "code"
+          .= code
+           <> "suggestions"
+          .= suggestions
+          <> "original_output"
+          .= originalOutput
+      )
+
 data DiagnosticResult = DiagnosticResult
   { diagnostics :: [Diagnostic],
     resultSource :: Maybe Source,
     resultSeverity :: Maybe Severity
   }
   deriving (Generic, Show)
+
+instance ToJSON DiagnosticResult where
+  toEncoding (DiagnosticResult diagnostics resultSource maybeSeverity) =
+    case maybeSeverity of
+      Just resSeverity ->
+        pairs
+          ( "diagnostics"
+              .= diagnostics
+              <> "source"
+              .= resultSource
+              <> "severity"
+              .= resSeverity
+          )
+      Nothing ->
+        pairs
+          ( "diagnostics"
+              .= diagnostics
+              <> "source"
+              .= resultSource
+          )
 
 data Severity
   = INFO
@@ -92,51 +149,6 @@ data Severity
 
 instance ToJSON Severity where
   toEncoding = genericToEncoding defaultOptions
-
-instance ToJSON Position where
-  toEncoding = genericToEncoding defaultOptions
-
-instance ToJSON Range where
-  toEncoding = genericToEncoding defaultOptions
-
-instance ToJSON Source where
-  toEncoding = genericToEncoding defaultOptions
-
-instance ToJSON Code where
-  toEncoding = genericToEncoding defaultOptions
-
-instance ToJSON Suggestion where
-  toEncoding = genericToEncoding defaultOptions
-
-instance ToJSON Location where
-  toEncoding = genericToEncoding defaultOptions
-
-instance ToJSON Diagnostic where
-  toEncoding (Diagnostic message location severity source code suggestions originalOutput) =
-    pairs
-      ( "message" .= message
-          <> "location" .= location
-          <> "severity" .= severity
-          <> "source" .= source
-          <> "code" .= code
-          <> "suggestions" .= suggestions
-          <> "original_output" .= originalOutput
-      )
-
-instance ToJSON DiagnosticResult where
-  toEncoding (DiagnosticResult diagnostics resultSource maybeSeverity) =
-    case maybeSeverity of
-      Just resSeverity ->
-        pairs
-          ( "diagnostics" .= diagnostics
-              <> "source" .= resultSource
-              <> "severity" .= resSeverity
-          )
-      Nothing ->
-        pairs
-          ( "diagnostics" .= diagnostics
-              <> "source" .= resultSource
-          )
 
 encodetojson :: ToJSON a => a -> Data.ByteString.Lazy.Internal.ByteString
 encodetojson = encode
