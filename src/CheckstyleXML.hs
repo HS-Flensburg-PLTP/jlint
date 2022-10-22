@@ -19,10 +19,11 @@ import Text.XML.HaXml
     Element (..),
     QName (..),
   )
+import Text.XML.HaXml.Escape (stdXmlEscaper, xmlUnEscape)
 
 toRDF :: Show i => Document i -> Either String [Diagnostic]
 toRDF (Document _ _ (Elem (N "checkstyle") _ children) _) = do
-  let res = map (withCElem parseFile) children
+  let res = map (withCElem (parseFile . xmlUnEscape stdXmlEscaper)) children
   if all isLeft res
     then Left (intercalate ", " (lefts res))
     else return (concat (rights res))
