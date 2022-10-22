@@ -2,19 +2,19 @@
 
 module Main where
 
-import CheckstyleXML
+import CheckstyleXML (toRDF)
 import Control.Monad (MonadPlus (..), unless, when)
-import Data.ByteString.Lazy.Internal
+import qualified Data.ByteString.Lazy.Char8 as C
 import Data.Semigroup ((<>))
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Rules (checkAll)
-import Language.Java.Syntax
+import Language.Java.Syntax (CompilationUnit)
 import Options.Applicative
 import RDF
-import System.FilePath.Find
+import System.FilePath.Find (always, extension, find, (==?))
 import System.IO (hPutStrLn, stderr)
-import Text.Parsec.Error
+import Text.Parsec.Error (ParseError)
 import Text.XML.HaXml.Parse (xmlParse')
 
 main :: IO ()
@@ -112,15 +112,13 @@ parseJava rootDir pretty checkstyleDiags =
     let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
     let diagnostics = concatMap (uncurry checkAll) cUnitResults
     let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
-    putStrLn
-      ( Data.ByteString.Lazy.Internal.unpackChars
-          ( RDF.encodetojson
-              ( DiagnosticResult
-                  { diagnostics = diagnosticResults,
-                    resultSource = Just (Source {name = "jlint", url = Nothing}),
-                    resultSeverity = RDF.checkSeverityList (map RDF.severity diagnosticResults) -- emmits highest severity of all results in all files
-                  }
-              )
+    C.putStrLn
+      ( RDF.encodetojson
+          ( DiagnosticResult
+              { diagnostics = diagnosticResults,
+                resultSource = Just (Source {name = "jlint", url = Nothing}),
+                resultSeverity = RDF.checkSeverityList (map RDF.severity diagnosticResults) -- emmits highest severity of all results in all files
+              }
           )
       )
     unless (null parsingErrors) $ print parsingErrors
