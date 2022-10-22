@@ -64,7 +64,7 @@ data Code = Code
   deriving (Generic, Show, Eq)
 
 instance ToJSON Code where
-  toEncoding = genericToEncoding defaultOptions
+  toEncoding (Code value url) = pairs ("value" .= value <> "url" .= url)
 
 data Suggestion = Suggestion
   { suggestionRange :: Range,
@@ -100,17 +100,17 @@ instance ToJSON Diagnostic where
     pairs
       ( "message"
           .= message
-          <> "location"
+            <> "location"
           .= location
-          <> "severity"
+            <> "severity"
           .= severity
-          <> "source"
+            <> "source"
           .= source
-          <> "code"
+            <> "code"
           .= code
-           <> "suggestions"
+            <> "suggestions"
           .= suggestions
-          <> "original_output"
+            <> "original_output"
           .= originalOutput
       )
 
