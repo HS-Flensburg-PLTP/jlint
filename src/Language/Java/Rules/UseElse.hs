@@ -3,7 +3,7 @@ module Language.Java.Rules.UseElse (check) where
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax (Block (..), BlockStmt (..), CompilationUnit (..), Stmt (..))
-import qualified RDF as RDF
+import qualified RDF
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
@@ -12,7 +12,7 @@ check cUnit path = do
   where
     checkStmt (IfThen range _ stmt) = do
       if doesAlwaysExit stmt
-        then return (RDF.rangeDiagnostic "Language.Java.Rules.UseElse" "Always use an `else` if the code in the then branch always exits." range path)
+        then return (RDF.rangeDiagnostic "Language.Java.Rules.UseElse" "Hier bitte ein `else` verwenden, damit sofort klar ist, dass der restliche Code nur ausgeführt wird, wenn die Bedingung nicht erfüllt ist." range path)
         else mzero
     checkStmt _ = mzero
 
