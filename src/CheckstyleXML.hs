@@ -1,6 +1,6 @@
 module CheckstyleXML (toRDF) where
 
-import Data.Either (isLeft, lefts, rights)
+import Data.Either (isLeft, rights)
 import Data.List (intercalate)
 import RDF
   ( Code (..),
@@ -24,27 +24,26 @@ import Text.XML.HaXml.Escape (stdXmlEscaper, xmlUnEscape)
 toRDF :: Show i => Document i -> Either String [Diagnostic]
 toRDF (Document _ _ (Elem (N "checkstyle") _ children) _) = do
   let res = map (withCElem (parseFile . xmlUnEscape stdXmlEscaper)) children
-  if all isLeft res
-    then Left (intercalate ", " (lefts res))
+  if any isLeft res
+    then Left (intercalate ", " (map show res))
     else return (concat (rights res))
 toRDF elem = Left ("Expecting checkstyle element but found " ++ show elem)
 
-withCElem :: (Element i -> Either String a) -> Content i -> Either String a
+withCElem :: (Element i -> Either String [a]) -> Content i -> Either String [a]
 withCElem f (CElem elem _) = f elem
-withCElem _ _ = Left "Expecting CElem"
+withCElem _ _ = Right []
 
 parseFile :: Show i => Element i -> Either String [Diagnostic]
-parseFile (Elem (N "file") _ []) = return []
 parseFile (Elem (N "file") attributes children) = do
   path <- lookupAttr "name" attributes
   let res = map (withCElem (parseError path)) children
-  if all isLeft res
-    then Left (intercalate ", " (lefts res))
-    else return (rights res)
-parseFile elem = Left ("Expecting file element but found " ++ show elem)
+  if any isLeft res
+    then Left (intercalate ", " (map show res))
+    else return (concat (rights res))
+parseFile _ = return []
 
-parseError :: Show i => String -> Element i -> Either String Diagnostic
-parseError path (Elem (N "error") attributes []) = do
+parseError :: Show i => String -> Element i -> Either String [Diagnostic]
+parseError path (Elem (N "error") attributes _) = do
   lineStr <- lookupAttr "line" attributes
   line <- readEither lineStr
   columnStr <- lookupAttr "column" attributes
@@ -54,7 +53,7 @@ parseError path (Elem (N "error") attributes []) = do
   message <- lookupAttr "message" attributes
   source <- lookupAttr "source" attributes
   return
-    ( Diagnostic
+    [ Diagnostic
         { message = message,
           location =
             Location
@@ -73,8 +72,8 @@ parseError path (Elem (N "error") attributes []) = do
           suggestions = Nothing,
           originalOutput = Nothing
         }
-    )
-parseError _ elem = Left ("Expecting error element but found " ++ show elem)
+    ]
+parseError _ _ = return []
 
 readEither :: Read a => String -> Either String a
 readEither str =
