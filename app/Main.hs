@@ -128,8 +128,8 @@ parseJava rootDir pretty checkstyleDiags =
     let numberOfHints = length diagnostics
     if numberOfHints == 0
       then do
-        putStrLn ("jlint did not generate any hints for the Java code in directory " ++ rootDir)
+        hPutStrLn stderr ("jlint did not generate any hints for the Java code in directory " ++ rootDir)
         exitSuccess
       else do
-        putStrLn ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
+        hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
         exitWith (ExitFailure numberOfHints)
