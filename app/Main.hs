@@ -12,7 +12,7 @@ import Language.Java.Rules (checkAll)
 import Language.Java.Syntax (CompilationUnit)
 import Options.Applicative
 import RDF
-import System.Exit (ExitCode (ExitFailure), exitWith)
+import System.Exit (ExitCode (ExitFailure), exitSuccess, exitWith)
 import System.FilePath.Find (always, extension, find, (==?))
 import System.IO (hPutStrLn, stderr)
 import Text.Parsec.Error (ParseError)
@@ -126,5 +126,10 @@ parseJava rootDir pretty checkstyleDiags =
     when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
 
     let numberOfHints = length diagnostics
-    putStrLn ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the provided Java code")
-    exitWith (ExitFailure numberOfHints)
+    if numberOfHints == 0
+      then do
+        putStrLn ("jlint did not generate any hints for the Java code in directory " ++ rootDir)
+        exitSuccess
+      else do
+        putStrLn ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
+        exitWith (ExitFailure numberOfHints)
