@@ -46,12 +46,11 @@ parseError :: Show i => String -> Element i -> Either String [Diagnostic]
 parseError path (Elem (N "error") attributes _) = do
   lineStr <- lookupAttr "line" attributes
   line <- readEither lineStr
-  columnStr <- lookupAttr "column" attributes
-  column <- readEither columnStr
   severityStr <- lookupAttr "severity" attributes
   severity <- severityFromString severityStr
   message <- lookupAttr "message" attributes
   source <- lookupAttr "source" attributes
+  let columnMaybe = either (const Nothing) Just (lookupAttr "column" attributes >>= readEither)
   return
     [ Diagnostic
         { message = message,
@@ -61,7 +60,7 @@ parseError path (Elem (N "error") attributes _) = do
                 range =
                   Just
                     ( Range
-                        { start = Position {line = line, column = column},
+                        { start = Position {line = line, column = columnMaybe},
                           end = Nothing
                         }
                     )

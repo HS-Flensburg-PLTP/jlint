@@ -28,8 +28,8 @@ tests =
 useElse :: CompilationUnit -> FilePath -> Assertion
 useElse cUnit path = do
   let diagnostic = check cUnit path
-  let expectedMsg = "Always use an `else` if the code in the then branch always exits."
+  let expectedMsg = "Hier bitte ein `else` verwenden, damit sofort klar ist, dass der restliche Code nur ausgeführt wird, wenn die Bedingung nicht erfüllt ist."
   assertEqual "Check message" [expectedMsg] (map message diagnostic)
   -- This source span should be exclusive -> adapt language-java
-  let expectedRange = Just (Range {start = Position {line = 4, column = 9}, end = Just (Position {line = 6, column = 9})})
+  let expectedRange = Just (Range {start = Position {line = 4, column = Just 9}, end = Just (Position {line = 6, column = Just 9})})
   assertEqual "Check range" [expectedRange] (map (range . location) diagnostic)
