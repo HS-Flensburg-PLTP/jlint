@@ -43,8 +43,6 @@ library
       Language.Java.Rules.UnnecessaryVariables
       Language.Java.Rules.UnusedLocalVariable
       Language.Java.Rules.UseElse
-      Language.Java.Syntax.Extra
-      Markdown
       RDF
   other-modules:
       Paths_jlint
