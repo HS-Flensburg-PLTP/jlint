@@ -30,9 +30,9 @@ checkStatements (methodName, methodBody) classVars path = do
     isReturnBool (Return (Just (Lit (Boolean _)))) = True
     isReturnBool (Return (Just (ExpName (Name varName))))
       | ((\(Ident name) -> name) (head varName), True) `elem` extractMethodVars methodBody =
-        True
+          True
       | ((\(Ident name) -> name) (head varName), False) `elem` extractMethodVars methodBody =
-        False
+          False
       | otherwise = ((\(Ident name) -> name) (head varName), True) `elem` classVars
     isReturnBool (StmtBlock (Block [BlockStmt a])) = isReturnBool a
     isReturnBool _ = False
