@@ -19,7 +19,7 @@ checkStatements (methodName, methodBody) classVars path = do
   stmt <- universeBi methodBody
   checkStatement stmt
   where
-    checkStatement (IfThenElse _ a b)
+    checkStatement (IfThenElse _ _ a b)
       | isReturnBool a && isReturnBool b = return (methodDiagnostic methodName "A if-then-else part with literal return can be simplified." path)
       | otherwise = mzero
     checkStatement (IfThen _ _ a)
@@ -30,9 +30,9 @@ checkStatements (methodName, methodBody) classVars path = do
     isReturnBool (Return (Just (Lit (Boolean _)))) = True
     isReturnBool (Return (Just (ExpName (Name varName))))
       | ((\(Ident name) -> name) (head varName), True) `elem` extractMethodVars methodBody =
-          True
+        True
       | ((\(Ident name) -> name) (head varName), False) `elem` extractMethodVars methodBody =
-          False
+        False
       | otherwise = ((\(Ident name) -> name) (head varName), True) `elem` classVars
     isReturnBool (StmtBlock (Block [BlockStmt a])) = isReturnBool a
     isReturnBool _ = False

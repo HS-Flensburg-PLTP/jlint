@@ -20,7 +20,7 @@ extractMethodStatements methodBody = do
   extractStatements statements
   where
     extractStatements (IfThen _ _ stmt) = [stmt]
-    extractStatements (IfThenElse _ stmt1 stmt2) = [stmt1, stmt2]
+    extractStatements (IfThenElse _ _ stmt1 stmt2) = [stmt1, stmt2]
     extractStatements (While _ stmt) = [stmt]
     extractStatements (BasicFor _ _ _ stmt) = [stmt]
     extractStatements (EnhancedFor _ _ _ _ stmt) = [stmt]

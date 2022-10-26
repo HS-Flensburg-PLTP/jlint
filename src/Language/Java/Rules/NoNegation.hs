@@ -16,9 +16,9 @@ checkIfThenElseStatements (methodName, methodBody) path varList = do
   stmt <- universeBi methodBody
   checkStatement stmt
   where
-    checkStatement (IfThenElse (BinOp _ NotEq _) (StmtBlock _) (StmtBlock _)) = return (methodDiagnostic methodName "A negated if-else expression can be used without negation." path)
-    checkStatement (IfThenElse (PreNot (Lit (Boolean bool))) (StmtBlock _) (StmtBlock _)) = return (methodDiagnostic methodName ("A negated if-else expression (!" ++ show bool ++ ") can be used without negation.") path)
-    checkStatement (IfThenElse (PreNot (ExpName (Name (Ident name : _)))) (StmtBlock _) (StmtBlock _)) =
+    checkStatement (IfThenElse _ (BinOp _ NotEq _) (StmtBlock _) (StmtBlock _)) = return (methodDiagnostic methodName "A negated if-else expression can be used without negation." path)
+    checkStatement (IfThenElse _ (PreNot (Lit (Boolean bool))) (StmtBlock _) (StmtBlock _)) = return (methodDiagnostic methodName ("A negated if-else expression (!" ++ show bool ++ ") can be used without negation.") path)
+    checkStatement (IfThenElse _ (PreNot (ExpName (Name (Ident name : _)))) (StmtBlock _) (StmtBlock _)) =
       if (name, True) `elem` varList then return (methodDiagnostic methodName ("A negated if-else expression (!" ++ name ++ ") can be used without negation.") path) else mzero
     checkStatement _ = mzero
 

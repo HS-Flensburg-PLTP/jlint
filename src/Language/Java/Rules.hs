@@ -15,8 +15,8 @@ module Language.Java.Rules where
 -- import Language.Java.Rules.SimplifyBooleanReturn
 -- import Language.Java.Rules.UnnecessaryVariables
 -- import Language.Java.Rules.UnusedLocalVariable
-import Language.Java.Rules.UseElse as UseElse
-import Language.Java.Syntax
+import Language.Java.Rules.UseElse as UseElse (check)
+import Language.Java.Syntax (CompilationUnit)
 import RDF
 
 checks :: [CompilationUnit -> FilePath -> [Diagnostic]]

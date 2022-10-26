@@ -31,8 +31,8 @@ checkAllStatements list counter
   | otherwise = counter
 
 extractStmt :: Stmt -> [[BlockStmt]]
-extractStmt (IfThenElse _ (StmtBlock (Block blockA)) (StmtBlock (Block blockB))) = [blockA, blockB]
-extractStmt (IfThenElse _ (StmtBlock (Block blockA)) ifThenElse) = blockA : extractStmt ifThenElse
+extractStmt (IfThenElse _ _ (StmtBlock (Block blockA)) (StmtBlock (Block blockB))) = [blockA, blockB]
+extractStmt (IfThenElse _ _ (StmtBlock (Block blockA)) ifThenElse) = blockA : extractStmt ifThenElse
 extractStmt _ = []
 
 reverseList :: [[BlockStmt]] -> [[BlockStmt]]
