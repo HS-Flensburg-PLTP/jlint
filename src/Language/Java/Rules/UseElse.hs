@@ -2,12 +2,14 @@ module Language.Java.Rules.UseElse (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.List (intercalate)
 import Language.Java.Syntax
   ( Block (Block),
     BlockStmt (BlockStmt),
     CompilationUnit,
     Stmt (..),
   )
+import Language.Java.Syntax.Extra as Syntax
 import qualified RDF
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
@@ -37,18 +39,23 @@ checkCodeAfterIfThenElse cUnit path = do
   blocks <- universeBi cUnit
   checkBlocks blocks
   where
-    checkBlocks (BlockStmt (IfThenElse range _ thenStmt _) : _ : _) =
+    checkBlocks [BlockStmt (IfThenElse {})] = mzero
+    checkBlocks (BlockStmt (IfThenElse range _ thenStmt _) : stmts) =
       if doesAlwaysExit thenStmt
         then
           return
             ( RDF.rangeDiagnostic
                 "Language.Java.Rules.UseElse"
-                "Der `then`-Zweig der `if`- verlässt immer die Methode. Daher sollte nach der `if`-Anweisung keine weitere Anweisung folgen."
+                (message stmts)
                 range
                 path
             )
         else mzero
     checkBlocks _ = mzero
+
+message :: [BlockStmt] -> String
+message blockStmts =
+  "Der `then`-Zweig der `if`-Anweisung verlässt immer die Methode. Daher sollte nach der gesamten `if`-Anweisung keine weitere Anweisung folgen. Auf die `if`-Anweisung folgen: " ++ intercalate ", " (map Syntax.blockStmtName blockStmts)
 
 doesAlwaysExit :: Stmt -> Bool
 doesAlwaysExit (Return _) = True
