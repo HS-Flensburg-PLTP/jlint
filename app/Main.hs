@@ -1,5 +1,3 @@
-{-# LANGUAGE FlexibleContexts #-}
-
 module Main where
 
 import CheckstyleXML (toRDF)
@@ -14,7 +12,7 @@ import Options.Applicative
 import RDF
 import System.Exit (ExitCode (ExitFailure), exitSuccess, exitWith)
 import System.FilePath.Find (always, extension, find, (==?))
-import System.IO (hPutStrLn, stderr)
+import System.IO (IOMode (ReadMode), char8, hGetContents, hPutStrLn, hSetEncoding, openFile, stderr)
 import Text.Parsec.Error (ParseError)
 import Text.XML.HaXml.Parse (xmlParse')
 
@@ -84,7 +82,9 @@ readAllFiles paths =
           [] ->
             return fileList
           path : restPaths -> do
-            file <- readFile path
+            inputHandle <- openFile path ReadMode
+            hSetEncoding inputHandle char8
+            file <- hGetContents inputHandle
             readAllFilesHelp restPaths ((file, path) : fileList)
    in readAllFilesHelp paths mzero
 
