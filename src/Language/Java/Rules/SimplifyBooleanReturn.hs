@@ -30,9 +30,9 @@ checkStatements (methodName, methodBody) classVars path = do
     isReturnBool (Return (Just (Lit (Boolean _)))) = True
     isReturnBool (Return (Just (ExpName (Name varName))))
       | ((\(Ident name) -> name) (head varName), True) `elem` extractMethodVars methodBody =
-          True
+        True
       | ((\(Ident name) -> name) (head varName), False) `elem` extractMethodVars methodBody =
-          False
+        False
       | otherwise = ((\(Ident name) -> name) (head varName), True) `elem` classVars
     isReturnBool (StmtBlock (Block [BlockStmt a])) = isReturnBool a
     isReturnBool _ = False
@@ -45,8 +45,8 @@ extractMethodVars methodBody = do
   var <- universeBi methodBody
   checkVars var
   where
-    checkVars (LocalVars _ (PrimType BooleanT) varDecl) = concatMap (\(VarDecl varDeclId _) -> [(extractVarName varDeclId, True)]) varDecl
-    checkVars (LocalVars _ _ varDecl) = concatMap (\(VarDecl varDeclId _) -> [(extractVarName varDeclId, False)]) varDecl
+    checkVars (LocalVars _ _ (PrimType BooleanT) varDecl) = concatMap (\(VarDecl varDeclId _) -> [(extractVarName varDeclId, True)]) varDecl
+    checkVars (LocalVars _ _ _ varDecl) = concatMap (\(VarDecl varDeclId _) -> [(extractVarName varDeclId, False)]) varDecl
     checkVars _ = []
 
 extractClassVars :: CompilationUnit -> [(String, Bool)]

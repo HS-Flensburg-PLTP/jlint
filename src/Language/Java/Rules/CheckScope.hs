@@ -11,7 +11,7 @@ extractMethodVariables methodBody = do
   names <- universeBi methodBody
   extractNames names
   where
-    extractNames (LocalVars _ _ varDecls) = map (\(VarDecl varId _) -> extractVarName varId) varDecls
+    extractNames (LocalVars _ _ _ varDecls) = map (\(VarDecl varId _) -> extractVarName varId) varDecls
     extractNames _ = mzero
 
 extractMethodStatements :: MethodBody -> [Stmt]

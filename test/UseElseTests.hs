@@ -1,11 +1,10 @@
 module UseElseTests where
 
-import CheckResults
+import Control.Monad (zipWithM_)
 import Language.Java.Parser (compilationUnit, parser)
 import Language.Java.Rules.UseElse (check)
 import Language.Java.Syntax (CompilationUnit)
 import RDF
-import RessourceManager
 import System.Directory (getCurrentDirectory)
 import Test.HUnit
 
@@ -28,12 +27,7 @@ tests =
 useElse :: CompilationUnit -> FilePath -> Assertion
 useElse cUnit path = do
   let diagnostic = check cUnit path
-  let expectedMsg1 = "Hier bitte ein `else` verwenden, damit sofort klar ist, dass der restliche Code nur ausgeführt wird, wenn die Bedingung nicht erfüllt ist."
-  let expectedMsg2 = "Der `then`-Zweig der `if`- verlässt immer die Methode. Daher sollte nach der `if`-Anweisung keine weitere Anweisung folgen."
-  assertEqual
-    "Check message"
-    [expectedMsg1, expectedMsg2]
-    (map message diagnostic)
+  assertEqual "Check number of messages" 3 (length diagnostic)
   -- This source span should be exclusive -> adapt language-java
   let expectedRange1 =
         Just
@@ -45,11 +39,16 @@ useElse cUnit path = do
   let expectedRange2 =
         Just
           ( Range
+              { start = Position {line = 35, column = Just 10},
+                end = Just (Position {line = 37, column = Just 10})
+              }
+          )
+  let expectedRange3 =
+        Just
+          ( Range
               { start = Position {line = 12, column = Just 9},
                 end = Just (Position {line = 18, column = Just 9})
               }
           )
-  assertEqual
-    "Check range"
-    [expectedRange1, expectedRange2]
-    (map (range . location) diagnostic)
+  let expectedRanges = [expectedRange1, expectedRange2, expectedRange3]
+  zipWithM_ (assertEqual "Check range") expectedRanges (map (range . location) diagnostic)

@@ -7,6 +7,7 @@ import NeedBraces.Tests
 import NoLoopBreak.Tests (testAllNoLoopBreaks)
 import NonFinalMethodAttributes.Tests (testAllNonFinalMethodAttributes)
 import NonPrivateAttributes.Tests (testAllNonPrivateAttributes)
+import qualified ReduceScopeTests
 import SameExecutionsInIf.Tests
 import SimplifyBooleanReturn.Tests
 import Test.HUnit (runTestTT)
@@ -27,4 +28,5 @@ main = do
   SimplifyBooleanReturn.Tests.testAll
   NeedBraces.Tests.testAll
   _ <- runTestTT UseElseTests.tests
+  _ <- runTestTT ReduceScopeTests.tests
   return ()

@@ -40,8 +40,8 @@ extractMethodVars (_, methodBody) = do
   var <- universeBi methodBody
   extractNameAndBool var
   where
-    extractNameAndBool (LocalVars [] (PrimType BooleanT) var) = map (\(VarDecl v _) -> extractVarName v True) var
-    extractNameAndBool (LocalVars [] _ var) = map (\(VarDecl v _) -> extractVarName v False) var
+    extractNameAndBool (LocalVars _ [] (PrimType BooleanT) var) = map (\(VarDecl v _) -> extractVarName v True) var
+    extractNameAndBool (LocalVars _ [] _ var) = map (\(VarDecl v _) -> extractVarName v False) var
     extractNameAndBool _ = mzero
 
 concatFittingMethodAndClassVars :: [(String, Bool)] -> [(String, Bool)] -> [(String, Bool)]

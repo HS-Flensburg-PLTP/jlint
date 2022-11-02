@@ -38,6 +38,7 @@ library
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNegation
+      Language.Java.Rules.ReduceScope
       Language.Java.Rules.SameExecutionsInIf
       Language.Java.Rules.SimplifyBooleanReturn
       Language.Java.Rules.UnnecessaryVariables
@@ -100,6 +101,7 @@ test-suite jlint-test
       NoLoopBreak.Tests
       NonFinalMethodAttributes.Tests
       NonPrivateAttributes.Tests
+      ReduceScopeTests
       RessourceManager
       SameExecutionsInIf.Tests
       SimplifyBooleanReturn.Tests

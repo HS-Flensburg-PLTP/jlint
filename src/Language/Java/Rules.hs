@@ -15,12 +15,17 @@ module Language.Java.Rules where
 -- import Language.Java.Rules.SimplifyBooleanReturn
 -- import Language.Java.Rules.UnnecessaryVariables
 -- import Language.Java.Rules.UnusedLocalVariable
+
+import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import Language.Java.Rules.UseElse as UseElse (check)
 import Language.Java.Syntax (CompilationUnit)
-import RDF
+import RDF (Diagnostic)
 
 checks :: [CompilationUnit -> FilePath -> [Diagnostic]]
-checks = [UseElse.check]
+checks =
+  [ UseElse.check,
+    ReduceScope.check
+  ]
 
 -- [ NeedBraces.check,
 --   CheckNonFinalMethodAttributes.check,
