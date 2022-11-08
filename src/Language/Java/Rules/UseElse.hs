@@ -9,7 +9,7 @@ import Language.Java.Syntax
     CompilationUnit,
     Stmt (..),
   )
-import Language.Java.Syntax.Extra as Syntax
+import Language.Java.Syntax.BlockStmt as BlockStmt (name)
 import qualified RDF
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
@@ -18,10 +18,11 @@ check cUnit path =
 
 checkIfWithoutElse :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkIfWithoutElse cUnit path = do
-  stmt <- universeBi cUnit
-  checkStmt stmt
+  blocks <- universeBi cUnit
+  checkBlocks blocks
   where
-    checkStmt (IfThen range _ stmt) = do
+    checkBlocks [BlockStmt (IfThen {})] = mzero
+    checkBlocks (BlockStmt (IfThen range _ stmt) : _) = do
       if doesAlwaysExit stmt
         then
           return
@@ -32,7 +33,7 @@ checkIfWithoutElse cUnit path = do
                 path
             )
         else mzero
-    checkStmt _ = mzero
+    checkBlocks _ = mzero
 
 checkCodeAfterIfThenElse :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkCodeAfterIfThenElse cUnit path = do
@@ -55,14 +56,13 @@ checkCodeAfterIfThenElse cUnit path = do
 
 message :: [BlockStmt] -> String
 message blockStmts =
-  "Der `then`-Zweig der `if`-Anweisung verlässt immer die Methode. Daher sollte nach der gesamten `if`-Anweisung keine weitere Anweisung folgen. Auf die `if`-Anweisung folgen: " ++ intercalate ", " (map Syntax.blockStmtName blockStmts)
+  "Der `then`-Zweig der `if`-Anweisung verlässt immer die Methode. Daher sollte nach der gesamten `if`-Anweisung keine weitere Anweisung folgen. Auf die `if`-Anweisung folgen: " ++ intercalate ", " (map BlockStmt.name blockStmts)
 
 doesAlwaysExit :: Stmt -> Bool
 doesAlwaysExit (Return _) = True
 doesAlwaysExit (Throw _) = True
-doesAlwaysExit (StmtBlock (Block [blockStmt])) = doesBlockAlwaysExit blockStmt
--- Currently not supported
-doesAlwaysExit (StmtBlock _) = False
+doesAlwaysExit (StmtBlock (Block [])) = False
+doesAlwaysExit (StmtBlock (Block blocks)) = doesBlockAlwaysExit (last blocks)
 doesAlwaysExit (IfThen _ _ stmt) = doesAlwaysExit stmt
 doesAlwaysExit (IfThenElse _ _ stmt1 stmt2) = doesAlwaysExit stmt1 && doesAlwaysExit stmt2
 doesAlwaysExit (While _ stmt) = doesAlwaysExit stmt
