@@ -31,14 +31,14 @@ resolver:
 #   - wai
 packages:
 - .
-- ../language-java
+# - ../language-java
 # Dependency packages to be pulled from upstream that are not in the resolver.
 # These entries can reference officially published versions as well as
 # forks / in-progress versions pinned to a git hash. For example:
 #
-# extra-deps:
-# - git: https://github.com/hsfl-pltp/language-java.git
-#   commit: 27a6afedecbca25b23be92b0da041f94a33d079e
+extra-deps:
+- git: https://github.com/hsfl-pltp/language-java.git
+  commit: 4b54a23e16598f002285f6e4ef97c84b1328ebef
 #
 # extra-deps: []
 
