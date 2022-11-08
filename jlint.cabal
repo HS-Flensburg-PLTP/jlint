@@ -34,17 +34,21 @@ library
       Language.Java.Rules.CheckScope
       Language.Java.Rules.DefaultComesLast
       Language.Java.Rules.EmptyLoopBody
+      Language.Java.Rules.InitializeVariables
       Language.Java.Rules.NamingConventions
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNegation
+      Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.SameExecutionsInIf
       Language.Java.Rules.SimplifyBooleanReturn
       Language.Java.Rules.UnnecessaryVariables
       Language.Java.Rules.UnusedLocalVariable
       Language.Java.Rules.UseElse
-      Language.Java.Syntax.Extra
+      Language.Java.Syntax.BlockStmt
+      Language.Java.Syntax.Ident
+      Language.Java.Syntax.VarDecl
       Markdown
       RDF
   other-modules:
@@ -96,15 +100,18 @@ test-suite jlint-test
       CheckScope.Tests
       DefaultComesLast.Tests
       EmptyLoopBody.Tests
+      InitializeVariablesTests
       NamingConventions.Tests
       NeedBraces.Tests
       NoLoopBreak.Tests
       NonFinalMethodAttributes.Tests
       NonPrivateAttributes.Tests
+      PreferExpressionsTests
       ReduceScopeTests
       RessourceManager
       SameExecutionsInIf.Tests
       SimplifyBooleanReturn.Tests
+      Tests
       UnnecessaryVariables.Tests
       UseElseTests
       Paths_jlint

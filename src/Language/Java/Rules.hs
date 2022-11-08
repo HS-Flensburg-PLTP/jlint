@@ -16,6 +16,8 @@ module Language.Java.Rules where
 -- import Language.Java.Rules.UnnecessaryVariables
 -- import Language.Java.Rules.UnusedLocalVariable
 
+import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
+import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import Language.Java.Rules.UseElse as UseElse (check)
 import Language.Java.Syntax (CompilationUnit)
@@ -23,8 +25,10 @@ import RDF (Diagnostic)
 
 checks :: [CompilationUnit -> FilePath -> [Diagnostic]]
 checks =
-  [ UseElse.check,
-    ReduceScope.check
+  [ InitializeVariables.check,
+    PreferExpressions.check,
+    ReduceScope.check,
+    UseElse.check
   ]
 
 -- [ NeedBraces.check,

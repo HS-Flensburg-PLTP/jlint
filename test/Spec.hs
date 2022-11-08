@@ -2,11 +2,13 @@ import CheckScope.Tests
 import DefaultComesLast.Tests
 import EmptyLoopBody.Tests
 import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
+import qualified InitializeVariablesTests
 import NamingConventions.Tests
 import NeedBraces.Tests
 import NoLoopBreak.Tests (testAllNoLoopBreaks)
 import NonFinalMethodAttributes.Tests (testAllNonFinalMethodAttributes)
 import NonPrivateAttributes.Tests (testAllNonPrivateAttributes)
+import qualified PreferExpressionsTests
 import qualified ReduceScopeTests
 import SameExecutionsInIf.Tests
 import SimplifyBooleanReturn.Tests
@@ -23,10 +25,12 @@ main = do
   NamingConventions.Tests.testAll
   testAllNonFinalMethodAttributes
   testAllNonPrivateAttributes
-  SameExecutionsInIf.Tests.testAll
+  -- SameExecutionsInIf.Tests.testAll
   DefaultComesLast.Tests.testAll
   SimplifyBooleanReturn.Tests.testAll
   NeedBraces.Tests.testAll
-  _ <- runTestTT UseElseTests.tests
+  _ <- runTestTT InitializeVariablesTests.tests
+  _ <- runTestTT PreferExpressionsTests.tests
   _ <- runTestTT ReduceScopeTests.tests
+  _ <- runTestTT UseElseTests.tests
   return ()

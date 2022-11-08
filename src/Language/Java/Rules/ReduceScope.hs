@@ -13,9 +13,8 @@ import Language.Java.Syntax
     Ident (Ident),
     Name (Name),
     Stmt (..),
-    VarDecl (..),
-    VarDeclId (..),
   )
+import qualified Language.Java.Syntax.VarDecl as VarDecl
 import qualified Markdown
 import RDF (Diagnostic, rangeDiagnostic)
 
@@ -25,7 +24,7 @@ check cUnit path = do
   checkBlocks blocks
   where
     checkBlocks (LocalVars range _ _ vars : BlockStmt stmt : stmts) =
-      let declVars = map varDeclName vars
+      let declVars = map VarDecl.ident vars
           varsNotInStmt = filter (`notElem` variables stmt) declVars
           varsNotInStmts = filter (`notElem` variables stmts) declVars
        in if hasNoSideEffect stmt
@@ -76,13 +75,6 @@ message :: Ident -> String
 message var =
   "Der Scope der Variable " ++ Markdown.code (nameFromIdent var) ++ " kann reduziert werden."
 
-varDeclName :: VarDecl -> Ident
-varDeclName (VarDecl varDeclId _) = varDeclIdName varDeclId
-
-varDeclIdName :: VarDeclId -> Ident
-varDeclIdName (VarDeclArray varDeclId) = varDeclIdName varDeclId
-varDeclIdName (VarId ident) = ident
-
 variables :: (Data a) => a -> [Ident]
 variables parent = [ident | ExpName (Name idents) <- universeBi parent, ident <- idents]
 
@@ -98,7 +90,7 @@ hasNoSideEffect (While {}) = False
 hasNoSideEffect (BasicFor {}) = False
 hasNoSideEffect (EnhancedFor {}) = False
 hasNoSideEffect Empty = False
-hasNoSideEffect (ExpStmt _) = False
+hasNoSideEffect (ExpStmt {}) = False
 hasNoSideEffect (Assert {}) = False
 hasNoSideEffect (Switch {}) = False
 hasNoSideEffect (Do {}) = False
