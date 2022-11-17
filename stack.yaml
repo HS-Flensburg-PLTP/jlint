@@ -38,8 +38,8 @@ packages:
 #
 extra-deps:
 - git: https://github.com/hsfl-pltp/language-java.git
-  commit: 4b54a23e16598f002285f6e4ef97c84b1328ebef
-#
+  commit: 8a2ec2be4c1e8dfef76e4eefed061c70f4fdceaf
+
 # extra-deps: []
 
 # Override default flag values for local packages and extra-deps
