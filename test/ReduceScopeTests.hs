@@ -21,7 +21,7 @@ withFile relativePath check = do
 
 tests :: Test
 tests =
-  let file = "/test/ReduceScope.java"
+  let file = "/test/java/ReduceScope.java"
    in test [file ~: withFile file reduceScope]
 
 reduceScope :: CompilationUnit -> FilePath -> Assertion

@@ -5,15 +5,16 @@ module Language.Java.Rules.ReduceScope where
 import Control.Monad (MonadPlus (..))
 import Data.Data (Data)
 import Data.Generics.Uniplate.Data (universeBi)
+import qualified Language.Java.Purity as Purity
 import Language.Java.Syntax
-  ( Block (Block),
-    BlockStmt (BlockStmt, LocalVars),
+  ( BlockStmt (BlockStmt, LocalVars),
     CompilationUnit,
     Exp (..),
-    Ident (Ident),
+    Ident,
     Name (Name),
     Stmt (..),
   )
+import qualified Language.Java.Syntax.Ident as Ident
 import qualified Language.Java.Syntax.VarDecl as VarDecl
 import qualified Markdown
 import RDF (Diagnostic, rangeDiagnostic)
@@ -27,7 +28,7 @@ check cUnit path = do
       let declVars = map VarDecl.ident vars
           varsNotInStmt = filter (`notElem` variables stmt) declVars
           varsNotInStmts = filter (`notElem` variables stmts) declVars
-       in if hasNoSideEffect stmt
+       in if Purity.hasNoSideEffect stmt
             then
               if null varsNotInStmt
                 then reduceVarsInIf varsNotInStmts stmt path
@@ -47,7 +48,7 @@ check cUnit path = do
 reduceVarsInIf :: [Ident] -> Stmt -> FilePath -> [Diagnostic]
 reduceVarsInIf declVars (IfThenElse range condition thenStmt elseStmt) path =
   let varsNotInCondition = filter (`notElem` variables condition) declVars
-   in if hasNoSideEffectExp condition
+   in if Purity.hasNoSideEffectExp condition
         then
           if null varsNotInCondition
             then mzero
@@ -73,61 +74,7 @@ reduceVarsInIf _ _ _ = mzero
 
 message :: Ident -> String
 message var =
-  "Der Scope der Variable " ++ Markdown.code (nameFromIdent var) ++ " kann reduziert werden."
+  "Der Scope der Variable " ++ Markdown.code (Ident.name var) ++ " kann reduziert werden."
 
 variables :: (Data a) => a -> [Ident]
 variables parent = [ident | ExpName (Name idents) <- universeBi parent, ident <- idents]
-
-nameFromIdent :: Ident -> String
-nameFromIdent (Ident name) = name
-
--- Identifies statements that do not cause side effects concerning class attributes
-hasNoSideEffect :: Stmt -> Bool
-hasNoSideEffect (StmtBlock (Block _)) = False
-hasNoSideEffect (IfThen {}) = False
-hasNoSideEffect (IfThenElse {}) = False
-hasNoSideEffect (While {}) = False
-hasNoSideEffect (BasicFor {}) = False
-hasNoSideEffect (EnhancedFor {}) = False
-hasNoSideEffect Empty = False
-hasNoSideEffect (ExpStmt {}) = False
-hasNoSideEffect (Assert {}) = False
-hasNoSideEffect (Switch {}) = False
-hasNoSideEffect (Do {}) = False
-hasNoSideEffect (Break {}) = True
-hasNoSideEffect (Continue {}) = True
-hasNoSideEffect (Return {}) = True
-hasNoSideEffect (Synchronized {}) = False
-hasNoSideEffect (Throw {}) = False
-hasNoSideEffect (Try {}) = False
-hasNoSideEffect (Labeled _ stmt) = hasNoSideEffect stmt
-
-hasNoSideEffectExp :: Exp -> Bool
-hasNoSideEffectExp (Lit _) = True
-hasNoSideEffectExp (ClassLit _) = False
-hasNoSideEffectExp This = False
-hasNoSideEffectExp (ThisClass {}) = False
-hasNoSideEffectExp (InstanceCreation {}) = False
-hasNoSideEffectExp (QualInstanceCreation {}) = False
-hasNoSideEffectExp (ArrayCreate {}) = False
-hasNoSideEffectExp (ArrayCreateInit {}) = False
-hasNoSideEffectExp (FieldAccess {}) = True
-hasNoSideEffectExp (MethodInv {}) = False
-hasNoSideEffectExp (ArrayAccess {}) = False
-hasNoSideEffectExp (ExpName {}) = True
-hasNoSideEffectExp (PostIncrement _) = False
-hasNoSideEffectExp (PostDecrement _) = False
-hasNoSideEffectExp (PreIncrement _) = False
-hasNoSideEffectExp (PreDecrement _) = False
-hasNoSideEffectExp (PrePlus {}) = False
-hasNoSideEffectExp (PreMinus {}) = False
-hasNoSideEffectExp (PreBitCompl {}) = False
-hasNoSideEffectExp (PreNot {}) = False
-hasNoSideEffectExp (SwitchExp {}) = False
-hasNoSideEffectExp (Cast {}) = False
-hasNoSideEffectExp (BinOp leftExp _ rightExp) = hasNoSideEffectExp leftExp && hasNoSideEffectExp rightExp
-hasNoSideEffectExp (InstanceOf {}) = False
-hasNoSideEffectExp (Cond {}) = False
-hasNoSideEffectExp (Assign {}) = False
-hasNoSideEffectExp (Lambda {}) = False
-hasNoSideEffectExp (MethodRef {}) = False
