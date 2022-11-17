@@ -7,22 +7,12 @@ import Language.Java.Syntax (CompilationUnit)
 import RDF
 import System.Directory (getCurrentDirectory)
 import Test.HUnit
-
-withFile :: FilePath -> (CompilationUnit -> FilePath -> Assertion) -> Assertion
-withFile relativePath check = do
-  path <- getCurrentDirectory
-  let file = path ++ relativePath
-  content <- readFile file
-  case parser compilationUnit file content of
-    Left error ->
-      assertFailure ("Parsing " ++ file ++ " failed with error:" ++ show error)
-    Right cUnit ->
-      check cUnit path
+import qualified Tests
 
 tests :: Test
 tests =
   let file = "/test/java/ReduceScope.java"
-   in test [file ~: withFile file reduceScope]
+   in test [file ~: Tests.withParsedJavaFile file reduceScope]
 
 reduceScope :: CompilationUnit -> FilePath -> Assertion
 reduceScope cUnit path = do

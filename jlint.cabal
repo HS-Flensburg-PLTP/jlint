@@ -30,6 +30,7 @@ library
       Language.Java.AST
       Language.Java.Purity
       Language.Java.Rules
+      Language.Java.Rules.AvoidNegations
       Language.Java.Rules.CheckNonFinalMethodAttributes
       Language.Java.Rules.CheckNonPrivateAttributes
       Language.Java.Rules.CheckScope
@@ -39,7 +40,6 @@ library
       Language.Java.Rules.NamingConventions
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoLoopBreak
-      Language.Java.Rules.NoNegation
       Language.Java.Rules.NoNullPointerExceptionsForControl
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ReduceScope
@@ -98,6 +98,7 @@ test-suite jlint-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      AvoidNegationsTests
       CheckResults
       CheckScope.Tests
       DefaultComesLast.Tests

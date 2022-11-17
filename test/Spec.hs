@@ -1,3 +1,4 @@
+import qualified AvoidNegationsTests
 import CheckScope.Tests
 import DefaultComesLast.Tests
 import EmptyLoopBody.Tests
@@ -13,7 +14,7 @@ import qualified PreferExpressionsTests
 import qualified ReduceScopeTests
 import SameExecutionsInIf.Tests
 import SimplifyBooleanReturn.Tests
-import Test.HUnit (runTestTT)
+import Test.HUnit (Test, runTestTT, test, (~:))
 import UnnecessaryVariables.Tests (testAllUnnecessaryVariables)
 import qualified UseElseTests
 
@@ -30,9 +31,16 @@ main = do
   DefaultComesLast.Tests.testAll
   SimplifyBooleanReturn.Tests.testAll
   NeedBraces.Tests.testAll
-  runTestTT InitializeVariablesTests.tests
-  runTestTT NoNullPointerExceptionsForControlTests.tests
-  runTestTT PreferExpressionsTests.tests
-  runTestTT ReduceScopeTests.tests
-  runTestTT UseElseTests.tests
+  runTestTT tests
   return ()
+
+tests :: Test
+tests =
+  test
+    [ "AvoidNegations" ~: AvoidNegationsTests.tests,
+      "InitialzeVariables" ~: InitializeVariablesTests.tests,
+      "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
+      "PreferExpressions" ~: PreferExpressionsTests.tests,
+      "ReduceScope" ~: ReduceScopeTests.tests,
+      "UseElse" ~: UseElseTests.tests
+    ]
