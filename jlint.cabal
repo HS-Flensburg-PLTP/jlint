@@ -28,6 +28,7 @@ library
       CheckstyleXML
       Control.Monad.Extra
       Language.Java.AST
+      Language.Java.Purity
       Language.Java.Rules
       Language.Java.Rules.CheckNonFinalMethodAttributes
       Language.Java.Rules.CheckNonPrivateAttributes
@@ -39,6 +40,7 @@ library
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNegation
+      Language.Java.Rules.NoNullPointerExceptionsForControl
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.SameExecutionsInIf
@@ -106,6 +108,7 @@ test-suite jlint-test
       NoLoopBreak.Tests
       NonFinalMethodAttributes.Tests
       NonPrivateAttributes.Tests
+      NoNullPointerExceptionsForControlTests
       PreferExpressionsTests
       ReduceScopeTests
       RessourceManager

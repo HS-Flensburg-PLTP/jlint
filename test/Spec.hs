@@ -6,6 +6,7 @@ import qualified InitializeVariablesTests
 import NamingConventions.Tests
 import NeedBraces.Tests
 import NoLoopBreak.Tests (testAllNoLoopBreaks)
+import qualified NoNullPointerExceptionsForControlTests
 import NonFinalMethodAttributes.Tests (testAllNonFinalMethodAttributes)
 import NonPrivateAttributes.Tests (testAllNonPrivateAttributes)
 import qualified PreferExpressionsTests
@@ -29,8 +30,9 @@ main = do
   DefaultComesLast.Tests.testAll
   SimplifyBooleanReturn.Tests.testAll
   NeedBraces.Tests.testAll
-  _ <- runTestTT InitializeVariablesTests.tests
-  _ <- runTestTT PreferExpressionsTests.tests
-  _ <- runTestTT ReduceScopeTests.tests
-  _ <- runTestTT UseElseTests.tests
+  runTestTT InitializeVariablesTests.tests
+  runTestTT NoNullPointerExceptionsForControlTests.tests
+  runTestTT PreferExpressionsTests.tests
+  runTestTT ReduceScopeTests.tests
+  runTestTT UseElseTests.tests
   return ()
