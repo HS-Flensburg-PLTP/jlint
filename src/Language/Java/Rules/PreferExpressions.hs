@@ -1,6 +1,7 @@
 module Language.Java.Rules.PreferExpressions (check) where
 
 import Control.Monad (MonadPlus (..))
+import Data.Data (Data)
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
   ( BlockStmt (BlockStmt, LocalVars),
@@ -32,12 +33,13 @@ check cUnit path = do
             let declVars = map VarDecl.ident (filter VarDecl.isInitialized vars)
              in if var `elem` declVars
                   then
-                    [ RDF.rangeDiagnostic
-                        "Language.Java.Rules.PreferExpressions"
-                        (message var)
-                        (startLoc, endLoc)
-                        path
-                    ]
+                    return
+                      ( RDF.rangeDiagnostic
+                          "Language.Java.Rules.PreferExpressions"
+                          (assignedTwiceMessage var)
+                          (startLoc, endLoc)
+                          path
+                      )
                   else mzero
     checkBlocks
       ( BlockStmt (ExpStmt (startLoc, _) exp1)
@@ -46,16 +48,37 @@ check cUnit path = do
         ) =
         case (filterVarUpdate exp1, filterVarUpdate exp2) of
           (Nothing, _) -> mzero
-          (_, Nothing) -> mzero
+          (Just _, Nothing) -> mzero
           (Just ident1, Just ident2) ->
             if ident1 == ident2
               then
-                [ RDF.rangeDiagnostic
-                    "Language.Java.Rules.PreferExpressions"
-                    (message ident1)
-                    (startLoc, endLoc)
-                    path
-                ]
+                return
+                  ( RDF.rangeDiagnostic
+                      "Language.Java.Rules.PreferExpressions"
+                      (assignedTwiceMessage ident1)
+                      (startLoc, endLoc)
+                      path
+                  )
+              else mzero
+    checkBlocks
+      ( BlockStmt (ExpStmt span exp)
+          : stmt
+          : stmts
+        ) =
+        case filterVarUpdate exp of
+          Nothing -> mzero
+          Just ident ->
+            if length (filter (== ident) (variablesRead stmt)) == 1
+              && ident `notElem` variablesWritten stmt
+              && ident `notElem` variablesRead stmts
+              then
+                return
+                  ( RDF.rangeDiagnostic
+                      "Language.Java.Rules.PreferExpressions"
+                      (assignedAndUsedMessage ident)
+                      span
+                      path
+                  )
               else mzero
     checkBlocks _ = mzero
 
@@ -67,6 +90,16 @@ filterVarUpdate (PreDecrement (ExpName (Name [ident]))) = Just ident
 filterVarUpdate (Assign (NameLhs (Name [ident])) _ _) = Just ident
 filterVarUpdate _ = Nothing
 
-message :: Ident -> String
-message ident =
+variablesRead :: (Data a) => a -> [Ident]
+variablesRead parent = [ident | ExpName (Name idents) <- universeBi parent, ident <- idents]
+
+variablesWritten :: (Data a) => a -> [Ident]
+variablesWritten parent = [ident | Assign (NameLhs (Name [ident])) _ _ <- universeBi parent]
+
+assignedTwiceMessage :: Ident -> String
+assignedTwiceMessage ident =
   "Der Variable " ++ Markdown.code (Ident.name ident) ++ " wird zweimal direkt nacheinander ein neuer Wert zugewiesen. Diese beiden Zuweisungen können zusammengefasst werden."
+
+assignedAndUsedMessage :: Ident -> String
+assignedAndUsedMessage ident =
+  "Der Variable " ++ Markdown.code (Ident.name ident) ++ " wird ein neuer Wert zugewiesen und sie wird direkt danach nur gelesen.\nDaher kann der Wert, der der Variablen zugewiesen wird, dort eingesetzt werden, wo die Variable gelesen wird."
