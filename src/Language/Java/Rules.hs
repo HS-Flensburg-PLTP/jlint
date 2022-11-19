@@ -16,7 +16,9 @@ module Language.Java.Rules where
 -- import Language.Java.Rules.UnnecessaryVariables
 -- import Language.Java.Rules.UnusedLocalVariable
 
+import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
+import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import Language.Java.Rules.UseElse as UseElse (check)
@@ -25,7 +27,9 @@ import RDF (Diagnostic)
 
 checks :: [CompilationUnit -> FilePath -> [Diagnostic]]
 checks =
-  [ InitializeVariables.check,
+  [ AvoidNegations.check,
+    InitializeVariables.check,
+    NoNullPointerExceptionsForControl.check,
     PreferExpressions.check,
     ReduceScope.check,
     UseElse.check
