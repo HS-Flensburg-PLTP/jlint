@@ -76,4 +76,24 @@ class UseElse {
             throw new IndexOutOfBoundsException();
         }
     }
+
+    public static boolean isSubset(final int[] array1, final int[] array2) {
+        var isInTwo = true;
+
+        if (array1.length <= array2.length && array2.length > 0) {
+            for (int i = 0; isInTwo && i < array1.length; i++) {
+                var isIn = false;
+                for (int j = 0; j < array2.length; j++) {
+                    if (array1[i] == array2[j]) {
+                        isIn = true;
+                    }
+                }
+                isInTwo = isIn;
+                isIn = false;
+            }
+        } else {
+            return false;
+        }
+        return isInTwo;
+    }
 }

@@ -41,8 +41,8 @@ checkCodeAfterIfThenElse cUnit path = do
   checkBlocks blocks
   where
     checkBlocks [BlockStmt (IfThenElse {})] = mzero
-    checkBlocks (BlockStmt (IfThenElse range _ thenStmt _) : stmts) =
-      if doesAlwaysExit thenStmt
+    checkBlocks (BlockStmt (IfThenElse range _ thenStmt elseStmt) : stmts) =
+      if doesAlwaysExit thenStmt || doesAlwaysExit elseStmt
         then
           return
             ( RDF.rangeDiagnostic
@@ -56,7 +56,7 @@ checkCodeAfterIfThenElse cUnit path = do
 
 message :: [BlockStmt] -> String
 message blockStmts =
-  "Der `then`-Zweig der `if`-Anweisung verlässt immer die Methode. Daher sollte nach der gesamten `if`-Anweisung keine weitere Anweisung folgen. Auf die `if`-Anweisung folgen: " ++ intercalate ", " (map BlockStmt.name blockStmts)
+  "Der `then`- oder der `else`-Zweig der `if`-Anweisung verlässt immer die Methode. Daher sollte nach der gesamten `if`-Anweisung keine weitere Anweisung folgen. Auf die `if`-Anweisung folgen: " ++ intercalate ", " (map BlockStmt.name blockStmts)
 
 doesAlwaysExit :: Stmt -> Bool
 doesAlwaysExit (Return _) = True
