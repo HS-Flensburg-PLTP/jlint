@@ -52,7 +52,6 @@ checks =
 --   NamingConventions.checkLocalName,
 --   NamingConventions.checkMemberName,
 --   NamingConventions.checkTypeName,
---   NoNegation.check,
 --   SameExecutionsInIf.check,
 --   UnusedLocalVariable.checkMethodVars
 -- ]

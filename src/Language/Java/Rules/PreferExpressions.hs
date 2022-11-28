@@ -102,4 +102,4 @@ assignedTwiceMessage ident =
 
 assignedAndUsedMessage :: Ident -> String
 assignedAndUsedMessage ident =
-  "Der Variable " ++ Markdown.code (Ident.name ident) ++ " wird ein neuer Wert zugewiesen und sie wird direkt danach nur gelesen.\nDaher kann der Wert, der der Variablen zugewiesen wird, dort eingesetzt werden, wo die Variable gelesen wird."
+  "Der Variable " ++ Markdown.code (Ident.name ident) ++ " wird ein neuer Wert zugewiesen und sie wird direkt danach nur gelesen.\nDaher kann der Wert, der der Variable zugewiesen wird, dort eingesetzt werden, wo die Variable verwendet wird."

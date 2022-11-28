@@ -5,7 +5,6 @@ module Language.Java.Rules.ReduceScope where
 import Control.Monad (MonadPlus (..))
 import Data.Data (Data)
 import Data.Generics.Uniplate.Data (universeBi)
-import qualified Language.Java.Purity as Purity
 import Language.Java.Syntax
   ( BlockStmt (BlockStmt, LocalVars),
     CompilationUnit,
@@ -14,7 +13,9 @@ import Language.Java.Syntax
     Name (Name),
     Stmt (..),
   )
+import qualified Language.Java.Syntax.Exp as Exp
 import qualified Language.Java.Syntax.Ident as Ident
+import qualified Language.Java.Syntax.Stmt as Stmt
 import qualified Language.Java.Syntax.VarDecl as VarDecl
 import qualified Markdown
 import RDF (Diagnostic, rangeDiagnostic)
@@ -28,7 +29,7 @@ check cUnit path = do
       let declVars = map VarDecl.ident vars
           varsNotInStmt = filter (`notElem` variables stmt) declVars
           varsNotInStmts = filter (`notElem` variables stmts) declVars
-       in if Purity.hasNoSideEffect stmt
+       in if Stmt.hasNoSideEffect stmt
             then
               if null varsNotInStmt
                 then reduceVarsInIf varsNotInStmts stmt path
@@ -48,7 +49,7 @@ check cUnit path = do
 reduceVarsInIf :: [Ident] -> Stmt -> FilePath -> [Diagnostic]
 reduceVarsInIf declVars (IfThenElse range condition thenStmt elseStmt) path =
   let varsNotInCondition = filter (`notElem` variables condition) declVars
-   in if Purity.hasNoSideEffectExp condition
+   in if Exp.hasNoSideEffect condition
         then
           if null varsNotInCondition
             then mzero
