@@ -1,7 +1,6 @@
 import qualified AvoidNegationsTests
 import CheckScope.Tests
 import DefaultComesLast.Tests
-import EmptyLoopBody.Tests
 import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
 import qualified InitializeVariablesTests
 import NamingConventions.Tests
