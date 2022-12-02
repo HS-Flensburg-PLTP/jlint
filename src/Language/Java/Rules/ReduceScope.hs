@@ -6,48 +6,60 @@ import Control.Monad (MonadPlus (..))
 import Data.Data (Data)
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
-  ( BlockStmt (BlockStmt, LocalVars),
+  ( Block,
+    BlockStmt (BlockStmt, LocalVars),
     CompilationUnit,
     Exp (..),
     Ident,
     Name (Name),
     Stmt (..),
   )
+import qualified Language.Java.Syntax.BlockStmt as BlockStmt
 import qualified Language.Java.Syntax.Exp as Exp
 import qualified Language.Java.Syntax.Ident as Ident
 import qualified Language.Java.Syntax.Stmt as Stmt
 import qualified Language.Java.Syntax.VarDecl as VarDecl
 import qualified Markdown
-import RDF (Diagnostic, rangeDiagnostic)
+import qualified RDF (Diagnostic, rangeDiagnostic)
 
-check :: CompilationUnit -> FilePath -> [Diagnostic]
-check cUnit path = do
-  blocks <- universeBi cUnit
-  checkBlocks blocks
+check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check cUnit filePath = do
+  blockStmts <- universeBi cUnit
+  checkBlockStmts blockStmts
   where
-    checkBlocks (LocalVars range _ _ vars : BlockStmt stmt : stmts) =
-      let declVars = map VarDecl.ident vars
-          varsNotInStmt = filter (`notElem` variables stmt) declVars
-          varsNotInStmts = filter (`notElem` variables stmts) declVars
-       in if Stmt.hasNoSideEffect stmt
-            then
-              if null varsNotInStmt
-                then reduceVarsInIf varsNotInStmts stmt path
-                else
-                  map
-                    ( \var ->
-                        rangeDiagnostic
-                          "Language.Java.Rules.ReduceScope"
-                          (message var)
-                          range
-                          path
-                    )
-                    varsNotInStmt
-            else reduceVarsInIf varsNotInStmts stmt path
-    checkBlocks _ = mzero
+    checkBlockStmts (LocalVars _ _ _ vars : stmts) =
+      reduceScopeInBlockStmts (map VarDecl.ident vars) stmts filePath
+    checkBlockStmts _ = mzero
 
-reduceVarsInIf :: [Ident] -> Stmt -> FilePath -> [Diagnostic]
-reduceVarsInIf declVars (IfThenElse range condition thenStmt elseStmt) path =
+reduceScopeInBlockStmts :: [Ident] -> [BlockStmt] -> FilePath -> [RDF.Diagnostic]
+reduceScopeInBlockStmts declVars (BlockStmt span stmt : blockStmts) filePath =
+  let varsNotInStmt = filter (`notElem` variables blockStmts) declVars
+      varsNotInStmts = filter (`notElem` variables blockStmts) declVars
+   in if Stmt.hasNoSideEffect stmt
+        then
+          if null varsNotInStmt
+            then reduceScopeInIf varsNotInStmts stmt filePath
+            else
+              map
+                ( \var ->
+                    RDF.rangeDiagnostic
+                      "Language.Java.Rules.ReduceScope"
+                      (message var)
+                      span
+                      filePath
+                )
+                varsNotInStmt
+        else reduceScopeInIf varsNotInStmts stmt filePath
+reduceScopeInBlockStmts declVars (blockStmt@(LocalVars _ _ _ _) : blockStmts) filePath =
+  let varsNotInStmt = filter (`notElem` variables blockStmt) declVars
+   in {- We could be more precise in checking the side effects of the right-hand sides of the declarations separately. -}
+      if BlockStmt.hasNoSideEffect blockStmt && null varsNotInStmt
+        then mzero
+        else reduceScopeInBlockStmts varsNotInStmt blockStmts filePath
+reduceScopeInBlockStmts _ _ _ = mzero
+
+reduceScopeInIf :: [Ident] -> Stmt -> FilePath -> [RDF.Diagnostic]
+reduceScopeInIf declVars (IfThenElse span condition thenStmt elseStmt) path =
   let varsNotInCondition = filter (`notElem` variables condition) declVars
    in if Exp.hasNoSideEffect condition
         then
@@ -62,16 +74,16 @@ reduceVarsInIf declVars (IfThenElse range condition thenStmt elseStmt) path =
                     then
                       map
                         ( \var ->
-                            rangeDiagnostic
+                            RDF.rangeDiagnostic
                               "Language.Java.Rules.ReduceScope"
                               (message var)
-                              range
+                              span
                               path
                         )
                         varsNotInThenOrElse
                     else mzero
         else mzero
-reduceVarsInIf _ _ _ = mzero
+reduceScopeInIf _ _ _ = mzero
 
 message :: Ident -> String
 message var =

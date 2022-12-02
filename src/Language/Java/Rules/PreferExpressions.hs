@@ -24,7 +24,7 @@ check cUnit path = do
   where
     checkBlocks
       ( LocalVars (startLoc, _) _ _ vars
-          : BlockStmt (ExpStmt (_, endLoc) exp)
+          : BlockStmt _ (ExpStmt (_, endLoc) exp)
           : _
         ) =
         case filterVarUpdate exp of
@@ -42,8 +42,8 @@ check cUnit path = do
                       )
                   else mzero
     checkBlocks
-      ( BlockStmt (ExpStmt (startLoc, _) exp1)
-          : BlockStmt (ExpStmt (_, endLoc) exp2)
+      ( BlockStmt _ (ExpStmt (startLoc, _) exp1)
+          : BlockStmt _ (ExpStmt (_, endLoc) exp2)
           : _
         ) =
         case (filterVarUpdate exp1, filterVarUpdate exp2) of
@@ -61,7 +61,7 @@ check cUnit path = do
                   )
               else mzero
     checkBlocks
-      ( BlockStmt (ExpStmt span exp)
+      ( BlockStmt _ (ExpStmt span exp)
           : stmt
           : stmts
         ) =

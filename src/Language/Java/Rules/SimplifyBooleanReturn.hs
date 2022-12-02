@@ -34,7 +34,7 @@ checkStatements (methodName, methodBody) classVars path = do
       | ((\(Ident name) -> name) (head varName), False) `elem` extractMethodVars methodBody =
           False
       | otherwise = ((\(Ident name) -> name) (head varName), True) `elem` classVars
-    isReturnBool (StmtBlock (Block [BlockStmt a])) = isReturnBool a
+    isReturnBool (StmtBlock (Block [BlockStmt _ a])) = isReturnBool a
     isReturnBool _ = False
 
 checkIfVarIsBool :: String -> MethodBody -> Bool

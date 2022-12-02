@@ -39,7 +39,7 @@ checkLoop (Break _) = do
 checkLoop stmt = checkStatement stmt
 
 extractLoopBody :: [BlockStmt] -> Reader (String, FilePath) [Diagnostic]
-extractLoopBody ((BlockStmt block) : xs) = do
+extractLoopBody ((BlockStmt _ block) : xs) = do
   stmtblock <- checkLoop block
   elb <- extractLoopBody xs
   return (stmtblock ++ elb)

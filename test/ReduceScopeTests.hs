@@ -16,49 +16,66 @@ tests =
 
 reduceScope :: CompilationUnit -> FilePath -> Assertion
 reduceScope cUnit path = do
-  let diagnostic = ReduceScope.check cUnit path
-  assertEqual "Check number of messages" 6 (length diagnostic)
   let expectedRange1 =
-        Just
-          ( Range
-              { start = Position {line = 29, column = Just 9},
-                end = Just (Position {line = 36, column = Just 9})
-              }
-          )
+        Range
+          { start = Position {line = 29, column = Just 9},
+            end = Just (Position {line = 36, column = Just 9})
+          }
   let expectedRange2 =
-        Just
-          ( Range
-              { start = Position {line = 41, column = Just 9},
-                end = Just (Position {line = 48, column = Just 9})
-              }
-          )
+        Range
+          { start = Position {line = 41, column = Just 9},
+            end = Just (Position {line = 48, column = Just 9})
+          }
   let expectedRange3 =
-        Just
-          ( Range
-              { start = Position {line = 56, column = Just 10},
-                end = Just (Position {line = 75, column = Just 10})
-              }
-          )
+        Range
+          { start = Position {line = 56, column = Just 10},
+            end = Just (Position {line = 75, column = Just 10})
+          }
   let expectedRange4 =
-        Just
-          ( Range
-              { start = Position {line = 87, column = Just 9},
-                end = Just (Position {line = 98, column = Just 9})
-              }
-          )
+        Range
+          { start = Position {line = 56, column = Just 10},
+            end = Just (Position {line = 75, column = Just 10})
+          }
   let expectedRange5 =
-        Just
-          ( Range
-              { start = Position {line = 115, column = Just 9},
-                end = Just (Position {line = 125, column = Just 9})
-              }
-          )
+        Range
+          { start = Position {line = 56, column = Just 10},
+            end = Just (Position {line = 75, column = Just 10})
+          }
+
   let expectedRange6 =
-        Just
-          ( Range
-              { start = Position {line = 130, column = Just 9},
-                end = Just (Position {line = 141, column = Just 9})
-              }
-          )
-  let expectedRanges = [expectedRange1, expectedRange2, expectedRange3, expectedRange4, expectedRange5, expectedRange6]
-  zipWithM_ (assertEqual "Check range") expectedRanges (map (range . location) diagnostic)
+        Range
+          { start = Position {line = 87, column = Just 9},
+            end = Just (Position {line = 98, column = Just 9})
+          }
+  let expectedRange7 =
+        Range
+          { start = Position {line = 115, column = Just 9},
+            end = Just (Position {line = 125, column = Just 9})
+          }
+  let expectedRange8 =
+        Range
+          { start = Position {line = 130, column = Just 9},
+            end = Just (Position {line = 141, column = Just 9})
+          }
+  let expectedRange9 =
+        Range
+          { start = Position {line = 172, column = Just 9},
+            end = Just (Position {line = 178, column = Just 9})
+          }
+  let expectedRanges =
+        [ expectedRange1,
+          expectedRange2,
+          expectedRange3,
+          expectedRange4,
+          expectedRange5,
+          expectedRange6,
+          expectedRange7,
+          expectedRange8,
+          expectedRange9
+        ]
+  let diagnostic = ReduceScope.check cUnit path
+  assertEqual "Check number of messages" (length expectedRanges) (length diagnostic)
+  zipWithM_
+    (assertEqual "Check range")
+    (map Just expectedRanges)
+    (map (range . location) diagnostic)

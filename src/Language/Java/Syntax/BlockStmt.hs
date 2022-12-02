@@ -1,10 +1,16 @@
-module Language.Java.Syntax.BlockStmt (name) where
+module Language.Java.Syntax.BlockStmt
+  ( name,
+    hasNoSideEffect,
+  )
+where
 
 import Language.Java.Pretty (prettyPrint)
 import Language.Java.Syntax (BlockStmt (..), Stmt (..))
+import qualified Language.Java.Syntax.Stmt as Stmt
+import qualified Language.Java.Syntax.VarDecl as VarDecl
 
 name :: BlockStmt -> String
-name (BlockStmt stmt) = stmtName stmt
+name (BlockStmt _ stmt) = stmtName stmt
 name (LocalClass _) = "lokale Klasse"
 name (LocalVars {}) = "Variablendeklaration"
 
@@ -27,3 +33,8 @@ stmtName (ExpStmt _ exp) = prettyPrint exp
 stmtName (Assert {}) = "assert"
 stmtName (Break {}) = "break"
 stmtName (Continue {}) = "continue"
+
+hasNoSideEffect :: BlockStmt -> Bool
+hasNoSideEffect (BlockStmt _ stmt) = Stmt.hasNoSideEffect stmt
+hasNoSideEffect (LocalClass _) = False
+hasNoSideEffect (LocalVars _ _ _ varDecls) = all VarDecl.hasNoSideEffect varDecls

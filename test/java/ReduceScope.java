@@ -140,4 +140,42 @@ class ReduceScoope<T> {
             }
         }
     }
+
+    public static boolean isSubset(final int[] array1, final int[] array2) {
+        var inBothCounter = 0;
+        var in = false;
+        var notIn = false;
+        var arr1Index = 0;
+        var arr2Index = 0;
+        while (!notIn && arr1Index < array1.length) {
+            while (!notIn && !in && arr2Index < array2.length) {
+                if (array1[arr1Index] == array2[arr2Index]) {
+                    inBothCounter++;
+                    in = true;
+                } else {
+                    arr2Index++;
+                }
+                if (arr2Index == array2.length - 1 && array1[arr1Index] != array2[arr2Index]) {
+                    notIn = true;
+                }
+            }
+            in = false;
+            arr1Index++;
+            arr2Index = 0;
+        }
+        return inBothCounter == array1.length;
+    }
+
+    private static int sum(final int maxSpawn, final int[] array, final int start, final int end) {
+        var mid = start + (end - start) / 2;
+        var sum = 0;
+        if (maxSpawn > 0) {
+            sum = sum(maxSpawn - 1, array, start, mid - 1) + sum(maxSpawn - 1, array, mid, end);
+        } else if (maxSpawn == 0) {
+            for (int i = start; i <= end; i++) {
+                sum += array[i];
+            }
+        }
+        return sum;
+    }
 }
