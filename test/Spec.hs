@@ -15,6 +15,7 @@ import SameExecutionsInIf.Tests
 import SimplifyBooleanReturn.Tests
 import Test.HUnit (Test, runTestTT, test, (~:))
 import UnnecessaryVariables.Tests (testAllUnnecessaryVariables)
+import qualified UseAssignOpTests
 import qualified UseElseTests
 
 main :: IO ()
@@ -41,5 +42,6 @@ tests =
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
+      "UseAssignOp" ~: UseAssignOpTests.tests,
       "UseElse" ~: UseElseTests.tests
     ]

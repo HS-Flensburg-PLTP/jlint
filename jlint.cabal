@@ -46,6 +46,7 @@ library
       Language.Java.Rules.SimplifyBooleanReturn
       Language.Java.Rules.UnnecessaryVariables
       Language.Java.Rules.UnusedLocalVariable
+      Language.Java.Rules.UseAssignOp
       Language.Java.Rules.UseElse
       Language.Java.Syntax.BlockStmt
       Language.Java.Syntax.Exp
@@ -121,6 +122,7 @@ test-suite jlint-test
       SimplifyBooleanReturn.Tests
       Tests
       UnnecessaryVariables.Tests
+      UseAssignOpTests
       UseElseTests
       Paths_jlint
   hs-source-dirs:
