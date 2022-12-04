@@ -6,8 +6,7 @@ import Control.Monad (MonadPlus (..))
 import Data.Data (Data)
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
-  ( Block,
-    BlockStmt (BlockStmt, LocalVars),
+  ( BlockStmt (BlockStmt, LocalVars),
     CompilationUnit,
     Exp (..),
     Ident,
@@ -33,7 +32,7 @@ check cUnit filePath = do
 
 reduceScopeInBlockStmts :: [Ident] -> [BlockStmt] -> FilePath -> [RDF.Diagnostic]
 reduceScopeInBlockStmts declVars (BlockStmt span stmt : blockStmts) filePath =
-  let varsNotInStmt = filter (`notElem` variables blockStmts) declVars
+  let varsNotInStmt = filter (`notElem` variables stmt) declVars
       varsNotInStmts = filter (`notElem` variables blockStmts) declVars
    in if Stmt.hasNoSideEffect stmt
         then
