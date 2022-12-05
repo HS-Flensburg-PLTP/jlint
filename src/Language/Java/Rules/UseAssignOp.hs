@@ -22,7 +22,7 @@ check cUnit path = do
         then case equalVariant op of
           Just assignOp ->
             return
-              (RDF.rangeDiagnostic (message op assignOp) "Language.Java.Rules.UseAssignOp" range path)
+              (RDF.rangeDiagnostic "Language.Java.Rules.UseAssignOp" (message op assignOp) range path)
           Nothing -> mzero
         else mzero
     checkStmt _ = mzero
