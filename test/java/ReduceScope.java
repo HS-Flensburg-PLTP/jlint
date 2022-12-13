@@ -178,4 +178,44 @@ class ReduceScoope<T> {
         }
         return sum;
     }
+
+    // The rule should not fire for this example
+     static int sum(final int cores, final int[] array, final int start, final int end) {
+         if (cores <= 1 || end <= start) {
+             var sum = 0;
+             for (int i = start; i <= end; i++) {
+                 sum += array[i];
+             }
+             return sum;
+         } else {
+             var mid = start + (end - start) / 2;
+             return sum(cores / 2, array, start, mid) + sum(cores - cores / 2, array, mid + 1, end);
+         }
+     }
+
+    // The rule should not fire for this example
+    public T remove1(final int index) {
+        var removed = nodeAt(index);
+        if (index == 0) {
+            this.first = removed.getNext();
+        } else {
+            var pred = nodeAt(index - 1);
+            pred.setNext(removed.getNext());
+        }
+        this.elements--;
+        return removed.getValue();
+    }
+
+    // The rule should not fire for this example
+    public T remove2(final int index) {
+        var removed = this.first;
+        if (index == 0) {
+            this.first = removed.getNext();
+        } else {
+            var pred = nodeAt(index - 1);
+            pred.setNext(removed.getNext());
+        }
+        this.elements--;
+        return removed.getValue();
+    }
 }

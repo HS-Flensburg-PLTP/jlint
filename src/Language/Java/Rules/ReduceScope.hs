@@ -8,7 +8,6 @@ import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
   ( BlockStmt (BlockStmt, LocalVars),
     CompilationUnit,
-    Exp (..),
     Ident,
     Name (Name),
     Stmt (..),
@@ -69,8 +68,9 @@ reduceScopeInIf declVars (IfThenElse span condition thenStmt elseStmt) path =
                     filter
                       (\var -> var `notElem` variables thenStmt || var `notElem` variables elseStmt)
                       varsNotInCondition
-               in if not (null varsNotInThenOrElse)
-                    then
+               in if null varsNotInThenOrElse
+                    then mzero
+                    else
                       map
                         ( \var ->
                             RDF.rangeDiagnostic
@@ -80,7 +80,6 @@ reduceScopeInIf declVars (IfThenElse span condition thenStmt elseStmt) path =
                               path
                         )
                         varsNotInThenOrElse
-                    else mzero
         else mzero
 reduceScopeInIf _ _ _ = mzero
 
@@ -89,4 +88,5 @@ message var =
   "Der Scope der Variable " ++ Markdown.code (Ident.name var) ++ " kann reduziert werden."
 
 variables :: (Data a) => a -> [Ident]
-variables parent = [ident | ExpName (Name idents) <- universeBi parent, ident <- idents]
+variables parent =
+  [ident | Name (ident : _) <- universeBi parent]
