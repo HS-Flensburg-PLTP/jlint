@@ -1,5 +1,4 @@
 import qualified AvoidNegationsTests
-import CheckScope.Tests
 import DefaultComesLast.Tests
 import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
 import qualified InitializeVariablesTests
@@ -14,15 +13,12 @@ import qualified ReduceScopeTests
 import SameExecutionsInIf.Tests
 import SimplifyBooleanReturn.Tests
 import Test.HUnit (Test, runTestTT, test, (~:))
-import UnnecessaryVariables.Tests (testAllUnnecessaryVariables)
 import qualified UseAssignOpTests
 import qualified UseElseTests
 
 main :: IO ()
 main = do
   testAllEmptyLoopBodies
-  CheckScope.Tests.testAll
-  testAllUnnecessaryVariables
   testAllNoLoopBreaks
   NamingConventions.Tests.testAll
   testAllNonFinalMethodAttributes

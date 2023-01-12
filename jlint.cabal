@@ -32,7 +32,6 @@ library
       Language.Java.Rules.AvoidNegations
       Language.Java.Rules.CheckNonFinalMethodAttributes
       Language.Java.Rules.CheckNonPrivateAttributes
-      Language.Java.Rules.CheckScope
       Language.Java.Rules.DefaultComesLast
       Language.Java.Rules.EmptyLoopBody
       Language.Java.Rules.InitializeVariables
@@ -44,7 +43,6 @@ library
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.SameExecutionsInIf
       Language.Java.Rules.SimplifyBooleanReturn
-      Language.Java.Rules.UnnecessaryVariables
       Language.Java.Rules.UnusedLocalVariable
       Language.Java.Rules.UseAssignOp
       Language.Java.Rules.UseElse
@@ -105,7 +103,6 @@ test-suite jlint-test
   other-modules:
       AvoidNegationsTests
       CheckResults
-      CheckScope.Tests
       DefaultComesLast.Tests
       EmptyLoopBody.Tests
       InitializeVariablesTests
@@ -121,7 +118,6 @@ test-suite jlint-test
       SameExecutionsInIf.Tests
       SimplifyBooleanReturn.Tests
       Tests
-      UnnecessaryVariables.Tests
       UseAssignOpTests
       UseElseTests
       Paths_jlint
