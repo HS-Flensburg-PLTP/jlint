@@ -1,38 +1,35 @@
 # jlint
 
-[contributing.md](CONTRIBUTING.md)
+## Setup
 
-## Developing
+1. [GHCup](https://www.haskell.org/ghcup/) installieren
 
-### Setup
+2. [VSCode](https://code.visualstudio.com) installieren
 
-Compiler: 
-Stack GHCI 
-https://docs.haskellstack.org/en/stable/README/ 
+3. VSCode Extension `Haskell` installieren
 
-IDE: 
-Microsoft Visual Studio Code 
-https://www.microsoft.com/de-de/techwiese/aktionen/visual-studio-kostenlos.aspx
+In den Extension Settings sollten noch folgende Einstellungen überprüft werden:
+- Formatting Provider: ormolu
+- Manage HLS: GHCup
 
-Plugins: 
-Haskell for VSCode incl hlint https://marketplace.visualstudio.com/items?itemName=haskell.haskell
+Die Extension übernimmt dann automatisch die notwendigen Installationen (GHC, HLS).
 
-Haskell Extension Pack
-https://marketplace.visualstudio.com/items?itemName=mogeko.haskell-extension-pack
+### Trojanerwarnung unter Windows
 
-Haskell Syntax Highlighting
-https://marketplace.visualstudio.com/items?itemName=justusadam.language-haskell
+Der Versuch, die HLS-Version 1.9.1.0 zu installieren über GHCup scheitert aktuell (diese Version wird aber von der Extension verwendet).
+Für die Installation (auch automatisch ausgelöst durch die Extension) sollte temporär eine Ausnahme hinzugefügt werden:
+- In der `Protection history` unter `Virus & threat protection` kann der flaschgemeldete Trojaner erlaubt werden vor dem erneuten Versuch der Installation
+- In `Allowed threats` kann nach erfolgter Installation die Ausnahme wieder entfernt werden
 
-Ormolu
-https://marketplace.visualstudio.com/items?itemName=sjurmillidahl.ormolu-vscode
+## Entwicklung
 
-Plugins entweder über die beigefügten Links öffnen und installieren, oder direkt über den Marketplace in VSCode suchen und dort installieren.
+Bei korrektem Setup sollten z.B folgende Features von HLS in VScode funktionieren:
+- Linter (als Anmerkungen im Code)
+- Formatter `Shift-Alt-F`
+- Typinformationen `Hover`
+- Sprung zur Deklaration `Ctrl-Click`
 
+## Verwendung
 
-Formatter:
-Ormolu
-https://github.com/tweag/ormolu#building
-
-Installation mit Stack Compiler:
-Terminal öffnen,
-Befehl: stack install ormolu  
+- `stack build` - Laden der Dependencies und Builden des Projekts
+- `stack exec jlint -- --path <srcpath>` ausführen der Executable
