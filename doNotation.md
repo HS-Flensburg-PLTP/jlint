@@ -82,9 +82,9 @@ mzero :: Monad m => m a
 
 mzero:
 Gibt das "Nichts" der Monade zurück.
-Im Falle einer Liste, wäre das die leere Liste [], im Falle vom Maybe wäre es "nothing".
+Im Falle einer Liste wäre das die leere Liste [], im Falle vom Maybe wäre es `Nothing`.
 
-Eine Anwendung für mzero findet man in jeder Regel, falls keine der Kriterien zutrifft:
+Eine Anwendung für `mzero` findet man in jeder Regel, falls keine der Kriterien zutrifft:
 
 ```haskell
 checkStatements :: (String, MethodBody) -> FilePath -> [Diagnostic]
