@@ -51,7 +51,7 @@ putStrLn “String”
 
 wäre eine solche “leere” Funktion, die eigentlich keinen Wert zurückgibt. Tatsächlich aber gibt sie eine “leere” IO Action zurück (`IO ()`).
 
-Innerhalb eines do-Blocks sind alle bekannten Sprachkonstrukte in Haskell nutzbar (z. B. `if-then-else, guards, let, where`, etc.).
+Innerhalb eines do-Blocks sind alle bekannten Sprachkonstrukte in Haskell nutzbar (z. B. `if-then-else`, `guards`, `let`, `where`, etc.).
 
 ## Einführung Monaden
 
