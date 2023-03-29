@@ -33,3 +33,13 @@ Bei korrektem Setup sollten z.B folgende Features von HLS in VScode funktioniere
 
 - `stack build` - Laden der Dependencies und Builden des Projekts
 - `stack exec jlint -- --path <srcpath>` ausführen der Executable
+
+## Branching
+
+Der Branch `main` stellt den Entwicklungsstand dar.  
+Der Zustand auf `release` wird auf den GitHub Runner ausgeliefert und ist somit der Production-Branch.  
+
+#### Feature Branch
+
+Beim Entwickeln eines neuen Features ist stets ein eigener Branch anzulegen.  
+Dieser zweigt von `main` ab und folgt der Namenskonvention `feature-<issue>`, wobei `issue` für die ID des Tickets steht.
