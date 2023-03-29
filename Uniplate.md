@@ -3,25 +3,30 @@
 
 ### Funktionen der Uniplate Bibliothek
 
-Die universe Funktion nimmt eine Datenstruktur und gibt eine Liste an alle in ihr liegenden Strukturen desselben Typs zurück.
-```
+Die `universe` Funktion nimmt eine Datenstruktur und gibt eine Liste an alle in ihr liegenden Strukturen desselben Typs zurück.
+
+```haskell
 universe :: Uniplate α ⇒ α → [α] 
 universe x = x : concatMap universe (children x )
 ```
 
-Die universeBi Funktion nimmt eine Datenstruktur vom Typ from die Datenstrukturen von Typ to enthält und gibt alle enthaltenen to Strukturen in einer List aus. 
-```
+Die `universeBi` Funktion nimmt eine Datenstruktur vom Typ `from`, welche Datenstrukturen von Typ `to` enthält und gibt alle enthaltenen `to`-Strukturen in einer List aus. 
+
+```haskell
 universeBi :: Biplate from to ⇒ from → [to] 
 universeBi = universeOn biplate 
 ```
 
-#### Funktionsweise in JLint
-```
+### Funktionsweise in JLint
+
+```haskell
 getStatements :: CompilationUnit -> [Stmt]
 getStatements cUnit = universeBi cUnit
 ```
-universeBi auf eine CompilationUnit angewendet, liefert in diesem Fall eine Liste an allen Statements, die sie enthält. 
-``` 
+
+`universeBi` auf eine `CompilationUnit` angewendet, liefert in diesem Fall eine Liste an allen Statements, die sie enthält. 
+
+``` haskell
 --Ausschnitt aus Language.Java.Rules.AvoidNegations
 checkStatements :: (String, MethodBody) -> FilePath -> [Diagnostic]
 checkStatements (methodName, methodBody) path = do
