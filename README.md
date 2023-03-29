@@ -35,7 +35,9 @@ Dieser zweigt von `main` ab und folgt der Namenskonvention `feature-<issue>`, wo
 
 ### Schreiben neuer Regeln
 
-Zu neuen Regeln sollten immer entsprechende Testfälle mitentwickelt werden (Ordner: `test`). Dazu gehören Java-Beispieldateien, die eigentlichen Tests und der jeweilige Eintrag in **jlint.cabal** unter `test-suite`. 
+Zu neuen Regeln sollten immer entsprechende Testfälle mitentwickelt werden (Ordner: `test`). Dazu gehören Java-Beispieldateien, die eigentlichen Tests und der jeweilige Eintrag in `test/Spec.hs`.
+
+Um neue Regeln in der Anwendung zu integrieren, müssen diese in `src/Language/Java/Rules.hs` angegeben werden.
 
 ## Lokale Verwendung
 
