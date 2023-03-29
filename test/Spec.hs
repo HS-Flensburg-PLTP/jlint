@@ -15,6 +15,7 @@ import SimplifyBooleanReturn.Tests
 import Test.HUnit (Test, runTestTT, test, (~:))
 import qualified UseAssignOpTests
 import qualified UseElseTests
+import qualified UseJavaArrayTypeStyleTests
 
 main :: IO ()
 main = do
@@ -39,5 +40,6 @@ tests =
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
       "UseAssignOp" ~: UseAssignOpTests.tests,
-      "UseElse" ~: UseElseTests.tests
+      "UseElse" ~: UseElseTests.tests,
+      "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests
     ]
