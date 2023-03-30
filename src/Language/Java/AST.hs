@@ -44,8 +44,8 @@ extractVarName (VarId (Ident n)) = n
 
 extractAnnotations :: CompilationUnit -> [Annotation]
 extractAnnotations cUnit = do
-  membDecl <- universeBi cUnit
-  extractAnnotation membDecl
+  annotations <- universeBi cUnit
+  extractAnnotation annotations
   where
     extractAnnotation (NormalAnnotation annName annKV) = return (NormalAnnotation annName annKV)
     extractAnnotation (SingleElementAnnotation annName annValue) = return (SingleElementAnnotation annName annValue)
