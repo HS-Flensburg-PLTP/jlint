@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.35.0.
+-- This file has been generated from package.yaml by hpack version 0.35.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -40,6 +40,7 @@ library
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNullPointerExceptionsForControl
       Language.Java.Rules.PreferExpressions
+      Language.Java.Rules.ProhibitAnnotations
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.SameExecutionsInIf
       Language.Java.Rules.SimplifyBooleanReturn
