@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.35.0.
+-- This file has been generated from package.yaml by hpack version 0.35.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -46,6 +46,7 @@ library
       Language.Java.Rules.UnusedLocalVariable
       Language.Java.Rules.UseAssignOp
       Language.Java.Rules.UseElse
+      Language.Java.Rules.UseIncrementDecrementOperator
       Language.Java.Syntax.BlockStmt
       Language.Java.Syntax.Exp
       Language.Java.Syntax.Ident
@@ -120,6 +121,7 @@ test-suite jlint-test
       Tests
       UseAssignOpTests
       UseElseTests
+      UseIncrementDecrementOperatorTests
       Paths_jlint
   hs-source-dirs:
       test
