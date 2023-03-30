@@ -3,8 +3,7 @@ module Language.Java.AST where
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
-  ( Annotation (MarkerAnnotation, NormalAnnotation, SingleElementAnnotation),
-    CompilationUnit,
+  ( CompilationUnit,
     FormalParam,
     Ident (Ident),
     MemberDecl (FieldDecl, MethodDecl),
@@ -41,12 +40,3 @@ extractMethodParameters cUnit = do
 extractVarName :: VarDeclId -> String
 extractVarName (VarDeclArray varDeclId) = extractVarName varDeclId
 extractVarName (VarId (Ident n)) = n
-
-extractAnnotations :: CompilationUnit -> [Annotation]
-extractAnnotations cUnit = do
-  annotation <- universeBi cUnit
-  extractAnnotation annotation
-  where
-    extractAnnotation (NormalAnnotation annName annKV) = return (NormalAnnotation annName annKV)
-    extractAnnotation (SingleElementAnnotation annName annValue) = return (SingleElementAnnotation annName annValue)
-    extractAnnotation (MarkerAnnotation annName) = return (MarkerAnnotation annName)
