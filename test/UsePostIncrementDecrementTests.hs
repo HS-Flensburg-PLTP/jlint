@@ -1,11 +1,16 @@
 module UsePostIncrementDecrementTests where
 
-import Tests (withParsedJavaFile)
-import RDF 
-import Test.HUnit
-import Language.Java.Syntax ( CompilationUnit )
-import Control.Monad 
+import Control.Monad
 import Language.Java.Rules.UsePostIncrementDecrement (check)
+import Language.Java.Syntax (CompilationUnit)
+import RDF
+  ( Diagnostic (location),
+    Location (range),
+    Position (Position, column, line),
+    Range (Range, end, start),
+  )
+import Test.HUnit
+import Tests (withParsedJavaFile)
 
 tests :: Test
 tests =
