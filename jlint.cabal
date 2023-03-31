@@ -114,6 +114,7 @@ test-suite jlint-test
       NonPrivateAttributes.Tests
       NoNullPointerExceptionsForControlTests
       PreferExpressionsTests
+      ProhibitAnnotationsTests
       ReduceScopeTests
       RessourceManager
       SameExecutionsInIf.Tests
