@@ -2,7 +2,6 @@ module Language.Java.AST where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
-import Language.Java.Parser (compilationUnit, importDecl)
 import Language.Java.Syntax
   ( CompilationUnit,
     FormalParam,
@@ -14,7 +13,6 @@ import Language.Java.Syntax
     VarDecl (VarDecl),
     VarDeclId (..),
   )
-import Options.Applicative (CommandFields)
 
 extractMethods :: CompilationUnit -> [(String, MethodBody)]
 extractMethods cUnit = do
