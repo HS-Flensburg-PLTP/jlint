@@ -28,9 +28,9 @@ main = execParser opts >>= importJava
         )
 
 importJava :: Params -> IO ()
-importJava (Params path pretty Nothing) = do
-  parseJava path pretty []
-importJava (Params path pretty (Just checkstyleFile)) = do
+importJava (Params path showAST pretty Nothing) = do
+  parseJava path pretty showAST []
+importJava (Params path showAST pretty (Just checkstyleFile)) = do
   content <- readFile checkstyleFile
   diags <- case xmlParse' "" content of
     Left error -> do
@@ -41,10 +41,11 @@ importJava (Params path pretty (Just checkstyleFile)) = do
         hPutStrLn stderr ("Import of checkstyle XML failed with error " ++ error)
         return []
       Right diags -> return diags
-  parseJava path pretty diags
+  parseJava path pretty showAST diags
 
 data Params = Params
   { path :: String,
+    showAST :: Bool,
     pretty :: Bool,
     checkstyleFile :: Maybe String
   }
@@ -55,6 +56,11 @@ params =
     <$> argument
       str
       (metavar "<src-path>")
+    <*> switch
+      ( long "show-ast"
+          <> short 't'
+          <> help "Only show AST of given file(s) - no checks run. Should only be used with single file."
+      )
     <*> switch
       ( long "pretty"
           <> help "By setting this Parameter the java source representation of the AST is shown"
@@ -102,32 +108,36 @@ parseAllFiles files =
    in parseAllfilesHelp files (mzero, mzero)
 
 -- missing pretty option and does not print errors
-parseJava :: FilePath -> Bool -> [Diagnostic] -> IO ()
-parseJava rootDir pretty checkstyleDiags =
+parseJava :: FilePath -> Bool -> Bool -> [Diagnostic] -> IO ()
+parseJava rootDir pretty showAST checkstyleDiags =
   do
     pathList <- findAllJavaFiles rootDir
     fileList <- readAllFiles pathList
     let (parsingErrors, cUnitResults) = parseAllFiles fileList
-    let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
-    let diagnostics = concatMap (uncurry checkAll) cUnitResults
-    let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
-    C.putStrLn
-      ( RDF.encodetojson
-          ( DiagnosticResult
-              { diagnostics = diagnosticResults,
-                resultSource = Just (Source {name = "jlint", url = Nothing}),
-                resultSeverity = RDF.checkSeverityList (map RDF.severity diagnosticResults) -- emmits highest severity of all results in all files
-              }
-          )
-      )
-    unless (null parsingErrors) $ print parsingErrors
-    when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
-
-    let numberOfHints = length diagnostics
-    if numberOfHints == 0
+    if showAST
       then do
-        hPutStrLn stderr ("jlint did not generate any hints for the Java code in directory " ++ rootDir)
-        exitSuccess
+        print cUnitResults
       else do
-        hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
-        exitWith (ExitFailure numberOfHints)
+        let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
+        let diagnostics = concatMap (uncurry checkAll) cUnitResults
+        let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
+        C.putStrLn
+          ( RDF.encodetojson
+              ( DiagnosticResult
+                  { diagnostics = diagnosticResults,
+                    resultSource = Just (Source {name = "jlint", url = Nothing}),
+                    resultSeverity = RDF.checkSeverityList (map RDF.severity diagnosticResults) -- emmits highest severity of all results in all files
+                  }
+              )
+          )
+        unless (null parsingErrors) $ print parsingErrors
+        when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
+
+        let numberOfHints = length diagnostics
+        if numberOfHints == 0
+          then do
+            hPutStrLn stderr ("jlint did not generate any hints for the Java code in directory " ++ rootDir)
+            exitSuccess
+          else do
+            hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
+            exitWith (ExitFailure numberOfHints)
