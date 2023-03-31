@@ -1,77 +1,90 @@
-/*
--------------------------
-MarkerAnnotationAboveFunction
-+++++++++++++++++++++++++
-public class Annotations {
+/**
+ * Jeden Annotation Typ 2x Erlaubt/NichtErlaubt
+ * Jede stelle wo sie vorkommen können 5x
+ * - einzelne zeile
+ * - instanzierung
+ * - typecast
+ * - implements
+ * - throw
+ * 
+ * @FooBar
+ * @BarFoo
+ * 
+ * @FooBar(foo="bar")
+ * @BarFoo(bar="foo")
+ * 
+ * @FooBar("foo")
+ * @BarFoo("bar")
+ */
 
-    @Annotation
-    public void testfunction {}
-}
--------------------------
-MarkerAnnotationInInstanceCreation
-+++++++++++++++++++++++++
-public class Annotations {
-    new @Annotation MyObject();
-}
--------------------------
-MarkerAnnotationInTypecast
-+++++++++++++++++++++++++
-public class Annotations {
-    Int a;
-    a = (@Annotation Int) 2;
-}
--------------------------
-MarkerAnnotationInImplements
-+++++++++++++++++++++++++
-public class Annotations<T> implements @Annotation List<@Annotation T>{}
--------------------------
-MarkerAnnotationInThrow
-+++++++++++++++++++++++++
-public class Annotations {
-    void throwAnnotation() throws @Annotation Exception{}
+interface Bar1 {
 }
 
+interface Bar2 {
+}
 
+interface Bar3 {
+}
 
- Above stuff
-    @Annon
-    class 
-    method
-    ...
+interface Bar4 {
+}
 
-    Class instance creation expression:
+interface Bar5 {
+}
 
-        new @Interned MyObject();
+interface Bar6 {
+}
 
-    Type cast:
+interface Bar7 {
+}
 
-        myString = (@NonNull String) str;
+// Foo implements @FooBar Bar1, @FooBar(foo = "bar") Bar2, @FooBar("foo") Bar3,
+// @BarFoo Bar4, @BarFoo(bar = "foo") Bar5, @BarFoo("bar") Bar6
+public class Foo {
 
-    implements clause:
+    /*
+    String foo1 = (@FooBar String) "bar";
+    String foo2 = (@BarFoo String) "bar";
+    String foo3 = (@FooBar(foo = "bar") String) "bar";
+    String foo4 = (@BarFoo(bar = "foo") String) "bar";
+    String foo5 = (@FooBar("foo") String) "bar";
+    String foo6 = (@BarFoo("bar") String) "bar";
 
-        class UnmodifiableList<T> implements
-            @Readonly List<@Readonly T> { ... }
+    String foo7 = new @FooBar String();
+    String foo8 = new @BarFoo String();
+    String foo9 = new @FooBar(foo = "bar") String();
+    String foo10 = new @BarFoo(bar = "foo") String();
+    String foo11 = new @FooBar("foo") String();
+    String foo12 = new @BarFoo("bar") String();
+    
 
-    Thrown exception declaration:
+    void foofunc1() throws @FooBar BarException {
+    }
 
-        void monitorTemperature() throws
-            @Critical TemperatureException { ... }
+    void foofunc2() throws @BarFoo BarException {
+    }
 
+    void foofunc3() throws @FooBar(foo = "bar") BarException {
+    }
 
-*/
-/*
+    void foofunc4() throws @BarFoo(bar = "foo") BarException {
+    }
 
-    NormalAnnotation
+    void foofunc5() throws @FooBar("foo") BarException {
+    }
 
-    annName :: Name
-    annKV :: [(Ident, ElementValue)]
+    void foofunc6() throws @BarFoo("bar") BarException {
+    }
+    */
+    
+    @FooBar
+    @BarFoo
+    @FooBar(foo = "bar")
+    @BarFoo(bar = "foo")
+    @FooBar("foo")
+    @BarFoo("bar")
+    void foofunc7() {
+       
+    }
 
-SingleElementAnnotation
-
-    annName :: Name
-    annValue :: ElementValue
-
-MarkerAnnotation
-
-    annName :: Name
-*/
+}

@@ -13,22 +13,15 @@ import qualified RDF
 
 checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checks =
-  [ ProhibitAnnotations.check
-  ]
-
-{-
-checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
-checks =
   [ AvoidNegations.check,
     InitializeVariables.check,
     NoNullPointerExceptionsForControl.check,
     PreferExpressions.check,
     ReduceScope.check,
     UseAssignOp.check,
-    UseElse.check
+    UseElse.check,
+    ProhibitAnnotations.check
   ]
-
--}
 
 checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkAll cUnit path = concatMap (\f -> f cUnit path) checks

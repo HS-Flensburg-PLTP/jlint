@@ -1,35 +1,24 @@
 module Language.Java.Rules.ProhibitAnnotations where
 
+import Control.Monad (MonadPlus (..))
+import Data.List (find)
 import Language.Java.AST (extractAnnotations)
 import Language.Java.Syntax (Annotation (..), CompilationUnit, Ident (Ident), Name (..))
 import RDF (Diagnostic, simpleDiagnostic)
 
--- TODO: Erlaubte Annotations
 check :: CompilationUnit -> FilePath -> [Diagnostic]
 check cUnit path = do
   annotation <- extractAnnotations cUnit
   checkAnnotation annotation path
 
--- TODO: Erlaubte Annotations
 checkAnnotation :: Annotation -> FilePath -> [Diagnostic]
-checkAnnotation annotation path = case annotation of
-  NormalAnnotation (Name idents) _ -> return (simpleDiagnostic ("normal annotation gefunden " ++ concatMap (\(Ident str) -> str) idents) path)
-  SingleElementAnnotation (Name idents) _ -> return (simpleDiagnostic ("single ele annotation gefunden " ++ concatMap (\(Ident str) -> str) idents) path)
-  MarkerAnnotation (Name idents) -> return (simpleDiagnostic ("marker annotation gefunden " ++ concatMap (\(Ident str) -> str) idents) path)
+checkAnnotation annotation path =
+  let name = case annotation of
+        NormalAnnotation (Name idents) _ -> concatMap (\(Ident str) -> str) idents
+        SingleElementAnnotation (Name idents) _ -> concatMap (\(Ident str) -> str) idents
+        MarkerAnnotation (Name idents) -> concatMap (\(Ident str) -> str) idents
 
-{-
-    NormalAnnotation
-
-    annName :: Name
-    annKV :: [(Ident, ElementValue)]
-
-SingleElementAnnotation
-
-    annName :: Name
-    annValue :: ElementValue
-
-MarkerAnnotation
-
-    annName :: Name
-
-    -}
+      whitelist = ["FooBar"]
+   in case Data.List.find (== name) whitelist of
+        Nothing -> return (simpleDiagnostic ("Prohibited Annotation found: " ++ name) path)
+        Just _ -> mzero
