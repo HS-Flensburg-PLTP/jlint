@@ -124,7 +124,7 @@ parseJava rootDir pretty checkstyleDiags =
       )
     unless (null parsingErrors) $ print parsingErrors
     when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
-
+    print cUnitResults
     let numberOfHints = length diagnostics
     if numberOfHints == 0
       then do
