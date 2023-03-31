@@ -23,7 +23,7 @@ main = execParser opts >>= importJava
       info
         (params <**> helper)
         ( fullDesc
-            <> progDesc "Parse the java file"
+            <> progDesc "Runs linter checks on given <src-path> (.java FILE or all .java files in DIRECTORY)"
             <> header "Linter for java code"
         )
 
@@ -52,11 +52,9 @@ data Params = Params
 params :: Parser Params
 params =
   Params
-    <$> strOption
-      ( long "path"
-          <> metavar "SRCPath"
-          <> help "Path to the java file"
-      )
+    <$> argument
+      str
+      (metavar "<src-path>")
     <*> switch
       ( long "pretty"
           <> help "By setting this Parameter the java source representation of the AST is shown"
