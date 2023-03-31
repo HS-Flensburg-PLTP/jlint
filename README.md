@@ -31,7 +31,7 @@ Der Zustand auf `release` wird auf den GitHub Runner ausgeliefert und ist somit 
 #### Feature Branch
 
 Beim Entwickeln eines neuen Features ist stets ein eigener Branch anzulegen.  
-Dieser zweigt von `main` ab und folgt der Namenskonvention `feature-<issue>`, wobei `issue` für die ID des Tickets steht.
+Dieser zweigt von `main` ab und folgt der Namenskonvention `feature-<issue>`, wobei `<issue>` für die ID des Tickets steht.
 
 ### Schreiben neuer Regeln
 
