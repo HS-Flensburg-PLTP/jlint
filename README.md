@@ -21,6 +21,12 @@ Bei korrektem Setup sollten z.B folgende Features von HLS in VScode funktioniere
 - Typinformationen `Hover`
 - Sprung zur Deklaration `Ctrl-Click`
 
+### Empfehlungen für VSCode
+
+- `Insert Final Newline` aktivieren
+  - der Formatchecker über github erwartet diese, lokal fügt Ormolu diese nicht automatisch hinzu
+- `Auto Save` und `Format on Save` aktivieren
+
 ## Entwicklung
 
 ### Branching
