@@ -5,6 +5,7 @@ import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
+import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import Language.Java.Rules.UseElse as UseElse (check)
 import Language.Java.Syntax (CompilationUnit)
@@ -17,6 +18,7 @@ checks =
     NoNullPointerExceptionsForControl.check,
     PreferExpressions.check,
     ReduceScope.check,
+    RedundantModifiers.check,
     UseAssignOp.check,
     UseElse.check
   ]

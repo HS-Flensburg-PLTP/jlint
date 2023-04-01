@@ -10,6 +10,7 @@ import NonFinalMethodAttributes.Tests (testAllNonFinalMethodAttributes)
 import NonPrivateAttributes.Tests (testAllNonPrivateAttributes)
 import qualified PreferExpressionsTests
 import qualified ReduceScopeTests
+import qualified RedundantModifiersTests
 import SameExecutionsInIf.Tests
 import SimplifyBooleanReturn.Tests
 import Test.HUnit (Test, runTestTT, test, (~:))
@@ -38,6 +39,7 @@ tests =
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
+      "RedundantModifiers" ~: RedundantModifiersTests.tests,
       "UseAssignOp" ~: UseAssignOpTests.tests,
       "UseElse" ~: UseElseTests.tests
     ]
