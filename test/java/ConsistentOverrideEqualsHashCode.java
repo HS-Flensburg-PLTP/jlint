@@ -1,8 +1,8 @@
 public static class Example1 {
-    public int hashCode() {
+    public int hashCode() { // violation, no 'equals'
         // code
     }
-    public boolean equals(String o) { // violation, overloaded implementation of 'equals'
+    public boolean equals(String o) {
         // code
     }
 }
@@ -37,12 +37,12 @@ public static class Example5 {
     public static int hashCode(int i) {
         // code
     }
-    public boolean equals(Object o) { // violation, overloaded implementation of 'hashCode'
+    public boolean equals(Object o) { // violation, no 'hashCode'
         // code
     }
 }
 public static class Example6 {
-    public int hashCode() { // violation, overloaded implementation of 'equals'
+    public int hashCode() { // violation, no 'equals'
         // code
     }
     public static boolean equals(Object o, Object o2) {
