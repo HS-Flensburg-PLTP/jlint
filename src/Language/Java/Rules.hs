@@ -9,6 +9,7 @@ import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import Language.Java.Rules.UseElse as UseElse (check)
 import Language.Java.Syntax (CompilationUnit)
 import qualified RDF
+import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
 
 checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checks =
@@ -18,7 +19,8 @@ checks =
     PreferExpressions.check,
     ReduceScope.check,
     UseAssignOp.check,
-    UseElse.check
+    UseElse.check,
+    ConsistentOverrideEqualsHashCode.check
   ]
 
 checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
