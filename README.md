@@ -9,11 +9,11 @@
 3. VSCode Extension `Haskell` installieren
 
 In den Extension Settings sollten noch folgende Einstellungen überprüft werden:
-- Formatting Provider: ormolu
-- Manage HLS: GHCup
+- Formatting Provider: `ormolu`
+- Manage HLS: `GHCup`
+- Ghcup Executable Path: expl. Angabe, wenn `ghcup` nicht im PATH vorhanden
 
-Die Extension übernimmt dann automatisch die notwendigen Installationen (GHC, HLS).  
- _siehe ggf.: [Trojanerwarnung unter Windows](#trojanerwarnung-unter-windows)_
+Die Extension übernimmt dann automatisch die notwendigen Installationen (GHC, HLS).
 
 Bei korrektem Setup sollten z.B folgende Features von HLS in VScode funktionieren:
 - Linter (als Anmerkungen im Code)
@@ -48,14 +48,10 @@ Um neue Regeln in der Anwendung zu integrieren, müssen diese in `src/Language/J
 ## Lokale Verwendung
 
 - `stack build` - Laden der Dependencies und Builden des Projekts
-- `stack test` - Führt die in **jlint.cabal** angegebenen Tests durch
-- `stack exec jlint -- --path <srcpath>` - Ausführen der Executable
-
-<hr>
-
-### Trojanerwarnung unter Windows
-
-Der Versuch, die HLS-Version 1.9.1.0 zu installieren über GHCup scheitert aktuell (diese Version wird aber von der Extension verwendet).
-Für die Installation (auch automatisch ausgelöst durch die Extension) sollte temporär eine Ausnahme hinzugefügt werden:
-- In der `Protection history` unter `Virus & threat protection` kann der falschgemeldete Trojaner erlaubt werden vor dem erneuten Versuch der Installation
-- In `Allowed threats` kann nach erfolgter Installation die Ausnahme wieder entfernt werden
+- `stack test` - Führt die Test-Suite aus
+- `stack exec jlint <srcpath>` - Ausführen der Executable
+  - nützliche Entwickler-Optionen: (zusätzlich `--` zum Escapen der Optionen von `stack`)
+    - `-t/--show-ast` - nur Anzeige von AST, keine Analyse
+    - `--pretty` - printet formatierten Java-Code
+  - Beispiel 1: `stack exec jlint -- /test/java` führt die Analyse aller .java Files im angegebenen Ordner durch
+  - Beispiel 2: `stack exec jlint -- /test/java/UseElse.java -t` zeigt den AST der Datei
