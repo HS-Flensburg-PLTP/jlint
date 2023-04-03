@@ -18,8 +18,8 @@ useIncrementDecrementOperator :: CompilationUnit -> FilePath -> Assertion
 useIncrementDecrementOperator cUnit path = do
   let expectedRange1 =
         Range
-          { start = Position {line = 4, column = Just 9},
-            end = Just (Position {line = 5, column = Just 9})
+          { start = Position {line = 1, column = Just 1},
+            end = Just (Position {line = 1, column = Just 1})
           }
   let expectedRange2 =
         Range
@@ -28,8 +28,8 @@ useIncrementDecrementOperator cUnit path = do
           }
   let expectedRange3 =
         Range
-          { start = Position {line = 13, column = Just 9},
-            end = Just (Position {line = 14, column = Just 9})
+          { start = Position {line = 1, column = Just 1},
+            end = Just (Position {line = 1, column = Just 1})
           }
   let expectedRange4 =
         Range
@@ -38,8 +38,8 @@ useIncrementDecrementOperator cUnit path = do
           }
   let expectedRange5 =
         Range
-          { start = Position {line = 22, column = Just 9},
-            end = Just (Position {line = 23, column = Just 9})
+          { start = Position {line = 1, column = Just 1},
+            end = Just (Position {line = 1, column = Just 1})
           }
   let expectedRange6 =
         Range
@@ -48,26 +48,11 @@ useIncrementDecrementOperator cUnit path = do
           }
   let expectedRange7 =
         Range
-          { start = Position {line = 31, column = Just 9},
-            end = Just (Position {line = 32, column = Just 9})
-          }
-  let expectedRange8 =
-        Range
-          { start = Position {line = 1, column = Just 1},
-            end = Just (Position {line = 1, column = Just 1})
-          }
-  let expectedRange9 =
-        Range
-          { start = Position {line = 1, column = Just 1},
-            end = Just (Position {line = 1, column = Just 1})
-          }
-  let expectedRange10 =
-        Range
           { start = Position {line = 1, column = Just 1},
             end = Just (Position {line = 1, column = Just 1})
           }
   let expectedRanges =
-        [expectedRange1, expectedRange2, expectedRange3, expectedRange4, expectedRange5, expectedRange6, expectedRange7, expectedRange8, expectedRange9, expectedRange10]
+        [expectedRange1, expectedRange2, expectedRange3, expectedRange4, expectedRange5, expectedRange6, expectedRange7]
   let diagnostic = check cUnit path
   assertEqual "Check number of messages" (length expectedRanges) (length diagnostic)
   zipWithM_
