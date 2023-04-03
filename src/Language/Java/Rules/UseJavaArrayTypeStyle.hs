@@ -14,7 +14,7 @@ check cUnit path = do
       return
         ( RDF.rangeDiagnostic
             "Language.Java.Rules.UseJavaArrayTypeStyle"
-            "Array Typen sollten in Java-Style und nicht C-Style definiert werden. Die Arrayklammern `[]` gehören also hinter den Typen und nicht hinter den Namen."
+            "Array-Typen sollten im Java-Stil und nicht im C-Stil definiert werden. Die Arrayklammern `[]` gehören also hinter den Typ und nicht hinter den Namen der Variable."
             dummySourceSpan
             path
         )
