@@ -1,39 +1,36 @@
 module Language.Java.Rules.RedundantModifiers where
 
-import Control.Monad
+import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
-import RDF (Diagnostic, rangeDiagnostic)
+import qualified Markdown
+import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [Diagnostic]
+check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  interfaceDecl <- universeBi cUnit
-  case interfaceDecl of
-    (InterfaceDecl _ InterfaceNormal _ _ _ _ _ body) -> do
-      memberDecl <- universeBi body
-      case memberDecl of
-        (MethodDecl span modifiers _ _ _ _ _ _ _) ->
-          concatMap (checkModifier path span) modifiers
-        _ ->
-          mzero
-    _ ->
-      mzero
+  InterfaceDecl _ InterfaceNormal _ _ _ _ _ body <- universeBi cUnit
+  memberDecl <- universeBi body
+  concatMap (checkModifier path) (methodModifiers memberDecl)
 
-checkModifier :: FilePath -> SourceSpan -> Modifier -> [Diagnostic]
-checkModifier path span Public =
+methodModifiers :: MemberDecl -> [Modifier]
+methodModifiers (MethodDecl _ modifiers _ _ _ _ _ _ _) = modifiers
+methodModifiers _ = []
+
+checkModifier :: FilePath -> Modifier -> [RDF.Diagnostic]
+checkModifier path Public =
   return
-    ( rangeDiagnostic
+    ( RDF.rangeDiagnostic
         "Language.Java.Rules.RedundantModifier"
-        "Auf den redundanten Modifizierer `public` sollte in Interfaces verzichtet werden."
-        span
+        ("Auf den redundanten Modifier " ++ Markdown.code "public" ++ " sollte in Interfaces verzichtet werden.")
+        dummySourceSpan
         path
     )
-checkModifier path span Abstract =
+checkModifier path Abstract =
   return
-    ( rangeDiagnostic
+    ( RDF.rangeDiagnostic
         "Language.Java.Rules.RedundantModifier"
-        "Auf den redundanten Modifizierer `abstract` sollte in Interfaces verzichtet werden."
-        span
+        ("Auf den redundanten Modifier " ++ Markdown.code "abstract" ++ " sollte in Interfaces verzichtet werden.")
+        dummySourceSpan
         path
     )
-checkModifier _ _ _ = mzero
+checkModifier _ _ = mzero
