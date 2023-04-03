@@ -7,10 +7,10 @@ import qualified RDF
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  varDecl <- universeBi cUnit
-  checkVarDecl varDecl
+  varDeclId <- universeBi cUnit
+  checkVarDeclId varDeclId
   where
-    checkVarDecl (VarDecl (VarDeclArray _) _) =
+    checkVarDeclId (VarDeclArray (VarId _)) =
       return
         ( RDF.rangeDiagnostic
             "Language.Java.Rules.UseJavaArrayTypeStyle"
@@ -18,5 +18,5 @@ check cUnit path = do
             dummySourceSpan
             path
         )
-    checkVarDecl _ =
+    checkVarDeclId _ =
       mzero

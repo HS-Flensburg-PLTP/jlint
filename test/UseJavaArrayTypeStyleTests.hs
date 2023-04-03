@@ -24,9 +24,27 @@ useJavaArrayTypeStyle cUnit path = do
           { start = Position {line = 1, column = Just 1},
             end = Just (Position {line = 1, column = Just 1})
           }
+  let expectedRange3 =
+        Range
+          { start = Position {line = 1, column = Just 1},
+            end = Just (Position {line = 1, column = Just 1})
+          }
+  let expectedRange4 =
+        Range
+          { start = Position {line = 1, column = Just 1},
+            end = Just (Position {line = 1, column = Just 1})
+          }
+  let expectedRange5 =
+        Range
+          { start = Position {line = 1, column = Just 1},
+            end = Just (Position {line = 1, column = Just 1})
+          }
   let expectedRanges =
         [ expectedRange1,
-          expectedRange2
+          expectedRange2,
+          expectedRange3,
+          expectedRange4,
+          expectedRange5
         ]
   let diagnostic = UseJavaArrayTypeStyle.check cUnit path
   assertEqual "Check number of messages" (length expectedRanges) (length diagnostic)
