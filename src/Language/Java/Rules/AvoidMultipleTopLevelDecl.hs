@@ -6,10 +6,10 @@ import Data.Generics.Uniplate.Data (universeBi)
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  typeDecls <- universeBi cUnit
-  checkTypeDecl typeDecls
+  comUnit <- universeBi cUnit
+  checkComUnit comUnit
   where
-    checkTypeDecl (CompilationUnit _ _ typeDecls ) =
+    checkComUnit (CompilationUnit _ _ typeDecls ) =
         if length typeDecls > 1
             then
                 [
