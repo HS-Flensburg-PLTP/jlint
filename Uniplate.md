@@ -1,34 +1,48 @@
 # Uniplate
->Die grundlegende Idee hinter Uniplate ist, dass viele Operationen auf Datenstrukturen ähnliche Muster aufweisen, wie zum Beispiel das Durchlaufen von Kindknoten oder das Ersetzen von Teilbäumen. Uniplate stellt eine generische Möglichkeit bereit, solche Muster auf Datenstrukturen anzuwenden, wodurch Code wieder verwendet werden kann und sich die Lesbarkeit verbessert.
+>Die Grundidee hinter Uniplate ist, dass viele Operationen auf Datenstrukturen ähnliche Muster aufweisen, wie z.B. das Durchlaufen von Kindknoten oder das Ersetzen von Teilbäumen. Uniplate bietet eine generische Möglichkeit, solche Muster auf Datenstrukturen anzuwenden, wodurch Code wiederverwendet werden kann und die Lesbarkeit verbessert wird.
 
 ### Funktionen der Uniplate Bibliothek
 
-Die `universe` Funktion nimmt eine Datenstruktur und gibt eine Liste an alle in ihr liegenden Strukturen desselben Typs zurück.
+### universe
+Die Funktion `universe` nimmt eine Datenstruktur vom Typ `a` und gibt eine Liste aller darin enthaltenen Strukturen desselben Typs zurück.
 
 ```haskell
-universe :: Uniplate α ⇒ α → [α] 
-universe x = x : concatMap universe (children x )
+universe :: Uniplate a => a -> [a]
 ```
 
-Die `universeBi` Funktion nimmt eine Datenstruktur vom Typ `from`, welche Datenstrukturen von Typ `to` enthält und gibt alle enthaltenen `to`-Strukturen in einer List aus. 
+### Verwendung von universe in jlint
+Im folgenden Fall werden mit `universe` alle Strukturen vom Typ `Stmt` aus einem `Stmt` in eine Liste generiert. 
+Und mit list comprehension werden dann alle `Stmt` aus der Liste, die mit dem Konstruktor `Empty` erzeugt wurden, in eine neue Liste getan.
 
 ```haskell
-universeBi :: Biplate from to ⇒ from → [to] 
+getEmptysFromStmt :: Stmt -> [Stmt]
+getEmptysFromStmt stmt = [Empty| Empty <- universe stmt]
+```
+
+
+### universeBi
+Die Funktion `universeBi` nimmt eine Datenstruktur vom Typ `from`, die Datenstrukturen vom Typ `to` enthält,  und gibt alle enthaltenen `to`-Strukturen in einer Liste aus. 
+Wird `universeBi` auf eine Datenstruktur vom Typ `from` aufgerufen, die keine Strukturen vom Typ `to` enthält, wird eine leere Liste zurückgegeben.
+
+```haskell
+universeBi :: Biplate from to => from -> [to]
 universeBi = universeOn biplate 
 ```
 
-### Funktionsweise in JLint
+### Verwendung von universeBi in jlint
+In jlint wird `universeBi` verwendet um Strukturen eines bestimmten Types aus dem AST heraus zu filtern.
 
+In der folgenden Funktion liefert `universeBi` bei Anwendung auf eine `CompilationUnit` eine Liste aller darin enthaltenen `Stmt`.
 ```haskell
 getStatements :: CompilationUnit -> [Stmt]
 getStatements cUnit = universeBi cUnit
 ```
 
-`universeBi` auf eine `CompilationUnit` angewendet, liefert in diesem Fall eine Liste an allen Statements, die sie enthält. 
+Die folgenden Beispiele zeigen, wie `universeBy` in jlint unterschiedlich verwendet wird.
 
 ``` haskell
 --Ausschnitt aus Language.Java.Rules.AvoidNegations
-checkStatements :: (String, MethodBody) -> FilePath -> [Diagnostic]
+checkStatements :: (String, MethodBody) -> FilePath -> [RDF.Diagnostic]
 checkStatements (methodName, methodBody) path = do
   stmt <- universeBi methodBody
   checkStatement stmt
@@ -36,7 +50,7 @@ checkStatements (methodName, methodBody) path = do
   ...
 
 --Ausschnitt aus Language.Java.Rules.DefaultComesLast
-checkDefaultComesLast :: (String, MethodBody) -> FilePath -> [Diagnostic]
+checkDefaultComesLast :: (String, MethodBody) -> FilePath -> [RDF.Diagnostic]
 checkDefaultComesLast (methodName, methodBody) path = do
   (Switch _ _ blocks) <- universeBi methodBody
   checkSwitch blocks mzero
@@ -49,8 +63,6 @@ checkIfWithoutElse cUnit path = do
   checkBlocks blocks
   where
   ...
-```
-
-Der zurückgelieferte Typ wird bestimmt durch Typinferenz, ausgehend davon, wie die Liste danach verwendet wird. 
+``` 
 
 
