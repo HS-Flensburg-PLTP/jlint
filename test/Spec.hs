@@ -4,11 +4,11 @@ import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
 import qualified InitializeVariablesTests
 import NamingConventions.Tests
 import NeedBraces.Tests
-import qualified ParameterNumberTests
 import NoLoopBreak.Tests (testAllNoLoopBreaks)
 import qualified NoNullPointerExceptionsForControlTests
 import NonFinalMethodAttributes.Tests (testAllNonFinalMethodAttributes)
 import NonPrivateAttributes.Tests (testAllNonPrivateAttributes)
+import qualified ParameterNumberTests
 import qualified PreferExpressionsTests
 import qualified ReduceScopeTests
 import SameExecutionsInIf.Tests
