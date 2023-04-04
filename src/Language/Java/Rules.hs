@@ -9,10 +9,12 @@ import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import Language.Java.Rules.UseElse as UseElse (check)
 import Language.Java.Syntax (CompilationUnit)
 import qualified RDF
+import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 
 checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checks =
-  [ AvoidNegations.check,
+  [ AvoidMultipleVarDecl.check,
+    AvoidNegations.check,
     InitializeVariables.check,
     NoNullPointerExceptionsForControl.check,
     PreferExpressions.check,
