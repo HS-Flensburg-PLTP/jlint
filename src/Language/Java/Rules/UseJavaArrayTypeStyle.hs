@@ -10,12 +10,12 @@ check cUnit path = do
   varDeclId <- universeBi cUnit
   checkVarDeclId varDeclId
   where
-    checkVarDeclId (VarDeclArray (VarId _)) =
+    checkVarDeclId (VarDeclArray span (VarId _)) =
       return
         ( RDF.rangeDiagnostic
             "Language.Java.Rules.UseJavaArrayTypeStyle"
             "Array-Typen sollten im Java-Stil und nicht im C-Stil definiert werden. Die Arrayklammern `[]` gehören also hinter den Typ und nicht hinter den Namen der Variable."
-            dummySourceSpan
+            span
             path
         )
     checkVarDeclId _ =

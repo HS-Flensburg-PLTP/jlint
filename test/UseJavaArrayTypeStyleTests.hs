@@ -16,28 +16,28 @@ useJavaArrayTypeStyle :: CompilationUnit -> FilePath -> Assertion
 useJavaArrayTypeStyle cUnit path = do
   let expectedRange1 =
         Range
-          { start = Position {line = 1, column = Just 1},
-            end = Just (Position {line = 1, column = Just 1})
+          { start = Position {line = 3, column = Just 12},
+            end = Just (Position {line = 3, column = Just 20})
           }
   let expectedRange2 =
         Range
-          { start = Position {line = 1, column = Just 1},
-            end = Just (Position {line = 1, column = Just 1})
+          { start = Position {line = 6, column = Just 13},
+            end = Just (Position {line = 6, column = Just 22})
           }
   let expectedRange3 =
         Range
-          { start = Position {line = 1, column = Just 1},
-            end = Just (Position {line = 1, column = Just 1})
+          { start = Position {line = 10, column = Just 23},
+            end = Just (Position {line = 10, column = Just 30})
           }
   let expectedRange4 =
         Range
-          { start = Position {line = 1, column = Just 1},
-            end = Just (Position {line = 1, column = Just 1})
+          { start = Position {line = 11, column = Just 13},
+            end = Just (Position {line = 11, column = Just 24})
           }
   let expectedRange5 =
         Range
-          { start = Position {line = 1, column = Just 1},
-            end = Just (Position {line = 1, column = Just 1})
+          { start = Position {line = 14, column = Just 39},
+            end = Just (Position {line = 14, column = Just 45})
           }
   let expectedRanges =
         [ expectedRange1,
