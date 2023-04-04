@@ -17,20 +17,14 @@ methodModifiers (MethodDecl _ modifiers _ _ _ _ _ _ _) = modifiers
 methodModifiers _ = []
 
 checkModifier :: FilePath -> Modifier -> [RDF.Diagnostic]
-checkModifier path Public =
-  return
-    ( RDF.rangeDiagnostic
-        "Language.Java.Rules.RedundantModifier"
-        ("Auf den redundanten Modifier " ++ Markdown.code "public" ++ " sollte in Interfaces verzichtet werden.")
-        dummySourceSpan
-        path
-    )
-checkModifier path Abstract =
-  return
-    ( RDF.rangeDiagnostic
-        "Language.Java.Rules.RedundantModifier"
-        ("Auf den redundanten Modifier " ++ Markdown.code "abstract" ++ " sollte in Interfaces verzichtet werden.")
-        dummySourceSpan
-        path
-    )
+checkModifier path mod@(Public span) = return (diagnostic path span (show mod))
+checkModifier path mod@(Abstract span) = return (diagnostic path span (show mod))
 checkModifier _ _ = mzero
+
+diagnostic :: FilePath -> SourceSpan -> String -> RDF.Diagnostic
+diagnostic path span name =
+  RDF.rangeDiagnostic
+    "Language.Java.Rules.RedundantModifier"
+    ("Auf den redundanten Modifier " ++ Markdown.code name ++ " sollte in Interfaces verzichtet werden.")
+    span
+    path
