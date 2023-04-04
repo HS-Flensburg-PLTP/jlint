@@ -1,5 +1,6 @@
 module Language.Java.Rules where
 
+import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
@@ -9,7 +10,6 @@ import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import Language.Java.Rules.UseElse as UseElse (check)
 import Language.Java.Syntax (CompilationUnit)
 import qualified RDF
-import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 
 checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checks =

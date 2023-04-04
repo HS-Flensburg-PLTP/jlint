@@ -1,5 +1,5 @@
-import qualified AvoidNegationsTests
 import qualified AvoidMultipleVarDeclTests
+import qualified AvoidNegationsTests
 import DefaultComesLast.Tests
 import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
 import qualified InitializeVariablesTests
