@@ -9,6 +9,7 @@ import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import Language.Java.Rules.UseElse as UseElse (check)
 import Language.Java.Syntax (CompilationUnit)
 import qualified RDF
+import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 
 checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checks =
@@ -17,6 +18,7 @@ checks =
     NoNullPointerExceptionsForControl.check,
     PreferExpressions.check,
     ReduceScope.check,
+    ParameterNumber.check,
     UseAssignOp.check,
     UseElse.check
   ]

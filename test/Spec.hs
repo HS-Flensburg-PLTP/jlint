@@ -4,6 +4,7 @@ import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
 import qualified InitializeVariablesTests
 import NamingConventions.Tests
 import NeedBraces.Tests
+import qualified ParameterNumberTests
 import NoLoopBreak.Tests (testAllNoLoopBreaks)
 import qualified NoNullPointerExceptionsForControlTests
 import NonFinalMethodAttributes.Tests (testAllNonFinalMethodAttributes)
@@ -36,6 +37,7 @@ tests =
     [ "AvoidNegations" ~: AvoidNegationsTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
+      "ParameterNumber" ~: ParameterNumberTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
       "UseAssignOp" ~: UseAssignOpTests.tests,
