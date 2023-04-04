@@ -11,12 +11,18 @@ universe :: Uniplate a => a -> [a]
 ```
 
 ### Verwendung von universe in jlint
-Im folgenden Fall werden mit `universe` alle Strukturen vom Typ `Stmt` aus einem `Stmt` in eine Liste generiert. 
-Und mit list comprehension werden dann alle `Stmt` aus der Liste, die mit dem Konstruktor `Empty` erzeugt wurden, in eine neue Liste getan.
+Im folgenden Fall werden in einem `do`-Block mit `universe` nacheinander alle Strukturen vom Typ `Stmt` aus einem `Stmt` gelesen. Diese werden einzeln mit der Hilfsmethode überprüft, ob sie eine Schleife darstellen. Wenn ja, wird die Abbruchbedingung zurückgegeben.
 
 ```haskell
-getEmptysFromStmt :: Stmt -> [Stmt]
-getEmptysFromStmt stmt = [Empty| Empty <- universe stmt]
+extractLoopCondiditions :: Stmt -> [Exp]
+extractLoopCondiditions parentStmt = do 
+    stmt <- universe parentStmt
+    checkLoop stmt
+    where
+        checkLoop (While exp _) = return exp
+        checkLoop (BasicFor _ (Just exp) _ _) = return exp
+        checkLoop (EnhancedFor _ _ _ exp _) = return exp
+        checkLoop _ = mzero
 ```
 
 
@@ -34,35 +40,40 @@ In jlint wird `universeBi` verwendet um Strukturen eines bestimmten Types aus de
 
 In der folgenden Funktion liefert `universeBi` bei Anwendung auf eine `CompilationUnit` eine Liste aller darin enthaltenen `Stmt`.
 ```haskell
-getStatements :: CompilationUnit -> [Stmt]
-getStatements cUnit = universeBi cUnit
+statements :: CompilationUnit -> [Stmt]
+statements cUnit = universeBi cUnit
 ```
 
 Die folgenden Beispiele zeigen, wie `universeBy` in jlint unterschiedlich verwendet wird.
 
 ``` haskell
---Ausschnitt aus Language.Java.Rules.AvoidNegations
-checkStatements :: (String, MethodBody) -> FilePath -> [RDF.Diagnostic]
-checkStatements (methodName, methodBody) path = do
-  stmt <- universeBi methodBody
-  checkStatement stmt
+--Ausschnitt aus Language.Java.Rules.AvoidNegations checkStatements
+checkStatements :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkStatements cUnit path = do
+  stmt <- universeBi cUnit
+  checkIfThenElse stmt path
   where
-  ...
+    checkIfThenElse :: Stmt -> FilePath -> m Diagnostic
+    ...
 
---Ausschnitt aus Language.Java.Rules.DefaultComesLast
-checkDefaultComesLast :: (String, MethodBody) -> FilePath -> [RDF.Diagnostic]
-checkDefaultComesLast (methodName, methodBody) path = do
-  (Switch _ _ blocks) <- universeBi methodBody
-  checkSwitch blocks mzero
-  ...
-
---Ausschnitt aus Language.Java.Rules.UseElse
-checkIfWithoutElse :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
-checkIfWithoutElse cUnit path = do
-  blocks <- universeBi cUnit
-  checkBlocks blocks
+--Ausschnitt aus Language.Java.Rules.AvoidNegations checkExpressions
+checkExpression :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkExpression cUnit path = do
+  exp <- universeBi cUnit
+  checkCond stmt path
   where
-  ...
+    checkCond :: Exp -> FilePath -> m Diagnostic
+    ...
+
+--Ausschnitt aus Language.Java.Rules.AST
+extractMethods :: CompilationUnit -> [(String, MethodBody)]
+extractMethods cUnit = do
+  membDecl <- universeBi cUnit
+  extractBody membDecl
+  where
+    extractBody :: MemberDecl -> m (String, MethodBody)
+    extractBody (MethodDecl _ _ _ _ (Ident n) _ _ _ b) = return (n, b)
+    extractBody _ = mzero
 ``` 
 
 
