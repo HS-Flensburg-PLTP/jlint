@@ -85,16 +85,16 @@ check cUnit path = do
 filterVarUpdate :: Exp -> Maybe Ident
 filterVarUpdate (PostIncrement (ExpName (Name [ident]))) = Just ident
 filterVarUpdate (PostDecrement (ExpName (Name [ident]))) = Just ident
-filterVarUpdate (PreIncrement (ExpName (Name [ident]))) = Just ident
-filterVarUpdate (PreDecrement (ExpName (Name [ident]))) = Just ident
-filterVarUpdate (Assign (NameLhs (Name [ident])) _ _) = Just ident
+filterVarUpdate (PreIncrement _ (ExpName (Name [ident]))) = Just ident
+filterVarUpdate (PreDecrement _ (ExpName (Name [ident]))) = Just ident
+filterVarUpdate (Assign _ (NameLhs (Name [ident])) _ _) = Just ident
 filterVarUpdate _ = Nothing
 
 variablesRead :: (Data a) => a -> [Ident]
 variablesRead parent = [ident | ExpName (Name idents) <- universeBi parent, ident <- idents]
 
 variablesWritten :: (Data a) => a -> [Ident]
-variablesWritten parent = [ident | Assign (NameLhs (Name [ident])) _ _ <- universeBi parent]
+variablesWritten parent = [ident | Assign _ (NameLhs (Name [ident])) _ _ <- universeBi parent]
 
 assignedTwiceMessage :: Ident -> String
 assignedTwiceMessage ident =

@@ -16,7 +16,7 @@ ident :: VarDecl -> Ident
 ident (VarDecl varDeclId _) = varDeclIdIdent varDeclId
 
 varDeclIdIdent :: VarDeclId -> Ident
-varDeclIdIdent (VarDeclArray varDeclId) = varDeclIdIdent varDeclId
+varDeclIdIdent (VarDeclArray _ varDeclId) = varDeclIdIdent varDeclId
 varDeclIdIdent (VarId ident) = ident
 
 hasNoSideEffect :: VarDecl -> Bool

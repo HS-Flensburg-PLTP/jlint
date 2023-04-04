@@ -24,7 +24,7 @@ check cUnit path = do
   where
     checkBlocks
       ( LocalVars _ _ _ varDecls
-          : BlockStmt _ (ExpStmt range (Assign (NameLhs (Name [ident])) EqualA _))
+          : BlockStmt _ (ExpStmt range (Assign _ (NameLhs (Name [ident])) EqualA _))
           : _
         ) =
         let nonInitializedIdents = map VarDecl.ident (filter (not . VarDecl.isInitialized) varDecls)
