@@ -5,6 +5,7 @@ import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
 import qualified RDF
 
+-- checks if all classes in the filepath consistently override Object equals and hashCode
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   classDecl <- universeBi cUnit
@@ -23,12 +24,30 @@ check cUnit path = do
         )
     checkConsistentUse (_ : _) = mzero
 
+-- extracts all methods from a class that override Object equals and hashCode
 extractEqualsHashCode :: ClassDecl -> [MemberDecl]
-extractEqualsHashCode classes = do
-  membDecl <- universeBi classes
+extractEqualsHashCode classDecl = do
+  membDecl <- universeBi classDecl
   extractMatches membDecl
   where
-    extractMatches hashCode@(MethodDecl _ [Public] [] (Just (PrimType IntT)) (Ident "hashCode") [] [] _ _) = return hashCode
-    extractMatches equals@(MethodDecl _ [Public] [] (Just (PrimType BooleanT)) (Ident "equals") [FormalParam [] (RefType (ClassRefType (ClassType [(Ident "Object", [])]))) False _] [] _ _) = return equals
-    extractMatches equals@(MethodDecl _ [Public] [] (Just (PrimType BooleanT)) (Ident "equals") [FormalParam [] (RefType (ClassRefType (ClassType [(Ident "java", []), (Ident "lang", []), (Ident "Object", [])]))) False _] [] _ _) = return equals
-    extractMatches _ = mzero
+    extractMatches membDecl =
+      if isObjectHashCodeMethod membDecl || isObjectHashEqualsMethod membDecl
+        then return membDecl
+        else mzero
+
+-- checks if method matches profile of Object hashCode
+isObjectHashCodeMethod :: MemberDecl -> Bool
+isObjectHashCodeMethod (MethodDecl _ [Public] [] (Just (PrimType IntT)) (Ident "hashCode") [] [] _ _) = True
+isObjectHashCodeMethod _ = False
+
+-- checks if method matches profile of Object equals
+isObjectHashEqualsMethod :: MemberDecl -> Bool
+isObjectHashEqualsMethod (MethodDecl _ [Public] [] (Just (PrimType BooleanT)) (Ident "equals") [FormalParam [] (RefType (ClassRefType classType)) False _] [] _ _) =
+  isJavaLangObject classType
+isObjectHashEqualsMethod _ = False
+
+-- checks if a classType is of Type Object or java.lang.Object
+isJavaLangObject :: ClassType -> Bool
+isJavaLangObject (ClassType [(Ident "Object", [])]) = True
+isJavaLangObject (ClassType [(Ident "java", []), (Ident "lang", []), (Ident "Object", [])]) = True
+isJavaLangObject _ = False

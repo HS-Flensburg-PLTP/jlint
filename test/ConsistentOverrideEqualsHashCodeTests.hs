@@ -3,7 +3,7 @@ module ConsistentOverrideEqualsHashCodeTests where
 import Control.Monad (zipWithM_)
 import Language.Java.Rules.ConsistentOverrideEqualsHashCode (check)
 import Language.Java.Syntax (CompilationUnit)
-import RDF
+import qualified RDF
 import Test.HUnit
 import qualified Tests
 
@@ -15,24 +15,24 @@ tests =
 consistentOverride :: CompilationUnit -> FilePath -> Assertion
 consistentOverride cUnit path = do
   let expectedRange1 =
-        Range
-          { start = Position {line = 2, column = Just 5},
-            end = Just (Position {line = 4, column = Just 5})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 2, RDF.column = Just 5},
+            RDF.end = Just (RDF.Position {RDF.line = 4, RDF.column = Just 5})
           }
   let expectedRange2 =
-        Range
-          { start = Position {line = 10, column = Just 5},
-            end = Just (Position {line = 12, column = Just 5})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 10, RDF.column = Just 5},
+            RDF.end = Just (RDF.Position {RDF.line = 12, RDF.column = Just 5})
           }
   let expectedRange3 =
-        Range
-          { start = Position {line = 40, column = Just 5},
-            end = Just (Position {line = 42, column = Just 5})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 40, RDF.column = Just 5},
+            RDF.end = Just (RDF.Position {RDF.line = 42, RDF.column = Just 5})
           }
   let expectedRange4 =
-        Range
-          { start = Position {line = 45, column = Just 5},
-            end = Just (Position {line = 47, column = Just 5})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 45, RDF.column = Just 5},
+            RDF.end = Just (RDF.Position {RDF.line = 47, RDF.column = Just 5})
           }
 
   let expectedRanges =
@@ -47,4 +47,4 @@ consistentOverride cUnit path = do
   zipWithM_
     (assertEqual "Check range")
     (map Just expectedRanges)
-    (map (range . location) diagnostic)
+    (map (RDF.range . RDF.location) diagnostic)
