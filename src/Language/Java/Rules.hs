@@ -16,11 +16,11 @@ checks =
   [ AvoidNegations.check,
     InitializeVariables.check,
     NoNullPointerExceptionsForControl.check,
+    NoStarImports.check,
     PreferExpressions.check,
     ReduceScope.check,
     UseAssignOp.check,
-    UseElse.check,
-    NoStarImports.check
+    UseElse.check
   ]
 
 checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
