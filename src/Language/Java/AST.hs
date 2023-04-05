@@ -1,13 +1,11 @@
 module Language.Java.AST where
 
 import Control.Monad (MonadPlus (..))
-import Data.Generics.Uniplate.Data (universe, universeBi)
-import Language.Java.Parser (importDecl)
+import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
   ( CompilationUnit,
     FormalParam,
     Ident (Ident),
-    ImportDecl (ImportDecl),
     MemberDecl (FieldDecl, MethodDecl),
     MethodBody,
     Modifier,
