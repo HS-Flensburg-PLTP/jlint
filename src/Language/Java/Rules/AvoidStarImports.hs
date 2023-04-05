@@ -2,6 +2,7 @@ module Language.Java.Rules.AvoidStarImports where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
+import Language.Java.Pretty (prettyPrint)
 import Language.Java.Syntax
 import qualified RDF
 
@@ -10,16 +11,16 @@ check cUnit path = do
   importDecl <- universeBi cUnit
   checkImport importDecl
   where
-    checkImport (ImportDecl _ (Name idents) allNamesImported) =
+    checkImport (ImportDecl _ name allNamesImported) =
       if allNamesImported
         then
           return
-            ( RDF.simpleDiagnostic
+            ( RDF.rangeDiagnostic
+                "AvoidStarImports"
                 ( "Keine *-Importe erlaubt: "
-                    ++ concatMap
-                      (\(Ident str) -> str ++ ".")
-                      idents
+                    ++ prettyPrint name
                 )
+                dummySourceSpan
                 path
             )
         else mzero
