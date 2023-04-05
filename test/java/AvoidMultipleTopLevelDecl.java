@@ -2,10 +2,14 @@ class foo {
 
 }
 
-class bar {
+interface bar {
 
 }
 
-class foobar  {
+enum foobar  {
+    
+}
+
+public record test (String foo, String bar) {
     
 }

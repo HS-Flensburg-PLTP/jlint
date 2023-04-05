@@ -18,8 +18,8 @@ avoidMultipleTopLevelDecl :: CompilationUnit -> FilePath -> Assertion
 avoidMultipleTopLevelDecl cUnit path = do
   let expectedRange1 =
         RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 1, RDF.column = Just 1},
-            RDF.end = Just (RDF.Position {RDF.line = 1, RDF.column = Just 1})
+          { RDF.start = RDF.Position {RDF.line = 5, RDF.column = Just 1},
+            RDF.end = Just (RDF.Position {RDF.line = 7, RDF.column = Just 1})
           }
   let expectedRanges =
         [ expectedRange1
