@@ -11,10 +11,10 @@ check cUnit path = do
     checkComUnit (CompilationUnit _ _ typeDecls) =
       if length typeDecls > 1
         then case typeDecls !! 1 of
-                (ClassTypeDecl (ClassDecl span _ _ _ _ _ _)) -> message span path
-                (ClassTypeDecl (EnumDecl span _ _ _ _)) -> message span path
-                (InterfaceTypeDecl (InterfaceDecl span _ _ _ _ _ _ _)) -> message span path
-                (ClassTypeDecl (RecordDecl span _ _ _ _ _ _)) -> message span path
+          (ClassTypeDecl (ClassDecl span _ _ _ _ _ _)) -> message span path
+          (ClassTypeDecl (EnumDecl span _ _ _ _)) -> message span path
+          (InterfaceTypeDecl (InterfaceDecl span _ _ _ _ _ _ _)) -> message span path
+          (ClassTypeDecl (RecordDecl span _ _ _ _ _ _)) -> message span path
         else mzero
 
 message :: SourceSpan -> FilePath -> [RDF.Diagnostic]
