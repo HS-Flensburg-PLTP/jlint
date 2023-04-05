@@ -3,9 +3,9 @@ module Language.Java.Rules.AvoidStarImports where
 import Control.Monad (MonadPlus (mzero))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax (CompilationUnit, Ident (Ident), ImportDecl (ImportDecl), Name (Name))
-import RDF (Diagnostic, simpleDiagnostic)
+import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [Diagnostic]
+check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   importDecl <- universeBi cUnit
   checkImport importDecl
@@ -14,7 +14,7 @@ check cUnit path = do
       if allNamesImported
         then
           return
-            ( simpleDiagnostic
+            ( RDF.simpleDiagnostic
                 ( "Keine *-Importe erlaubt: "
                     ++ concatMap
                       (\(Ident str) -> str ++ ".")
