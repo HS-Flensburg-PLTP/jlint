@@ -1,7 +1,8 @@
 module Language.Java.AST where
 
 import Control.Monad (MonadPlus (..))
-import Data.Generics.Uniplate.Data (universeBi)
+import Data.Generics.Uniplate.Data (universe, universeBi)
+import Language.Java.Parser (importDecl)
 import Language.Java.Syntax
   ( CompilationUnit,
     FormalParam,
@@ -41,10 +42,3 @@ extractMethodParameters cUnit = do
 extractVarName :: VarDeclId -> String
 extractVarName (VarDeclArray varDeclId) = extractVarName varDeclId
 extractVarName (VarId (Ident n)) = n
-
-extractImports :: CompilationUnit -> [ImportDecl]
-extractImports cUnit = do
-  importDecl <- universeBi cUnit
-  extractImport importDecl
-  where
-    extractImport (ImportDecl b1 name b2) = return (ImportDecl b1 name b2)
