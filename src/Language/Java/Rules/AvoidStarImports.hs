@@ -15,7 +15,7 @@ check cUnit path = do
         then
           return
             ( simpleDiagnostic
-                ( "No *-Import allowed for "
+                ( "Keine *-Importe erlaubt: "
                     ++ concatMap
                       (\(Ident str) -> str ++ ".")
                       idents
