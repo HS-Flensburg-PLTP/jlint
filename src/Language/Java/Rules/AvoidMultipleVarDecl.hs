@@ -2,15 +2,15 @@ module Language.Java.Rules.AvoidMultipleVarDecl (check) where
 
 import Control.Monad (MonadPlus (mzero))
 import Data.Generics.Uniplate.Data (universeBi)
-import Language.Java.Syntax (BlockStmt (LocalVars), CompilationUnit)
+import Language.Java.Syntax
 import qualified RDF
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  blockStmts <- universeBi cUnit
-  checkBlockStmts blockStmts
+  blockStmt <- universeBi cUnit
+  checkBlockStmt blockStmt
   where
-    checkBlockStmts (LocalVars span _ _ varDecls) =
+    checkBlockStmt (LocalVars span _ _ varDecls) =
       if length varDecls > 1
         then
           [ RDF.rangeDiagnostic
@@ -20,4 +20,4 @@ check cUnit path = do
               path
           ]
         else mzero
-    checkBlockStmts _ = mzero
+    checkBlockStmt _ = mzero

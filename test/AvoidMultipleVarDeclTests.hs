@@ -3,8 +3,8 @@ module AvoidMultipleVarDeclTests where
 import Control.Monad (zipWithM_)
 import Language.Java.Parser (compilationUnit, parser)
 import Language.Java.Rules.AvoidMultipleVarDecl (check)
-import Language.Java.Syntax (CompilationUnit)
-import RDF
+import Language.Java.Syntax
+import qualified RDF
 import System.Directory (getCurrentDirectory)
 import Test.HUnit
 import Tests
@@ -17,19 +17,19 @@ tests =
 avoidMultipleVarDecl :: CompilationUnit -> FilePath -> Assertion
 avoidMultipleVarDecl cUnit path = do
   let expectedRange1 =
-        Range
-          { start = Position {line = 6, column = Just 9},
-            end = Just (Position {line = 8, column = Just 9})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 6, RDF.column = Just 9},
+            RDF.end = Just (RDF.Position {RDF.line = 8, RDF.column = Just 9})
           }
   let expectedRange2 =
-        Range
-          { start = Position {line = 8, column = Just 9},
-            end = Just (Position {line = 11, column = Just 9})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 8, RDF.column = Just 9},
+            RDF.end = Just (RDF.Position {RDF.line = 11, RDF.column = Just 9})
           }
   let expectedRange3 =
-        Range
-          { start = Position {line = 11, column = Just 9},
-            end = Just (Position {line = 12, column = Just 5})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 11, RDF.column = Just 9},
+            RDF.end = Just (RDF.Position {RDF.line = 12, RDF.column = Just 5})
           }
   let expectedRanges =
         [ expectedRange1,
@@ -41,4 +41,4 @@ avoidMultipleVarDecl cUnit path = do
   zipWithM_
     (assertEqual "Check range")
     (map Just expectedRanges)
-    (map (range . location) diagnostic)
+    (map (RDF.range . RDF.location) diagnostic)
