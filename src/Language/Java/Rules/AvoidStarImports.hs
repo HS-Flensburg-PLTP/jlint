@@ -1,8 +1,8 @@
 module Language.Java.Rules.AvoidStarImports where
 
-import Control.Monad (MonadPlus (mzero))
+import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
-import Language.Java.Syntax (CompilationUnit, Ident (Ident), ImportDecl (ImportDecl), Name (Name))
+import Language.Java.Syntax
 import qualified RDF
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
