@@ -3,7 +3,7 @@ module ProhibitAnnotationsTests where
 import Control.Monad.Identity (zipWithM_)
 import Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations (check)
 import Language.Java.Syntax (CompilationUnit)
-import RDF
+import qualified RDF
 import Test.HUnit
 import qualified Tests
 
@@ -20,4 +20,4 @@ prohibitAnnotations cUnit path = do
   zipWithM_
     (assertEqual "Check range")
     (map Just expectedRanges)
-    (map (range . location) diagnostics)
+    (map (RDF.range . RDF.location) diagnostics)

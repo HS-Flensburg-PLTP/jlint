@@ -3,15 +3,15 @@ module Language.Java.Rules.ProhibitAnnotations where
 import Control.Monad (MonadPlus (..))
 import Data.List (find)
 import Language.Java.AST (extractAnnotations)
-import Language.Java.Syntax (Annotation (..), CompilationUnit, Ident (Ident), Name (..))
-import RDF (Diagnostic, simpleDiagnostic)
+import Language.Java.Syntax (Annotation (..), CompilationUnit, Ident (Ident), Name (..), dummySourceSpan)
+import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [Diagnostic]
+check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   annotation <- extractAnnotations cUnit
   checkAnnotation annotation path
 
-checkAnnotation :: Annotation -> FilePath -> [Diagnostic]
+checkAnnotation :: Annotation -> FilePath -> [RDF.Diagnostic]
 checkAnnotation annotation path =
   let name = case annotation of
         NormalAnnotation (Name idents) _ -> concatMap (\(Ident str) -> str) idents
@@ -20,5 +20,5 @@ checkAnnotation annotation path =
 
       whitelist = ["FooBar"]
    in case Data.List.find (== name) whitelist of
-        Nothing -> return (simpleDiagnostic ("Prohibited Annotation found: " ++ name) path)
+        Nothing -> return (RDF.rangeDiagnostic "ProhibitAnnotations" ("Prohibited Annotation found: " ++ name) dummySourceSpan path)
         Just _ -> mzero
