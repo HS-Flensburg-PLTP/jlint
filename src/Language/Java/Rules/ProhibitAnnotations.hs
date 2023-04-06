@@ -1,14 +1,14 @@
 module Language.Java.Rules.ProhibitAnnotations where
 
 import Control.Monad (MonadPlus (..))
+import Data.Generics.Uniplate.Data (universeBi)
 import Data.List (find)
-import Language.Java.AST (extractAnnotations)
 import Language.Java.Syntax (Annotation (..), CompilationUnit, Ident (Ident), Name (..), dummySourceSpan)
 import qualified RDF
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  annotation <- extractAnnotations cUnit
+  annotation <- universeBi cUnit
   checkAnnotation annotation path
 
 checkAnnotation :: Annotation -> FilePath -> [RDF.Diagnostic]
