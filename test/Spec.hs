@@ -9,6 +9,7 @@ import qualified NoNullPointerExceptionsForControlTests
 import NonFinalMethodAttributes.Tests (testAllNonFinalMethodAttributes)
 import NonPrivateAttributes.Tests (testAllNonPrivateAttributes)
 import qualified PreferExpressionsTests
+import qualified ProhibitAnnotationsTests
 import qualified ReduceScopeTests
 import SameExecutionsInIf.Tests
 import SimplifyBooleanReturn.Tests
@@ -39,5 +40,6 @@ tests =
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
       "UseAssignOp" ~: UseAssignOpTests.tests,
-      "UseElse" ~: UseElseTests.tests
+      "UseElse" ~: UseElseTests.tests,
+      "ProhibitAnnotations" ~: ProhibitAnnotationsTests.tests
     ]

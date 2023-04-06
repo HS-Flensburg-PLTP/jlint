@@ -14,7 +14,20 @@ tests =
 
 prohibitAnnotations :: CompilationUnit -> FilePath -> Assertion
 prohibitAnnotations cUnit path = do
-  let expectedRanges = []
+  let expectedRanges =
+        [ RDF.Range
+            { RDF.start = RDF.Position {RDF.line = 1, RDF.column = Just 1},
+              RDF.end = Just (RDF.Position {RDF.line = 1, RDF.column = Just 1})
+            },
+          RDF.Range
+            { RDF.start = RDF.Position {RDF.line = 1, RDF.column = Just 1},
+              RDF.end = Just (RDF.Position {RDF.line = 1, RDF.column = Just 1})
+            },
+          RDF.Range
+            { RDF.start = RDF.Position {RDF.line = 1, RDF.column = Just 1},
+              RDF.end = Just (RDF.Position {RDF.line = 1, RDF.column = Just 1})
+            }
+        ]
   let diagnostics = ProhibitAnnotations.check cUnit path
   assertEqual "Check Number of messages" (length expectedRanges) (length diagnostics)
   zipWithM_
