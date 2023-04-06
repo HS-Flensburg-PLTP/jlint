@@ -6,6 +6,7 @@ import NamingConventions.Tests
 import NeedBraces.Tests
 import NoLoopBreak.Tests (testAllNoLoopBreaks)
 import qualified NoNullPointerExceptionsForControlTests
+import qualified NoStarImportsTests
 import NonFinalMethodAttributes.Tests (testAllNonFinalMethodAttributes)
 import NonPrivateAttributes.Tests (testAllNonPrivateAttributes)
 import qualified PreferExpressionsTests
@@ -36,6 +37,7 @@ tests =
     [ "AvoidNegations" ~: AvoidNegationsTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
+      "NoStarImports" ~: NoStarImportsTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
       "UseAssignOp" ~: UseAssignOpTests.tests,
