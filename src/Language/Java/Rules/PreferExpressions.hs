@@ -83,8 +83,8 @@ check cUnit path = do
     checkBlocks _ = mzero
 
 filterVarUpdate :: Exp -> Maybe Ident
-filterVarUpdate (PostIncrement (ExpName (Name [ident]))) = Just ident
-filterVarUpdate (PostDecrement (ExpName (Name [ident]))) = Just ident
+filterVarUpdate (PostIncrement _ (ExpName (Name [ident]))) = Just ident
+filterVarUpdate (PostDecrement _ (ExpName (Name [ident]))) = Just ident
 filterVarUpdate (PreIncrement _ (ExpName (Name [ident]))) = Just ident
 filterVarUpdate (PreDecrement _ (ExpName (Name [ident]))) = Just ident
 filterVarUpdate (Assign _ (NameLhs (Name [ident])) _ _) = Just ident
