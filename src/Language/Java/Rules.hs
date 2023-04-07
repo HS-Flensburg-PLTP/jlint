@@ -13,7 +13,14 @@ import qualified RDF
 
 checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checks =
-  [ ModifiedControlVariable.check
+  [ AvoidNegations.check,
+    InitializeVariables.check,
+    ModifiedControlVariable.check,
+    NoNullPointerExceptionsForControl.check,
+    PreferExpressions.check,
+    ReduceScope.check,
+    UseAssignOp.check,
+    UseElse.check
   ]
 
 checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
