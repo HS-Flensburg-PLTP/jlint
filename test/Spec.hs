@@ -2,6 +2,7 @@ import qualified AvoidNegationsTests
 import DefaultComesLast.Tests
 import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
 import qualified InitializeVariablesTests
+import qualified ModifiedControlVariableTests
 import NamingConventions.Tests
 import NeedBraces.Tests
 import NoLoopBreak.Tests (testAllNoLoopBreaks)
@@ -39,5 +40,6 @@ tests =
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
       "UseAssignOp" ~: UseAssignOpTests.tests,
-      "UseElse" ~: UseElseTests.tests
+      "UseElse" ~: UseElseTests.tests,
+      "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests
     ]

@@ -107,6 +107,7 @@ test-suite jlint-test
       DefaultComesLast.Tests
       EmptyLoopBody.Tests
       InitializeVariablesTests
+      ModifiedControlVariableTests
       NamingConventions.Tests
       NeedBraces.Tests
       NoLoopBreak.Tests
