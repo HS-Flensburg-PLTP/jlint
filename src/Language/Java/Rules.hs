@@ -1,9 +1,9 @@
 module Language.Java.Rules where
 
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
+import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
-import qualified Language.Java.Rules.NoStarImports as NoStarImports
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
@@ -14,9 +14,9 @@ import qualified RDF
 checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checks =
   [ AvoidNegations.check,
+    AvoidStarImport.check,
     InitializeVariables.check,
     NoNullPointerExceptionsForControl.check,
-    NoStarImports.check,
     PreferExpressions.check,
     ReduceScope.check,
     UseAssignOp.check,

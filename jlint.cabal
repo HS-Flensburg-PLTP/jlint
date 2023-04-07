@@ -30,6 +30,7 @@ library
       Language.Java.AST
       Language.Java.Rules
       Language.Java.Rules.AvoidNegations
+      Language.Java.Rules.AvoidStarImport
       Language.Java.Rules.CheckNonFinalMethodAttributes
       Language.Java.Rules.CheckNonPrivateAttributes
       Language.Java.Rules.DefaultComesLast
@@ -39,7 +40,6 @@ library
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNullPointerExceptionsForControl
-      Language.Java.Rules.NoStarImports
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.SameExecutionsInIf
@@ -103,6 +103,7 @@ test-suite jlint-test
   main-is: Spec.hs
   other-modules:
       AvoidNegationsTests
+      AvoidStarImportTests
       CheckResults
       DefaultComesLast.Tests
       EmptyLoopBody.Tests
@@ -113,7 +114,6 @@ test-suite jlint-test
       NonFinalMethodAttributes.Tests
       NonPrivateAttributes.Tests
       NoNullPointerExceptionsForControlTests
-      NoStarImportsTests
       PreferExpressionsTests
       ReduceScopeTests
       RessourceManager

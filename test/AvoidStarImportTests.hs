@@ -1,7 +1,7 @@
-module NoStarImportsTests where
+module AvoidStarImportTests where
 
 import Control.Monad
-import Language.Java.Rules.NoStarImports (check)
+import Language.Java.Rules.AvoidStarImport (check)
 import Language.Java.Syntax (CompilationUnit)
 import qualified RDF
 import Test.HUnit
@@ -9,7 +9,7 @@ import Tests
 
 tests :: Test
 tests =
-  let file = "/test/java/NoStarImports.java"
+  let file = "/test/java/AvoidStarImport.java"
    in test [file ~: Tests.withParsedJavaFile file noStarImports]
 
 noStarImports :: CompilationUnit -> FilePath -> Assertion

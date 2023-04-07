@@ -1,4 +1,5 @@
 import qualified AvoidNegationsTests
+import qualified AvoidStarImportTests
 import DefaultComesLast.Tests
 import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
 import qualified InitializeVariablesTests
@@ -6,7 +7,6 @@ import NamingConventions.Tests
 import NeedBraces.Tests
 import NoLoopBreak.Tests (testAllNoLoopBreaks)
 import qualified NoNullPointerExceptionsForControlTests
-import qualified NoStarImportsTests
 import NonFinalMethodAttributes.Tests (testAllNonFinalMethodAttributes)
 import NonPrivateAttributes.Tests (testAllNonPrivateAttributes)
 import qualified PreferExpressionsTests
@@ -35,9 +35,9 @@ tests :: Test
 tests =
   test
     [ "AvoidNegations" ~: AvoidNegationsTests.tests,
+      "AvoidStarImport" ~: AvoidStarImportTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
-      "NoStarImports" ~: NoStarImportsTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
       "UseAssignOp" ~: UseAssignOpTests.tests,
