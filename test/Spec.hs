@@ -1,4 +1,5 @@
 import qualified AvoidNegationsTests
+import qualified DeclarationOrderTests
 import DefaultComesLast.Tests
 import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
 import qualified InitializeVariablesTests
@@ -39,5 +40,6 @@ tests =
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
       "UseAssignOp" ~: UseAssignOpTests.tests,
-      "UseElse" ~: UseElseTests.tests
+      "UseElse" ~: UseElseTests.tests,
+      "DeclarationOrder" ~: DeclarationOrderTests.tests
     ]
