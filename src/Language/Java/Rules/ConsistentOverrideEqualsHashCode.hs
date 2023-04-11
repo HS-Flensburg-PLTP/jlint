@@ -2,7 +2,7 @@ module Language.Java.Rules.ConsistentOverrideEqualsHashCode where
 
 import Control.Monad (MonadPlus (mzero))
 import Data.Generics.Uniplate.Data (universeBi)
-import Data.Maybe
+import Data.Maybe (maybeToList)
 import Language.Java.Syntax
 import qualified RDF
 
@@ -13,40 +13,23 @@ check cUnit path = do
   checkConsistentUse (extractEqualsHashCode classDecl)
   where
     checkConsistentUse [] = mzero
-    checkConsistentUse [EqualsMethod span] = return (RDF.rangeDiagnostic "Language.Java.Rules.ConsistentOverrideEqualsHashCode" "by overriding 'equals' the class must also override 'hashcode'" span path)
-    checkConsistentUse [HashCodeMethod span] = return (RDF.rangeDiagnostic "Language.Java.Rules.ConsistentOverrideEqualsHashCode" "by overriding 'hashCode' the class must also override 'equals'" span path)
+    checkConsistentUse [(msg, span)] = return (RDF.rangeDiagnostic "Language.Java.Rules.ConsistentOverrideEqualsHashCode" msg span path)
     checkConsistentUse (_ : _) = mzero
 
-data EqualsOrHashCode
-  = HashCodeMethod SourceSpan
-  | EqualsMethod SourceSpan
-
 -- extracts all methods from a class that override Object equals and hashCode
-extractEqualsHashCode :: ClassDecl -> [EqualsOrHashCode]
+extractEqualsHashCode :: ClassDecl -> [(String, SourceSpan)]
 extractEqualsHashCode classDecl = do
   membDecl <- universeBi classDecl
   extractMatches membDecl
   where
-    extractMatches membDecl
-      | isObjectHashCodeMethod membDecl = return (HashCodeMethod (fromJust (methodDeclSpan membDecl)))
-      | isObjectHashEqualsMethod membDecl = return (EqualsMethod (fromJust (methodDeclSpan membDecl)))
-      | otherwise = mzero
+    extractMatches membDecl = maybeToList (filterEqualsAndHashCode membDecl)
 
--- extracts SourceSpan from a MethodDecl
-methodDeclSpan :: MemberDecl -> Maybe SourceSpan
-methodDeclSpan (MethodDecl span _ _ _ _ _ _ _ _) = Just span
-methodDeclSpan _ = Nothing
-
--- checks if method matches profile of Object hashCode
-isObjectHashCodeMethod :: MemberDecl -> Bool
-isObjectHashCodeMethod (MethodDecl _ [Public] [] (Just (PrimType IntT)) (Ident "hashCode") [] [] _ _) = True
-isObjectHashCodeMethod _ = False
-
--- checks if method matches profile of Object equals
-isObjectHashEqualsMethod :: MemberDecl -> Bool
-isObjectHashEqualsMethod (MethodDecl _ [Public] [] (Just (PrimType BooleanT)) (Ident "equals") [FormalParam [] (RefType (ClassRefType classType)) False _] [] _ _) =
-  isJavaLangObject classType
-isObjectHashEqualsMethod _ = False
+-- checks if a MembderDecl overrides equals or hashcode
+filterEqualsAndHashCode :: MemberDecl -> Maybe (String, SourceSpan)
+filterEqualsAndHashCode (MethodDecl span [Public] [] (Just (PrimType IntT)) (Ident "hashCode") [] [] _ _) = Just ("by overriding 'hashCode' the class must also override 'equals'", span)
+filterEqualsAndHashCode (MethodDecl span [Public] [] (Just (PrimType BooleanT)) (Ident "equals") [FormalParam [] (RefType (ClassRefType classType)) False _] [] _ _) =
+  if isJavaLangObject classType then Just ("by overriding 'equals' the class must also override 'hashcode'", span) else Nothing
+filterEqualsAndHashCode _ = Nothing
 
 -- checks if a classType is of Type Object or java.lang.Object
 isJavaLangObject :: ClassType -> Bool
