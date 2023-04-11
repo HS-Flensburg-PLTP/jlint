@@ -1,3 +1,4 @@
+import qualified AvoidMultipleVarDeclTests
 import qualified AvoidNegationsTests
 import DefaultComesLast.Tests
 import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
@@ -34,7 +35,8 @@ main = do
 tests :: Test
 tests =
   test
-    [ "AvoidNegations" ~: AvoidNegationsTests.tests,
+    [ "AvoidMultipleVarDecl" ~: AvoidMultipleVarDeclTests.tests,
+      "AvoidNegations" ~: AvoidNegationsTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,

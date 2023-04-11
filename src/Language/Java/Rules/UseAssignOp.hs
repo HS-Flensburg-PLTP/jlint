@@ -17,7 +17,7 @@ check cUnit path = do
   stmt <- universeBi cUnit
   checkStmt stmt
   where
-    checkStmt (ExpStmt range (Assign (NameLhs name1) EqualA (BinOp (ExpName name2) op _))) =
+    checkStmt (ExpStmt range (Assign _ (NameLhs name1) EqualA (BinOp (ExpName name2) op _))) =
       if name1 == name2
         then case equalVariant op of
           Just assignOp ->
