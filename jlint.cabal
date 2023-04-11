@@ -29,6 +29,7 @@ library
       Control.Monad.Extra
       Language.Java.AST
       Language.Java.Rules
+      Language.Java.Rules.AvoidMultipleVarDecl
       Language.Java.Rules.AvoidNegations
       Language.Java.Rules.CheckNonFinalMethodAttributes
       Language.Java.Rules.CheckNonPrivateAttributes
@@ -102,6 +103,7 @@ test-suite jlint-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      AvoidMultipleVarDeclTests
       AvoidNegationsTests
       CheckResults
       DefaultComesLast.Tests
