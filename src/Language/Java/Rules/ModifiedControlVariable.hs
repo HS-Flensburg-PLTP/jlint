@@ -1,7 +1,7 @@
 module Language.Java.Rules.ModifiedControlVariable where
 
 import Control.Monad (MonadPlus (..))
-import Data.Generics.Uniplate.Data
+import Data.Generics.Uniplate.Data (universeBi)
 import qualified Data.List
 import Language.Java.Pretty
 import Language.Java.Syntax
