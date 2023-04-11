@@ -46,4 +46,19 @@ public class ModifiedControlVariable {
         }
     }
 
+    public void LoopWithDouble() {
+        for (double i = 0; i < 20; i++) {
+            if (i == 3) {
+                i++;
+            }
+        }
+    }
+
+    // will be skipped
+    public void OnlyPrimtiveTypes() {
+        for (int a[] = { 0 }; a[0] < 10; a[0]++) {
+            a[0]++;
+        }
+    }
+
 }

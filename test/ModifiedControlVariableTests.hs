@@ -58,6 +58,10 @@ modifiedControlVariable cUnit path = do
           RDF.Range
             { RDF.start = RDF.Position {RDF.line = 1, RDF.column = Just 1},
               RDF.end = Just (RDF.Position {RDF.line = 1, RDF.column = Just 1})
+            },
+          RDF.Range
+            { RDF.start = RDF.Position {RDF.line = 1, RDF.column = Just 1},
+              RDF.end = Just (RDF.Position {RDF.line = 1, RDF.column = Just 1})
             }
         ]
   let diagnostic = check cUnit path

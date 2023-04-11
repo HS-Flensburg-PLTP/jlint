@@ -2,7 +2,6 @@ module Language.Java.Rules.ModifiedControlVariable where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
-import qualified Data.List
 import Language.Java.Pretty
 import Language.Java.Syntax
 import Language.Java.Syntax.VarDecl (ident)
@@ -14,21 +13,22 @@ check cUnit path = do
   checkBasicFor stmt
   where
     checkBasicFor (BasicFor (Just (ForLocalVars _ _ forVarDecls)) _ _ forStmt) = do
-      varDeclIdent <- map ident forVarDecls
       expr <- universeBi forStmt
-      checkBasicForModifiedControlVariable varDeclIdent expr
+      checkBasicForModifiedControlVariable expr
       where
-        checkBasicForModifiedControlVariable varDeclIdent expr = case expr of
-          Assign (NameLhs (Name assignIdents)) _ _ -> checkVarDeclIdentInExp varDeclIdent assignIdents
-          PostIncrement (ExpName (Name name)) -> checkVarDeclIdentInExp varDeclIdent name
-          PreIncrement (ExpName (Name name)) -> checkVarDeclIdentInExp varDeclIdent name
-          PostDecrement (ExpName (Name name)) -> checkVarDeclIdentInExp varDeclIdent name
-          PreDecrement (ExpName (Name name)) -> checkVarDeclIdentInExp varDeclIdent name
+        checkBasicForModifiedControlVariable expr = case expr of
+          Assign (NameLhs (Name name)) _ _ -> checkVarDeclIdentInExp name
+          PostIncrement (ExpName (Name name)) -> checkVarDeclIdentInExp name
+          PreIncrement (ExpName (Name name)) -> checkVarDeclIdentInExp name
+          PostDecrement (ExpName (Name name)) -> checkVarDeclIdentInExp name
+          PreDecrement (ExpName (Name name)) -> checkVarDeclIdentInExp name
           _ -> mzero
 
-        checkVarDeclIdentInExp :: Ident -> [Ident] -> [RDF.Diagnostic]
-        checkVarDeclIdentInExp varDeclIdent expIdents =
-          case Data.List.find (== varDeclIdent) expIdents of
-            Nothing -> mzero
-            Just _ -> return (RDF.rangeDiagnostic "ModifiedControlVariable" ("Laufvariable " ++ prettyPrint varDeclIdent ++ " darf nicht innerhalb der Schleife modifiziert werden!") dummySourceSpan path)
+        checkVarDeclIdentInExp :: [Ident] -> [RDF.Diagnostic]
+        checkVarDeclIdentInExp expIdents =
+          map
+            ( \varDecl ->
+                RDF.rangeDiagnostic "Language.Java.Rules.ModifiedControlVariable" ("Laufvariable " ++ prettyPrint (ident varDecl) ++ " darf nicht innerhalb der Schleife modifiziert werden!") dummySourceSpan path
+            )
+            (filter (\varDecl -> ident varDecl `elem` expIdents) forVarDecls)
     checkBasicFor _ = mzero
