@@ -1,17 +1,11 @@
 class UsePostIncrementDecrement {
     static int PreIncrementOperator(int i) {
-        return ++i;
-    }
-
-    static int PostIncrementOperator(int i) {
-        return i++;
-    }
-
-    static int PreDecrementOperator(int i) {
-        return --i;
-    }
-
-    static int PostDecrementOperator(int i) {
-        return i--;
+        int q = ++i;
+        int j = q++;
+        ++j;
+        for(int k = 0; k < 2; ++k) {
+            j++;
+        }
+        return q;
     }
 }

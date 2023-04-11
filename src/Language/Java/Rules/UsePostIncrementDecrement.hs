@@ -11,20 +11,20 @@ check cUnit path = do
   expr <- universeBi cUnit
   checkExpr expr
   where
-    checkExpr (PreIncrement _) =
+    checkExpr (PreIncrement span _) =
       return
         ( RDF.rangeDiagnostic
             "Language.Java.Rules.UseIncrementDecrement"
             ("Anstelle des PreIncrement Operators " ++ Markdown.code "++x" ++ " sollte hier der PostIncrement-Operator " ++ Markdown.code "x++" ++ " verwendet werden.")
-            dummySourceSpan
+            span
             path
         )
-    checkExpr (PreDecrement _) =
+    checkExpr (PreDecrement span _) =
       return
         ( RDF.rangeDiagnostic
             "Language.Java.Rules.UseIncrementDecrement"
             ("Anstelle des PreDecrement Operators " ++ Markdown.code "--x" ++ " sollte hier der PostDecrement-Operator " ++ Markdown.code "x--" ++ " verwendet werden.")
-            dummySourceSpan
+            span
             path
         )
     checkExpr _ = mzero
