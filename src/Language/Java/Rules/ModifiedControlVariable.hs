@@ -16,19 +16,19 @@ check cUnit path = do
       expr <- universeBi forStmt
       checkBasicForModifiedControlVariable expr
       where
-        checkBasicForModifiedControlVariable (Assign (NameLhs (Name name)) _ _) = checkVarDeclIdentInExp name
-        checkBasicForModifiedControlVariable (PostIncrement (ExpName (Name name))) = checkVarDeclIdentInExp name
-        checkBasicForModifiedControlVariable (PreIncrement (ExpName (Name name))) = checkVarDeclIdentInExp name
-        checkBasicForModifiedControlVariable (PostDecrement (ExpName (Name name))) = checkVarDeclIdentInExp name
-        checkBasicForModifiedControlVariable (PreDecrement (ExpName (Name name))) = checkVarDeclIdentInExp name
+        checkBasicForModifiedControlVariable (Assign sourceSpan (NameLhs (Name name)) _ _) = checkVarDeclIdentInExp name sourceSpan
+        checkBasicForModifiedControlVariable (PostIncrement sourceSpan (ExpName (Name name))) = checkVarDeclIdentInExp name sourceSpan
+        checkBasicForModifiedControlVariable (PreIncrement sourceSpan (ExpName (Name name))) = checkVarDeclIdentInExp name sourceSpan
+        checkBasicForModifiedControlVariable (PostDecrement sourceSpan (ExpName (Name name))) = checkVarDeclIdentInExp name sourceSpan
+        checkBasicForModifiedControlVariable (PreDecrement sourceSpan (ExpName (Name name))) = checkVarDeclIdentInExp name sourceSpan
         checkBasicForModifiedControlVariable _ = mzero
 
-        checkVarDeclIdentInExp :: [Ident] -> [RDF.Diagnostic]
-        checkVarDeclIdentInExp expIdents =
+        checkVarDeclIdentInExp :: [Ident] -> SourceSpan -> [RDF.Diagnostic]
+        checkVarDeclIdentInExp expIdents sourceSpan =
           [ RDF.rangeDiagnostic
               "Language.Java.Rules.ModifiedControlVariable"
               ("Laufvariable " ++ prettyPrint (ident varDecl) ++ " darf nicht innerhalb der Schleife modifiziert werden!")
-              dummySourceSpan
+              sourceSpan
               path
             | varDecl <- filter (\varDecl -> ident varDecl `elem` expIdents) forVarDecls
           ]
