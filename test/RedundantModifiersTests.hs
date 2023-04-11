@@ -2,8 +2,8 @@ module RedundantModifiersTests where
 
 import Control.Monad (zipWithM_)
 import Language.Java.Rules.RedundantModifiers (check)
-import Language.Java.Syntax (CompilationUnit)
-import RDF
+import Language.Java.Syntax
+import qualified RDF
 import Test.HUnit
 import qualified Tests
 
@@ -15,24 +15,24 @@ tests =
 redundantModifiers :: CompilationUnit -> FilePath -> Assertion
 redundantModifiers cUnit path = do
   let expectedRange1 =
-        Range
-          { start = Position {line = 3, column = Just 5},
-            end = Just (Position {line = 3, column = Just 12})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 3, RDF.column = Just 5},
+            RDF.end = Just (RDF.Position {RDF.line = 3, RDF.column = Just 12})
           }
   let expectedRange2 =
-        Range
-          { start = Position {line = 4, column = Just 5},
-            end = Just (Position {line = 4, column = Just 14})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 4, RDF.column = Just 5},
+            RDF.end = Just (RDF.Position {RDF.line = 4, RDF.column = Just 14})
           }
   let expectedRange3 =
-        Range
-          { start = Position {line = 5, column = Just 5},
-            end = Just (Position {line = 5, column = Just 12})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 5, RDF.column = Just 5},
+            RDF.end = Just (RDF.Position {RDF.line = 5, RDF.column = Just 12})
           }
   let expectedRange4 =
-        Range
-          { start = Position {line = 5, column = Just 12},
-            end = Just (Position {line = 5, column = Just 21})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 5, RDF.column = Just 12},
+            RDF.end = Just (RDF.Position {RDF.line = 5, RDF.column = Just 21})
           }
   let expectedRanges =
         [ expectedRange1,
@@ -45,4 +45,4 @@ redundantModifiers cUnit path = do
   zipWithM_
     (assertEqual "Check range")
     (map Just expectedRanges)
-    (map (range . location) diagnostic)
+    (map (RDF.range . RDF.location) diagnostic)
