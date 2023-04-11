@@ -26,9 +26,11 @@ check cUnit path = do
 
         checkVarDeclIdentInExp :: [Ident] -> [RDF.Diagnostic]
         checkVarDeclIdentInExp expIdents =
-          map
-            ( \varDecl ->
-                RDF.rangeDiagnostic "Language.Java.Rules.ModifiedControlVariable" ("Laufvariable " ++ prettyPrint (ident varDecl) ++ " darf nicht innerhalb der Schleife modifiziert werden!") dummySourceSpan path
-            )
-            (filter (\varDecl -> ident varDecl `elem` expIdents) forVarDecls)
+          [ RDF.rangeDiagnostic
+              "Language.Java.Rules.ModifiedControlVariable"
+              ("Laufvariable " ++ prettyPrint (ident varDecl) ++ " darf nicht innerhalb der Schleife modifiziert werden!")
+              dummySourceSpan
+              path
+            | varDecl <- filter (\varDecl -> ident varDecl `elem` expIdents) forVarDecls
+          ]
     checkBasicFor _ = mzero
