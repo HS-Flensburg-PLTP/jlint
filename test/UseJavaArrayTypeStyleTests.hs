@@ -2,8 +2,8 @@ module UseJavaArrayTypeStyleTests where
 
 import Control.Monad (zipWithM_)
 import Language.Java.Rules.UseJavaArrayTypeStyle as UseJavaArrayTypeStyle (check)
-import Language.Java.Syntax (CompilationUnit)
-import RDF
+import Language.Java.Syntax
+import qualified RDF
 import Test.HUnit
 import qualified Tests
 
@@ -15,29 +15,29 @@ tests =
 useJavaArrayTypeStyle :: CompilationUnit -> FilePath -> Assertion
 useJavaArrayTypeStyle cUnit path = do
   let expectedRange1 =
-        Range
-          { start = Position {line = 3, column = Just 12},
-            end = Just (Position {line = 3, column = Just 20})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 3, RDF.column = Just 12},
+            RDF.end = Just (RDF.Position {RDF.line = 3, RDF.column = Just 20})
           }
   let expectedRange2 =
-        Range
-          { start = Position {line = 6, column = Just 13},
-            end = Just (Position {line = 6, column = Just 22})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 6, RDF.column = Just 13},
+            RDF.end = Just (RDF.Position {RDF.line = 6, RDF.column = Just 22})
           }
   let expectedRange3 =
-        Range
-          { start = Position {line = 10, column = Just 23},
-            end = Just (Position {line = 10, column = Just 30})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 10, RDF.column = Just 23},
+            RDF.end = Just (RDF.Position {RDF.line = 10, RDF.column = Just 30})
           }
   let expectedRange4 =
-        Range
-          { start = Position {line = 11, column = Just 13},
-            end = Just (Position {line = 11, column = Just 24})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 11, RDF.column = Just 13},
+            RDF.end = Just (RDF.Position {RDF.line = 11, RDF.column = Just 24})
           }
   let expectedRange5 =
-        Range
-          { start = Position {line = 14, column = Just 39},
-            end = Just (Position {line = 14, column = Just 45})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 14, RDF.column = Just 39},
+            RDF.end = Just (RDF.Position {RDF.line = 14, RDF.column = Just 45})
           }
   let expectedRanges =
         [ expectedRange1,
@@ -51,4 +51,4 @@ useJavaArrayTypeStyle cUnit path = do
   zipWithM_
     (assertEqual "Check range")
     (map Just expectedRanges)
-    (map (range . location) diagnostic)
+    (map (RDF.range . RDF.location) diagnostic)
