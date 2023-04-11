@@ -1,6 +1,6 @@
-import One.Two.Three.*;
-import Four.Five.Six.*;
-import Seven.Eight.Nine;
+import one.two.three.*;
+import four.five.six.*;
+import seven.eight.nine;
 
 public class NoStarImports {
 
