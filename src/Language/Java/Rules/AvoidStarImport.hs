@@ -16,7 +16,7 @@ check cUnit path = do
         then
           return
             ( RDF.rangeDiagnostic
-                "AvoidStarImport"
+                "Language.Java.Rules.AvoidStarImport"
                 ( "Keine *-Importe erlaubt: "
                     ++ prettyPrint name
                 )
