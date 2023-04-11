@@ -10,13 +10,8 @@ import qualified RDF
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   stmt <- universeBi cUnit
-  basicFor <- extractBasicFor stmt
-  checkBasicFor basicFor
+  checkBasicFor stmt
   where
-    extractBasicFor lol = case lol of
-      BasicFor {} -> return lol
-      _ -> mzero
-
     checkBasicFor (BasicFor (Just (ForLocalVars _ _ forVarDecls)) _ _ forStmt) = do
       varDeclIdent <- map (\(VarDecl (VarId varDeclIdentStr) _) -> varDeclIdentStr) forVarDecls
       expr <- universeBi forStmt
