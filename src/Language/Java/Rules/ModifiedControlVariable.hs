@@ -16,13 +16,12 @@ check cUnit path = do
       expr <- universeBi forStmt
       checkBasicForModifiedControlVariable expr
       where
-        checkBasicForModifiedControlVariable expr = case expr of
-          Assign (NameLhs (Name name)) _ _ -> checkVarDeclIdentInExp name
-          PostIncrement (ExpName (Name name)) -> checkVarDeclIdentInExp name
-          PreIncrement (ExpName (Name name)) -> checkVarDeclIdentInExp name
-          PostDecrement (ExpName (Name name)) -> checkVarDeclIdentInExp name
-          PreDecrement (ExpName (Name name)) -> checkVarDeclIdentInExp name
-          _ -> mzero
+        checkBasicForModifiedControlVariable (Assign (NameLhs (Name name)) _ _) = checkVarDeclIdentInExp name
+        checkBasicForModifiedControlVariable (PostIncrement (ExpName (Name name))) = checkVarDeclIdentInExp name
+        checkBasicForModifiedControlVariable (PreIncrement (ExpName (Name name))) = checkVarDeclIdentInExp name
+        checkBasicForModifiedControlVariable (PostDecrement (ExpName (Name name))) = checkVarDeclIdentInExp name
+        checkBasicForModifiedControlVariable (PreDecrement (ExpName (Name name))) = checkVarDeclIdentInExp name
+        checkBasicForModifiedControlVariable _ = mzero
 
         checkVarDeclIdentInExp :: [Ident] -> [RDF.Diagnostic]
         checkVarDeclIdentInExp expIdents =
