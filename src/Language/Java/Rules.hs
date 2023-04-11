@@ -1,5 +1,6 @@
 module Language.Java.Rules where
 
+import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
 import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
@@ -13,7 +14,8 @@ import qualified RDF
 
 checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checks =
-  [ AvoidNegations.check,
+  [ AvoidMultipleVarDecl.check,
+    AvoidNegations.check,
     AvoidStarImport.check,
     InitializeVariables.check,
     NoNullPointerExceptionsForControl.check,

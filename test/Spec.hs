@@ -1,3 +1,4 @@
+import qualified AvoidMultipleVarDeclTests
 import qualified AvoidNegationsTests
 import qualified AvoidStarImportTests
 import DefaultComesLast.Tests
@@ -34,7 +35,8 @@ main = do
 tests :: Test
 tests =
   test
-    [ "AvoidNegations" ~: AvoidNegationsTests.tests,
+    [ "AvoidMultipleVarDecl" ~: AvoidMultipleVarDeclTests.tests,
+      "AvoidNegations" ~: AvoidNegationsTests.tests,
       "AvoidStarImport" ~: AvoidStarImportTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
