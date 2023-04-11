@@ -11,7 +11,7 @@ check cUnit path = do
   importDecl <- universeBi cUnit
   checkImport importDecl
   where
-    checkImport (ImportDecl _ name allNamesImported) =
+    checkImport (ImportDecl sourceSpan _ name allNamesImported) =
       if allNamesImported
         then
           return
@@ -20,7 +20,7 @@ check cUnit path = do
                 ( "Keine *-Importe erlaubt: "
                     ++ prettyPrint name
                 )
-                dummySourceSpan
+                sourceSpan
                 path
             )
         else mzero
