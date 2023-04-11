@@ -2,6 +2,7 @@ module Language.Java.Rules.ConsistentOverrideEqualsHashCode where
 
 import Control.Monad (MonadPlus (mzero))
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.Maybe
 import Language.Java.Syntax
 import qualified RDF
 
@@ -12,28 +13,29 @@ check cUnit path = do
   checkConsistentUse (extractEqualsHashCode classDecl)
   where
     checkConsistentUse [] = mzero
-    checkConsistentUse [MethodDecl span _ _ _ (Ident "equals") _ _ _ _] = return (RDF.rangeDiagnostic "Language.Java.Rules.ConsistentOverrideEqualsHashCode" "by overriding 'equals' the class must also override 'hashcode'" span path)
-    checkConsistentUse [MethodDecl span _ _ _ (Ident "hashCode") _ _ _ _] = return (RDF.rangeDiagnostic "Language.Java.Rules.ConsistentOverrideEqualsHashCode" "by overriding 'hashCode' the class must also override 'equals'" span path)
-    checkConsistentUse [memberDecl] =
-      return
-        ( RDF.rangeDiagnostic
-            "Language.Java.Rules.ConsistentOverrideEqualsHashCode"
-            (show memberDecl)
-            dummySourceSpan
-            path
-        )
+    checkConsistentUse [EqualsMethod span] = return (RDF.rangeDiagnostic "Language.Java.Rules.ConsistentOverrideEqualsHashCode" "by overriding 'equals' the class must also override 'hashcode'" span path)
+    checkConsistentUse [HashCodeMethod span] = return (RDF.rangeDiagnostic "Language.Java.Rules.ConsistentOverrideEqualsHashCode" "by overriding 'hashCode' the class must also override 'equals'" span path)
     checkConsistentUse (_ : _) = mzero
 
+data EqualsOrHashCode
+  = HashCodeMethod SourceSpan
+  | EqualsMethod SourceSpan
+
 -- extracts all methods from a class that override Object equals and hashCode
-extractEqualsHashCode :: ClassDecl -> [MemberDecl]
+extractEqualsHashCode :: ClassDecl -> [EqualsOrHashCode]
 extractEqualsHashCode classDecl = do
   membDecl <- universeBi classDecl
   extractMatches membDecl
   where
-    extractMatches membDecl =
-      if isObjectHashCodeMethod membDecl || isObjectHashEqualsMethod membDecl
-        then return membDecl
-        else mzero
+    extractMatches membDecl
+      | isObjectHashCodeMethod membDecl = return (HashCodeMethod (fromJust (methodDeclSpan membDecl)))
+      | isObjectHashEqualsMethod membDecl = return (EqualsMethod (fromJust (methodDeclSpan membDecl)))
+      | otherwise = mzero
+
+-- extracts SourceSpan from a MethodDecl
+methodDeclSpan :: MemberDecl -> Maybe SourceSpan
+methodDeclSpan (MethodDecl span _ _ _ _ _ _ _ _) = Just span
+methodDeclSpan _ = Nothing
 
 -- checks if method matches profile of Object hashCode
 isObjectHashCodeMethod :: MemberDecl -> Bool
