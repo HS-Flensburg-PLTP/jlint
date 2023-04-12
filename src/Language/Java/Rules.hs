@@ -4,6 +4,7 @@ import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDec
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
+import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
@@ -20,6 +21,7 @@ checks =
     NoNullPointerExceptionsForControl.check,
     PreferExpressions.check,
     ReduceScope.check,
+    ParameterNumber.check,
     UseAssignOp.check,
     UseElse.check,
     UseJavaArrayTypeStyle.check
