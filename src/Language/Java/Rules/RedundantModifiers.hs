@@ -10,7 +10,8 @@ check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   InterfaceDecl _ InterfaceNormal _ _ _ _ _ body <- universeBi cUnit
   memberDecl <- universeBi body
-  concatMap (checkModifier path) (methodModifiers memberDecl)
+  mod <- methodModifiers memberDecl
+  checkModifier path mod
 
 methodModifiers :: MemberDecl -> [Modifier]
 methodModifiers (MethodDecl _ modifiers _ _ _ _ _ _ _) = modifiers
