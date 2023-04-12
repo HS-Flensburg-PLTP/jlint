@@ -33,6 +33,7 @@ library
       Language.Java.Rules.AvoidNegations
       Language.Java.Rules.CheckNonFinalMethodAttributes
       Language.Java.Rules.CheckNonPrivateAttributes
+      Language.Java.Rules.ConsistentOverrideEqualsHashCode
       Language.Java.Rules.DefaultComesLast
       Language.Java.Rules.EmptyLoopBody
       Language.Java.Rules.InitializeVariables
@@ -40,6 +41,7 @@ library
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNullPointerExceptionsForControl
+      Language.Java.Rules.ParameterNumber
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.RedundantModifiers
@@ -48,6 +50,8 @@ library
       Language.Java.Rules.UnusedLocalVariable
       Language.Java.Rules.UseAssignOp
       Language.Java.Rules.UseElse
+      Language.Java.Rules.UseJavaArrayTypeStyle
+      Language.Java.Rules.UsePostIncrementDecrement
       Language.Java.Syntax.BlockStmt
       Language.Java.Syntax.Exp
       Language.Java.Syntax.Ident
@@ -106,6 +110,7 @@ test-suite jlint-test
       AvoidMultipleVarDeclTests
       AvoidNegationsTests
       CheckResults
+      ConsistentOverrideEqualsHashCodeTests
       DefaultComesLast.Tests
       EmptyLoopBody.Tests
       InitializeVariablesTests
@@ -115,6 +120,7 @@ test-suite jlint-test
       NonFinalMethodAttributes.Tests
       NonPrivateAttributes.Tests
       NoNullPointerExceptionsForControlTests
+      ParameterNumberTests
       PreferExpressionsTests
       ReduceScopeTests
       RedundantModifiersTests
@@ -124,6 +130,8 @@ test-suite jlint-test
       Tests
       UseAssignOpTests
       UseElseTests
+      UseJavaArrayTypeStyleTests
+      UsePostIncrementDecrementTests
       Paths_jlint
   hs-source-dirs:
       test
