@@ -8,6 +8,7 @@ import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import Language.Java.Rules.UseElse as UseElse (check)
+import qualified Language.Java.Rules.UseJavaArrayTypeStyle as UseJavaArrayTypeStyle
 import Language.Java.Syntax (CompilationUnit)
 import qualified RDF
 
@@ -20,7 +21,8 @@ checks =
     PreferExpressions.check,
     ReduceScope.check,
     UseAssignOp.check,
-    UseElse.check
+    UseElse.check,
+    UseJavaArrayTypeStyle.check
   ]
 
 checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]

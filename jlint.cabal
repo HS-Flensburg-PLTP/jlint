@@ -47,6 +47,7 @@ library
       Language.Java.Rules.UnusedLocalVariable
       Language.Java.Rules.UseAssignOp
       Language.Java.Rules.UseElse
+      Language.Java.Rules.UseJavaArrayTypeStyle
       Language.Java.Syntax.BlockStmt
       Language.Java.Syntax.Exp
       Language.Java.Syntax.Ident
@@ -122,6 +123,7 @@ test-suite jlint-test
       Tests
       UseAssignOpTests
       UseElseTests
+      UseJavaArrayTypeStyleTests
       Paths_jlint
   hs-source-dirs:
       test
