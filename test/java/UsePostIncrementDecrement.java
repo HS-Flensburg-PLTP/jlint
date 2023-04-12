@@ -1,5 +1,5 @@
 class UsePostIncrementDecrement {
-    static int PreIncrementOperator(int i) {
+    static int preIncrementOperator(int i) {
         int q = ++i;
         int j = q++;
         ++j;

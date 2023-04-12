@@ -15,7 +15,7 @@ check cUnit path = do
       return
         ( RDF.rangeDiagnostic
             "Language.Java.Rules.UseIncrementDecrement"
-            ("Anstelle des PreIncrement Operators " ++ Markdown.code "++x" ++ " sollte hier der PostIncrement-Operator " ++ Markdown.code "x++" ++ " verwendet werden.")
+            ("Anstelle des PreIncrement-Operators " ++ Markdown.code "++x" ++ " sollte hier der PostIncrement-Operator " ++ Markdown.code "x++" ++ " verwendet werden.")
             span
             path
         )
@@ -23,7 +23,7 @@ check cUnit path = do
       return
         ( RDF.rangeDiagnostic
             "Language.Java.Rules.UseIncrementDecrement"
-            ("Anstelle des PreDecrement Operators " ++ Markdown.code "--x" ++ " sollte hier der PostDecrement-Operator " ++ Markdown.code "x--" ++ " verwendet werden.")
+            ("Anstelle des PreDecrement-Operators " ++ Markdown.code "--x" ++ " sollte hier der PostDecrement-Operator " ++ Markdown.code "x--" ++ " verwendet werden.")
             span
             path
         )
