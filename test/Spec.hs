@@ -13,6 +13,7 @@ import NonPrivateAttributes.Tests (testAllNonPrivateAttributes)
 import qualified ParameterNumberTests
 import qualified PreferExpressionsTests
 import qualified ReduceScopeTests
+import qualified RedundantModifiersTests
 import SameExecutionsInIf.Tests
 import SimplifyBooleanReturn.Tests
 import Test.HUnit (Test, runTestTT, test, (~:))
@@ -44,6 +45,7 @@ tests =
       "ParameterNumber" ~: ParameterNumberTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
+      "RedundantModifiers" ~: RedundantModifiersTests.tests,
       "UseAssignOp" ~: UseAssignOpTests.tests,
       "UseElse" ~: UseElseTests.tests,
       "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests,

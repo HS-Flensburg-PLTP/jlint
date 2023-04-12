@@ -8,6 +8,7 @@ import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNull
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
+import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import Language.Java.Rules.UseElse as UseElse (check)
 import qualified Language.Java.Rules.UseJavaArrayTypeStyle as UseJavaArrayTypeStyle
@@ -20,9 +21,10 @@ checks =
     AvoidNegations.check,
     InitializeVariables.check,
     NoNullPointerExceptionsForControl.check,
+    ParameterNumber.check,
     PreferExpressions.check,
     ReduceScope.check,
-    ParameterNumber.check,
+    RedundantModifiers.check,
     UseAssignOp.check,
     UseElse.check,
     UseJavaArrayTypeStyle.check,

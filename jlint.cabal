@@ -44,6 +44,7 @@ library
       Language.Java.Rules.ParameterNumber
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ReduceScope
+      Language.Java.Rules.RedundantModifiers
       Language.Java.Rules.SameExecutionsInIf
       Language.Java.Rules.SimplifyBooleanReturn
       Language.Java.Rules.UnusedLocalVariable
@@ -122,6 +123,7 @@ test-suite jlint-test
       ParameterNumberTests
       PreferExpressionsTests
       ReduceScopeTests
+      RedundantModifiersTests
       RessourceManager
       SameExecutionsInIf.Tests
       SimplifyBooleanReturn.Tests
