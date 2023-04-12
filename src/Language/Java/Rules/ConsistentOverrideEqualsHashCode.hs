@@ -26,8 +26,8 @@ extractEqualsHashCode classDecl = do
 
 -- checks if a MembderDecl overrides equals or hashcode
 filterEqualsAndHashCode :: MemberDecl -> Maybe (String, SourceSpan)
-filterEqualsAndHashCode (MethodDecl span [Public] [] (Just (PrimType IntT)) (Ident "hashCode") [] [] _ _) = Just ("by overriding 'hashCode' the class must also override 'equals'", span)
-filterEqualsAndHashCode (MethodDecl span [Public] [] (Just (PrimType BooleanT)) (Ident "equals") [FormalParam [] (RefType (ClassRefType classType)) False _] [] _ _) =
+filterEqualsAndHashCode (MethodDecl span [Public _] [] (Just (PrimType IntT)) (Ident "hashCode") [] [] _ _) = Just ("by overriding 'hashCode' the class must also override 'equals'", span)
+filterEqualsAndHashCode (MethodDecl span [Public _] [] (Just (PrimType BooleanT)) (Ident "equals") [FormalParam [] (RefType (ClassRefType classType)) False _] [] _ _) =
   if isJavaLangObject classType then Just ("by overriding 'equals' the class must also override 'hashcode'", span) else Nothing
 filterEqualsAndHashCode _ = Nothing
 
