@@ -1,5 +1,6 @@
 import qualified AvoidMultipleVarDeclTests
 import qualified AvoidNegationsTests
+import qualified ConsistentOverrideEqualsHashCodeTests
 import DefaultComesLast.Tests
 import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
 import qualified InitializeVariablesTests
@@ -45,5 +46,6 @@ tests =
       "ReduceScope" ~: ReduceScopeTests.tests,
       "UseAssignOp" ~: UseAssignOpTests.tests,
       "UseElse" ~: UseElseTests.tests,
-      "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests
+      "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests,
+      "ConsistentOverrideEqualsHashCode" ~: ConsistentOverrideEqualsHashCodeTests.tests
     ]

@@ -2,6 +2,7 @@ module Language.Java.Rules where
 
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
+import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
@@ -24,7 +25,8 @@ checks =
     ParameterNumber.check,
     UseAssignOp.check,
     UseElse.check,
-    UseJavaArrayTypeStyle.check
+    UseJavaArrayTypeStyle.check,
+    ConsistentOverrideEqualsHashCode.check
   ]
 
 checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]

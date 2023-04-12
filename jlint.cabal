@@ -33,6 +33,7 @@ library
       Language.Java.Rules.AvoidNegations
       Language.Java.Rules.CheckNonFinalMethodAttributes
       Language.Java.Rules.CheckNonPrivateAttributes
+      Language.Java.Rules.ConsistentOverrideEqualsHashCode
       Language.Java.Rules.DefaultComesLast
       Language.Java.Rules.EmptyLoopBody
       Language.Java.Rules.InitializeVariables
@@ -108,6 +109,7 @@ test-suite jlint-test
       AvoidMultipleVarDeclTests
       AvoidNegationsTests
       CheckResults
+      ConsistentOverrideEqualsHashCodeTests
       DefaultComesLast.Tests
       EmptyLoopBody.Tests
       InitializeVariablesTests
