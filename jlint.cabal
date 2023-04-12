@@ -49,6 +49,7 @@ library
       Language.Java.Rules.UseAssignOp
       Language.Java.Rules.UseElse
       Language.Java.Rules.UseJavaArrayTypeStyle
+      Language.Java.Rules.UsePostIncrementDecrement
       Language.Java.Syntax.BlockStmt
       Language.Java.Syntax.Exp
       Language.Java.Syntax.Ident
@@ -126,6 +127,7 @@ test-suite jlint-test
       UseAssignOpTests
       UseElseTests
       UseJavaArrayTypeStyleTests
+      UsePostIncrementDecrementTests
       Paths_jlint
   hs-source-dirs:
       test
