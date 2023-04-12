@@ -40,6 +40,7 @@ library
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNullPointerExceptionsForControl
+      Language.Java.Rules.ParameterNumber
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.SameExecutionsInIf
@@ -47,6 +48,7 @@ library
       Language.Java.Rules.UnusedLocalVariable
       Language.Java.Rules.UseAssignOp
       Language.Java.Rules.UseElse
+      Language.Java.Rules.UseJavaArrayTypeStyle
       Language.Java.Rules.UsePostIncrementDecrement
       Language.Java.Syntax.BlockStmt
       Language.Java.Syntax.Exp
@@ -115,6 +117,7 @@ test-suite jlint-test
       NonFinalMethodAttributes.Tests
       NonPrivateAttributes.Tests
       NoNullPointerExceptionsForControlTests
+      ParameterNumberTests
       PreferExpressionsTests
       ReduceScopeTests
       RessourceManager
@@ -123,6 +126,7 @@ test-suite jlint-test
       Tests
       UseAssignOpTests
       UseElseTests
+      UseJavaArrayTypeStyleTests
       UsePostIncrementDecrementTests
       Paths_jlint
   hs-source-dirs:
