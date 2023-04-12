@@ -20,4 +20,4 @@ check cUnit path = do
     else mzero
 
 maxNumber :: Int
-maxNumber = 5
+maxNumber = 7
