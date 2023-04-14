@@ -38,5 +38,5 @@ extractMethodParameters cUnit = do
     extractFormalParam _ = mzero
 
 extractVarName :: VarDeclId -> String
-extractVarName (VarDeclArray varDeclId) = extractVarName varDeclId
+extractVarName (VarDeclArray _ varDeclId) = extractVarName varDeclId
 extractVarName (VarId (Ident n)) = n
