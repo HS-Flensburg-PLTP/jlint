@@ -17,26 +17,7 @@
  * @BarFoo("bar")
  */
 
-interface Bar1 {
-}
 
-interface Bar2 {
-}
-
-interface Bar3 {
-}
-
-interface Bar4 {
-}
-
-interface Bar5 {
-}
-
-interface Bar6 {
-}
-
-interface Bar7 {
-}
 
 // Foo implements @FooBar Bar1, @FooBar(foo = "bar") Bar2, @FooBar("foo") Bar3,
 // @BarFoo Bar4, @BarFoo(bar = "foo") Bar5, @BarFoo("bar") Bar6
