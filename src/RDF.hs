@@ -13,6 +13,7 @@ module RDF
     encodetojson,
     simpleDiagnostic,
     checkSeverityList,
+    mkRange,
     methodDiagnostic,
     rangeDiagnostic,
   )
@@ -100,17 +101,17 @@ instance ToJSON Diagnostic where
     pairs
       ( "message"
           .= message
-            <> "location"
+          <> "location"
           .= location
-            <> "severity"
+          <> "severity"
           .= severity
-            <> "source"
+          <> "source"
           .= source
-            <> "code"
+          <> "code"
           .= code
-            <> "suggestions"
+          <> "suggestions"
           .= suggestions
-            <> "original_output"
+          <> "original_output"
           .= originalOutput
       )
 
@@ -197,4 +198,11 @@ rangeDiagnostic rule msg range fPath =
       code = Just (Code {value = rule, codeURL = Nothing}),
       suggestions = Nothing,
       originalOutput = Nothing
+    }
+
+mkRange :: (Int, Int) -> (Int, Int) -> Range
+mkRange (sLn, sCol) (eLn, eCol) =
+  Range
+    { start = Position {line = sLn, column = Just sCol},
+      end = Just (Position {line = eLn, column = Just eCol})
     }
