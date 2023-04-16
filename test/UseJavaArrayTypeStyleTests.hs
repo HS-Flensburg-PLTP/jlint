@@ -22,7 +22,7 @@ useJavaArrayTypeStyle cUnit path = do
   let expectedRange2 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 6, RDF.column = Just 13},
-            RDF.end = Just (RDF.Position {RDF.line = 6, RDF.column = Just 22})
+            RDF.end = Just (RDF.Position {RDF.line = 6, RDF.column = Just 21})
           }
   let expectedRange3 =
         RDF.Range
@@ -32,7 +32,7 @@ useJavaArrayTypeStyle cUnit path = do
   let expectedRange4 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 11, RDF.column = Just 13},
-            RDF.end = Just (RDF.Position {RDF.line = 11, RDF.column = Just 24})
+            RDF.end = Just (RDF.Position {RDF.line = 11, RDF.column = Just 23})
           }
   let expectedRange5 =
         RDF.Range

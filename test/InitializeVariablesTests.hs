@@ -21,7 +21,7 @@ initializeVariables cUnit path = do
         Just
           ( Range
               { start = Position {line = 8, column = Just 13},
-                end = Just (Position {line = 9, column = Just 13})
+                end = Just (Position {line = 8, column = Just 64})
               }
           )
   let expectedRanges = [expectedRange1]

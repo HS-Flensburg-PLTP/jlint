@@ -17,22 +17,22 @@ consistentOverride cUnit path = do
   let expectedRange1 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 2, RDF.column = Just 5},
-            RDF.end = Just (RDF.Position {RDF.line = 4, RDF.column = Just 5})
+            RDF.end = Just (RDF.Position {RDF.line = 4, RDF.column = Just 6})
           }
   let expectedRange2 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 10, RDF.column = Just 5},
-            RDF.end = Just (RDF.Position {RDF.line = 12, RDF.column = Just 5})
+            RDF.end = Just (RDF.Position {RDF.line = 12, RDF.column = Just 6})
           }
   let expectedRange3 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 40, RDF.column = Just 5},
-            RDF.end = Just (RDF.Position {RDF.line = 42, RDF.column = Just 5})
+            RDF.end = Just (RDF.Position {RDF.line = 42, RDF.column = Just 6})
           }
   let expectedRange4 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 45, RDF.column = Just 5},
-            RDF.end = Just (RDF.Position {RDF.line = 47, RDF.column = Just 5})
+            RDF.end = Just (RDF.Position {RDF.line = 47, RDF.column = Just 6})
           }
 
   let expectedRanges =
