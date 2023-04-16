@@ -16,6 +16,9 @@ import qualified Language.Java.Rules.UseJavaArrayTypeStyle as UseJavaArrayTypeSt
 import Language.Java.Syntax (CompilationUnit)
 import qualified RDF
 
+whitelist :: [String]
+whitelist = ["Override"]
+
 checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checks =
   [ AvoidMultipleVarDecl.check,
@@ -28,7 +31,7 @@ checks =
     RedundantModifiers.check,
     UseAssignOp.check,
     UseElse.check,
-    ProhibitAnnotations.check,
+    ProhibitAnnotations.check whitelist,
     UseJavaArrayTypeStyle.check,
     ConsistentOverrideEqualsHashCode.check
   ]

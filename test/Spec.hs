@@ -49,10 +49,7 @@ tests =
       "RedundantModifiers" ~: RedundantModifiersTests.tests,
       "UseAssignOp" ~: UseAssignOpTests.tests,
       "UseElse" ~: UseElseTests.tests,
-<<<<<<< HEAD
-      "ProhibitAnnotations" ~: ProhibitAnnotationsTests.tests
-=======
+      "ProhibitAnnotations" ~: ProhibitAnnotationsTests.tests,
       "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests,
       "ConsistentOverrideEqualsHashCode" ~: ConsistentOverrideEqualsHashCodeTests.tests
->>>>>>> main
     ]

@@ -1,24 +1,3 @@
-/**
- * Jeden Annotation Typ 2x Erlaubt/NichtErlaubt
- * Jede stelle wo sie vorkommen können 5x
- * - einzelne zeile
- * - instanzierung
- * - typecast
- * - implements
- * - throw
- * 
- * @FooBar
- * @BarFoo
- * 
- * @FooBar(foo="bar")
- * @BarFoo(bar="foo")
- * 
- * @FooBar("foo")
- * @BarFoo("bar")
- */
-
-
-
 // Foo implements @FooBar Bar1, @FooBar(foo = "bar") Bar2, @FooBar("foo") Bar3,
 // @BarFoo Bar4, @BarFoo(bar = "foo") Bar5, @BarFoo("bar") Bar6
 public class Foo {
@@ -64,8 +43,13 @@ public class Foo {
     @BarFoo(bar = "foo")
     @FooBar("foo")
     @BarFoo("bar")
+    @SuppressWarnings
+    @SuppressWarnings("unchecked")
+    @SuppressWarnings(value = "unchecked")
+    @Override
     void foofunc7() {
        
     }
 
 }
+
