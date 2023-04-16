@@ -30,6 +30,6 @@ check cUnit path = do
               ("Laufvariable " ++ prettyPrint (ident varDecl) ++ " darf nicht innerhalb der Schleife modifiziert werden!")
               sourceSpan
               path
-            | varDecl <- filter (\varDecl -> ident varDecl `elem` expIdents) forVarDecls
+            | varDecl <- filter (\varDecl -> [ident varDecl] == expIdents) forVarDecls
           ]
     checkBasicFor _ = mzero
