@@ -1,5 +1,9 @@
 package test.java;
 
+public class SecondClass {
+    public int i = 0;
+}
+
 public class ModifiedControlVariable {
     public void SingleForLoop() {
         for (int i = 0; i < 20; i++) {
@@ -8,10 +12,13 @@ public class ModifiedControlVariable {
     }
 
     public void NestedForLoop() {
+        var objectOfSecondClass = new SecondClass();
+
         for (int i = 0; i < 20; i++) {
             i = i + 9;
 
             for (int j = 0; j < 20; j++) {
+                objectOfSecondClass.i++;
                 j++;
             }
         }
