@@ -1,17 +1,23 @@
 module Language.Java.Rules.CheckNonPrivateAttributes where
 
 import Language.Java.AST (extractAttributes)
-import Language.Java.Syntax (CompilationUnit (..), Modifier (Private))
-import RDF (Diagnostic (..), methodDiagnostic)
+import Language.Java.Syntax
+import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [Diagnostic]
+check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   attributes <- extractAttributes cUnit
   checkAttributes attributes path
 
-checkAttributes :: ([String], [Modifier]) -> FilePath -> [Diagnostic]
+checkAttributes :: ([String], [Modifier]) -> FilePath -> [RDF.Diagnostic]
 checkAttributes (varNames, mods) path =
   concatMap (checkModifier mods) varNames
   where
     checkModifier modifier varname =
-      [methodDiagnostic varname "Is not declared as private" path | Private `notElem` modifier]
+      [ RDF.rangeDiagnostic
+          "Language.Java.Rules.CheckNonPrivateAttributes"
+          (varname ++ " is not declared as private")
+          dummySourceSpan
+          path
+        | Private `notElem` modifier
+      ]

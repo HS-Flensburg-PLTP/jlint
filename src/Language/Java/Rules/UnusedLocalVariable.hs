@@ -5,9 +5,9 @@ import Data.Function ((&))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.AST (extractMethods, extractVarName)
 import Language.Java.Syntax
-import RDF (Diagnostic (..), methodDiagnostic, simpleDiagnostic)
+import qualified RDF
 
-checkMethodVars :: CompilationUnit -> FilePath -> [Diagnostic]
+checkMethodVars :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkMethodVars cUnit path = do
   (methodName, methodBody) <- extractMethods cUnit
   checkIfMethodVarsAreUsed (extractMethodVariables methodBody) (extractMethodVariableUsages methodBody) methodName path
@@ -27,19 +27,19 @@ extractMethodVariableUsages methodBody = do
   where
     extractUsedVariables (Name varList) = map (\(Ident n) -> n) varList
 
-checkIfMethodVarsAreUsed :: [String] -> [String] -> String -> FilePath -> [Diagnostic]
-checkIfMethodVarsAreUsed declaredVars usedVars methodName path =
+checkIfMethodVarsAreUsed :: [String] -> [String] -> String -> FilePath -> [RDF.Diagnostic]
+checkIfMethodVarsAreUsed declaredVars usedVars _ path =
   declaredVars
     & filter (`notElem` usedVars)
-    & map (\var -> methodDiagnostic methodName ("Variable " ++ var ++ " is declared but never used.") path)
+    & map (\var -> RDF.rangeDiagnostic "Language.Java.Rules.UnusedLocalVariable" ("Variable " ++ var ++ " is declared but never used.") dummySourceSpan path)
 
-checkClassVars :: CompilationUnit -> FilePath -> [Diagnostic]
+checkClassVars :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkClassVars cUnit path =
   concatMap
     ( \var ->
         if checkClassVarUsages (extractMethods cUnit) var
           then mzero
-          else [simpleDiagnostic ("LocalVariable " ++ var ++ " is declared but never used.") path]
+          else [RDF.rangeDiagnostic "Language.Java.Rules.UnusedLocalVariable" ("LocalVariable " ++ var ++ " is declared but never used.") dummySourceSpan path]
     )
     (extractClassVars cUnit)
 

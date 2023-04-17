@@ -6,7 +6,7 @@ import Tests
 
 tests :: Test
 tests =
-  countTest
-    0 -- rule seems broken
+  rangesTest
+    [] -- rule seems broken
     "/test/java/SameExecutionsInIf.java"
     SameExecutionsInIf.check

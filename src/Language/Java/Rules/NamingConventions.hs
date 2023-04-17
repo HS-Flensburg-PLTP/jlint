@@ -9,10 +9,10 @@ import Data.Function ((&))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.AST (extractMethods)
 import Language.Java.Syntax
-import RDF (Diagnostic (..), methodDiagnostic, simpleDiagnostic)
+import qualified RDF
 import Text.RE.TDFA.String
 
-check :: CompilationUnit -> FilePath -> [Diagnostic]
+check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path =
   concatMap
     (\c -> c cUnit path)
@@ -27,17 +27,17 @@ check cUnit path =
 
 {- Package Name -}
 
-checkPackageName :: CompilationUnit -> FilePath -> [Diagnostic]
+checkPackageName :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkPackageName (CompilationUnit (Just pDeckl) _ _) path = checkTLD (extractPackageNames pDeckl) path
 checkPackageName (CompilationUnit {}) _ = []
 
-checkTLD :: [String] -> FilePath -> [Diagnostic]
+checkTLD :: [String] -> FilePath -> [RDF.Diagnostic]
 checkTLD [] _ = []
 checkTLD (ident : idents) path
   | matched (ident ?=~ reTopLevelDomain) = checkRestPN idents path
-  | otherwise = simpleDiagnostic (packageNameMsg ident) path : checkRestPN idents path
+  | otherwise = RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" (packageNameMsg ident) dummySourceSpan path : checkRestPN idents path
 
-checkRestPN :: [String] -> FilePath -> [Diagnostic]
+checkRestPN :: [String] -> FilePath -> [RDF.Diagnostic]
 checkRestPN idents path =
   idents
     & filter
@@ -46,7 +46,7 @@ checkRestPN idents path =
             ( matched (ident ?=~ reRestDomain)
             )
       )
-    & map (\ident -> simpleDiagnostic (packageNameMsg ident) path)
+    & map (\ident -> RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" (packageNameMsg ident) dummySourceSpan path)
 
 packageNameMsg :: String -> String
 packageNameMsg name = "PackageName element " ++ name ++ " does not match the specifications."
@@ -56,21 +56,21 @@ extractPackageNames (PackageDecl (Name packageNames)) = map (\(Ident name) -> na
 
 {- MethodName -}
 
-checkMethodName :: CompilationUnit -> FilePath -> [Diagnostic]
+checkMethodName :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkMethodName cUnit path = do
   (methodName, _) <- extractMethods cUnit
   checkMethodNames methodName path
 
-checkMethodNames :: String -> FilePath -> [Diagnostic]
+checkMethodNames :: String -> FilePath -> [RDF.Diagnostic]
 checkMethodNames name path
   | matched (name ?=~ reCamelCase) = mzero
-  | otherwise = return (simpleDiagnostic (methodNameMsg name) path)
+  | otherwise = return (RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" (methodNameMsg name) dummySourceSpan path)
   where
     methodNameMsg name = "Methodname " ++ name ++ " does not match the specifications."
 
 {- ParameterName -}
 
-checkParameterName :: CompilationUnit -> FilePath -> [Diagnostic]
+checkParameterName :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkParameterName cUnit path = do
   method <- extractFormalParams cUnit
   checkParameterNames method path
@@ -83,15 +83,15 @@ extractFormalParams cUnit = do
     extractBody (MethodDecl _ _ _ _ (Ident n) formalParams _ _ _) = return (n, map (\(FormalParam _ _ _ varDeclIds) -> extractFormalParamName varDeclIds) formalParams)
     extractBody _ = mzero
 
-checkParameterNames :: (String, [String]) -> FilePath -> [Diagnostic]
-checkParameterNames (methodName, formalParams) path =
+checkParameterNames :: (String, [String]) -> FilePath -> [RDF.Diagnostic]
+checkParameterNames (_, formalParams) path =
   formalParams
     & filter (\name -> not (matched (name ?=~ reCamelCase)))
-    & map (\name -> methodDiagnostic methodName ("parameter " ++ name ++ " doesn't match the specifications.") path)
+    & map (\name -> RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" ("parameter " ++ name ++ " doesn't match the specifications.") dummySourceSpan path)
 
 {- StaticVariableName -}
 
-checkStaticVariableName :: CompilationUnit -> FilePath -> [Diagnostic]
+checkStaticVariableName :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkStaticVariableName cUnit path = do
   membDecl <- extractStaticFieldNames cUnit
   checkStaticVariableNames membDecl path
@@ -106,20 +106,20 @@ extractStaticFieldNames cUnit = do
       | otherwise = mzero
     extractMemberDecl _ = mzero
 
-checkStaticVariableNames :: String -> FilePath -> [Diagnostic]
+checkStaticVariableNames :: String -> FilePath -> [RDF.Diagnostic]
 checkStaticVariableNames name path
   | matched (name ?=~ reCamelCase) = mzero
-  | otherwise = return (simpleDiagnostic ("Static variable " ++ name ++ " doesn't match the specifications.") path)
+  | otherwise = return (RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" ("Static variable " ++ name ++ " doesn't match the specifications.") dummySourceSpan path)
 
 {- LocalFinalVariableName & LocalVariableName -}
 
-checkLocalName :: CompilationUnit -> FilePath -> [Diagnostic]
+checkLocalName :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkLocalName cUnit path = do
   method <- extractMethods cUnit
   extractLocalFinalVariableNames2 method path
 
-extractLocalFinalVariableNames2 :: (String, MethodBody) -> FilePath -> [Diagnostic]
-extractLocalFinalVariableNames2 (methodName, methodBody) path = do
+extractLocalFinalVariableNames2 :: (String, MethodBody) -> FilePath -> [RDF.Diagnostic]
+extractLocalFinalVariableNames2 (_, methodBody) path = do
   fieldNames <- universeBi methodBody
   extractMemberDecl fieldNames
   where
@@ -127,16 +127,16 @@ extractLocalFinalVariableNames2 (methodName, methodBody) path = do
       | Final `elem` modifier =
           map extractVarName varDecls
             & filter (\name -> not (matched (name ?=~ reCamelCase)))
-            & map (\name -> methodDiagnostic methodName ("Local final variable " ++ name ++ " doesn't match the specifications") path)
+            & map (\name -> RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" ("Local final variable " ++ name ++ " doesn't match the specifications") dummySourceSpan path)
       | otherwise =
           map extractVarName varDecls
             & filter (\name -> not (matched (name ?=~ reCamelCase)))
-            & map (\name -> methodDiagnostic methodName ("Local non-final variable " ++ name ++ " doesn't match the specifications") path)
+            & map (\name -> RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" ("Local non-final variable " ++ name ++ " doesn't match the specifications") dummySourceSpan path)
     extractMemberDecl _ = mzero
 
 {- MemberName -}
 
-checkMemberName :: CompilationUnit -> FilePath -> [Diagnostic]
+checkMemberName :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkMemberName cUnit path = do
   varNames <- extractNonStaticFieldNames cUnit
   checkMemberNames varNames path
@@ -151,14 +151,14 @@ extractNonStaticFieldNames cUnit = do
       | otherwise = mzero
     extractMemberDecl _ = mzero
 
-checkMemberNames :: String -> FilePath -> [Diagnostic]
+checkMemberNames :: String -> FilePath -> [RDF.Diagnostic]
 checkMemberNames name path
   | matched (name ?=~ reCamelCase) = mzero
-  | otherwise = return (simpleDiagnostic ("Instance variable " ++ name ++ " doesn't match the specifications.") path)
+  | otherwise = return (RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" ("Instance variable " ++ name ++ " doesn't match the specifications.") dummySourceSpan path)
 
 {- TypeName -}
 
-checkTypeName :: CompilationUnit -> FilePath -> [Diagnostic]
+checkTypeName :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkTypeName cUnit = checkTypeNames (extractCLassesAndInterfaces cUnit ++ extractEnums cUnit)
 
 extractCLassesAndInterfaces :: CompilationUnit -> [String]
@@ -178,11 +178,11 @@ extractEnums cUnit = do
     extractEnum (EnumDecl _ _ (Ident n) _ _) = return n
     extractEnum _ = mzero
 
-checkTypeNames :: [String] -> FilePath -> [Diagnostic]
+checkTypeNames :: [String] -> FilePath -> [RDF.Diagnostic]
 checkTypeNames names path =
   names
     & filter (\name -> not (matched (name ?=~ rePascalCase)))
-    & map (\name -> simpleDiagnostic ("Type name " ++ name ++ " doesn't match the specifications.") path)
+    & map (\name -> RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" ("Type name " ++ name ++ " doesn't match the specifications.") dummySourceSpan path)
 
 {- Regular Expressions -}
 
