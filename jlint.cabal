@@ -1,6 +1,7 @@
 cabal-version: 1.12
 
 -- This file has been generated from package.yaml by hpack version 0.35.1.
+-- This file has been generated from package.yaml by hpack version 0.35.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -30,9 +31,11 @@ library
       Language.Java.AST
       Language.Java.Rules
       Language.Java.Rules.AvoidMultipleTopLevelDecl
+      Language.Java.Rules.AvoidMultipleVarDecl
       Language.Java.Rules.AvoidNegations
       Language.Java.Rules.CheckNonFinalMethodAttributes
       Language.Java.Rules.CheckNonPrivateAttributes
+      Language.Java.Rules.ConsistentOverrideEqualsHashCode
       Language.Java.Rules.DefaultComesLast
       Language.Java.Rules.EmptyLoopBody
       Language.Java.Rules.InitializeVariables
@@ -40,13 +43,17 @@ library
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNullPointerExceptionsForControl
+      Language.Java.Rules.ParameterNumber
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ReduceScope
+      Language.Java.Rules.RedundantModifiers
       Language.Java.Rules.SameExecutionsInIf
       Language.Java.Rules.SimplifyBooleanReturn
       Language.Java.Rules.UnusedLocalVariable
       Language.Java.Rules.UseAssignOp
       Language.Java.Rules.UseElse
+      Language.Java.Rules.UseJavaArrayTypeStyle
+      Language.Java.Rules.UsePostIncrementDecrement
       Language.Java.Syntax.BlockStmt
       Language.Java.Syntax.Exp
       Language.Java.Syntax.Ident
@@ -103,8 +110,10 @@ test-suite jlint-test
   main-is: Spec.hs
   other-modules:
       AvoidMultipleTopLevelDeclTests
+      AvoidMultipleVarDeclTests
       AvoidNegationsTests
       CheckResults
+      ConsistentOverrideEqualsHashCodeTests
       DefaultComesLast.Tests
       EmptyLoopBody.Tests
       InitializeVariablesTests
@@ -114,14 +123,18 @@ test-suite jlint-test
       NonFinalMethodAttributes.Tests
       NonPrivateAttributes.Tests
       NoNullPointerExceptionsForControlTests
+      ParameterNumberTests
       PreferExpressionsTests
       ReduceScopeTests
+      RedundantModifiersTests
       RessourceManager
       SameExecutionsInIf.Tests
       SimplifyBooleanReturn.Tests
       Tests
       UseAssignOpTests
       UseElseTests
+      UseJavaArrayTypeStyleTests
+      UsePostIncrementDecrementTests
       Paths_jlint
   hs-source-dirs:
       test

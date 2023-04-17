@@ -1,5 +1,7 @@
 import qualified AvoidMultipleTopLevelDeclTests
+import qualified AvoidMultipleVarDeclTests
 import qualified AvoidNegationsTests
+import qualified ConsistentOverrideEqualsHashCodeTests
 import DefaultComesLast.Tests
 import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
 import qualified InitializeVariablesTests
@@ -9,13 +11,16 @@ import NoLoopBreak.Tests (testAllNoLoopBreaks)
 import qualified NoNullPointerExceptionsForControlTests
 import NonFinalMethodAttributes.Tests (testAllNonFinalMethodAttributes)
 import NonPrivateAttributes.Tests (testAllNonPrivateAttributes)
+import qualified ParameterNumberTests
 import qualified PreferExpressionsTests
 import qualified ReduceScopeTests
+import qualified RedundantModifiersTests
 import SameExecutionsInIf.Tests
 import SimplifyBooleanReturn.Tests
 import Test.HUnit (Test, runTestTT, test, (~:))
 import qualified UseAssignOpTests
 import qualified UseElseTests
+import qualified UseJavaArrayTypeStyleTests
 
 main :: IO ()
 main = do
@@ -35,11 +40,16 @@ tests :: Test
 tests =
   test
     [ "AvoidMultipleTopLevelDecl" ~: AvoidMultipleTopLevelDeclTests.tests,
+      "AvoidMultipleVarDecl" ~: AvoidMultipleVarDeclTests.tests,
       "AvoidNegations" ~: AvoidNegationsTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
+      "ParameterNumber" ~: ParameterNumberTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
+      "RedundantModifiers" ~: RedundantModifiersTests.tests,
       "UseAssignOp" ~: UseAssignOpTests.tests,
-      "UseElse" ~: UseElseTests.tests
+      "UseElse" ~: UseElseTests.tests,
+      "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests,
+      "ConsistentOverrideEqualsHashCode" ~: ConsistentOverrideEqualsHashCodeTests.tests
     ]

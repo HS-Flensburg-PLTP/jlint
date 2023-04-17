@@ -192,4 +192,4 @@ extractVarName (VarDecl id _) = extractFormalParamName id
 
 extractFormalParamName :: VarDeclId -> String
 extractFormalParamName (VarId (Ident name)) = name
-extractFormalParamName (VarDeclArray varDeclId) = extractFormalParamName varDeclId
+extractFormalParamName (VarDeclArray _ varDeclId) = extractFormalParamName varDeclId
