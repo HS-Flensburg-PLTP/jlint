@@ -11,8 +11,12 @@ import Tests
 
 tests :: Test
 tests =
-  let file = "/test/java/AvoidMultipleTopLevelDecl.java"
-   in test [file ~: Tests.withParsedJavaFile file avoidMultipleTopLevelDecl]
+  test
+    [ let file = "/test/java/MultipleTopLevelDecl.java"
+       in test [file ~: Tests.withParsedJavaFile file avoidMultipleTopLevelDecl],
+      let file = "/test/java/SingleTopLevelDecl.java"
+       in test [file ~: Tests.withParsedJavaFile file singleTopLevelDecl]
+    ]
 
 avoidMultipleTopLevelDecl :: CompilationUnit -> FilePath -> Assertion
 avoidMultipleTopLevelDecl cUnit path = do
@@ -30,3 +34,8 @@ avoidMultipleTopLevelDecl cUnit path = do
     (assertEqual "Check range")
     (map Just expectedRanges)
     (map (RDF.range . RDF.location) diagnostic)
+
+singleTopLevelDecl :: CompilationUnit -> FilePath -> Assertion
+singleTopLevelDecl cUnit path = do
+  let diagnostic = check cUnit path
+  assertEqual "Check number of messages" 0 (length diagnostic)
