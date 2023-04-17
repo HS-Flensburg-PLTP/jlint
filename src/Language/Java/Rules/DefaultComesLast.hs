@@ -15,7 +15,7 @@ check cUnit path = do
   checkDefaultComesLast methods path
 
 checkDefaultComesLast :: (String, MethodBody) -> FilePath -> [RDF.Diagnostic]
-checkDefaultComesLast (methodName, methodBody) path = do
+checkDefaultComesLast (_, methodBody) path = do
   (Switch _ _ blocks) <- universeBi methodBody
   checkSwitch blocks mzero
   where
@@ -26,12 +26,6 @@ checkDefaultComesLast (methodName, methodBody) path = do
         (SwitchBlock Default _) : xs@[SwitchBlock _ _] ->
           checkSwitch
             xs
-            ( RDF.rangeDiagnostic
-                "Language.Java.Rules.DefaultComesLast"
-                "Defaultcase in Switch-Case is not defined last"
-                dummySourceSpan
-                path
-                : diagnosticList
-            )
+            (RDF.rangeDiagnostic "Language.Java.Rules.DefaultComesLast" "Defaultcase in Switch-Case is not defined last" dummySourceSpan path : diagnosticList)
         _ : xs ->
           checkSwitch xs diagnosticList
