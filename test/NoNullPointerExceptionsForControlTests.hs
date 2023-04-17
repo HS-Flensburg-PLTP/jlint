@@ -2,8 +2,8 @@ module NoNullPointerExceptionsForControlTests where
 
 import Control.Monad (zipWithM_)
 import Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl (check)
-import Language.Java.Syntax (CompilationUnit)
-import RDF
+import Language.Java.Syntax
+import qualified RDF
 import System.Directory (getCurrentDirectory)
 import Test.HUnit
 import qualified Tests
@@ -16,14 +16,14 @@ tests =
 nullPointerExceptions :: CompilationUnit -> FilePath -> Assertion
 nullPointerExceptions cUnit path = do
   let expectedRange1 =
-        Range
-          { start = Position {line = 7, column = Just 13},
-            end = Just (Position {line = 12, column = Just 9})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 7, RDF.column = Just 13},
+            RDF.end = Just (RDF.Position {RDF.line = 12, RDF.column = Just 9})
           }
   let expectedRange2 =
-        Range
-          { start = Position {line = 19, column = Just 13},
-            end = Just (Position {line = 24, column = Just 9})
+        RDF.Range
+          { RDF.start = RDF.Position {RDF.line = 19, RDF.column = Just 13},
+            RDF.end = Just (RDF.Position {RDF.line = 24, RDF.column = Just 9})
           }
   let expectedRanges =
         [ expectedRange1,
@@ -34,4 +34,4 @@ nullPointerExceptions cUnit path = do
   zipWithM_
     (assertEqual "Check range")
     (map Just expectedRanges)
-    (map (range . location) diagnostic)
+    (map (RDF.range . RDF.location) diagnostic)
