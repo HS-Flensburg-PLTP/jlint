@@ -11,7 +11,6 @@ import Language.Java.Syntax
     Name,
     Op (Add, Sub),
     SourceSpan,
-    dummySourceSpan,
   )
 import qualified RDF
 
@@ -20,12 +19,12 @@ check cUnit path = do
   exp <- universeBi cUnit
   checkExp exp
   where
-    checkExp (Assign (NameLhs name1) EqualA (BinOp (ExpName name2) op (Lit (Int 1)))) =
-      assignError name1 name2 op dummySourceSpan path
-    checkExp (Assign (NameLhs name1) EqualA (BinOp (Lit (Int 1)) op (ExpName name2))) =
-      assignError name1 name2 op dummySourceSpan path
-    checkExp (Assign _ op (Lit (Int 1))) =
-      compoundAssError dummySourceSpan path op
+    checkExp (Assign span (NameLhs name1) EqualA (BinOp (ExpName name2) op (Lit (Int 1)))) =
+      assignError name1 name2 op span path
+    checkExp (Assign span (NameLhs name1) EqualA (BinOp (Lit (Int 1)) op (ExpName name2))) =
+      assignError name1 name2 op span path
+    checkExp (Assign span _ op (Lit (Int 1))) =
+      compoundAssError span path op
     checkExp _ = mzero
 
 assignError :: Name -> Name -> Op -> SourceSpan -> FilePath -> [RDF.Diagnostic]

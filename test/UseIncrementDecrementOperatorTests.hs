@@ -18,38 +18,38 @@ useIncrementDecrementOperator :: CompilationUnit -> FilePath -> Assertion
 useIncrementDecrementOperator cUnit path = do
   let expectedRange1 =
         Range
-          { start = Position {line = 1, column = Just 1},
-            end = Just (Position {line = 1, column = Just 1})
+          { start = Position {line = 4, column = Just 9},
+            end = Just (Position {line = 4, column = Just 18})
           }
   let expectedRange2 =
         Range
-          { start = Position {line = 1, column = Just 1},
-            end = Just (Position {line = 1, column = Just 1})
+          { start = Position {line = 5, column = Just 9},
+            end = Just (Position {line = 5, column = Just 18})
           }
   let expectedRange3 =
         Range
-          { start = Position {line = 1, column = Just 1},
-            end = Just (Position {line = 1, column = Just 1})
+          { start = Position {line = 6, column = Just 9},
+            end = Just (Position {line = 6, column = Just 18})
           }
   let expectedRange4 =
         Range
-          { start = Position {line = 1, column = Just 1},
-            end = Just (Position {line = 1, column = Just 1})
+          { start = Position {line = 7, column = Just 9},
+            end = Just (Position {line = 7, column = Just 15})
           }
   let expectedRange5 =
         Range
-          { start = Position {line = 1, column = Just 1},
-            end = Just (Position {line = 1, column = Just 1})
+          { start = Position {line = 9, column = Just 35},
+            end = Just (Position {line = 9, column = Just 44})
           }
   let expectedRange6 =
         Range
-          { start = Position {line = 1, column = Just 1},
-            end = Just (Position {line = 1, column = Just 1})
+          { start = Position {line = 12, column = Just 35},
+            end = Just (Position {line = 12, column = Just 41})
           }
   let expectedRange7 =
         Range
-          { start = Position {line = 1, column = Just 1},
-            end = Just (Position {line = 1, column = Just 1})
+          { start = Position {line = 15, column = Just 16},
+            end = Just (Position {line = 15, column = Just 25})
           }
   let expectedRanges =
         [expectedRange1, expectedRange2, expectedRange3, expectedRange4, expectedRange5, expectedRange6, expectedRange7]
