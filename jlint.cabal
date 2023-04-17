@@ -109,24 +109,23 @@ test-suite jlint-test
   other-modules:
       AvoidMultipleVarDeclTests
       AvoidNegationsTests
+      CheckNonFinalMethodAttributesTests
+      CheckNonPrivateAttributesTests
       CheckResults
       ConsistentOverrideEqualsHashCodeTests
-      DefaultComesLast.Tests
-      EmptyLoopBody.Tests
+      DefaultComesLastTests
+      EmptyLoopBodyTests
       InitializeVariablesTests
-      NamingConventions.Tests
-      NeedBraces.Tests
-      NoLoopBreak.Tests
-      NonFinalMethodAttributes.Tests
-      NonPrivateAttributes.Tests
+      NamingConventionsTests
+      NeedBracesTests
+      NoLoopBreakTests
       NoNullPointerExceptionsForControlTests
       ParameterNumberTests
       PreferExpressionsTests
       ReduceScopeTests
       RedundantModifiersTests
-      RessourceManager
-      SameExecutionsInIf.Tests
-      SimplifyBooleanReturn.Tests
+      SameExecutionsInIfTests
+      SimplifyBooleanReturnTests
       Tests
       UseAssignOpTests
       UseElseTests

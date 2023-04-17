@@ -12,6 +12,19 @@ import Language.Java.Syntax
 import RDF (Diagnostic (..), methodDiagnostic, simpleDiagnostic)
 import Text.RE.TDFA.String
 
+check :: CompilationUnit -> FilePath -> [Diagnostic]
+check cUnit path =
+  concatMap
+    (\c -> c cUnit path)
+    [ checkPackageName,
+      checkMethodName,
+      checkParameterName,
+      checkStaticVariableName,
+      checkLocalName,
+      checkMemberName,
+      checkTypeName
+    ]
+
 {- Package Name -}
 
 checkPackageName :: CompilationUnit -> FilePath -> [Diagnostic]
