@@ -1,4 +1,4 @@
-module Tests (countTest, rangesTest, withParsedJavaFile) where
+module Tests (rangesTest, withParsedJavaFile) where
 
 import Control.Monad (zipWithM_)
 import Language.Java.Parser (compilationUnit, parser)
@@ -18,6 +18,10 @@ withParsedJavaFile relativePath check = do
     Right cUnit ->
       check cUnit path
 
+rangesTest :: [RDF.Range] -> FilePath -> (CompilationUnit -> FilePath -> [RDF.Diagnostic]) -> Test
+rangesTest testRanges =
+  ruleTest (justifyRanges testRanges)
+
 ruleTest :: ([RDF.Diagnostic] -> Assertion) -> FilePath -> (CompilationUnit -> FilePath -> [RDF.Diagnostic]) -> Test
 ruleTest justify path check =
   path ~: do
@@ -29,15 +33,6 @@ ruleTest justify path check =
         assertFailure ("Parsing " ++ file ++ " failed with error:" ++ show error)
       Right cUnit ->
         justify (check cUnit path)
-
--- "quick fix" for old tests without rangeDiagnostics
-countTest :: Int -> FilePath -> (CompilationUnit -> FilePath -> [RDF.Diagnostic]) -> Test
-countTest expectedCount =
-  ruleTest (assertEqual "Check number of messages" expectedCount . length)
-
-rangesTest :: [RDF.Range] -> FilePath -> (CompilationUnit -> FilePath -> [RDF.Diagnostic]) -> Test
-rangesTest testRanges =
-  ruleTest (justifyRanges testRanges)
 
 justifyRanges :: [RDF.Range] -> [RDF.Diagnostic] -> Assertion
 justifyRanges expectedRanges diagnostic = do
