@@ -5,13 +5,13 @@ public class SecondClass {
 }
 
 public class ModifiedControlVariable {
-    public void SingleForLoop() {
+    public void singleForLoop() {
         for (int i = 0; i < 20; i++) {
             i = 12;
         }
     }
 
-    public void NestedForLoop() {
+    public void nestedForLoop() {
         var objectOfSecondClass = new SecondClass();
 
         for (int i = 0; i < 20; i++) {
@@ -24,7 +24,7 @@ public class ModifiedControlVariable {
         }
     }
 
-    public void NestedForLoop2() {
+    public void nestedForLoop2() {
         for (int i = 0; i < 20; i++) {
             i--;
             for (int j = 0; j < 20; j++) {
@@ -33,7 +33,7 @@ public class ModifiedControlVariable {
         }
     }
 
-    public void NestedForLoop3() {
+    public void nestedForLoop3() {
         for (int i = 0; i < 20; i++) {
             i--;
             for (int j = 0; j < 20; j++, i++) {
@@ -45,7 +45,7 @@ public class ModifiedControlVariable {
         }
     }
 
-    public void LoopWithIf() {
+    public void loopWithIf() {
         for (int i = 0; i < 20; i++) {
             if (i == 3) {
                 i++;
@@ -53,7 +53,7 @@ public class ModifiedControlVariable {
         }
     }
 
-    public void LoopWithDouble() {
+    public void loopWithDouble() {
         for (double i = 0; i < 20; i++) {
             if (i == 3) {
                 i++;
@@ -62,7 +62,7 @@ public class ModifiedControlVariable {
     }
 
     // will be skipped
-    public void OnlyPrimtiveTypes() {
+    public void onlyPrimtiveTypes() {
         for (int a[] = { 0 }; a[0] < 10; a[0]++) {
             a[0]++;
         }
