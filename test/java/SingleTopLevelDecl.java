@@ -1,3 +1,3 @@
-class foo {
+class Foo {
     
 }

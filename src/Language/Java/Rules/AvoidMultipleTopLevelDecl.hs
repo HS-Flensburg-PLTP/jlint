@@ -8,11 +8,8 @@ check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   checkComUnit cUnit
   where
-    checkComUnit (CompilationUnit _ _ typeDecls) =
-      case typeDecls of
-        [] -> mzero
-        [_] -> mzero
-        _ -> message (typeDeclSourceSpan (typeDecls !! 1)) path
+    checkComUnit (CompilationUnit _ _ (_ : typeDecl : _)) = message (typeDeclSourceSpan typeDecl) path
+    checkComUnit _ = mzero
 
 typeDeclSourceSpan :: TypeDecl -> SourceSpan
 typeDeclSourceSpan (ClassTypeDecl (ClassDecl span _ _ _ _ _ _)) = span

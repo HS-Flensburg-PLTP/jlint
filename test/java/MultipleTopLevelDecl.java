@@ -1,7 +1,7 @@
-class foo {
+class Foo {
 
 }
 
-interface bar {
+interface Bar {
 
 }
