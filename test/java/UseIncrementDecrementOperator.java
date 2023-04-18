@@ -1,6 +1,6 @@
 class UseIncrementDecrementOperator {
     
-    static int foo(int i, int j, int k) {
+    static int foo(int i, int j, int k, int l) {
         i = i + 1;
         j = j - 1;
         i = 1 + i;
@@ -17,5 +17,10 @@ class UseIncrementDecrementOperator {
 
     static int bar(int i, int j) {
         return i = j + 1;
+    }
+
+    static void foobar(int l) {
+        l = l * 1;
+        l = l / 1;
     }
 }
