@@ -19,32 +19,35 @@ checkBasicFor (BasicFor (Just (ForLocalVars _ _ forVarDecls)) _ _ forStmt) path 
   where
     checkBasicForModifiedControlVariable (Assign sourceSpan (NameLhs (Name [controlVariable])) _ _) =
       map
-        (createRangeDiag sourceSpan path)
-        (checkVarDeclIdentInExp controlVariable forVarDecls)
+        (rangeDiag sourceSpan)
+        (varDeclIdentInExpr controlVariable)
     checkBasicForModifiedControlVariable (PostIncrement sourceSpan (ExpName (Name [controlVariable]))) =
       map
-        (createRangeDiag sourceSpan path)
-        (checkVarDeclIdentInExp controlVariable forVarDecls)
+        (rangeDiag sourceSpan)
+        (varDeclIdentInExpr controlVariable)
     checkBasicForModifiedControlVariable (PreIncrement sourceSpan (ExpName (Name [controlVariable]))) =
       map
-        (createRangeDiag sourceSpan path)
-        (checkVarDeclIdentInExp controlVariable forVarDecls)
+        (rangeDiag sourceSpan)
+        (varDeclIdentInExpr controlVariable)
     checkBasicForModifiedControlVariable (PostDecrement sourceSpan (ExpName (Name [controlVariable]))) =
       map
-        (createRangeDiag sourceSpan path)
-        (checkVarDeclIdentInExp controlVariable forVarDecls)
+        (rangeDiag sourceSpan)
+        (varDeclIdentInExpr controlVariable)
     checkBasicForModifiedControlVariable (PreDecrement sourceSpan (ExpName (Name [controlVariable]))) =
       map
-        (createRangeDiag sourceSpan path)
-        (checkVarDeclIdentInExp controlVariable forVarDecls)
+        (rangeDiag sourceSpan)
+        (varDeclIdentInExpr controlVariable)
     checkBasicForModifiedControlVariable _ = mzero
+
+    rangeDiag = createRangeDiagnostic path
+    varDeclIdentInExpr = checkVarDeclIdentInExp forVarDecls
 checkBasicFor _ _ = mzero
 
-checkVarDeclIdentInExp :: Ident -> [VarDecl] -> [VarDecl]
-checkVarDeclIdentInExp controlVariable = filter (\varDecl -> ident varDecl == controlVariable)
+checkVarDeclIdentInExp :: [VarDecl] -> Ident -> [VarDecl]
+checkVarDeclIdentInExp varDecls controlVariable = filter (\varDecl -> ident varDecl == controlVariable) varDecls
 
-createRangeDiag :: SourceSpan -> FilePath -> VarDecl -> RDF.Diagnostic
-createRangeDiag sourceSpan path varDecl =
+createRangeDiagnostic :: FilePath -> SourceSpan -> VarDecl -> RDF.Diagnostic
+createRangeDiagnostic path sourceSpan varDecl =
   RDF.rangeDiagnostic
     "Language.Java.Rules.ModifiedControlVariable"
     ("Laufvariable " ++ prettyPrint (ident varDecl) ++ " darf nicht innerhalb der Schleife modifiziert werden!")
