@@ -2,6 +2,7 @@ module Language.Java.Rules where
 
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
+import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
 import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
@@ -19,6 +20,7 @@ checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checks =
   [ AvoidMultipleVarDecl.check,
     AvoidNegations.check,
+    AvoidStarImport.check,
     InitializeVariables.check,
     NoNullPointerExceptionsForControl.check,
     ParameterNumber.check,
