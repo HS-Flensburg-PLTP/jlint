@@ -10,26 +10,43 @@ import qualified RDF
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   stmt <- universeBi cUnit
-  checkBasicFor stmt
-  where
-    checkBasicFor (BasicFor (Just (ForLocalVars _ _ forVarDecls)) _ _ forStmt) = do
-      expr <- universeBi forStmt
-      checkBasicForModifiedControlVariable expr
-      where
-        checkBasicForModifiedControlVariable (Assign sourceSpan (NameLhs (Name [ident])) _ _) = checkVarDeclIdentInExp ident sourceSpan
-        checkBasicForModifiedControlVariable (PostIncrement sourceSpan (ExpName (Name [ident]))) = checkVarDeclIdentInExp ident sourceSpan
-        checkBasicForModifiedControlVariable (PreIncrement sourceSpan (ExpName (Name [ident]))) = checkVarDeclIdentInExp ident sourceSpan
-        checkBasicForModifiedControlVariable (PostDecrement sourceSpan (ExpName (Name [ident]))) = checkVarDeclIdentInExp ident sourceSpan
-        checkBasicForModifiedControlVariable (PreDecrement sourceSpan (ExpName (Name [ident]))) = checkVarDeclIdentInExp ident sourceSpan
-        checkBasicForModifiedControlVariable _ = mzero
+  checkBasicFor stmt path
 
-        checkVarDeclIdentInExp :: Ident -> SourceSpan -> [RDF.Diagnostic]
-        checkVarDeclIdentInExp expIdent sourceSpan =
-          [ RDF.rangeDiagnostic
-              "Language.Java.Rules.ModifiedControlVariable"
-              ("Laufvariable " ++ prettyPrint (ident varDecl) ++ " darf nicht innerhalb der Schleife modifiziert werden!")
-              sourceSpan
-              path
-            | varDecl <- filter (\varDecl -> ident varDecl == expIdent) forVarDecls
-          ]
-    checkBasicFor _ = mzero
+checkBasicFor :: Stmt -> FilePath -> [RDF.Diagnostic]
+checkBasicFor (BasicFor (Just (ForLocalVars _ _ forVarDecls)) _ _ forStmt) path = do
+  expr <- universeBi forStmt
+  checkBasicForModifiedControlVariable expr
+  where
+    checkBasicForModifiedControlVariable (Assign sourceSpan (NameLhs (Name [controlVariable])) _ _) =
+      map
+        (createRangeDiag sourceSpan path)
+        (checkVarDeclIdentInExp controlVariable forVarDecls)
+    checkBasicForModifiedControlVariable (PostIncrement sourceSpan (ExpName (Name [controlVariable]))) =
+      map
+        (createRangeDiag sourceSpan path)
+        (checkVarDeclIdentInExp controlVariable forVarDecls)
+    checkBasicForModifiedControlVariable (PreIncrement sourceSpan (ExpName (Name [controlVariable]))) =
+      map
+        (createRangeDiag sourceSpan path)
+        (checkVarDeclIdentInExp controlVariable forVarDecls)
+    checkBasicForModifiedControlVariable (PostDecrement sourceSpan (ExpName (Name [controlVariable]))) =
+      map
+        (createRangeDiag sourceSpan path)
+        (checkVarDeclIdentInExp controlVariable forVarDecls)
+    checkBasicForModifiedControlVariable (PreDecrement sourceSpan (ExpName (Name [controlVariable]))) =
+      map
+        (createRangeDiag sourceSpan path)
+        (checkVarDeclIdentInExp controlVariable forVarDecls)
+    checkBasicForModifiedControlVariable _ = mzero
+checkBasicFor _ _ = mzero
+
+checkVarDeclIdentInExp :: Ident -> [VarDecl] -> [VarDecl]
+checkVarDeclIdentInExp controlVariable = filter (\varDecl -> ident varDecl == controlVariable)
+
+createRangeDiag :: SourceSpan -> FilePath -> VarDecl -> RDF.Diagnostic
+createRangeDiag sourceSpan path varDecl =
+  RDF.rangeDiagnostic
+    "Language.Java.Rules.ModifiedControlVariable"
+    ("Laufvariable " ++ prettyPrint (ident varDecl) ++ " darf nicht innerhalb der Schleife modifiziert werden!")
+    sourceSpan
+    path
