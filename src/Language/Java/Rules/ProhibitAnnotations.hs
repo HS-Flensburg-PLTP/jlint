@@ -11,20 +11,18 @@ check whitelist cUnit path = do
   annotation <- universeBi cUnit
   checkAnnotation whitelist annotation path
 
-{-whitelist :: [String]
-whitelist = ["FooBar"]-}
+whitelist :: [String]
+whitelist = ["Override"]
 
 annotationName :: Annotation -> Name
-annotationName annotation = case annotation of
-  NormalAnnotation _ name _ -> name
-  SingleElementAnnotation _ name _ -> name
-  MarkerAnnotation _ name -> name
+annotationName (NormalAnnotation _ name _) = name
+annotationName (SingleElementAnnotation _ name _) = name
+annotationName (MarkerAnnotation _ name) = name
 
 annotationSourceSpan :: Annotation -> SourceSpan
-annotationSourceSpan annotation = case annotation of
-  NormalAnnotation sourcespan _ _ -> sourcespan
-  SingleElementAnnotation sourcespan _ _ -> sourcespan
-  MarkerAnnotation sourcespan _ -> sourcespan
+annotationSourceSpan (NormalAnnotation sourcespan _ _) = sourcespan
+annotationSourceSpan (SingleElementAnnotation sourcespan _ _) = sourcespan
+annotationSourceSpan (MarkerAnnotation sourcespan _) = sourcespan
 
 checkAnnotation :: [String] -> Annotation -> FilePath -> [RDF.Diagnostic]
 checkAnnotation whitelist annotation path =
@@ -32,4 +30,4 @@ checkAnnotation whitelist annotation path =
       sourcespan = annotationSourceSpan annotation
    in if name `elem` whitelist
         then mzero
-        else return (RDF.rangeDiagnostic "ProhibitAnnotations" ("Prohibited Annotation found: " ++ name) sourcespan path)
+        else return (RDF.rangeDiagnostic "Language.Java.Rules.ProhibitAnnotations" ("Prohibited Annotation found: " ++ name) sourcespan path)
