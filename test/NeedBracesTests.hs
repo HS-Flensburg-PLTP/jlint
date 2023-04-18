@@ -1,4 +1,4 @@
-module NeedBracesTests where
+module NeedBracesTests (tests) where
 
 import qualified Language.Java.Rules.NeedBraces as NeedBraces
 import qualified RDF

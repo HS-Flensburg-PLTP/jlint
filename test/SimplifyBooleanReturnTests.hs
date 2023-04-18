@@ -1,4 +1,4 @@
-module SimplifyBooleanReturnTests where
+module SimplifyBooleanReturnTests (tests) where
 
 import qualified Language.Java.Rules.SimplifyBooleanReturn as SimplifyBooleanReturn
 import qualified RDF

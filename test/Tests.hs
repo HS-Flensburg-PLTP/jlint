@@ -7,6 +7,7 @@ import qualified RDF
 import System.Directory (getCurrentDirectory)
 import Test.HUnit
 
+-- keeping this for now: compatibility with current/older pull requests
 withParsedJavaFile :: FilePath -> (CompilationUnit -> FilePath -> Assertion) -> Assertion
 withParsedJavaFile relativePath check = do
   path <- getCurrentDirectory

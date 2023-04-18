@@ -1,4 +1,4 @@
-module PreferExpressionsTests where
+module PreferExpressionsTests (tests) where
 
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified RDF

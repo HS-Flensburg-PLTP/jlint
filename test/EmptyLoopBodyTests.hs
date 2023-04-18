@@ -1,4 +1,4 @@
-module EmptyLoopBodyTests where
+module EmptyLoopBodyTests (tests) where
 
 import qualified Language.Java.Rules.EmptyLoopBody as EmptyLoopBody
 import qualified RDF

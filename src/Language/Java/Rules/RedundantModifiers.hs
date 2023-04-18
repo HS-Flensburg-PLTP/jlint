@@ -1,4 +1,4 @@
-module Language.Java.Rules.RedundantModifiers where
+module Language.Java.Rules.RedundantModifiers (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)

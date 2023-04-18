@@ -1,4 +1,4 @@
-module ConsistentOverrideEqualsHashCodeTests where
+module ConsistentOverrideEqualsHashCodeTests (tests) where
 
 import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
 import qualified RDF

@@ -1,4 +1,4 @@
-module AvoidNegationsTests where
+module AvoidNegationsTests (tests) where
 
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
 import qualified RDF

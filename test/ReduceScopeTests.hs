@@ -1,4 +1,4 @@
-module ReduceScopeTests where
+module ReduceScopeTests (tests) where
 
 import Language.Java.Rules.ReduceScope as ReduceScope
 import qualified RDF

@@ -1,4 +1,4 @@
-module CheckNonFinalMethodAttributesTests where
+module CheckNonFinalMethodAttributesTests (tests) where
 
 import qualified Language.Java.Rules.CheckNonFinalMethodAttributes as CheckNonFinalMethodAttributes
 import qualified RDF

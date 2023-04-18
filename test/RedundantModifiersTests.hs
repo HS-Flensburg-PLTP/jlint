@@ -1,4 +1,4 @@
-module RedundantModifiersTests where
+module RedundantModifiersTests (tests) where
 
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified RDF

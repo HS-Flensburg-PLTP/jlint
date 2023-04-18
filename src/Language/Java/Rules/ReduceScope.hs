@@ -1,6 +1,6 @@
 {-# LANGUAGE FlexibleContexts #-}
 
-module Language.Java.Rules.ReduceScope where
+module Language.Java.Rules.ReduceScope (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Data (Data)

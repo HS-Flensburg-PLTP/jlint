@@ -1,4 +1,4 @@
-module ParameterNumberTests where
+module ParameterNumberTests (tests) where
 
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified RDF

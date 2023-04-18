@@ -1,4 +1,4 @@
-module Language.Java.Rules.CheckNonPrivateAttributes where
+module Language.Java.Rules.CheckNonPrivateAttributes (check) where
 
 import Language.Java.AST (extractAttributes)
 import Language.Java.Syntax

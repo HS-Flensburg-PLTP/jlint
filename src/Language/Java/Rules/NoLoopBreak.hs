@@ -1,4 +1,4 @@
-module Language.Java.Rules.NoLoopBreak where
+module Language.Java.Rules.NoLoopBreak (check) where
 
 import Control.Monad.Reader
 import Data.Generics.Uniplate.Data (universeBi)

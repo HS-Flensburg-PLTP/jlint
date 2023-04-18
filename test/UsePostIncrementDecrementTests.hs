@@ -1,4 +1,4 @@
-module UsePostIncrementDecrementTests where
+module UsePostIncrementDecrementTests (tests) where
 
 import qualified Language.Java.Rules.UsePostIncrementDecrement as UsePostIncrementDecrement
 import qualified RDF

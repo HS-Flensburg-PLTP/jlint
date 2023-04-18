@@ -1,4 +1,4 @@
-module Language.Java.Rules.UseJavaArrayTypeStyle where
+module Language.Java.Rules.UseJavaArrayTypeStyle (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)

@@ -1,4 +1,4 @@
-module AvoidStarImportTests where
+module AvoidStarImportTests (tests) where
 
 import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
 import qualified RDF

@@ -1,4 +1,4 @@
-module UseAssignOpTests where
+module UseAssignOpTests (tests) where
 
 import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import qualified RDF

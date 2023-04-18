@@ -1,4 +1,4 @@
-module NamingConventionsTests where
+module NamingConventionsTests (tests) where
 
 import qualified Language.Java.Rules.NamingConventions as NamingConventions
 import qualified RDF

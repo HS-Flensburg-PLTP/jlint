@@ -2,7 +2,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE QuasiQuotes #-}
 
-module Language.Java.Rules.NamingConventions where
+module Language.Java.Rules.NamingConventions (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Function ((&))

@@ -1,4 +1,4 @@
-module UseElseTests where
+module UseElseTests (tests) where
 
 import qualified Language.Java.Rules.UseElse as UseElse
 import qualified RDF

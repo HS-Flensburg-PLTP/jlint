@@ -1,4 +1,4 @@
-module SameExecutionsInIfTests where
+module SameExecutionsInIfTests (tests) where
 
 import qualified Language.Java.Rules.SameExecutionsInIf as SameExecutionsInIf
 import Test.HUnit (Test)

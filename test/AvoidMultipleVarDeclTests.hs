@@ -1,4 +1,4 @@
-module AvoidMultipleVarDeclTests where
+module AvoidMultipleVarDeclTests (tests) where
 
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified RDF

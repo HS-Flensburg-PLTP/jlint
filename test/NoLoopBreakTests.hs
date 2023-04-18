@@ -1,4 +1,4 @@
-module NoLoopBreakTests where
+module NoLoopBreakTests (tests) where
 
 import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
 import qualified RDF

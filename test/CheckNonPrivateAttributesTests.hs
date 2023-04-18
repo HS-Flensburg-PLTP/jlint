@@ -1,4 +1,4 @@
-module CheckNonPrivateAttributesTests where
+module CheckNonPrivateAttributesTests (tests) where
 
 import qualified Language.Java.Rules.CheckNonPrivateAttributes as CheckNonPrivateAttributes
 import qualified RDF

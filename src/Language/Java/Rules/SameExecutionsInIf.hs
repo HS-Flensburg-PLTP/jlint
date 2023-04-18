@@ -1,4 +1,4 @@
-module Language.Java.Rules.SameExecutionsInIf where
+module Language.Java.Rules.SameExecutionsInIf (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
@@ -12,7 +12,7 @@ check cUnit path = do
   checkMethodBlocks methods path
 
 checkMethodBlocks :: (String, MethodBody) -> FilePath -> [RDF.Diagnostic]
-checkMethodBlocks (methodName, methodBody) path = do
+checkMethodBlocks (_, methodBody) path = do
   blockStmts <- universeBi methodBody
   checkStmts (extractIfThenElseBlocks blockStmts)
   where

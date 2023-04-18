@@ -1,4 +1,4 @@
-module DefaultComesLastTests where
+module DefaultComesLastTests (tests) where
 
 import qualified Language.Java.Rules.DefaultComesLast as DefaultComesLast
 import qualified RDF

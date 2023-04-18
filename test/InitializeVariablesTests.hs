@@ -1,4 +1,4 @@
-module InitializeVariablesTests where
+module InitializeVariablesTests (tests) where
 
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
 import qualified RDF

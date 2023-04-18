@@ -1,4 +1,4 @@
-module Language.Java.Rules.AvoidNegations where
+module Language.Java.Rules.AvoidNegations (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)

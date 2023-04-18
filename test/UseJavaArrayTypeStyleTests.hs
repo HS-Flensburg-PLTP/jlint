@@ -1,4 +1,4 @@
-module UseJavaArrayTypeStyleTests where
+module UseJavaArrayTypeStyleTests (tests) where
 
 import qualified Language.Java.Rules.UseJavaArrayTypeStyle as UseJavaArrayTypeStyle
 import qualified RDF

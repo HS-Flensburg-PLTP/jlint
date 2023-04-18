@@ -1,4 +1,4 @@
-module NoNullPointerExceptionsForControlTests where
+module NoNullPointerExceptionsForControlTests (tests) where
 
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
 import qualified RDF
