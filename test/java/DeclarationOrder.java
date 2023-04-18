@@ -4,14 +4,14 @@ public class DeclarationOrder {
     protected int b;
     public int c;
 
-    Test() {
+    DeclarationOrder() {
           this.a = 0;
         }
 
     public void foo() {
     }
 
-    Test(int a) {
+    DeclarationOrder(int a) {
           this.a = a;
         }
 

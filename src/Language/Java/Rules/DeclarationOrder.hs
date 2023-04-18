@@ -2,51 +2,63 @@ module Language.Java.Rules.DeclarationOrder (check) where
 
 import Control.Monad (MonadPlus (mzero))
 import Data.Generics.Uniplate.Data (universeBi)
-import Language.Java.Syntax (CompilationUnit, MemberDecl (ConstructorDecl, FieldDecl, MethodDecl), Modifier (Private, Protected, Public, Static))
-import RDF (Diagnostic)
+import Language.Java.Syntax
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [Diagnostic]
-check cUnit path = checkRank 0 (extractMemberDecls cUnit path)
+data Rank
+  = StaticPublicField
+  | StaticProtectedField
+  | StaticPackageField
+  | StaticPrivateField
+  | InstancePublicField
+  | InstanceProtectedField
+  | InstancePackageField
+  | InstancePrivateField
+  | Constructor
+  | Method
+  deriving (Eq, Ord, Show)
 
-extractMemberDecls :: CompilationUnit -> FilePath -> [(Int, RDF.Diagnostic)]
-extractMemberDecls cUnit path = do
+check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check cUnit path = checkRank path (extractMemberDecls cUnit)
+
+extractMemberDecls :: CompilationUnit -> [(Rank, SourceSpan)]
+extractMemberDecls cUnit = do
   toplvlDecl <- universeBi cUnit
-  checkTopLvlStmts toplvlDecl path
+  checkTopLvlStmts toplvlDecl
 
-checkTopLvlStmts :: MemberDecl -> FilePath -> [(Int, RDF.Diagnostic)]
-checkTopLvlStmts toplvlDecl path = case toplvlDecl of
+checkTopLvlStmts :: MemberDecl -> [(Rank, SourceSpan)]
+checkTopLvlStmts toplvlDecl = case toplvlDecl of
   FieldDecl sourceSpan mods _ _ ->
     if Static `elem` mods
       then
         if Public `elem` mods
-          then [(0, RDF.rangeDiagnostic "DeclarationOrder" "Public Static Variable an der falschen Stelle deklariert." sourceSpan path)]
+          then [(StaticPublicField, sourceSpan)]
           else
             if Protected `elem` mods
-              then [(1, RDF.rangeDiagnostic "DeclarationOrder" "Protected Static Variable an der falschen Stelle deklariert." sourceSpan path)]
+              then [(StaticProtectedField, sourceSpan)]
               else
                 if Private `elem` mods
-                  then [(3, RDF.rangeDiagnostic "DeclarationOrder" "Private Static Variable an der falschen Stelle deklariert." sourceSpan path)]
-                  else [(2, RDF.rangeDiagnostic "DeclarationOrder" "Package Static Variable an der falschen Stelle deklariert." sourceSpan path)]
+                  then [(StaticPrivateField, sourceSpan)]
+                  else [(StaticPackageField, sourceSpan)]
       else
         if Public `elem` mods
-          then [(4, RDF.rangeDiagnostic "DeclarationOrder" "Public Instanz Variable an der falschen Stelle deklariert." sourceSpan path)]
+          then [(InstancePublicField, sourceSpan)]
           else
             if Protected `elem` mods
-              then [(5, RDF.rangeDiagnostic "DeclarationOrder" "Protected Instanz Variable an der falschen Stelle deklariert." sourceSpan path)]
+              then [(InstanceProtectedField, sourceSpan)]
               else
                 if Private `elem` mods
-                  then [(7, RDF.rangeDiagnostic "DeclarationOrder" "Private Instanz Variable an der falschen Stelle deklariert." sourceSpan path)]
-                  else [(6, RDF.rangeDiagnostic "DeclarationOrder" "Package Instanz Variable an der falschen Stelle deklariert." sourceSpan path)]
-  ConstructorDecl sourceSpan _ _ _ _ _ _ -> [(8, RDF.rangeDiagnostic "DeclarationOrder" "Konstruktor an der falschen Stelle deklariert." sourceSpan path)]
-  MethodDecl sourceSpan _ _ _ _ _ _ _ _ -> [(9, RDF.rangeDiagnostic "DeclarationOrder" "Methode an der falschen Stelle deklariert." sourceSpan path)]
+                  then [(InstancePrivateField, sourceSpan)]
+                  else [(InstancePackageField, sourceSpan)]
+  ConstructorDecl sourceSpan _ _ _ _ _ _ -> [(Constructor, sourceSpan)]
+  MethodDecl sourceSpan _ _ _ _ _ _ _ _ -> [(Method, sourceSpan)]
   _ -> mzero
 
-checkRank :: Int -> [(Int, Diagnostic)] -> [Diagnostic]
-checkRank allowedrank list =
-  case list of
-    (rank, diag) : xs ->
-      if rank < allowedrank
-        then return diag
-        else checkRank rank xs
-    [] -> mzero
+checkRank :: FilePath -> [(Rank, SourceSpan)] -> [RDF.Diagnostic]
+checkRank path declOrder =
+  map
+    (\((rank, sourcespan), _) -> RDF.rangeDiagnostic "Language.Java.Rules.DeclarationOrder" (show rank ++ " an der falschen Stelle deklariert.") sourcespan path)
+    ( filter
+        (\((rankA, _), (rankB, _)) -> rankA > rankB)
+        (zip declOrder (tail declOrder))
+    )
