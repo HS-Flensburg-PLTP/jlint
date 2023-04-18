@@ -113,7 +113,6 @@ test-suite jlint-test
       AvoidStarImportTests
       CheckNonFinalMethodAttributesTests
       CheckNonPrivateAttributesTests
-      CheckResults
       ConsistentOverrideEqualsHashCodeTests
       DefaultComesLastTests
       EmptyLoopBodyTests

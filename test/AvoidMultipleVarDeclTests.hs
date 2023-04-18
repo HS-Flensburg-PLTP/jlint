@@ -1,44 +1,20 @@
 module AvoidMultipleVarDeclTests where
 
-import Control.Monad (zipWithM_)
-import Language.Java.Parser (compilationUnit, parser)
-import Language.Java.Rules.AvoidMultipleVarDecl (check)
-import Language.Java.Syntax
+import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified RDF
-import System.Directory (getCurrentDirectory)
-import Test.HUnit
+import Test.HUnit (Test)
 import Tests
 
 tests :: Test
 tests =
-  let file = "/test/java/AvoidMultipleVarDecl.java"
-   in test [file ~: Tests.withParsedJavaFile file avoidMultipleVarDecl]
+  rangesTest
+    expectedRanges
+    "/test/java/AvoidMultipleVarDecl.java"
+    AvoidMultipleVarDecl.check
 
-avoidMultipleVarDecl :: CompilationUnit -> FilePath -> Assertion
-avoidMultipleVarDecl cUnit path = do
-  let expectedRange1 =
-        RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 6, RDF.column = Just 9},
-            RDF.end = Just (RDF.Position {RDF.line = 6, RDF.column = Just 18})
-          }
-  let expectedRange2 =
-        RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 8, RDF.column = Just 9},
-            RDF.end = Just (RDF.Position {RDF.line = 9, RDF.column = Just 15})
-          }
-  let expectedRange3 =
-        RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 11, RDF.column = Just 9},
-            RDF.end = Just (RDF.Position {RDF.line = 11, RDF.column = Just 30})
-          }
-  let expectedRanges =
-        [ expectedRange1,
-          expectedRange2,
-          expectedRange3
-        ]
-  let diagnostic = check cUnit path
-  assertEqual "Check number of messages" (length expectedRanges) (length diagnostic)
-  zipWithM_
-    (assertEqual "Check range")
-    (map Just expectedRanges)
-    (map (RDF.range . RDF.location) diagnostic)
+expectedRanges :: [RDF.Range]
+expectedRanges =
+  [ RDF.mkRange (6, 9) (6, 18),
+    RDF.mkRange (8, 9) (9, 15),
+    RDF.mkRange (11, 9) (11, 30)
+  ]
