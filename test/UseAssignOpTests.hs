@@ -19,7 +19,7 @@ useAssignOp cUnit path = do
   let expectedRange1 =
         Range
           { start = Position {line = 11, column = Just 17},
-            end = Just (Position {line = 12, column = Just 17})
+            end = Just (Position {line = 11, column = Just 46})
           }
   let expectedRanges =
         [ expectedRange1

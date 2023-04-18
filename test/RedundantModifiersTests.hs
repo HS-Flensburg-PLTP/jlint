@@ -17,22 +17,22 @@ redundantModifiers cUnit path = do
   let expectedRange1 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 3, RDF.column = Just 5},
-            RDF.end = Just (RDF.Position {RDF.line = 3, RDF.column = Just 12})
+            RDF.end = Just (RDF.Position {RDF.line = 3, RDF.column = Just 11})
           }
   let expectedRange2 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 4, RDF.column = Just 5},
-            RDF.end = Just (RDF.Position {RDF.line = 4, RDF.column = Just 14})
+            RDF.end = Just (RDF.Position {RDF.line = 4, RDF.column = Just 13})
           }
   let expectedRange3 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 5, RDF.column = Just 5},
-            RDF.end = Just (RDF.Position {RDF.line = 5, RDF.column = Just 12})
+            RDF.end = Just (RDF.Position {RDF.line = 5, RDF.column = Just 11})
           }
   let expectedRange4 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 5, RDF.column = Just 12},
-            RDF.end = Just (RDF.Position {RDF.line = 5, RDF.column = Just 21})
+            RDF.end = Just (RDF.Position {RDF.line = 5, RDF.column = Just 20})
           }
   let expectedRanges =
         [ expectedRange1,
