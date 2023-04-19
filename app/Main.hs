@@ -1,12 +1,14 @@
 module Main where
 
 import CheckstyleXML (toRDF)
+import Config
 import Control.Monad (MonadPlus (..), unless, when)
+import Data.Aeson (decodeFileStrict)
 import qualified Data.ByteString.Lazy.Char8 as C
 import Data.Semigroup ((<>))
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
-import Language.Java.Rules (checkAll)
+import Language.Java.Rules (checkAll, checkRule)
 import Language.Java.Syntax (CompilationUnit)
 import Options.Applicative
 import RDF
@@ -118,26 +120,30 @@ parseJava rootDir pretty showAST checkstyleDiags =
       then do
         print cUnitResults
       else do
-        let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
-        let diagnostics = concatMap (uncurry checkAll) cUnitResults
-        let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
-        C.putStrLn
-          ( RDF.encodetojson
-              ( DiagnosticResult
-                  { diagnostics = diagnosticResults,
-                    resultSource = Just (Source {name = "jlint", url = Nothing}),
-                    resultSeverity = RDF.checkSeverityList (map RDF.severity diagnosticResults) -- emmits highest severity of all results in all files
-                  }
+        config <- decodeFileStrict "config.json" :: IO (Maybe Config)
+        case config of
+          Nothing -> putStrLn "Fehler beim Laden der config File"
+          Just config -> do
+            let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
+            let diagnostics = concatMap (uncurry (checkRule (rules config))) cUnitResults
+            let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
+            C.putStrLn
+              ( RDF.encodetojson
+                  ( DiagnosticResult
+                      { diagnostics = diagnosticResults,
+                        resultSource = Just (Source {name = "jlint", url = Nothing}),
+                        resultSeverity = RDF.checkSeverityList (map RDF.severity diagnosticResults) -- emmits highest severity of all results in all files
+                      }
+                  )
               )
-          )
-        unless (null parsingErrors) $ print parsingErrors
-        when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
+            unless (null parsingErrors) $ print parsingErrors
+            when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
 
-        let numberOfHints = length diagnostics
-        if numberOfHints == 0
-          then do
-            hPutStrLn stderr ("jlint did not generate any hints for the Java code in directory " ++ rootDir)
-            exitSuccess
-          else do
-            hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
-            exitWith (ExitFailure numberOfHints)
+            let numberOfHints = length diagnostics
+            if numberOfHints == 0
+              then do
+                hPutStrLn stderr ("jlint did not generate any hints for the Java code in directory " ++ rootDir)
+                exitSuccess
+              else do
+                hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
+                exitWith (ExitFailure numberOfHints)
