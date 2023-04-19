@@ -13,21 +13,26 @@ check cUnit path = do
   where
     checkExp assign@(Assign span (NameLhs name1) EqualA (BinOp (ExpName name2) op (Lit (Int 1)))) =
       if name1 == name2
-        then case opToPostIncDec op name1 of
-          Just postIncDec -> return (RDF.rangeDiagnostic "Language.Java.Rules.UseIncrementDecrementOperator" (assignMessage assign postIncDec) span path)
-          Nothing -> mzero
+        then message assign (opToPostIncDec op name1) span path
         else mzero
     checkExp assign@(Assign span (NameLhs name1) EqualA (BinOp (Lit (Int 1)) op (ExpName name2))) =
       if name1 == name2
-        then case opToPostIncDec op name1 of
-          Just postIncDec -> return (RDF.rangeDiagnostic "Language.Java.Rules.UseIncrementDecrementOperator" (assignMessage assign postIncDec) span path)
-          Nothing -> mzero
+        then message assign (opToPostIncDec op name1) span path
         else mzero
     checkExp assign@(Assign span (NameLhs name) op (Lit (Int 1))) =
-      case assignOpToPostIncDec op name of
-        Just postIncDec -> return (RDF.rangeDiagnostic "Language.Java.Rules.UseIncrementDecrementOperator" (assignMessage assign postIncDec) span path)
-        Nothing -> mzero
+      message assign (assignOpToPostIncDec op name) span path
     checkExp _ = mzero
+
+message :: Exp -> Maybe Exp -> SourceSpan -> FilePath -> [RDF.Diagnostic]
+message assign (Just postIncDec) span path =
+  return
+    ( RDF.rangeDiagnostic
+        "Language.Java.Rules.UseIncrementDecrementOperator"
+        ("Anstelle einer Zuweisung " ++ prettyPrint assign ++ " sollte " ++ prettyPrint postIncDec ++ " verwendet werden.")
+        span
+        path
+    )
+message _ Nothing _ _ = mzero
 
 opToPostIncDec :: Op -> Name -> Maybe Exp
 opToPostIncDec Add name = Just (PostIncrement dummySourceSpan (ExpName name))
@@ -38,7 +43,3 @@ assignOpToPostIncDec :: AssignOp -> Name -> Maybe Exp
 assignOpToPostIncDec AddA name = Just (PostIncrement dummySourceSpan (ExpName name))
 assignOpToPostIncDec SubA name = Just (PostDecrement dummySourceSpan (ExpName name))
 assignOpToPostIncDec _ _ = Nothing
-
-assignMessage :: Exp -> Exp -> String
-assignMessage assign postIncDec =
-  "Anstelle einer Zuweisung " ++ prettyPrint assign ++ " sollte " ++ prettyPrint postIncDec ++ " verwendet werden."
