@@ -12,6 +12,7 @@ import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import Language.Java.Rules.UseElse as UseElse (check)
+import qualified Language.Java.Rules.UseIncrementDecrementOperator as UseIncrementDecrementOperator
 import qualified Language.Java.Rules.UseJavaArrayTypeStyle as UseJavaArrayTypeStyle
 import Language.Java.Syntax
 import qualified RDF
@@ -30,6 +31,7 @@ checks =
     RedundantModifiers.check,
     UseAssignOp.check,
     UseElse.check,
+    UseIncrementDecrementOperator.check,
     UseJavaArrayTypeStyle.check
   ]
 

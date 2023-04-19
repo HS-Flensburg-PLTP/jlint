@@ -20,6 +20,7 @@ import SimplifyBooleanReturn.Tests
 import Test.HUnit (Test, runTestTT, test, (~:))
 import qualified UseAssignOpTests
 import qualified UseElseTests
+import qualified UseIncrementDecrementOperatorTests
 import qualified UseJavaArrayTypeStyleTests
 
 main :: IO ()
@@ -50,6 +51,7 @@ tests =
       "RedundantModifiers" ~: RedundantModifiersTests.tests,
       "UseAssignOp" ~: UseAssignOpTests.tests,
       "UseElse" ~: UseElseTests.tests,
+      "UseIncrementDecrementOperator" ~: UseIncrementDecrementOperatorTests.tests,
       "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests,
       "ConsistentOverrideEqualsHashCode" ~: ConsistentOverrideEqualsHashCodeTests.tests
     ]
