@@ -4,28 +4,28 @@
 
 1. [GHCup](https://www.haskell.org/ghcup/) installieren
 
-2. [VSCode](https://code.visualstudio.com) installieren
+2. [Ormolu](https://github.com/tweag/ormolu/releases) `0.4.0.0` herunterladen und entpacken
 
-3. VSCode Extension `Haskell` installieren
+3. [VSCode](https://code.visualstudio.com) installieren
 
-In den Extension Settings sollten noch folgende Einstellungen überprüft werden:
-- Formatting Provider: `ormolu`
-- Manage HLS: `GHCup`
-- Ghcup Executable Path: expl. Angabe, wenn `ghcup` nicht im PATH vorhanden
+4. VSCode Extension `Haskell` installieren
+    - Extension Settings:
+      - Manage HLS: `GHCup`
+      - Ghcup Executable Path: expl. Angabe, wenn `ghcup` nicht im PATH vorhanden
 
-Die Extension übernimmt dann automatisch die notwendigen Installationen (GHC, HLS).
+5. VSCode Extension `Ormolu` installieren
+    - Extension Settings:
+      - Ormolu Path (Angabe in `settings.json` - Pfadtrenner bei Windows beachten: `\\` - also z.B: `C:\\ormolu\\ormolu.exe`) 
 
-Bei korrektem Setup sollten z.B folgende Features von HLS in VScode funktionieren:
+6. `Default Formatter` auf `Ormolu` stellen und `Auto Save` und `Format on Save` aktivieren
+
+Die Extension `Haskell` übernimmt automatisch die notwendigen Installationen (GHC, HLS).
+
+Bei korrektem Setup sollten z.B folgende Features in VScode funktionieren:
 - Linter (als Anmerkungen im Code)
-- Formatter `Shift-Alt-F`
 - Typinformationen `Hover`
 - Sprung zur Deklaration `Ctrl-Click`
-
-### Empfehlungen für VSCode
-
-- `Insert Final Newline` aktivieren
-  - der Formatchecker über github erwartet diese, lokal fügt Ormolu diese nicht automatisch hinzu
-- `Auto Save` und `Format on Save` aktivieren
+- Formatierung des Codes beim Speichern
 
 ## Entwicklung
 
