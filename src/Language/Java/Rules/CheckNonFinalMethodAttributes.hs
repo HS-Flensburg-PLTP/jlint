@@ -1,7 +1,7 @@
 module Language.Java.Rules.CheckNonFinalMethodAttributes (check) where
 
 import Language.Java.AST (extractMethodParameters, extractVarName)
-import Language.Java.Syntax (CompilationUnit (..), FormalParam (..), Modifier (Final), dummySourceSpan)
+import Language.Java.Syntax
 import qualified RDF
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
