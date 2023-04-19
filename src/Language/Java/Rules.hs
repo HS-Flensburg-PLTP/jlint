@@ -1,5 +1,6 @@
 module Language.Java.Rules where
 
+import qualified Language.Java.Rules.AvoidMultipleTopLevelDecl as AvoidMultipleTopLevelDecl
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
 import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
@@ -12,13 +13,15 @@ import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import Language.Java.Rules.UseElse as UseElse (check)
+import qualified Language.Java.Rules.UseIncrementDecrementOperator as UseIncrementDecrementOperator
 import qualified Language.Java.Rules.UseJavaArrayTypeStyle as UseJavaArrayTypeStyle
 import Language.Java.Syntax
 import qualified RDF
 
 checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checks =
-  [ AvoidMultipleVarDecl.check,
+  [ AvoidMultipleTopLevelDecl.check,
+    AvoidMultipleVarDecl.check,
     AvoidNegations.check,
     AvoidStarImport.check,
     ConsistentOverrideEqualsHashCode.check,
@@ -30,6 +33,7 @@ checks =
     RedundantModifiers.check,
     UseAssignOp.check,
     UseElse.check,
+    UseIncrementDecrementOperator.check,
     UseJavaArrayTypeStyle.check
   ]
 

@@ -1,3 +1,4 @@
+import qualified AvoidMultipleTopLevelDeclTests
 import qualified AvoidMultipleVarDeclTests
 import qualified AvoidNegationsTests
 import qualified AvoidStarImportTests
@@ -20,6 +21,7 @@ import qualified SimplifyBooleanReturnTests
 import Test.HUnit
 import qualified UseAssignOpTests
 import qualified UseElseTests
+import qualified UseIncrementDecrementOperatorTests
 import qualified UseJavaArrayTypeStyleTests
 
 main :: IO ()
@@ -29,7 +31,8 @@ main = do
 tests :: Test
 tests =
   test
-    [ "AvoidMultipleVarDecl" ~: AvoidMultipleVarDeclTests.tests,
+    [ "AvoidMultipleTopLevelDecl" ~: AvoidMultipleTopLevelDeclTests.tests,
+      "AvoidMultipleVarDecl" ~: AvoidMultipleVarDeclTests.tests,
       "AvoidNegations" ~: AvoidNegationsTests.tests,
       "AvoidStarImport" ~: AvoidStarImportTests.tests,
       "CheckNonFinalMethodAttributes" ~: CheckNonFinalMethodAttributesTests.tests,
@@ -50,5 +53,6 @@ tests =
       "SimplifyBooleanReturn" ~: SimplifyBooleanReturnTests.tests,
       "UseAssignOp" ~: UseAssignOpTests.tests,
       "UseElse" ~: UseElseTests.tests,
+      "UseIncrementDecrementOperator" ~: UseIncrementDecrementOperatorTests.tests,
       "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests
     ]
