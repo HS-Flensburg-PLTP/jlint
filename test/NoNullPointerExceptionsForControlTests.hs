@@ -18,12 +18,12 @@ nullPointerExceptions cUnit path = do
   let expectedRange1 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 7, RDF.column = Just 13},
-            RDF.end = Just (RDF.Position {RDF.line = 12, RDF.column = Just 9})
+            RDF.end = Just (RDF.Position {RDF.line = 11, RDF.column = Just 14})
           }
   let expectedRange2 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 19, RDF.column = Just 13},
-            RDF.end = Just (RDF.Position {RDF.line = 24, RDF.column = Just 9})
+            RDF.end = Just (RDF.Position {RDF.line = 23, RDF.column = Just 14})
           }
   let expectedRanges =
         [ expectedRange1,

@@ -22,22 +22,22 @@ useJavaArrayTypeStyle cUnit path = do
   let expectedRange2 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 6, RDF.column = Just 13},
-            RDF.end = Just (RDF.Position {RDF.line = 6, RDF.column = Just 22})
+            RDF.end = Just (RDF.Position {RDF.line = 6, RDF.column = Just 21})
           }
   let expectedRange3 =
         RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 10, RDF.column = Just 23},
-            RDF.end = Just (RDF.Position {RDF.line = 10, RDF.column = Just 30})
+          { RDF.start = RDF.Position {RDF.line = 8, RDF.column = Just 13},
+            RDF.end = Just (RDF.Position {RDF.line = 8, RDF.column = Just 23})
           }
   let expectedRange4 =
         RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 11, RDF.column = Just 13},
-            RDF.end = Just (RDF.Position {RDF.line = 11, RDF.column = Just 24})
+          { RDF.start = RDF.Position {RDF.line = 11, RDF.column = Just 23},
+            RDF.end = Just (RDF.Position {RDF.line = 11, RDF.column = Just 30})
           }
   let expectedRange5 =
         RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 14, RDF.column = Just 39},
-            RDF.end = Just (RDF.Position {RDF.line = 14, RDF.column = Just 45})
+          { RDF.start = RDF.Position {RDF.line = 13, RDF.column = Just 39},
+            RDF.end = Just (RDF.Position {RDF.line = 13, RDF.column = Just 45})
           }
   let expectedRanges =
         [ expectedRange1,

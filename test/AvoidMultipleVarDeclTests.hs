@@ -19,17 +19,17 @@ avoidMultipleVarDecl cUnit path = do
   let expectedRange1 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 6, RDF.column = Just 9},
-            RDF.end = Just (RDF.Position {RDF.line = 8, RDF.column = Just 9})
+            RDF.end = Just (RDF.Position {RDF.line = 6, RDF.column = Just 18})
           }
   let expectedRange2 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 8, RDF.column = Just 9},
-            RDF.end = Just (RDF.Position {RDF.line = 11, RDF.column = Just 9})
+            RDF.end = Just (RDF.Position {RDF.line = 9, RDF.column = Just 15})
           }
   let expectedRange3 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 11, RDF.column = Just 9},
-            RDF.end = Just (RDF.Position {RDF.line = 12, RDF.column = Just 5})
+            RDF.end = Just (RDF.Position {RDF.line = 11, RDF.column = Just 30})
           }
   let expectedRanges =
         [ expectedRange1,

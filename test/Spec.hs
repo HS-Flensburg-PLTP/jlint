@@ -1,5 +1,6 @@
 import qualified AvoidMultipleVarDeclTests
 import qualified AvoidNegationsTests
+import qualified AvoidStarImportTests
 import qualified ConsistentOverrideEqualsHashCodeTests
 import DefaultComesLast.Tests
 import EmptyLoopBody.Tests (testAllEmptyLoopBodies)
@@ -41,6 +42,7 @@ tests =
   test
     [ "AvoidMultipleVarDecl" ~: AvoidMultipleVarDeclTests.tests,
       "AvoidNegations" ~: AvoidNegationsTests.tests,
+      "AvoidStarImport" ~: AvoidStarImportTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "ParameterNumber" ~: ParameterNumberTests.tests,

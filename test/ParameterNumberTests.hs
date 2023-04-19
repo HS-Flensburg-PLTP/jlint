@@ -19,17 +19,17 @@ parameterNumber cUnit path = do
   let expectedRange1 =
         Range
           { start = Position {line = 5, column = Just 5},
-            end = Just (Position {line = 6, column = Just 5})
+            end = Just (Position {line = 6, column = Just 6})
           }
   let expectedRange2 =
         Range
           { start = Position {line = 11, column = Just 5},
-            end = Just (Position {line = 12, column = Just 5})
+            end = Just (Position {line = 12, column = Just 6})
           }
   let expectedRange3 =
         Range
           { start = Position {line = 17, column = Just 5},
-            end = Just (Position {line = 18, column = Just 5})
+            end = Just (Position {line = 17, column = Just 115})
           }
   let expectedRanges =
         [ expectedRange1,
