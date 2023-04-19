@@ -1,4 +1,4 @@
-module Tests (rangesTest, withParsedJavaFile) where
+module Tests (goodFileTest, rangesTest) where
 
 import Control.Monad (zipWithM_)
 import Language.Java.Parser (compilationUnit, parser)
@@ -22,6 +22,10 @@ withParsedJavaFile relativePath check = do
 rangesTest :: [RDF.Range] -> FilePath -> (CompilationUnit -> FilePath -> [RDF.Diagnostic]) -> Test
 rangesTest testRanges =
   ruleTest (justifyRanges testRanges)
+
+goodFileTest :: FilePath -> (CompilationUnit -> FilePath -> [RDF.Diagnostic]) -> Test
+goodFileTest =
+  ruleTest (assertEqual "Check number of messages" 0 . length)
 
 ruleTest :: ([RDF.Diagnostic] -> Assertion) -> FilePath -> (CompilationUnit -> FilePath -> [RDF.Diagnostic]) -> Test
 ruleTest justify path check =
