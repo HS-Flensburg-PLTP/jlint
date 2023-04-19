@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/NoLoopBreak.java"
+    "NoLoopBreak.java"
     NoLoopBreak.check
 
 expectedRanges :: [RDF.Range]

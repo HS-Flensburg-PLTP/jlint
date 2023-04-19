@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/UsePostIncrementDecrement.java"
+    "UsePostIncrementDecrement.java"
     UsePostIncrementDecrement.check
 
 expectedRanges :: [RDF.Range]

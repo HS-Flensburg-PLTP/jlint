@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/EmptyLoopBody.java"
+    "EmptyLoopBody.java"
     EmptyLoopBody.check
 
 expectedRanges :: [RDF.Range]

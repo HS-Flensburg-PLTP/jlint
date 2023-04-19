@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/NoNullPointerExceptionsForControl.java"
+    "NoNullPointerExceptionsForControl.java"
     NoNullPointerExceptionsForControl.check
 
 expectedRanges :: [RDF.Range]

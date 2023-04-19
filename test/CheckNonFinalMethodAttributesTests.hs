@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/CheckNonFinalMethodAttributes.java"
+    "CheckNonFinalMethodAttributes.java"
     CheckNonFinalMethodAttributes.check
 
 expectedRanges :: [RDF.Range]

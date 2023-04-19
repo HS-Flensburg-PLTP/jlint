@@ -11,7 +11,7 @@ import Tests (withParsedJavaFile)
 
 tests :: Test
 tests =
-  let file = "/test/java/UseIncrementDecrementOperator.java"
+  let file = "UseIncrementDecrementOperator.java"
    in test [file ~: Tests.withParsedJavaFile file useIncrementDecrementOperator]
 
 useIncrementDecrementOperator :: CompilationUnit -> FilePath -> Assertion

@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/UseElse.java"
+    "UseElse.java"
     UseElse.check
 
 expectedRanges :: [RDF.Range]

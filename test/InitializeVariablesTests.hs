@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/InitializeVariables.java"
+    "InitializeVariables.java"
     InitializeVariables.check
 
 expectedRanges :: [RDF.Range]

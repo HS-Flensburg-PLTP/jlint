@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/RedundantModifiers.java"
+    "RedundantModifiers.java"
     RedundantModifiers.check
 
 expectedRanges :: [RDF.Range]
