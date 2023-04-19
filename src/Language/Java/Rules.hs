@@ -13,7 +13,7 @@ import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import Language.Java.Rules.UseElse as UseElse (check)
 import qualified Language.Java.Rules.UseJavaArrayTypeStyle as UseJavaArrayTypeStyle
-import Language.Java.Syntax (CompilationUnit)
+import Language.Java.Syntax
 import qualified RDF
 
 checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
@@ -21,6 +21,7 @@ checks =
   [ AvoidMultipleVarDecl.check,
     AvoidNegations.check,
     AvoidStarImport.check,
+    ConsistentOverrideEqualsHashCode.check,
     InitializeVariables.check,
     NoNullPointerExceptionsForControl.check,
     ParameterNumber.check,
@@ -29,8 +30,7 @@ checks =
     RedundantModifiers.check,
     UseAssignOp.check,
     UseElse.check,
-    UseJavaArrayTypeStyle.check,
-    ConsistentOverrideEqualsHashCode.check
+    UseJavaArrayTypeStyle.check
   ]
 
 checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]

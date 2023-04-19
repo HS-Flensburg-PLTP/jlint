@@ -17,12 +17,12 @@ noStarImports cUnit path = do
   let expectedRange1 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 1, RDF.column = Just 1},
-            RDF.end = Just (RDF.Position {RDF.line = 1, RDF.column = Just 23})
+            RDF.end = Just (RDF.Position {RDF.line = 1, RDF.column = Just 24})
           }
   let expectedRange2 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 2, RDF.column = Just 1},
-            RDF.end = Just (RDF.Position {RDF.line = 2, RDF.column = Just 23})
+            RDF.end = Just (RDF.Position {RDF.line = 2, RDF.column = Just 24})
           }
   let expectedRanges =
         [ expectedRange1,
