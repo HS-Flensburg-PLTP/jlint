@@ -23,7 +23,7 @@ avoidMultipleTopLevelDecl cUnit path = do
   let expectedRange1 =
         RDF.Range
           { RDF.start = RDF.Position {RDF.line = 5, RDF.column = Just 1},
-            RDF.end = Just (RDF.Position {RDF.line = 7, RDF.column = Just 1})
+            RDF.end = Just (RDF.Position {RDF.line = 7, RDF.column = Just 2})
           }
   let expectedRanges =
         [ expectedRange1
