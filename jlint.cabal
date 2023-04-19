@@ -30,6 +30,7 @@ library
       Control.Monad.Extra
       Language.Java.AST
       Language.Java.Rules
+      Language.Java.Rules.AvoidMultipleTopLevelDecl
       Language.Java.Rules.AvoidMultipleVarDecl
       Language.Java.Rules.AvoidNegations
       Language.Java.Rules.AvoidStarImport
@@ -110,6 +111,7 @@ test-suite jlint-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      AvoidMultipleTopLevelDeclTests
       AvoidMultipleVarDeclTests
       AvoidNegationsTests
       AvoidStarImportTests

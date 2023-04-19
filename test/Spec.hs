@@ -1,3 +1,4 @@
+import qualified AvoidMultipleTopLevelDeclTests
 import qualified AvoidMultipleVarDeclTests
 import qualified AvoidNegationsTests
 import qualified AvoidStarImportTests
@@ -40,7 +41,8 @@ main = do
 tests :: Test
 tests =
   test
-    [ "AvoidMultipleVarDecl" ~: AvoidMultipleVarDeclTests.tests,
+    [ "AvoidMultipleTopLevelDecl" ~: AvoidMultipleTopLevelDeclTests.tests,
+      "AvoidMultipleVarDecl" ~: AvoidMultipleVarDeclTests.tests,
       "AvoidNegations" ~: AvoidNegationsTests.tests,
       "AvoidStarImport" ~: AvoidStarImportTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
