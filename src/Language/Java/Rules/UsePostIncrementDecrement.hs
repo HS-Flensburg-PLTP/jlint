@@ -1,4 +1,4 @@
-module Language.Java.Rules.UsePostIncrementDecrement where
+module Language.Java.Rules.UsePostIncrementDecrement (check) where
 
 import Control.Monad
 import Data.Generics.Uniplate.Data (universeBi)

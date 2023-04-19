@@ -1,50 +1,21 @@
-module ConsistentOverrideEqualsHashCodeTests where
+module ConsistentOverrideEqualsHashCodeTests (tests) where
 
-import Control.Monad (zipWithM_)
-import Language.Java.Rules.ConsistentOverrideEqualsHashCode (check)
-import Language.Java.Syntax (CompilationUnit)
+import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
 import qualified RDF
-import Test.HUnit
-import qualified Tests
+import Test.HUnit (Test)
+import Tests
 
 tests :: Test
 tests =
-  let file = "/test/java/ConsistentOverrideEqualsHashCode.java"
-   in test [file ~: Tests.withParsedJavaFile file consistentOverride]
+  rangesTest
+    expectedRanges
+    "/test/java/ConsistentOverrideEqualsHashCode.java"
+    ConsistentOverrideEqualsHashCode.check
 
-consistentOverride :: CompilationUnit -> FilePath -> Assertion
-consistentOverride cUnit path = do
-  let expectedRange1 =
-        RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 2, RDF.column = Just 5},
-            RDF.end = Just (RDF.Position {RDF.line = 4, RDF.column = Just 6})
-          }
-  let expectedRange2 =
-        RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 10, RDF.column = Just 5},
-            RDF.end = Just (RDF.Position {RDF.line = 12, RDF.column = Just 6})
-          }
-  let expectedRange3 =
-        RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 40, RDF.column = Just 5},
-            RDF.end = Just (RDF.Position {RDF.line = 42, RDF.column = Just 6})
-          }
-  let expectedRange4 =
-        RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 45, RDF.column = Just 5},
-            RDF.end = Just (RDF.Position {RDF.line = 47, RDF.column = Just 6})
-          }
-
-  let expectedRanges =
-        [ expectedRange1,
-          expectedRange2,
-          expectedRange3,
-          expectedRange4
-        ]
-
-  let diagnostic = check cUnit path
-  assertEqual "Check number of messages" (length expectedRanges) (length diagnostic)
-  zipWithM_
-    (assertEqual "Check range")
-    (map Just expectedRanges)
-    (map (RDF.range . RDF.location) diagnostic)
+expectedRanges :: [RDF.Range]
+expectedRanges =
+  [ RDF.mkRange (2, 5) (4, 6),
+    RDF.mkRange (10, 5) (12, 6),
+    RDF.mkRange (40, 5) (42, 6),
+    RDF.mkRange (45, 5) (47, 6)
+  ]

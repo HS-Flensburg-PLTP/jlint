@@ -1,36 +1,19 @@
-module AvoidStarImportTests where
+module AvoidStarImportTests (tests) where
 
-import Control.Monad
-import Language.Java.Rules.AvoidStarImport (check)
-import Language.Java.Syntax (CompilationUnit)
+import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
 import qualified RDF
-import Test.HUnit
+import Test.HUnit (Test)
 import Tests
 
 tests :: Test
 tests =
-  let file = "/test/java/AvoidStarImport.java"
-   in test [file ~: Tests.withParsedJavaFile file noStarImports]
+  rangesTest
+    expectedRanges
+    "/test/java/AvoidStarImport.java"
+    AvoidStarImport.check
 
-noStarImports :: CompilationUnit -> FilePath -> Assertion
-noStarImports cUnit path = do
-  let expectedRange1 =
-        RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 1, RDF.column = Just 1},
-            RDF.end = Just (RDF.Position {RDF.line = 1, RDF.column = Just 24})
-          }
-  let expectedRange2 =
-        RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 2, RDF.column = Just 1},
-            RDF.end = Just (RDF.Position {RDF.line = 2, RDF.column = Just 24})
-          }
-  let expectedRanges =
-        [ expectedRange1,
-          expectedRange2
-        ]
-  let diagnostic = check cUnit path
-  assertEqual "Check number of messages" (length expectedRanges) (length diagnostic)
-  zipWithM_
-    (assertEqual "Check range")
-    (map Just expectedRanges)
-    (map (RDF.range . RDF.location) diagnostic)
+expectedRanges :: [RDF.Range]
+expectedRanges =
+  [ RDF.mkRange (1, 1) (1, 24),
+    RDF.mkRange (2, 1) (2, 24)
+  ]

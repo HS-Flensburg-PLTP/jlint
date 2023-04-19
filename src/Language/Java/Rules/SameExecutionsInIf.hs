@@ -1,18 +1,18 @@
-module Language.Java.Rules.SameExecutionsInIf where
+module Language.Java.Rules.SameExecutionsInIf (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.AST (extractMethods)
 import Language.Java.Syntax
-import RDF (Diagnostic (..), methodDiagnostic)
+import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [Diagnostic]
+check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   methods <- extractMethods cUnit
   checkMethodBlocks methods path
 
-checkMethodBlocks :: (String, MethodBody) -> FilePath -> [Diagnostic]
-checkMethodBlocks (methodName, methodBody) path = do
+checkMethodBlocks :: (String, MethodBody) -> FilePath -> [RDF.Diagnostic]
+checkMethodBlocks (_, methodBody) path = do
   blockStmts <- universeBi methodBody
   checkStmts (extractIfThenElseBlocks blockStmts)
   where
@@ -21,8 +21,8 @@ checkMethodBlocks (methodName, methodBody) path = do
     checkStmts [] = []
     checkStmts list = createDiagnostic (checkAllStatements list 0 + checkAllStatements (reverseList list) 0) (length (head list))
     createDiagnostic counter listLength
-      | counter > 0 && counter < listLength = [methodDiagnostic methodName ("In an if-then-else statement, " ++ show counter ++ " line(s) of code is/are the same and can be swapped out.") path]
-      | counter >= listLength = [methodDiagnostic methodName "In an if-then-else statement, all lines of code are the same and can be swapped out." path]
+      | counter > 0 && counter < listLength = [RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" ("In an if-then-else statement, " ++ show counter ++ " line(s) of code is/are the same and can be swapped out.") dummySourceSpan path]
+      | counter >= listLength = [RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" "In an if-then-else statement, all lines of code are the same and can be swapped out." dummySourceSpan path]
       | otherwise = []
 
 checkAllStatements :: [[BlockStmt]] -> Int -> Int

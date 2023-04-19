@@ -1,54 +1,22 @@
-module UseJavaArrayTypeStyleTests where
+module UseJavaArrayTypeStyleTests (tests) where
 
-import Control.Monad (zipWithM_)
-import Language.Java.Rules.UseJavaArrayTypeStyle as UseJavaArrayTypeStyle (check)
-import Language.Java.Syntax
+import qualified Language.Java.Rules.UseJavaArrayTypeStyle as UseJavaArrayTypeStyle
 import qualified RDF
-import Test.HUnit
-import qualified Tests
+import Test.HUnit (Test)
+import Tests
 
 tests :: Test
 tests =
-  let file = "/test/java/UseJavaArrayTypeStyle.java"
-   in test [file ~: Tests.withParsedJavaFile file useJavaArrayTypeStyle]
+  rangesTest
+    expectedRanges
+    "/test/java/UseJavaArrayTypeStyle.java"
+    UseJavaArrayTypeStyle.check
 
-useJavaArrayTypeStyle :: CompilationUnit -> FilePath -> Assertion
-useJavaArrayTypeStyle cUnit path = do
-  let expectedRange1 =
-        RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 3, RDF.column = Just 12},
-            RDF.end = Just (RDF.Position {RDF.line = 3, RDF.column = Just 20})
-          }
-  let expectedRange2 =
-        RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 6, RDF.column = Just 13},
-            RDF.end = Just (RDF.Position {RDF.line = 6, RDF.column = Just 21})
-          }
-  let expectedRange3 =
-        RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 8, RDF.column = Just 13},
-            RDF.end = Just (RDF.Position {RDF.line = 8, RDF.column = Just 23})
-          }
-  let expectedRange4 =
-        RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 11, RDF.column = Just 23},
-            RDF.end = Just (RDF.Position {RDF.line = 11, RDF.column = Just 30})
-          }
-  let expectedRange5 =
-        RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 13, RDF.column = Just 39},
-            RDF.end = Just (RDF.Position {RDF.line = 13, RDF.column = Just 45})
-          }
-  let expectedRanges =
-        [ expectedRange1,
-          expectedRange2,
-          expectedRange3,
-          expectedRange4,
-          expectedRange5
-        ]
-  let diagnostic = UseJavaArrayTypeStyle.check cUnit path
-  assertEqual "Check number of messages" (length expectedRanges) (length diagnostic)
-  zipWithM_
-    (assertEqual "Check range")
-    (map Just expectedRanges)
-    (map (RDF.range . RDF.location) diagnostic)
+expectedRanges :: [RDF.Range]
+expectedRanges =
+  [ RDF.mkRange (3, 12) (3, 20),
+    RDF.mkRange (6, 13) (6, 21),
+    RDF.mkRange (8, 13) (8, 23),
+    RDF.mkRange (11, 23) (11, 30),
+    RDF.mkRange (13, 39) (13, 45)
+  ]
