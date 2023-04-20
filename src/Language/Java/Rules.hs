@@ -34,8 +34,8 @@ checks =
     RedundantModifiers.check,
     UseAssignOp.check,
     UseElse.check,
-    DeclarationOrder.check
-      UseIncrementDecrementOperator.check,
+    DeclarationOrder.check,
+    UseIncrementDecrementOperator.check,
     UseJavaArrayTypeStyle.check
   ]
 
