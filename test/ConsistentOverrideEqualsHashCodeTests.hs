@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/ConsistentOverrideEqualsHashCode.java"
+    "ConsistentOverrideEqualsHashCode.java"
     ConsistentOverrideEqualsHashCode.check
 
 expectedRanges :: [RDF.Range]

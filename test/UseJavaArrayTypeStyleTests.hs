@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/UseJavaArrayTypeStyle.java"
+    "UseJavaArrayTypeStyle.java"
     UseJavaArrayTypeStyle.check
 
 expectedRanges :: [RDF.Range]

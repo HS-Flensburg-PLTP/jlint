@@ -12,9 +12,9 @@ import Tests
 tests :: Test
 tests =
   test
-    [ let file = "/test/java/MultipleTopLevelDecl.java"
+    [ let file = "MultipleTopLevelDecl.java"
        in test [file ~: Tests.withParsedJavaFile file avoidMultipleTopLevelDecl],
-      let file = "/test/java/SingleTopLevelDecl.java"
+      let file = "SingleTopLevelDecl.java"
        in test [file ~: Tests.withParsedJavaFile file singleTopLevelDecl]
     ]
 

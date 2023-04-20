@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/AvoidMultipleVarDecl.java"
+    "AvoidMultipleVarDecl.java"
     AvoidMultipleVarDecl.check
 
 expectedRanges :: [RDF.Range]

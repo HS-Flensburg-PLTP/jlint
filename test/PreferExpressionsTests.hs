@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/PreferExpressions.java"
+    "PreferExpressions.java"
     PreferExpressions.check
 
 expectedRanges :: [RDF.Range]

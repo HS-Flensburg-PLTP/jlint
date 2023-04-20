@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/SimplifyBooleanReturn.java"
+    "SimplifyBooleanReturn.java"
     SimplifyBooleanReturn.check
 
 expectedRanges :: [RDF.Range]
