@@ -1,4 +1,4 @@
-module Language.Java.Rules.ConsistentOverrideEqualsHashCode where
+module Language.Java.Rules.ConsistentOverrideEqualsHashCode (check) where
 
 import Control.Monad (MonadPlus (mzero))
 import Data.Generics.Uniplate.Data (universeBi)

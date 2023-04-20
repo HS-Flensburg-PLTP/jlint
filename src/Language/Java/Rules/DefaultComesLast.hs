@@ -7,15 +7,15 @@ import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.AST (extractMethods)
 import Language.Java.Syntax
-import RDF (Diagnostic (..), methodDiagnostic)
+import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [Diagnostic]
+check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   methods <- extractMethods cUnit
   checkDefaultComesLast methods path
 
-checkDefaultComesLast :: (String, MethodBody) -> FilePath -> [Diagnostic]
-checkDefaultComesLast (methodName, methodBody) path = do
+checkDefaultComesLast :: (String, MethodBody) -> FilePath -> [RDF.Diagnostic]
+checkDefaultComesLast (_, methodBody) path = do
   (Switch _ _ blocks) <- universeBi methodBody
   checkSwitch blocks mzero
   where
@@ -24,6 +24,8 @@ checkDefaultComesLast (methodName, methodBody) path = do
         [] ->
           diagnosticList
         (SwitchBlock Default _) : xs@[SwitchBlock _ _] ->
-          checkSwitch xs (methodDiagnostic methodName "Defaultcase in Switch-Case is not defined last" path : diagnosticList)
+          checkSwitch
+            xs
+            (RDF.rangeDiagnostic "Language.Java.Rules.DefaultComesLast" "Defaultcase in Switch-Case is not defined last" dummySourceSpan path : diagnosticList)
         _ : xs ->
           checkSwitch xs diagnosticList

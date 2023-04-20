@@ -1,30 +1,30 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 
-module Language.Java.Rules.EmptyLoopBody where
+module Language.Java.Rules.EmptyLoopBody (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.AST (extractMethods)
 import Language.Java.Syntax
-import RDF (Diagnostic (..), methodDiagnostic)
+import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [Diagnostic]
+check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   methods <- extractMethods cUnit
   checkStatements methods path
 
-checkStatements :: (String, MethodBody) -> FilePath -> [Diagnostic]
-checkStatements (methodName, methodBody) path = do
+checkStatements :: (String, MethodBody) -> FilePath -> [RDF.Diagnostic]
+checkStatements (_, methodBody) path = do
   stmt <- universeBi methodBody
   checkStatement stmt
   where
-    checkStatement (Do Empty _) = return (methodDiagnostic methodName "A Do-Loop has a empty loop body." path)
-    checkStatement (Do (StmtBlock (Block [])) _) = return (methodDiagnostic methodName "A Do-Loop has a empty loop body." path)
-    checkStatement (While _ Empty) = return (methodDiagnostic methodName "A While-Loop has a empty loop body." path)
-    checkStatement (While _ (StmtBlock (Block []))) = return (methodDiagnostic methodName "A While-Loop has a empty loop body." path)
-    checkStatement (BasicFor _ _ _ Empty) = return (methodDiagnostic methodName "A For-Loop has a empty loop body." path)
-    checkStatement (BasicFor _ _ _ (StmtBlock (Block []))) = return (methodDiagnostic methodName "A For-Loop has a empty loop body." path)
-    checkStatement (EnhancedFor _ _ _ _ Empty) = return (methodDiagnostic methodName "A ForEach-Loop has a empty loop body." path)
-    checkStatement (EnhancedFor _ _ _ _ (StmtBlock (Block []))) = return (methodDiagnostic methodName "A ForEach-Loop has a empty loop body." path)
+    checkStatement (Do Empty _) = return (RDF.rangeDiagnostic "Language.Java.Rules.EmptyLoopBody" "A Do-Loop has a empty loop body." dummySourceSpan path)
+    checkStatement (Do (StmtBlock (Block [])) _) = return (RDF.rangeDiagnostic "Language.Java.Rules.EmptyLoopBody" "A Do-Loop has a empty loop body." dummySourceSpan path)
+    checkStatement (While _ Empty) = return (RDF.rangeDiagnostic "Language.Java.Rules.EmptyLoopBody" "A While-Loop has a empty loop body." dummySourceSpan path)
+    checkStatement (While _ (StmtBlock (Block []))) = return (RDF.rangeDiagnostic "Language.Java.Rules.EmptyLoopBody" "A While-Loop has a empty loop body." dummySourceSpan path)
+    checkStatement (BasicFor _ _ _ Empty) = return (RDF.rangeDiagnostic "Language.Java.Rules.EmptyLoopBody" "A For-Loop has a empty loop body." dummySourceSpan path)
+    checkStatement (BasicFor _ _ _ (StmtBlock (Block []))) = return (RDF.rangeDiagnostic "Language.Java.Rules.EmptyLoopBody" "A For-Loop has a empty loop body." dummySourceSpan path)
+    checkStatement (EnhancedFor _ _ _ _ Empty) = return (RDF.rangeDiagnostic "Language.Java.Rules.EmptyLoopBody" "A ForEach-Loop has a empty loop body." dummySourceSpan path)
+    checkStatement (EnhancedFor _ _ _ _ (StmtBlock (Block []))) = return (RDF.rangeDiagnostic "Language.Java.Rules.EmptyLoopBody" "A ForEach-Loop has a empty loop body." dummySourceSpan path)
     checkStatement _ = mzero

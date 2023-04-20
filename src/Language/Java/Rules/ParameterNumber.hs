@@ -1,4 +1,4 @@
-module Language.Java.Rules.ParameterNumber where
+module Language.Java.Rules.ParameterNumber (check) where
 
 import Control.Monad (MonadPlus (mzero))
 import Data.Generics.Uniplate.Data (universeBi)

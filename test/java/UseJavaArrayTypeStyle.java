@@ -5,11 +5,10 @@ class UseJavaArrayTypeStyle {
     void vars() {
         int number[] = nums;
         String[] strings = new String[] {"1", "2", "3"};
-    }
-
-    void multiDim(int arr[][]) {
         int number[][] = nums;
     }
+
+    void multiDim(int arr[][]) {}
 
     void params(double[] arr1, double arr2[]) {}
 }
