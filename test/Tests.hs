@@ -5,7 +5,11 @@ import Language.Java.Parser (compilationUnit, parser)
 import Language.Java.Syntax (CompilationUnit)
 import qualified RDF
 import System.Directory (getCurrentDirectory)
+import System.FilePath ((</>))
 import Test.HUnit
+
+javaTestDirectory :: FilePath
+javaTestDirectory = "test" </> "java"
 
 rangesTest :: [RDF.Range] -> FilePath -> (CompilationUnit -> FilePath -> [RDF.Diagnostic]) -> Test
 rangesTest testRanges =
@@ -15,7 +19,7 @@ ruleTest :: ([RDF.Diagnostic] -> Assertion) -> FilePath -> (CompilationUnit -> F
 ruleTest justify path check =
   path ~: do
     dir <- getCurrentDirectory
-    let file = dir ++ path
+    let file = dir </> javaTestDirectory </> path
     content <- readFile file
     case parser compilationUnit file content of
       Left error ->

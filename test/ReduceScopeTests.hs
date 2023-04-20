@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/ReduceScope.java"
+    "ReduceScope.java"
     ReduceScope.check
 
 expectedRanges :: [RDF.Range]

@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/DefaultComesLast.java"
+    "DefaultComesLast.java"
     DefaultComesLast.check
 
 expectedRanges :: [RDF.Range]

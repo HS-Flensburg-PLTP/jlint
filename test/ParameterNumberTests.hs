@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/ParameterNumber.java"
+    "ParameterNumber.java"
     ParameterNumber.check
 
 expectedRanges :: [RDF.Range]
