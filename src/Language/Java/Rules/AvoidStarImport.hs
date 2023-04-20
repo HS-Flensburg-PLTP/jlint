@@ -1,4 +1,4 @@
-module Language.Java.Rules.AvoidStarImport where
+module Language.Java.Rules.AvoidStarImport (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)

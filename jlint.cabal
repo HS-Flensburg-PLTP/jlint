@@ -29,6 +29,7 @@ library
       Control.Monad.Extra
       Language.Java.AST
       Language.Java.Rules
+      Language.Java.Rules.AvoidMultipleTopLevelDecl
       Language.Java.Rules.AvoidMultipleVarDecl
       Language.Java.Rules.AvoidNegations
       Language.Java.Rules.AvoidStarImport
@@ -52,6 +53,7 @@ library
       Language.Java.Rules.UnusedLocalVariable
       Language.Java.Rules.UseAssignOp
       Language.Java.Rules.UseElse
+      Language.Java.Rules.UseIncrementDecrementOperator
       Language.Java.Rules.UseJavaArrayTypeStyle
       Language.Java.Rules.UsePostIncrementDecrement
       Language.Java.Syntax.BlockStmt
@@ -109,31 +111,31 @@ test-suite jlint-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      AvoidMultipleTopLevelDeclTests
       AvoidMultipleVarDeclTests
       AvoidNegationsTests
       AvoidStarImportTests
-      CheckResults
+      CheckNonFinalMethodAttributesTests
+      CheckNonPrivateAttributesTests
       ConsistentOverrideEqualsHashCodeTests
-      DefaultComesLast.Tests
-      EmptyLoopBody.Tests
+      DefaultComesLastTests
+      EmptyLoopBodyTests
       InitializeVariablesTests
       ModifiedControlVariableTests
-      NamingConventions.Tests
-      NeedBraces.Tests
-      NoLoopBreak.Tests
-      NonFinalMethodAttributes.Tests
-      NonPrivateAttributes.Tests
+      NamingConventionsTests
+      NeedBracesTests
+      NoLoopBreakTests
       NoNullPointerExceptionsForControlTests
       ParameterNumberTests
       PreferExpressionsTests
       ReduceScopeTests
       RedundantModifiersTests
-      RessourceManager
-      SameExecutionsInIf.Tests
-      SimplifyBooleanReturn.Tests
+      SameExecutionsInIfTests
+      SimplifyBooleanReturnTests
       Tests
       UseAssignOpTests
       UseElseTests
+      UseIncrementDecrementOperatorTests
       UseJavaArrayTypeStyleTests
       UsePostIncrementDecrementTests
       Paths_jlint
