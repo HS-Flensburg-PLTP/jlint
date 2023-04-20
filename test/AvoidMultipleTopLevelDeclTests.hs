@@ -14,7 +14,8 @@ tests =
 
 singleDeclTest :: Test
 singleDeclTest =
-  goodFileTest
+  rangesTest
+    []
     "/test/java/AvoidMultipleTopLevelDecl/SingleTopLevelDecl.java"
     AvoidMultipleTopLevelDecl.check
 
