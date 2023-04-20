@@ -29,9 +29,13 @@ library
       Control.Monad.Extra
       Language.Java.AST
       Language.Java.Rules
+      Language.Java.Rules.AvoidMultipleTopLevelDecl
+      Language.Java.Rules.AvoidMultipleVarDecl
       Language.Java.Rules.AvoidNegations
+      Language.Java.Rules.AvoidStarImport
       Language.Java.Rules.CheckNonFinalMethodAttributes
       Language.Java.Rules.CheckNonPrivateAttributes
+      Language.Java.Rules.ConsistentOverrideEqualsHashCode
       Language.Java.Rules.DeclarationOrder
       Language.Java.Rules.DefaultComesLast
       Language.Java.Rules.EmptyLoopBody
@@ -40,13 +44,18 @@ library
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNullPointerExceptionsForControl
+      Language.Java.Rules.ParameterNumber
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ReduceScope
+      Language.Java.Rules.RedundantModifiers
       Language.Java.Rules.SameExecutionsInIf
       Language.Java.Rules.SimplifyBooleanReturn
       Language.Java.Rules.UnusedLocalVariable
       Language.Java.Rules.UseAssignOp
       Language.Java.Rules.UseElse
+      Language.Java.Rules.UseIncrementDecrementOperator
+      Language.Java.Rules.UseJavaArrayTypeStyle
+      Language.Java.Rules.UsePostIncrementDecrement
       Language.Java.Syntax.BlockStmt
       Language.Java.Syntax.Exp
       Language.Java.Syntax.Ident
@@ -102,26 +111,33 @@ test-suite jlint-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      AvoidMultipleTopLevelDeclTests
+      AvoidMultipleVarDeclTests
       AvoidNegationsTests
-      CheckResults
+      AvoidStarImportTests
+      CheckNonFinalMethodAttributesTests
+      CheckNonPrivateAttributesTests
+      ConsistentOverrideEqualsHashCodeTests
       DeclarationOrderTests
-      DefaultComesLast.Tests
-      EmptyLoopBody.Tests
+      DefaultComesLastTests
+      EmptyLoopBodyTests
       InitializeVariablesTests
-      NamingConventions.Tests
-      NeedBraces.Tests
-      NoLoopBreak.Tests
-      NonFinalMethodAttributes.Tests
-      NonPrivateAttributes.Tests
+      NamingConventionsTests
+      NeedBracesTests
+      NoLoopBreakTests
       NoNullPointerExceptionsForControlTests
+      ParameterNumberTests
       PreferExpressionsTests
       ReduceScopeTests
-      RessourceManager
-      SameExecutionsInIf.Tests
-      SimplifyBooleanReturn.Tests
+      RedundantModifiersTests
+      SameExecutionsInIfTests
+      SimplifyBooleanReturnTests
       Tests
       UseAssignOpTests
       UseElseTests
+      UseIncrementDecrementOperatorTests
+      UseJavaArrayTypeStyleTests
+      UsePostIncrementDecrementTests
       Paths_jlint
   hs-source-dirs:
       test
