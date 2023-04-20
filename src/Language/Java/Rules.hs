@@ -19,6 +19,9 @@ import qualified Language.Java.Rules.UseJavaArrayTypeStyle as UseJavaArrayTypeSt
 import Language.Java.Syntax
 import qualified RDF
 
+annotationswhitelist :: [String]
+annotationswhitelist = ["Override"]
+
 checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checks =
   [ AvoidMultipleTopLevelDecl.check,
@@ -35,7 +38,7 @@ checks =
     UseAssignOp.check,
     UseElse.check,
     UseIncrementDecrementOperator.check,
-    ProhibitAnnotations.check ProhibitAnnotations.whitelist,
+    ProhibitAnnotations.check annotationswhitelist,
     UseJavaArrayTypeStyle.check
   ]
 
