@@ -1,4 +1,4 @@
-public class DeclarationOrder {
+public class WrongDeclarationOrder {
 
     public int a;
     protected int b;

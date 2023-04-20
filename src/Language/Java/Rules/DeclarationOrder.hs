@@ -74,7 +74,7 @@ checkForPublic (_ : xs) = checkForPublic xs
 
 checkRank :: FilePath -> [(Rank, SourceSpan)] -> [RDF.Diagnostic]
 checkRank path declOrder =
-  map (createError . fst) (filter (\((rankA, _), (rankB, _)) -> rankA > rankB) (zip declOrder (tail declOrder)))
+  map (createError . snd) (filter (\((rankA, _), (rankB, _)) -> rankA > rankB) (zip declOrder (tail declOrder)))
   where
     createError :: (Rank, SourceSpan) -> RDF.Diagnostic
     createError (rank, sourcespan) = RDF.rangeDiagnostic "Language.Java.Rules.DeclarationOrder" (show rank ++ " an der falschen Stelle deklariert.") sourcespan path
