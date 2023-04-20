@@ -5,6 +5,7 @@ import Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations (check)
 import Language.Java.Syntax (CompilationUnit)
 import qualified RDF
 import Test.HUnit
+import Tests
 import qualified Tests
 
 whitelist :: [String]
@@ -12,40 +13,17 @@ whitelist = ["FooBar", "Override"]
 
 tests :: Test
 tests =
-  let file = "/test/java/ProhibitAnnotations.java"
-   in test [file ~: Tests.withParsedJavaFile file prohibitAnnotations]
+  rangesTest
+    expectedRanges
+    "ProhibitAnnotations.java"
+    (ProhibitAnnotations.check whitelist)
 
-prohibitAnnotations :: CompilationUnit -> FilePath -> Assertion
-prohibitAnnotations cUnit path = do
-  let expectedRanges =
-        [ RDF.Range
-            { RDF.start = RDF.Position {RDF.line = 41, RDF.column = Just 5},
-              RDF.end = Just (RDF.Position {RDF.line = 42, RDF.column = Just 5})
-            },
-          RDF.Range
-            { RDF.start = RDF.Position {RDF.line = 43, RDF.column = Just 5},
-              RDF.end = Just (RDF.Position {RDF.line = 44, RDF.column = Just 5})
-            },
-          RDF.Range
-            { RDF.start = RDF.Position {RDF.line = 45, RDF.column = Just 5},
-              RDF.end = Just (RDF.Position {RDF.line = 46, RDF.column = Just 5})
-            },
-          RDF.Range
-            { RDF.start = RDF.Position {RDF.line = 46, RDF.column = Just 5},
-              RDF.end = Just (RDF.Position {RDF.line = 47, RDF.column = Just 5})
-            },
-          RDF.Range
-            { RDF.start = RDF.Position {RDF.line = 47, RDF.column = Just 5},
-              RDF.end = Just (RDF.Position {RDF.line = 48, RDF.column = Just 5})
-            },
-          RDF.Range
-            { RDF.start = RDF.Position {RDF.line = 48, RDF.column = Just 5},
-              RDF.end = Just (RDF.Position {RDF.line = 49, RDF.column = Just 5})
-            }
-        ]
-  let diagnostics = ProhibitAnnotations.check whitelist cUnit path
-  assertEqual "Check Number of messages" (length expectedRanges) (length diagnostics)
-  zipWithM_
-    (assertEqual "Check range")
-    (map Just expectedRanges)
-    (map (RDF.range . RDF.location) diagnostics)
+expectedRanges :: [RDF.Range]
+expectedRanges =
+  [ RDF.mkRange (41, 5) (41, 12),
+    RDF.mkRange (43, 5) (43, 25),
+    RDF.mkRange (45, 5) (45, 19),
+    RDF.mkRange (46, 5) (46, 22),
+    RDF.mkRange (47, 5) (47, 35),
+    RDF.mkRange (48, 5) (48, 43)
+  ]
