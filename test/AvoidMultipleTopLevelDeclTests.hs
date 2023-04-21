@@ -1,41 +1,32 @@
-module AvoidMultipleTopLevelDeclTests where
+module AvoidMultipleTopLevelDeclTests (tests) where
 
-import Control.Monad (zipWithM_)
-import Language.Java.Parser (compilationUnit, parser)
-import Language.Java.Rules.AvoidMultipleTopLevelDecl (check)
-import Language.Java.Syntax (CompilationUnit)
+import qualified Language.Java.Rules.AvoidMultipleTopLevelDecl as AvoidMultipleTopLevelDecl
 import qualified RDF
-import System.Directory (getCurrentDirectory)
-import Test.HUnit
+import System.FilePath ((</>))
+import Test.HUnit (Test, test, (~:))
 import Tests
 
 tests :: Test
 tests =
   test
-    [ let file = "MultipleTopLevelDecl.java"
-       in test [file ~: Tests.withParsedJavaFile file avoidMultipleTopLevelDecl],
-      let file = "SingleTopLevelDecl.java"
-       in test [file ~: Tests.withParsedJavaFile file singleTopLevelDecl]
+    [ "SingleDeclaration" ~: singleDeclTest,
+      "MultipleDeclarations" ~: multipleDeclsTest
     ]
 
-avoidMultipleTopLevelDecl :: CompilationUnit -> FilePath -> Assertion
-avoidMultipleTopLevelDecl cUnit path = do
-  let expectedRange1 =
-        RDF.Range
-          { RDF.start = RDF.Position {RDF.line = 5, RDF.column = Just 1},
-            RDF.end = Just (RDF.Position {RDF.line = 7, RDF.column = Just 2})
-          }
-  let expectedRanges =
-        [ expectedRange1
-        ]
-  let diagnostic = check cUnit path
-  assertEqual "Check number of messages" (length expectedRanges) (length diagnostic)
-  zipWithM_
-    (assertEqual "Check range")
-    (map Just expectedRanges)
-    (map (RDF.range . RDF.location) diagnostic)
+singleDeclTest :: Test
+singleDeclTest =
+  rangesTest
+    []
+    ("AvoidMultipleTopLevelDecl" </> "SingleTopLevelDecl.java")
+    AvoidMultipleTopLevelDecl.check
 
-singleTopLevelDecl :: CompilationUnit -> FilePath -> Assertion
-singleTopLevelDecl cUnit path = do
-  let diagnostic = check cUnit path
-  assertEqual "Check number of messages" 0 (length diagnostic)
+multipleDeclsTest :: Test
+multipleDeclsTest =
+  rangesTest
+    expectedRanges
+    ("AvoidMultipleTopLevelDecl" </> "MultipleTopLevelDecl.java")
+    AvoidMultipleTopLevelDecl.check
+
+expectedRanges :: [RDF.Range]
+expectedRanges =
+  [RDF.mkRange (5, 1) (7, 2)]

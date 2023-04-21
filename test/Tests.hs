@@ -1,4 +1,4 @@
-module Tests (rangesTest, withParsedJavaFile) where
+module Tests (rangesTest) where
 
 import Control.Monad (zipWithM_)
 import Language.Java.Parser (compilationUnit, parser)
@@ -10,18 +10,6 @@ import Test.HUnit
 
 javaTestDirectory :: FilePath
 javaTestDirectory = "test" </> "java"
-
--- keeping this for now: compatibility with current/older pull requests
-withParsedJavaFile :: FilePath -> (CompilationUnit -> FilePath -> Assertion) -> Assertion
-withParsedJavaFile relativePath check = do
-  path <- getCurrentDirectory
-  let file = path </> javaTestDirectory </> relativePath
-  content <- readFile file
-  case parser compilationUnit file content of
-    Left error ->
-      assertFailure ("Parsing " ++ file ++ " failed with error:" ++ show error)
-    Right cUnit ->
-      check cUnit path
 
 rangesTest :: [RDF.Range] -> FilePath -> (CompilationUnit -> FilePath -> [RDF.Diagnostic]) -> Test
 rangesTest testRanges =
