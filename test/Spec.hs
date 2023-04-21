@@ -8,6 +8,7 @@ import qualified ConsistentOverrideEqualsHashCodeTests
 import qualified DefaultComesLastTests
 import qualified EmptyLoopBodyTests
 import qualified InitializeVariablesTests
+import qualified ModifiedControlVariableTests
 import qualified NamingConventionsTests
 import qualified NeedBracesTests
 import qualified NoLoopBreakTests
@@ -42,12 +43,14 @@ tests =
       "DefaultComesLast" ~: DefaultComesLastTests.tests,
       "EmptyLoopBody" ~: EmptyLoopBodyTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
+      "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
       "NamingConventions" ~: NamingConventionsTests.tests,
       "NeedBraces" ~: NeedBracesTests.tests,
       "NoLoopBreak" ~: NoLoopBreakTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "ParameterNumber" ~: ParameterNumberTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
+      "ProhibitAnnotations" ~: ProhibitAnnotationsTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
       "RedundantModifiers" ~: RedundantModifiersTests.tests,
       "SameExecutionsInIf" ~: SameExecutionsInIfTests.tests,
@@ -55,6 +58,5 @@ tests =
       "UseAssignOp" ~: UseAssignOpTests.tests,
       "UseElse" ~: UseElseTests.tests,
       "UseIncrementDecrementOperator" ~: UseIncrementDecrementOperatorTests.tests,
-      "ProhibitAnnotations" ~: ProhibitAnnotationsTests.tests,
       "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests
     ]

@@ -1,7 +1,6 @@
 cabal-version: 1.12
 
 -- This file has been generated from package.yaml by hpack version 0.35.1.
--- This file has been generated from package.yaml by hpack version 0.35.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -40,6 +39,7 @@ library
       Language.Java.Rules.DefaultComesLast
       Language.Java.Rules.EmptyLoopBody
       Language.Java.Rules.InitializeVariables
+      Language.Java.Rules.ModifiedControlVariable
       Language.Java.Rules.NamingConventions
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoLoopBreak
@@ -122,6 +122,7 @@ test-suite jlint-test
       DefaultComesLastTests
       EmptyLoopBodyTests
       InitializeVariablesTests
+      ModifiedControlVariableTests
       NamingConventionsTests
       NeedBracesTests
       NoLoopBreakTests

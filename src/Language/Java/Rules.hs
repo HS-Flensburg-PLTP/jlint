@@ -6,6 +6,7 @@ import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
 import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
 import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
+import qualified Language.Java.Rules.ModifiedControlVariable as ModifiedControlVariable
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
@@ -30,6 +31,7 @@ checks =
     AvoidStarImport.check,
     ConsistentOverrideEqualsHashCode.check,
     InitializeVariables.check,
+    ModifiedControlVariable.check,
     NoNullPointerExceptionsForControl.check,
     ParameterNumber.check,
     PreferExpressions.check,
