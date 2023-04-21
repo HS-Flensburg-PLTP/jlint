@@ -15,6 +15,7 @@ import qualified NoLoopBreakTests
 import qualified NoNullPointerExceptionsForControlTests
 import qualified ParameterNumberTests
 import qualified PreferExpressionsTests
+import qualified ProhibitAnnotationsTests
 import qualified ReduceScopeTests
 import qualified RedundantModifiersTests
 import qualified SameExecutionsInIfTests
@@ -42,12 +43,14 @@ tests =
       "DefaultComesLast" ~: DefaultComesLastTests.tests,
       "EmptyLoopBody" ~: EmptyLoopBodyTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
+      "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
       "NamingConventions" ~: NamingConventionsTests.tests,
       "NeedBraces" ~: NeedBracesTests.tests,
       "NoLoopBreak" ~: NoLoopBreakTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "ParameterNumber" ~: ParameterNumberTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
+      "ProhibitAnnotations" ~: ProhibitAnnotationsTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
       "RedundantModifiers" ~: RedundantModifiersTests.tests,
       "SameExecutionsInIf" ~: SameExecutionsInIfTests.tests,
@@ -55,6 +58,5 @@ tests =
       "UseAssignOp" ~: UseAssignOpTests.tests,
       "UseElse" ~: UseElseTests.tests,
       "UseIncrementDecrementOperator" ~: UseIncrementDecrementOperatorTests.tests,
-      "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests,
-      "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests
+      "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests
     ]
