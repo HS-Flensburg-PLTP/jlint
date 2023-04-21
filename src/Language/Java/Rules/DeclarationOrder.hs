@@ -65,7 +65,7 @@ checkTopLvlStmts toplvlDecl = case toplvlDecl of
                   else Just (InstancePackageField, sourceSpan)
   ConstructorDecl sourceSpan _ _ _ _ _ _ -> Just (Constructor, sourceSpan)
   MethodDecl sourceSpan _ _ _ _ _ _ _ _ -> Just (Method, sourceSpan)
-  _ -> mzero
+  _ -> Nothing
 
 checkForPublic :: [Modifier] -> Bool
 checkForPublic [] = False
