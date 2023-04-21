@@ -17,19 +17,16 @@ singleDeclTest :: Test
 singleDeclTest =
   rangesTest
     []
-    (javaPathTo "SingleTopLevelDecl.java")
+    ("AvoidMultipleTopLevelDecl" </> "SingleTopLevelDecl.java")
     AvoidMultipleTopLevelDecl.check
 
 multipleDeclsTest :: Test
 multipleDeclsTest =
   rangesTest
     expectedRanges
-    (javaPathTo "MultipleTopLevelDecl.java")
+    ("AvoidMultipleTopLevelDecl" </> "MultipleTopLevelDecl.java")
     AvoidMultipleTopLevelDecl.check
 
 expectedRanges :: [RDF.Range]
 expectedRanges =
   [RDF.mkRange (5, 1) (7, 2)]
-
-javaPathTo :: FilePath -> FilePath
-javaPathTo = ("AvoidMultipleTopLevelDecl" </>)
