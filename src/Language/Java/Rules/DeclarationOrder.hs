@@ -18,17 +18,17 @@ data Rank
   | Method
   deriving (Eq, Ord)
 
-showRank :: Rank -> String
-showRank StaticPublicField = "static public Variable"
-showRank StaticProtectedField = "static protected Variable"
-showRank StaticPackageField = "static package Variable"
-showRank StaticPrivateField = "static private Variable"
-showRank InstancePublicField = "public Variable"
-showRank InstanceProtectedField = "protected Variable"
-showRank InstancePackageField = "package Variable"
-showRank InstancePrivateField = "private Variable"
-showRank Constructor = "Konstruktor"
-showRank Method = "Methode"
+rankToString :: Rank -> String
+rankToString StaticPublicField = "static public Variable"
+rankToString StaticProtectedField = "static protected Variable"
+rankToString StaticPackageField = "static package Variable"
+rankToString StaticPrivateField = "static private Variable"
+rankToString InstancePublicField = "public Variable"
+rankToString InstanceProtectedField = "protected Variable"
+rankToString InstancePackageField = "package Variable"
+rankToString InstancePrivateField = "private Variable"
+rankToString Constructor = "Konstruktor"
+rankToString Method = "Methode"
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = checkRank path (extractMemberDecls cUnit)
@@ -76,4 +76,4 @@ checkRank path declOrder =
   map (createError . snd) (filter (\((rankA, _), (rankB, _)) -> rankA > rankB) (zip declOrder (tail declOrder)))
   where
     createError :: (Rank, SourceSpan) -> RDF.Diagnostic
-    createError (rank, sourcespan) = RDF.rangeDiagnostic "Language.Java.Rules.DeclarationOrder" (showRank rank ++ " an der falschen Stelle deklariert.") sourcespan path
+    createError (rank, sourcespan) = RDF.rangeDiagnostic "Language.Java.Rules.DeclarationOrder" (rankToString rank ++ " an der falschen Stelle deklariert.") sourcespan path
