@@ -67,9 +67,13 @@ checkTopLvlStmts toplvlDecl = case toplvlDecl of
   _ -> Nothing
 
 checkForPublic :: [Modifier] -> Bool
-checkForPublic [] = False
-checkForPublic ((Public _) : _) = True
-checkForPublic (_ : xs) = checkForPublic xs
+checkForPublic =
+  any
+    ( \mod ->
+        case mod of
+          Public _ -> True
+          _ -> False
+    )
 
 checkRank :: FilePath -> [(Rank, SourceSpan)] -> [RDF.Diagnostic]
 checkRank path declOrder =
