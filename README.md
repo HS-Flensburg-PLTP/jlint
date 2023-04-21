@@ -4,20 +4,18 @@
 
 1. [GHCup](https://www.haskell.org/ghcup/) installieren
 
-2. [Ormolu](https://github.com/tweag/ormolu/releases) `0.4.0.0` herunterladen und entpacken
+2. [VSCode](https://code.visualstudio.com) installieren
 
-3. [VSCode](https://code.visualstudio.com) installieren
-
-4. VSCode Extension `Haskell` installieren
+3. VSCode Extension `Haskell` installieren
     - Extension Settings:
+      - Formatting Provider: `ormolu`
       - Manage HLS: `GHCup`
       - Ghcup Executable Path: expl. Angabe, wenn `ghcup` nicht im PATH vorhanden
+      - ToolChain (in `settings.json`): `"hls":"1.10.0.0"`
 
-5. VSCode Extension `Ormolu` installieren
-    - Extension Settings:
-      - Ormolu Path (Angabe in `settings.json` - Pfadtrenner bei Windows beachten: `\\` - also z.B: `C:\\ormolu\\ormolu.exe`) 
+4. In den VSCode settings `Insert Final Newline` aktivieren
 
-6. `Default Formatter` auf `Ormolu` stellen und `Auto Save` und `Format on Save` aktivieren
+5. (optional) In den VSCode settings `Format On Save` und `Auto Save` aktivieren
 
 Die Extension `Haskell` übernimmt automatisch die notwendigen Installationen (GHC, HLS).
 
@@ -25,7 +23,7 @@ Bei korrektem Setup sollten z.B folgende Features in VScode funktionieren:
 - Linter (als Anmerkungen im Code)
 - Typinformationen `Hover`
 - Sprung zur Deklaration `Ctrl-Click`
-- Formatierung des Codes beim Speichern
+- Formatierung des Codes (z.B. über Kontextmenü)
 
 ## Entwicklung
 
@@ -43,7 +41,7 @@ Dieser zweigt von `main` ab und folgt der Namenskonvention `feature-<issue>`, wo
 
 Zu neuen Regeln sollten immer entsprechende Testfälle mitentwickelt werden (Ordner: `test`). Dazu gehören Java-Beispieldateien, die eigentlichen Tests und der jeweilige Eintrag in `test/Spec.hs`.
 
-Um neue Regeln in der Anwendung zu integrieren, müssen diese in `src/Language/Java/Rules.hs` angegeben werden.
+(Optional) Um neue Regeln in der Anwendung zu integrieren, müssen diese in `src/Language/Java/Rules.hs` angegeben werden.
 
 ## Lokale Verwendung
 
