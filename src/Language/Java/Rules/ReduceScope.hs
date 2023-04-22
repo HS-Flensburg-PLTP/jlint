@@ -89,4 +89,4 @@ message var =
 
 variables :: (Data a) => a -> [Ident]
 variables parent =
-  [ident | Name (ident : _) <- universeBi parent]
+  [ident | Name _ (ident : _) <- universeBi parent]

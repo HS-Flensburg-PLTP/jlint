@@ -33,11 +33,11 @@ check cUnit path = do
     checkStatement _ = mzero
 
 catchesNullPointerException :: Catch -> Bool
-catchesNullPointerException (Catch (FormalParam _ (RefType (ClassRefType (ClassType typeName))) _ _) _) =
+catchesNullPointerException (Catch (FormalParam _ _ (RefType (ClassRefType (ClassType typeName))) _ _) _) =
   isNullPointerExceptionName (map fst typeName)
 catchesNullPointerException _ = False
 
 isNullPointerExceptionName :: [Ident] -> Bool
-isNullPointerExceptionName [Ident "NullPointerException"] = True
-isNullPointerExceptionName [Ident "java", Ident "lang", Ident "NullPointerException"] = True
+isNullPointerExceptionName [Ident _ "NullPointerException"] = True
+isNullPointerExceptionName [Ident _ "java", Ident _ "lang", Ident _ "NullPointerException"] = True
 isNullPointerExceptionName _ = False

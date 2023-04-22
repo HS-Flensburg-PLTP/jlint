@@ -1,6 +1,7 @@
 module Language.Java.Rules.CheckNonPrivateAttributes (check) where
 
 import Language.Java.AST (extractAttributes)
+import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 

@@ -15,7 +15,7 @@ name (LocalClass _) = "lokale Klasse"
 name (LocalVars {}) = "Variablendeklaration"
 
 stmtName :: Stmt -> String
-stmtName (Return _) = "return"
+stmtName (Return _ _) = "return"
 stmtName (Throw _) = "throw"
 stmtName (StmtBlock _) = "block"
 stmtName (IfThen {}) = "if-then"

@@ -59,18 +59,18 @@ message blockStmts =
   "Der `then`- oder der `else`-Zweig der `if`-Anweisung verlässt immer die Methode. Daher sollte nach der gesamten `if`-Anweisung keine weitere Anweisung folgen. Auf die `if`-Anweisung folgen: " ++ intercalate ", " (map BlockStmt.name blockStmts)
 
 doesAlwaysExit :: Stmt -> Bool
-doesAlwaysExit (Return _) = True
+doesAlwaysExit (Return _ _) = True
 doesAlwaysExit (Throw _) = True
 doesAlwaysExit (StmtBlock (Block [])) = False
 doesAlwaysExit (StmtBlock (Block blocks)) = doesBlockAlwaysExit (last blocks)
 doesAlwaysExit (IfThen _ _ stmt) = doesAlwaysExit stmt
 doesAlwaysExit (IfThenElse _ _ stmt1 stmt2) = doesAlwaysExit stmt1 && doesAlwaysExit stmt2
-doesAlwaysExit (While _ stmt) = doesAlwaysExit stmt
-doesAlwaysExit (BasicFor _ _ _ stmt) = doesAlwaysExit stmt
-doesAlwaysExit (EnhancedFor _ _ _ _ stmt) = doesAlwaysExit stmt
+doesAlwaysExit (While _ _ stmt) = doesAlwaysExit stmt
+doesAlwaysExit (BasicFor _ _ _ _ stmt) = doesAlwaysExit stmt
+doesAlwaysExit (EnhancedFor _ _ _ _ _ stmt) = doesAlwaysExit stmt
 -- Currently not supported
 doesAlwaysExit (Switch {}) = False
-doesAlwaysExit (Do stmt _) = doesAlwaysExit stmt
+doesAlwaysExit (Do _ stmt _) = doesAlwaysExit stmt
 -- Currently not supported
 doesAlwaysExit (Synchronized _ _) = False
 -- Currently not supported
