@@ -5,6 +5,7 @@ import qualified AvoidStarImportTests
 import qualified CheckNonFinalMethodAttributesTests
 import qualified CheckNonPrivateAttributesTests
 import qualified ConsistentOverrideEqualsHashCodeTests
+import qualified DeclarationOrderTests
 import qualified DefaultComesLastTests
 import qualified EmptyLoopBodyTests
 import qualified InitializeVariablesTests
@@ -58,5 +59,6 @@ tests =
       "UseAssignOp" ~: UseAssignOpTests.tests,
       "UseElse" ~: UseElseTests.tests,
       "UseIncrementDecrementOperator" ~: UseIncrementDecrementOperatorTests.tests,
-      "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests
+      "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests,
+      "DeclarationOrder" ~: DeclarationOrderTests.tests
     ]

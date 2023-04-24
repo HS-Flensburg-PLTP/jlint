@@ -5,6 +5,7 @@ import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDec
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
 import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
 import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
+import qualified Language.Java.Rules.DeclarationOrder as DeclarationOrder
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
 import qualified Language.Java.Rules.ModifiedControlVariable as ModifiedControlVariable
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
@@ -39,6 +40,7 @@ checks =
     RedundantModifiers.check,
     UseAssignOp.check,
     UseElse.check,
+    DeclarationOrder.check,
     UseIncrementDecrementOperator.check,
     ProhibitAnnotations.check annotationswhitelist,
     UseJavaArrayTypeStyle.check
