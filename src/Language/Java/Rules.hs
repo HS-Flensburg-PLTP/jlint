@@ -12,6 +12,7 @@ import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNull
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations
+import qualified Language.Java.Rules.ProhibitMyIdentPrefix as ProhibitMyIdentPrefix
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
@@ -43,7 +44,8 @@ checks =
     DeclarationOrder.check,
     UseIncrementDecrementOperator.check,
     ProhibitAnnotations.check annotationswhitelist,
-    UseJavaArrayTypeStyle.check
+    UseJavaArrayTypeStyle.check,
+    ProhibitMyIdentPrefix.check
   ]
 
 checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
