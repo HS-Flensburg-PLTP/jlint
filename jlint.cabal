@@ -48,6 +48,7 @@ library
       Language.Java.Rules.ParameterNumber
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ProhibitAnnotations
+      Language.Java.Rules.ProhibitMyVarPrefix
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.RedundantModifiers
       Language.Java.Rules.SameExecutionsInIf
@@ -132,6 +133,7 @@ test-suite jlint-test
       ParameterNumberTests
       PreferExpressionsTests
       ProhibitAnnotationsTests
+      ProhibitMyVarPrefixTests
       ReduceScopeTests
       RedundantModifiersTests
       SameExecutionsInIfTests
