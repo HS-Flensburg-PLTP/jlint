@@ -1,19 +1,21 @@
 package my.huge.pckage.de;
 
 public class myClass {
+    static final Int MY_YEAR = 1;
+
     String myString = "myStringy";
     String ohneMy = "myString";
     String mYear = "middleYear";
 
-    static final Int MY_YEAR = 1;
-
     enum MyEnum {
-        myOne, myTwo, myThree
+        myOne, Two, myThree
     }
 
+    public myClass() {
+        String myStringInClass = "Joscha";
+    }
 
-    public myClass(){}
-
-    public void myMethod(){}
-
+    public void myMethod() {
+        String myStringInMethod = "Joscha";
+    }
 }
