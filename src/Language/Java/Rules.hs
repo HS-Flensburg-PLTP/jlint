@@ -48,11 +48,14 @@ checks =
     UseJavaArrayTypeStyle.check
   ]
 
-checkRule :: [String] -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
-checkRule rules cUnit path = concatMap (\f -> f cUnit path) (foo rules)
+checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkAll cUnit path = concatMap (\f -> f cUnit path) checks
 
-foo :: [String] -> [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
-foo = map (\s -> findWithDefault (\_ _ -> []) s checkMapping)
+checkWithConfig :: [String] -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkWithConfig rules cUnit path = concatMap (\f -> f cUnit path) (checkRule rules)
+
+checkRule :: [String] -> [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
+checkRule = map (\s -> findWithDefault (\_ _ -> []) s checkMapping)
 
 checkMapping :: Map String (CompilationUnit -> FilePath -> [RDF.Diagnostic])
 checkMapping =
@@ -83,6 +86,3 @@ checkMapping =
       ("UseJavaArrayTypeStyle", UseJavaArrayTypeStyle.check),
       ("UsePostIncrementDecrement", UsePostIncrementDecrement.check)
     ]
-
-checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
-checkAll cUnit path = concatMap (\f -> f cUnit path) checks

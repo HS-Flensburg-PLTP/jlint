@@ -8,10 +8,11 @@ import qualified Data.ByteString.Lazy.Char8 as C
 import Data.Semigroup ((<>))
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
-import Language.Java.Rules (checkAll, checkRule)
+import Language.Java.Rules (checkAll, checkWithConfig)
 import Language.Java.Syntax (CompilationUnit)
 import Options.Applicative
 import RDF
+import System.Directory
 import System.Exit (ExitCode (ExitFailure), exitSuccess, exitWith)
 import System.FilePath.Find (always, extension, find, (==?))
 import System.IO (IOMode (ReadMode), char8, hGetContents, hPutStrLn, hSetEncoding, openFile, stderr)
@@ -120,30 +121,35 @@ parseJava rootDir pretty showAST checkstyleDiags =
       then do
         print cUnitResults
       else do
-        config <- decodeFileStrict "config.json" :: IO (Maybe Config)
-        case config of
-          Nothing -> putStrLn "Fehler beim Laden der config File"
-          Just config -> do
-            let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
-            let diagnostics = concatMap (uncurry (checkRule (rules config))) cUnitResults
-            let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
-            C.putStrLn
-              ( RDF.encodetojson
-                  ( DiagnosticResult
-                      { diagnostics = diagnosticResults,
-                        resultSource = Just (Source {name = "jlint", url = Nothing}),
-                        resultSeverity = RDF.checkSeverityList (map RDF.severity diagnosticResults) -- emmits highest severity of all results in all files
-                      }
-                  )
-              )
-            unless (null parsingErrors) $ print parsingErrors
-            when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
+        configExists <- doesFileExist "config.json"
+        diagnostics <- do
+          if configExists
+            then do
+              config <- decodeFileStrict "config.json" :: IO (Maybe Config)
+              case config of
+                Nothing -> return (concatMap (uncurry checkAll) cUnitResults)
+                Just config -> return (concatMap (uncurry (checkWithConfig (rules config))) cUnitResults)
+            else return (concatMap (uncurry checkAll) cUnitResults)
 
-            let numberOfHints = length diagnostics
-            if numberOfHints == 0
-              then do
-                hPutStrLn stderr ("jlint did not generate any hints for the Java code in directory " ++ rootDir)
-                exitSuccess
-              else do
-                hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
-                exitWith (ExitFailure numberOfHints)
+        let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
+        let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
+        C.putStrLn
+          ( RDF.encodetojson
+              ( DiagnosticResult
+                  { diagnostics = diagnosticResults,
+                    resultSource = Just (Source {name = "jlint", url = Nothing}),
+                    resultSeverity = RDF.checkSeverityList (map RDF.severity diagnosticResults) -- emmits highest severity of all results in all files
+                  }
+              )
+          )
+        unless (null parsingErrors) $ print parsingErrors
+        when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
+
+        let numberOfHints = length diagnostics
+        if numberOfHints == 0
+          then do
+            hPutStrLn stderr ("jlint did not generate any hints for the Java code in directory " ++ rootDir)
+            exitSuccess
+          else do
+            hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
+            exitWith (ExitFailure numberOfHints)
