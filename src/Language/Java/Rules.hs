@@ -8,15 +8,18 @@ import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
 import qualified Language.Java.Rules.CheckNonFinalMethodAttributes as CheckNonFinalMethodAttributes
 import qualified Language.Java.Rules.CheckNonPrivateAttributes as CheckNonPrivateAttributes
 import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
+import qualified Language.Java.Rules.DeclarationOrder as DeclarationOrder
 import qualified Language.Java.Rules.DefaultComesLast as DefaultComesLast
 import qualified Language.Java.Rules.EmptyLoopBody as EmptyLoopBody
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
+import qualified Language.Java.Rules.ModifiedControlVariable as ModifiedControlVariable
 import qualified Language.Java.Rules.NamingConventions as NamingConventions
 import qualified Language.Java.Rules.NeedBraces as NeedBraces
 import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
+import qualified Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.SameExecutionsInIf as SameExecutionsInIf
@@ -29,6 +32,9 @@ import qualified Language.Java.Rules.UsePostIncrementDecrement as UsePostIncreme
 import Language.Java.Syntax
 import qualified RDF
 
+annotationswhitelist :: [String]
+annotationswhitelist = ["Override"]
+
 checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checks =
   [ AvoidMultipleTopLevelDecl.check,
@@ -37,6 +43,7 @@ checks =
     AvoidStarImport.check,
     ConsistentOverrideEqualsHashCode.check,
     InitializeVariables.check,
+    ModifiedControlVariable.check,
     NoNullPointerExceptionsForControl.check,
     ParameterNumber.check,
     PreferExpressions.check,
@@ -44,7 +51,9 @@ checks =
     RedundantModifiers.check,
     UseAssignOp.check,
     UseElse.check,
+    DeclarationOrder.check,
     UseIncrementDecrementOperator.check,
+    ProhibitAnnotations.check annotationswhitelist,
     UseJavaArrayTypeStyle.check
   ]
 

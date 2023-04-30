@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/UseAssignOp.java"
+    "UseAssignOp.java"
     UseAssignOp.check
 
 expectedRanges :: [RDF.Range]

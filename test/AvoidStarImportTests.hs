@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/AvoidStarImport.java"
+    "AvoidStarImport.java"
     AvoidStarImport.check
 
 expectedRanges :: [RDF.Range]

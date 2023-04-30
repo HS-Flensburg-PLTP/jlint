@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/NamingConventions.java"
+    "NamingConventions.java"
     NamingConventions.check
 
 expectedRanges :: [RDF.Range]

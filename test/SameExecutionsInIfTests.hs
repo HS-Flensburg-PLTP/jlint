@@ -8,5 +8,5 @@ tests :: Test
 tests =
   rangesTest
     [] -- rule seems broken
-    "/test/java/SameExecutionsInIf.java"
+    "SameExecutionsInIf.java"
     SameExecutionsInIf.check

@@ -9,7 +9,7 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "/test/java/CheckNonPrivateAttributes.java"
+    "CheckNonPrivateAttributes.java"
     CheckNonPrivateAttributes.check
 
 expectedRanges :: [RDF.Range]
