@@ -2,6 +2,7 @@ module Language.Java.Rules.NeedBraces (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
+import Language.Java.AST (extractMethods)
 import Language.Java.Syntax
 import qualified Language.Java.Syntax.Stmt as Stmt
 import qualified RDF
@@ -30,9 +31,23 @@ checkStmt (Do _ (StmtBlock _) _) _ = mzero
 checkStmt (Do _ stmt _) path = return (diagnostic stmt path)
 checkStmt _ _ = mzero
 
-diagnostic :: Stmt -> FilePath -> RDF.Diagnostic
-diagnostic stmt =
-  RDF.rangeDiagnostic
-    "Language.Java.Rules.NeedBraces"
-    "Code-Blöcke sollten auch dann geklammert werden, wenn sie weniger als zwei Anweisungen enthalten."
-    (Stmt.sourceSpan stmt)
+checkStatements :: (String, MethodBody) -> FilePath -> [RDF.Diagnostic]
+checkStatements (_, methodBody) path = do
+  stmt <- universeBi methodBody
+  checkStatement stmt
+  where
+    checkStatement (Do (StmtBlock _) _) = mzero
+    checkStatement (Do _ _) = return (RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces" "A Do-Part contains no braces." dummySourceSpan path)
+    checkStatement (While _ (StmtBlock _)) = mzero
+    checkStatement (While _ _) = return (RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces" "A While-Part contains no braces." dummySourceSpan path)
+    checkStatement (BasicFor _ _ _ (StmtBlock _)) = mzero
+    checkStatement (BasicFor {}) = return (RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces" "A For-Part contains no braces." dummySourceSpan path)
+    checkStatement (EnhancedFor _ _ _ _ (StmtBlock _)) = mzero
+    checkStatement (EnhancedFor {}) = return (RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces" "A ForEach-Part contains no braces." dummySourceSpan path)
+    checkStatement (IfThen _ _ (StmtBlock _)) = mzero
+    checkStatement (IfThen {}) = return (RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces" "A IfThen-Part contains no braces." dummySourceSpan path)
+    checkStatement (IfThenElse _ _ (StmtBlock _) (StmtBlock _)) = mzero
+    checkStatement (IfThenElse _ _ _ (StmtBlock _)) = return (RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces" "A IfThenElse-Part contains no braces." dummySourceSpan path)
+    checkStatement (IfThenElse _ _ (StmtBlock _) _) = return (RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces" "A IfThenElse-Part contains no braces." dummySourceSpan path)
+    checkStatement (IfThenElse {}) = return (RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces" "A IfThenElse-Part contains no braces." dummySourceSpan path)
+    checkStatement _ = mzero
