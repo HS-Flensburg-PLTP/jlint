@@ -11,12 +11,12 @@ check cUnit path =
 
 checkVarDecl :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkVarDecl cUnit path = do
-  VarDecl varDeclId _ <- universeBi cUnit
+  VarDecl _ varDeclId _ <- universeBi cUnit
   checkVarDeclId varDeclId path
 
 checkParam :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkParam cUnit path = do
-  FormalParam _ _ _ varDeclId <- universeBi cUnit
+  FormalParam _ _ _ _ varDeclId <- universeBi cUnit
   checkVarDeclId varDeclId path
 
 checkVarDeclId :: VarDeclId -> FilePath -> [RDF.Diagnostic]

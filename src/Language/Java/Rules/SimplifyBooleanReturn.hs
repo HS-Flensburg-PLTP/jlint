@@ -6,6 +6,7 @@ module Language.Java.Rules.SimplifyBooleanReturn (check) where
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.AST (extractMethods, extractVarName)
+import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
@@ -27,13 +28,13 @@ checkStatements (methodName, methodBody) classVars path = do
       | otherwise = mzero
     checkStatement _ = mzero
 
-    isReturnBool (Return (Just (Lit (Boolean _)))) = True
-    isReturnBool (Return (Just (ExpName (Name varName))))
-      | ((\(Ident name) -> name) (head varName), True) `elem` extractMethodVars methodBody =
+    isReturnBool (Return _ (Just (Lit (Boolean _)))) = True
+    isReturnBool (Return _ (Just (ExpName (Name _ varName))))
+      | ((\(Ident _ name) -> name) (head varName), True) `elem` extractMethodVars methodBody =
           True
-      | ((\(Ident name) -> name) (head varName), False) `elem` extractMethodVars methodBody =
+      | ((\(Ident _ name) -> name) (head varName), False) `elem` extractMethodVars methodBody =
           False
-      | otherwise = ((\(Ident name) -> name) (head varName), True) `elem` classVars
+      | otherwise = ((\(Ident _ name) -> name) (head varName), True) `elem` classVars
     isReturnBool (StmtBlock (Block [BlockStmt _ a])) = isReturnBool a
     isReturnBool _ = False
 
@@ -45,8 +46,8 @@ extractMethodVars methodBody = do
   var <- universeBi methodBody
   checkVars var
   where
-    checkVars (LocalVars _ _ (PrimType BooleanT) varDecl) = concatMap (\(VarDecl varDeclId _) -> [(extractVarName varDeclId, True)]) varDecl
-    checkVars (LocalVars _ _ _ varDecl) = concatMap (\(VarDecl varDeclId _) -> [(extractVarName varDeclId, False)]) varDecl
+    checkVars (LocalVars _ _ (PrimType BooleanT) varDecl) = concatMap (\(VarDecl _ varDeclId _) -> [(extractVarName varDeclId, True)]) varDecl
+    checkVars (LocalVars _ _ _ varDecl) = concatMap (\(VarDecl _ varDeclId _) -> [(extractVarName varDeclId, False)]) varDecl
     checkVars _ = []
 
 extractClassVars :: CompilationUnit -> [(String, Bool)]
@@ -54,6 +55,6 @@ extractClassVars cUnit = do
   classDecl <- universeBi cUnit
   checkVars classDecl
   where
-    checkVars (FieldDecl _ _ (PrimType BooleanT) varDecl) = concatMap (\(VarDecl varDeclId _) -> [(extractVarName varDeclId, True)]) varDecl
-    checkVars (FieldDecl _ _ _ varDecl) = concatMap (\(VarDecl varDeclId _) -> [(extractVarName varDeclId, False)]) varDecl
+    checkVars (FieldDecl _ _ (PrimType BooleanT) varDecl) = concatMap (\(VarDecl _ varDeclId _) -> [(extractVarName varDeclId, True)]) varDecl
+    checkVars (FieldDecl _ _ _ varDecl) = concatMap (\(VarDecl _ varDeclId _) -> [(extractVarName varDeclId, False)]) varDecl
     checkVars _ = []

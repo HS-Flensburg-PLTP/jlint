@@ -3,6 +3,7 @@ module Language.Java.Rules.SameExecutionsInIf (check) where
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.AST (extractMethods)
+import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
