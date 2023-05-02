@@ -3,8 +3,7 @@ class NeedBraces {
     void foo() {
         for(int i = 0; i < 10; i++) System.out.println(i);
 
-        for (int i : arr) 
-            System.out.println(i);
+        for (int i : arr);
 
         do i++; while (true);
 
@@ -30,6 +29,8 @@ class NeedBraces {
         else
             i--;
 
+        for (int i : arr) {}
+        
         for(int i = 0; i < 10; i++) {
             System.out.println(i);
         }

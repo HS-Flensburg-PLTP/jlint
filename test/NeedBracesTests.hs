@@ -15,13 +15,11 @@ tests =
 expectedRanges :: [RDF.Range]
 expectedRanges =
   [ RDF.mkRange (4, 37) (4, 59),
-    RDF.mkRange (7, 13) (7, 35),
-    RDF.mkRange (9, 12) (9, 16),
-    RDF.mkRange (12, 13) (13, 21),
-    RDF.mkRange (13, 17) (13, 21),
-    RDF.mkRange (1, 1) (1, 1), -- noch keine SourceSpan für `Empty`
-    RDF.mkRange (18, 13) (18, 17),
-    RDF.mkRange (1, 1) (1, 1), -- noch keine SourceSpan für `Empty`
-    RDF.mkRange (29, 13) (29, 33),
-    RDF.mkRange (31, 13) (31, 17)
+    RDF.mkRange (6, 9) (6, 27),
+    RDF.mkRange (8, 12) (8, 16),
+    RDF.mkRange (11, 13) (12, 21),
+    RDF.mkRange (12, 17) (12, 21),
+    RDF.mkRange (17, 13) (17, 17),
+    RDF.mkRange (28, 13) (28, 33),
+    RDF.mkRange (30, 13) (30, 17)
   ]
