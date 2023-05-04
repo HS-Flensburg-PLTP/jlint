@@ -2,6 +2,7 @@ module Language.Java.Rules.DeclarationOrder (check) where
 
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.Maybe (maybeToList)
+import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 

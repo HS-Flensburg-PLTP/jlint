@@ -29,7 +29,7 @@ import Data.Aeson
   )
 import Data.ByteString.Lazy.Internal (ByteString)
 import GHC.Generics (Generic)
-import qualified Language.Java.Syntax as Java
+import qualified Language.Java.SourceSpan as SourceSpan
 
 data Position = Position
   { line :: Int,
@@ -177,14 +177,14 @@ checkSeverityList list = Just (maximum list)
 methodDiagnostic :: String -> String -> FilePath -> Diagnostic
 methodDiagnostic methodName msg = simpleDiagnostic ("Method " ++ methodName ++ ": " ++ msg)
 
-rangeFromSourceSpan :: Java.SourceSpan -> Range
+rangeFromSourceSpan :: SourceSpan.SourceSpan -> Range
 rangeFromSourceSpan (start, end) =
   Range
-    { start = Position {line = Java.loc_line start, column = Just (Java.loc_column start)},
-      end = Just (Position {line = Java.loc_line end, column = Just (Java.loc_column end)})
+    { start = Position {line = SourceSpan.loc_line start, column = Just (SourceSpan.loc_column start)},
+      end = Just (Position {line = SourceSpan.loc_line end, column = Just (SourceSpan.loc_column end)})
     }
 
-rangeDiagnostic :: String -> String -> Java.SourceSpan -> FilePath -> Diagnostic
+rangeDiagnostic :: String -> String -> SourceSpan.SourceSpan -> FilePath -> Diagnostic
 rangeDiagnostic rule msg range fPath =
   Diagnostic
     { message = msg,

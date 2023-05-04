@@ -3,6 +3,7 @@ module Language.Java.Rules.UseIncrementDecrementOperator where
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Pretty (prettyPrint)
+import Language.Java.SourceSpan (SourceSpan, dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
