@@ -48,7 +48,7 @@ library
       Language.Java.Rules.ParameterNumber
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ProhibitAnnotations
-      Language.Java.Rules.ProhibitMyIdentPrefix
+      Language.Java.Rules.ProhibitNonEnglishNames
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.RedundantModifiers
       Language.Java.Rules.SameExecutionsInIf
