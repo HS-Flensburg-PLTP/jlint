@@ -16,7 +16,9 @@ public class MyClass extends MyOtherClassWhichIsNotInThisFile implements MyInter
     String mYear = "middleYear";
 
     enum MyEnum {
-        myFirstEnum, Two, myThirdEnum
+        myFirstEnum,
+        Two,
+        myThirdEnum
     }
 
     @MyOverriddenMethodConstructor
