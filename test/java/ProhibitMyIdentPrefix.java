@@ -8,7 +8,7 @@ public class myClass {
     String mYear = "middleYear";
 
     enum MyEnum {
-        myOne, Two, myThree
+        myFirstEnum, Two, myThirdEnum
     }
 
     public myClass() {
