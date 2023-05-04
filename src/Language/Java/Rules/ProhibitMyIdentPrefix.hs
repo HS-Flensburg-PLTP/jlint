@@ -101,31 +101,3 @@ checkLambda (LambdaFormalParams formalParams) path = do
   ident <- universeBi formalParams
   checkIdent ident dummySourceSpan path
 checkLambda (LambdaInferredParams idents) path = concatMap (\ident -> checkIdent ident dummySourceSpan path) idents
-
-{-
-checkPackageDeclName
-checkClassDeclIdent
-checkEnumDeclIdent
-checkInterfaceDeclIdent
-checkMemberDecl
--}
-{-
-VarDecl Enum
-Methoden
-Class Interface usw
-Package
-
--}
-
-{-
-Packagedecl name
-Typedecl
-    classdecl ident
-    enumdecl
-    interface int
-decl
-    memberdecl
-
-extractIdent dingdasidenthat =
-
--}
