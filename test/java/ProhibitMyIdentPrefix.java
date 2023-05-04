@@ -1,8 +1,14 @@
 package my.huge.pckage.de;
 
+import java.util.List;
+
 import one.two.my;
 
-public class myClass {
+interface MyInterfaceToMark {
+
+}
+
+public class MyClass extends MyOtherClassWhichIsNotInThisFile implements MyInterfaceNotToMark {
     static final Int MY_YEAR = 1;
 
     String myString = "myStringy";
@@ -13,16 +19,30 @@ public class myClass {
         myFirstEnum, Two, myThirdEnum
     }
 
-    public myClass() {
+    @MyOverriddenMethodConstructor
+    public MyClass() {
         String myStringInClass = "Joscha";
 
         for (int myCounter = 0; myCounter < 10; myCounter++) {
             System.out.println(i);
             int myCounter2 = 0;
         }
+
+        List myList = new ArrayList();
+
+        numbers.forEach((myMoin) -> {
+            return 1;
+        });
     }
 
     public void myMethod() {
         String myStringInMethod = "Joscha";
+
+        try {
+            int myIntInTryBlock = 10;
+            throw new MyException();
+        } catch (MyException err) {
+            int myIntInCatchBlock = 9;
+        }
     }
 }
