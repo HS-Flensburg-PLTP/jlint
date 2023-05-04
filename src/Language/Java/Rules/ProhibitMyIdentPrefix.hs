@@ -4,7 +4,6 @@ module Language.Java.Rules.ProhibitMyIdentPrefix where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
-import Language.Java.Parser (formalParam, formalParams, lambdaExp)
 import Language.Java.Syntax
 import qualified RDF
 import Text.RE.TDFA.String
