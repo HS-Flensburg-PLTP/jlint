@@ -6,7 +6,7 @@ import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
 import qualified RDF
-import Text.RE.TDFA.String
+import Text.RE.TDFA.String (matched, re, (?=~))
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check (CompilationUnit pkgDecl _ typeDecls) path =
