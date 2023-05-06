@@ -42,25 +42,25 @@ extractMemberDecls cUnit = do
 checkTopLvlStmts :: MemberDecl -> Maybe (Rank, SourceSpan)
 checkTopLvlStmts toplvlDecl = case toplvlDecl of
   FieldDecl sourceSpan mods _ _ ->
-    if Static `elem` mods
+    if any (eq IgnoreSourceSpan Static) mods
       then
         if checkForPublic mods
           then Just (StaticPublicField, sourceSpan)
           else
-            if Protected `elem` mods
+            if any (eq IgnoreSourceSpan Protected) mods
               then Just (StaticProtectedField, sourceSpan)
               else
-                if Private `elem` mods
+                if any (eq IgnoreSourceSpan Private) mods
                   then Just (StaticPrivateField, sourceSpan)
                   else Just (StaticPackageField, sourceSpan)
       else
         if checkForPublic mods
           then Just (InstancePublicField, sourceSpan)
           else
-            if Protected `elem` mods
+            if any (eq IgnoreSourceSpan Protected) mods
               then Just (InstanceProtectedField, sourceSpan)
               else
-                if Private `elem` mods
+                if any (eq IgnoreSourceSpan Private) mods
                   then Just (InstancePrivateField, sourceSpan)
                   else Just (InstancePackageField, sourceSpan)
   ConstructorDecl sourceSpan _ _ _ _ _ _ -> Just (Constructor, sourceSpan)
