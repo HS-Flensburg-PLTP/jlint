@@ -30,7 +30,7 @@ checkConditionalBody stmt path = return (diagnostic bracesMessage (Stmt.sourceSp
 
 checkLoopBody :: Stmt -> SourceSpan -> FilePath -> [RDF.Diagnostic]
 checkLoopBody (StmtBlock _) _ _ = mzero
-checkLoopBody Empty span path = return (diagnostic emptyLoopMessage span path)
+checkLoopBody Empty loopSpan path = return (diagnostic emptyLoopMessage loopSpan path)
 checkLoopBody stmt _ path = return (diagnostic bracesMessage (Stmt.sourceSpan stmt) path)
 
 diagnostic :: String -> SourceSpan -> FilePath -> RDF.Diagnostic
