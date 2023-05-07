@@ -39,5 +39,24 @@ class NeedBraces {
             i++;
             i--;
         }
+
+        if (true) {
+            a = 1;
+        } else if (false) {
+            a = 2;
+        } else {
+            a = 3;
+        }
+
+        if (true) {
+            a = 1;
+        } else if (false)
+            a = 2;
+
+        if (true) {
+            a = 1;
+        } else if (false) {
+            a = 2;
+        } else a = 3;
     }
 }

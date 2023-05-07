@@ -13,15 +13,22 @@ check cUnit path = do
   checkStmt stmt path
 
 checkStmt :: Stmt -> FilePath -> [RDF.Diagnostic]
-checkStmt (IfThen _ _ stmt) path = checkConditionalBody stmt path
-checkStmt (IfThenElse _ _ stmt1 stmt2) path = do
-  stmt <- [stmt1, stmt2]
-  checkConditionalBody stmt path
+checkStmt (IfThen _ _ stmt) path = checkConditionalThen stmt path
+checkStmt (IfThenElse _ _ stmt1 stmt2) path =
+  checkConditionalThen stmt1 path ++ checkConditionalElse stmt2 path
 checkStmt (While span _ stmt) path = checkLoopBody stmt span path
 checkStmt (BasicFor span _ _ _ stmt) path = checkLoopBody stmt span path
 checkStmt (EnhancedFor span _ _ _ _ stmt) path = checkLoopBody stmt span path
 checkStmt (Do span stmt _) path = checkLoopBody stmt span path
 checkStmt _ _ = mzero
+
+checkConditionalThen :: Stmt -> FilePath -> [RDF.Diagnostic]
+checkConditionalThen = checkConditionalBody
+
+checkConditionalElse :: Stmt -> FilePath -> [RDF.Diagnostic]
+checkConditionalElse (IfThen {}) _ = mzero
+checkConditionalElse (IfThenElse {}) _ = mzero
+checkConditionalElse stmt path = checkConditionalBody stmt path
 
 checkConditionalBody :: Stmt -> FilePath -> [RDF.Diagnostic]
 checkConditionalBody (StmtBlock _) _ = mzero
