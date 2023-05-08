@@ -27,6 +27,7 @@ library
   exposed-modules:
       CheckstyleXML
       Control.Monad.Extra
+      Data.List.Extra
       Language.Java.AST
       Language.Java.Rules
       Language.Java.Rules.AvoidMultipleTopLevelDecl
