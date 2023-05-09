@@ -38,7 +38,7 @@ packages:
 #
 extra-deps:
 - git: https://github.com/hsfl-pltp/language-java.git
-  commit: 4cde2fe4489feb4a981ac6252e7decacc80a7cde
+  commit: f225e998488b74179bb2f05ddb933d1b57d1155b
 
 # extra-deps: []
 
