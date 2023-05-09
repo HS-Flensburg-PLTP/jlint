@@ -4,6 +4,7 @@ module Language.Java.Rules.ProhibitMyIdentPrefix where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
+import Language.Java.SourceSpan (SourceSpan, dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 import Text.RE.TDFA.String (matched, re, (?=~))
@@ -37,7 +38,7 @@ check (CompilationUnit pkgDecl _ typeDecls) path =
        )
 
 checkIdent :: Ident -> SourceSpan -> FilePath -> [RDF.Diagnostic]
-checkIdent (Ident ident) sourceSpan path
+checkIdent (Ident _ ident) sourceSpan path
   | matched (ident ?=~ [re|^([Mm]y)|MY|]) =
     return
       ( RDF.rangeDiagnostic
