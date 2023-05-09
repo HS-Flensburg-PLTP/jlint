@@ -1,4 +1,4 @@
 
 class TestClassName {
-    String testString = "Ahhhhh";
+    myString testString = "Ahhhhh";
 }

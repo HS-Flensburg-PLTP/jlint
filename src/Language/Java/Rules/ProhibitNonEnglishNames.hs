@@ -1,9 +1,11 @@
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE QuasiQuotes #-}
 
 module Language.Java.Rules.ProhibitNonEnglishNames where
 
+import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
-import Language.Java.Pretty (prettyPrint)
+import Language.Java.SourceSpan
 import Language.Java.Syntax
 import qualified RDF
 import Text.RE.TDFA.String
@@ -13,27 +15,18 @@ check cUnit path = do
   ident <- universeBi cUnit
   splitIdent ident path
 
-checkIdent :: Ident -> FilePath -> [RDF.Diagnostic]
-checkIdent ident path =
-  return (RDF.rangeDiagnostic "nonenglish" ("Name: " ++ prettyPrint ident) dummySourceSpan path)
+checkIdentString :: String -> SourceSpan -> FilePath -> [RDF.Diagnostic]
+checkIdentString identString sourceSpan path =
+  return (RDF.rangeDiagnostic "nonenglish" ("Name: " ++ identString) sourceSpan path)
 
 splitIdent :: Ident -> FilePath -> [RDF.Diagnostic]
-splitIdent (Ident ident) path =
+splitIdent (Ident sourceSpan ident) path =
   concatMap
-    ( \match ->
-        return
-          ( RDF.rangeDiagnostic
-              "nonenglish"
-              ( "Name: "
-                  ++ ( \m -> case m of
-                         Just a -> a
-                         Nothing -> ""
-                     )
-                    (matchedText match)
-              )
-              dummySourceSpan
-              path
-          )
+    ( ( \case
+          Just string -> checkIdentString string sourceSpan path
+          Nothing -> []
+      )
+        . matchedText
     )
     (allMatches (ident *=~ [re|([a-z]|[A-Z])[a-z]*|]))
 
