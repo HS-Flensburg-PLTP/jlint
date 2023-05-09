@@ -39,7 +39,6 @@ library
       Language.Java.Rules.ConsistentOverrideEqualsHashCode
       Language.Java.Rules.DeclarationOrder
       Language.Java.Rules.DefaultComesLast
-      Language.Java.Rules.EmptyLoopBody
       Language.Java.Rules.InitializeVariables
       Language.Java.Rules.ModifiedControlVariable
       Language.Java.Rules.NamingConventions
@@ -123,7 +122,6 @@ test-suite jlint-test
       ConsistentOverrideEqualsHashCodeTests
       DeclarationOrderTests
       DefaultComesLastTests
-      EmptyLoopBodyTests
       InitializeVariablesTests
       ModifiedControlVariableTests
       NamingConventionsTests
