@@ -35,7 +35,7 @@ checkBasicFor _ _ = mzero
 
 checkIdent :: Ident -> [Ident] -> SourceSpan -> FilePath -> [RDF.Diagnostic]
 checkIdent ident idents sourceSpan path =
-  if ident `elem` idents
+  if any (eq IgnoreSourceSpan ident) idents
     then return (createRangeDiagnostic ident sourceSpan path)
     else mzero
 

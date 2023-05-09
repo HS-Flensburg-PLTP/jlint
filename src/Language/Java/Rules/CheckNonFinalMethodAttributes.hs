@@ -1,5 +1,6 @@
 module Language.Java.Rules.CheckNonFinalMethodAttributes (check) where
 
+import Data.List.Extra (none)
 import Language.Java.AST (extractMethodParameters, extractVarName)
 import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
@@ -19,5 +20,5 @@ checkFormalParamList (_, formalParams) path = concatMap checkFormalParam formalP
           (extractVarName varid ++ " is not declared as Final")
           dummySourceSpan
           path
-        | Final `notElem` modifier
+        | none (eq IgnoreSourceSpan Final) modifier
       ]
