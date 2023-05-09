@@ -8,6 +8,7 @@ import Control.Monad (MonadPlus (..))
 import Data.Function ((&))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.AST (extractMethods)
+import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 import Text.RE.TDFA.String
@@ -52,7 +53,7 @@ packageNameMsg :: String -> String
 packageNameMsg name = "PackageName element " ++ name ++ " does not match the specifications."
 
 extractPackageNames :: PackageDecl -> [String]
-extractPackageNames (PackageDecl (Name packageNames)) = map (\(Ident name) -> name) packageNames
+extractPackageNames (PackageDecl (Name _ packageNames)) = map (\(Ident _ name) -> name) packageNames
 
 {- MethodName -}
 
@@ -80,7 +81,7 @@ extractFormalParams cUnit = do
   membDecl <- universeBi cUnit
   extractBody membDecl
   where
-    extractBody (MethodDecl _ _ _ _ (Ident n) formalParams _ _ _) = return (n, map (\(FormalParam _ _ _ varDeclIds) -> extractFormalParamName varDeclIds) formalParams)
+    extractBody (MethodDecl _ _ _ _ (Ident _ n) formalParams _ _ _) = return (n, map (\(FormalParam _ _ _ _ varDeclIds) -> extractFormalParamName varDeclIds) formalParams)
     extractBody _ = mzero
 
 checkParameterNames :: (String, [String]) -> FilePath -> [RDF.Diagnostic]
@@ -166,8 +167,8 @@ extractCLassesAndInterfaces cUnit = do
   classesAndInterfaces <- universeBi cUnit
   extractCLassAndInterface classesAndInterfaces
   where
-    extractCLassAndInterface (ClassTypeDecl (ClassDecl _ _ (Ident n) _ _ _ _)) = return n
-    extractCLassAndInterface (InterfaceTypeDecl (InterfaceDecl _ _ _ (Ident n) _ _ _ _)) = return n
+    extractCLassAndInterface (ClassTypeDecl (ClassDecl _ _ (Ident _ n) _ _ _ _)) = return n
+    extractCLassAndInterface (InterfaceTypeDecl (InterfaceDecl _ _ _ (Ident _ n) _ _ _ _)) = return n
     extractCLassAndInterface _ = mzero
 
 extractEnums :: CompilationUnit -> [String]
@@ -175,7 +176,7 @@ extractEnums cUnit = do
   enums <- universeBi cUnit
   extractEnum enums
   where
-    extractEnum (EnumDecl _ _ (Ident n) _ _) = return n
+    extractEnum (EnumDecl _ _ (Ident _ n) _ _) = return n
     extractEnum _ = mzero
 
 checkTypeNames :: [String] -> FilePath -> [RDF.Diagnostic]
@@ -201,8 +202,8 @@ rePascalCase = [re|^[A-Z][a-zA-Z0-9]*$|]
 {- Helper -}
 
 extractVarName :: VarDecl -> String
-extractVarName (VarDecl id _) = extractFormalParamName id
+extractVarName (VarDecl _ id _) = extractFormalParamName id
 
 extractFormalParamName :: VarDeclId -> String
-extractFormalParamName (VarId (Ident name)) = name
+extractFormalParamName (VarId (Ident _ name)) = name
 extractFormalParamName (VarDeclArray _ varDeclId) = extractFormalParamName varDeclId

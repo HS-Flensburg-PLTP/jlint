@@ -3,6 +3,7 @@ module Language.Java.Rules.NoLoopBreak (check) where
 import Control.Monad.Reader
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.AST (extractMethods)
+import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
@@ -17,10 +18,10 @@ checkStatements (methodName, methodBody) path = do
   runReader (checkStatement stmt) (methodName, path)
 
 checkStatement :: Stmt -> Reader (String, FilePath) [RDF.Diagnostic]
-checkStatement (While _ stmt) = checkLoop stmt
-checkStatement (Do stmt _) = checkLoop stmt
-checkStatement (BasicFor _ _ _ stmt) = checkLoop stmt
-checkStatement (EnhancedFor _ _ _ _ stmt) = checkLoop stmt
+checkStatement (While _ _ stmt) = checkLoop stmt
+checkStatement (Do _ stmt _) = checkLoop stmt
+checkStatement (BasicFor _ _ _ _ stmt) = checkLoop stmt
+checkStatement (EnhancedFor _ _ _ _ _ stmt) = checkLoop stmt
 checkStatement _ = return []
 
 checkLoop :: Stmt -> Reader (String, FilePath) [RDF.Diagnostic]
@@ -30,10 +31,10 @@ checkLoop (IfThenElse _ _ stmt1 stmt2) = do
   stm1 <- checkLoop stmt1
   stm2 <- checkLoop stmt2
   return (stm1 ++ stm2)
-checkLoop (Return _) = do
+checkLoop (Return _ _) = do
   (_, path) <- ask
   return [RDF.rangeDiagnostic "Language.Java.Rules.NoLoopBreak" "Exit Loop with return" dummySourceSpan path]
-checkLoop (Break _) = do
+checkLoop (Break _ _) = do
   (_, path) <- ask
   return [RDF.rangeDiagnostic "Language.Java.Rules.NoLoopBreak" "Exit Loop with break" dummySourceSpan path]
 checkLoop stmt = checkStatement stmt

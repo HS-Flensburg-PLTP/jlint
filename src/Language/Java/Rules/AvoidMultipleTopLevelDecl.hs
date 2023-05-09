@@ -1,6 +1,7 @@
 module Language.Java.Rules.AvoidMultipleTopLevelDecl (check) where
 
 import Control.Monad (MonadPlus (..))
+import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 

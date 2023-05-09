@@ -1,6 +1,7 @@
 module Language.Java.Rules.CheckNonFinalMethodAttributes (check) where
 
 import Language.Java.AST (extractMethodParameters, extractVarName)
+import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
@@ -12,7 +13,7 @@ check cUnit path = do
 checkFormalParamList :: (String, [FormalParam]) -> FilePath -> [RDF.Diagnostic]
 checkFormalParamList (_, formalParams) path = concatMap checkFormalParam formalParams
   where
-    checkFormalParam (FormalParam modifier _ _ varid) =
+    checkFormalParam (FormalParam _ modifier _ _ varid) =
       [ RDF.rangeDiagnostic
           "Language.Java.Rules.CheckNonFinalMethodAttributes"
           (extractVarName varid ++ " is not declared as Final")

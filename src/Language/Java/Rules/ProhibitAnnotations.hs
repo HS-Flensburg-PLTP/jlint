@@ -3,6 +3,7 @@ module Language.Java.Rules.ProhibitAnnotations where
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Pretty (prettyPrint)
+import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
