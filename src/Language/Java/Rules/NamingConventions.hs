@@ -168,8 +168,8 @@ extractCLassesAndInterfaces cUnit = do
   classesAndInterfaces <- universeBi cUnit
   extractCLassAndInterface classesAndInterfaces
   where
-    extractCLassAndInterface (ClassTypeDecl _ (ClassDecl _ _ (Ident _ n) _ _ _ _)) = return n
-    extractCLassAndInterface (InterfaceTypeDecl _ (InterfaceDecl _ _ _ (Ident _ n) _ _ _ _)) = return n
+    extractCLassAndInterface (ClassTypeDecl (ClassDecl _ _ (Ident _ n) _ _ _ _)) = return n
+    extractCLassAndInterface (InterfaceTypeDecl (InterfaceDecl _ _ _ (Ident _ n) _ _ _ _)) = return n
     extractCLassAndInterface _ = mzero
 
 extractEnums :: CompilationUnit -> [String]
