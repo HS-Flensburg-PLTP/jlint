@@ -3,10 +3,11 @@
 
 module Language.Java.Rules.ProhibitNonEnglishNames where
 
-import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
+import qualified Data.Text
 import Language.Java.SourceSpan
 import Language.Java.Syntax
+import Network.HTTP.Req
 import qualified RDF
 import Text.RE.TDFA.String
 
@@ -15,9 +16,29 @@ check cUnit path = do
   ident <- universeBi cUnit
   splitIdent ident path
 
+{-
+https://api.dictionaryapi.dev/api/v2/entries/en/<word>
+404 = not found
+200 = found + json
+
+return (RDF.rangeDiagnostic "nonenglish" ("Name: " ++ identString) sourceSpan path)
+-}
+
 checkIdentString :: String -> SourceSpan -> FilePath -> [RDF.Diagnostic]
 checkIdentString identString sourceSpan path =
-  return (RDF.rangeDiagnostic "nonenglish" ("Name: " ++ identString) sourceSpan path)
+  ( \case
+      200 -> []
+      _ -> return (RDF.rangeDiagnostic "nonenglish" ("Name: " ++ identString) sourceSpan path)
+  )
+    ( responseStatusCode
+        ( req
+            GET
+            (https (Data.Text.pack "api.dictionaryapi.dev/api/v2/entries/en/<word>") /: Data.Text.pack "get")
+            NoReqBody
+            jsonResponse
+            mempty
+        )
+    )
 
 splitIdent :: Ident -> FilePath -> [RDF.Diagnostic]
 splitIdent (Ident sourceSpan ident) path =

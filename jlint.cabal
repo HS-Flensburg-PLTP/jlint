@@ -84,6 +84,8 @@ library
     , optparse-applicative >=0.16.1.0 && <1
     , parsec >=3.1.14.0 && <3.2
     , regex >=1.1.0 && <1.2
+    , req >=3.10
+    , text >=1.2.5
     , uniplate >=1.6.11 && <1.7
   default-language: Haskell2010
 
@@ -107,6 +109,8 @@ executable jlint
     , optparse-applicative >=0.16.1.0 && <1
     , parsec >=3.1.14.0 && <3.2
     , regex >=1.1.0 && <1.2
+    , req >=3.10
+    , text >=1.2.5
     , uniplate >=1.6.11 && <1.7
   default-language: Haskell2010
 
@@ -165,7 +169,9 @@ test-suite jlint-test
     , optparse-applicative >=0.16.1.0 && <1
     , parsec >=3.1.14.0 && <3.2
     , regex >=1.1.0 && <1.2
+    , req >=3.10
     , split >=0.2.3.4 && <0.3
+    , text >=1.2.5
     , uniplate >=1.6.11 && <1.7
     , unliftio >=0.2.21.0 && <1
   default-language: Haskell2010
