@@ -12,7 +12,7 @@ check _ _ = mzero
 -- Reminder: Use "sourceSpan typeDecl", when implemented in language-java
 typeDeclSourceSpan :: TypeDecl -> SourceSpan
 typeDeclSourceSpan (ClassTypeDecl ctd) = sourceSpan ctd
-typeDeclSourceSpan (InterfaceTypeDecl (InterfaceDecl span _ _ _ _ _ _ _)) = span
+typeDeclSourceSpan (InterfaceTypeDecl itd) = sourceSpan itd
 
 message :: SourceSpan -> FilePath -> RDF.Diagnostic
 message =
