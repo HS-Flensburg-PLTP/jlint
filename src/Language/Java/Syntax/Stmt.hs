@@ -1,5 +1,6 @@
-module Language.Java.Syntax.Stmt (hasNoSideEffect) where
+module Language.Java.Syntax.Stmt (hasNoSideEffect, sourceSpan) where
 
+import Language.Java.SourceSpan (SourceSpan, dummySourceSpan)
 import Language.Java.Syntax (Stmt (..))
 
 -- Identifies statements that do not cause side effects concerning class attributes

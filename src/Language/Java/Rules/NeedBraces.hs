@@ -4,6 +4,7 @@ import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.SourceSpan (SourceSpan, sourceSpan)
 import Language.Java.Syntax
+import qualified Language.Java.Syntax.Stmt as Stmt
 import qualified RDF
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
