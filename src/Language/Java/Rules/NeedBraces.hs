@@ -2,9 +2,8 @@ module Language.Java.Rules.NeedBraces (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
-import Language.Java.SourceSpan (SourceSpan)
+import Language.Java.SourceSpan (SourceSpan, sourceSpan)
 import Language.Java.Syntax
-import qualified Language.Java.Syntax.Stmt as Stmt
 import qualified RDF
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
@@ -33,12 +32,12 @@ checkConditionalElse stmt path = checkConditionalBody stmt path
 checkConditionalBody :: Stmt -> FilePath -> [RDF.Diagnostic]
 checkConditionalBody (StmtBlock _) _ = mzero
 checkConditionalBody Empty _ = mzero
-checkConditionalBody stmt path = return (diagnostic bracesMessage (Stmt.sourceSpan stmt) path)
+checkConditionalBody stmt path = return (diagnostic bracesMessage (sourceSpan stmt) path)
 
 checkLoopBody :: Stmt -> SourceSpan -> FilePath -> [RDF.Diagnostic]
 checkLoopBody (StmtBlock _) _ _ = mzero
 checkLoopBody Empty loopSpan path = return (diagnostic emptyLoopMessage loopSpan path)
-checkLoopBody stmt _ path = return (diagnostic bracesMessage (Stmt.sourceSpan stmt) path)
+checkLoopBody stmt _ path = return (diagnostic bracesMessage (sourceSpan stmt) path)
 
 diagnostic :: String -> SourceSpan -> FilePath -> RDF.Diagnostic
 diagnostic =
