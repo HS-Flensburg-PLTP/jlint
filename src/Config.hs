@@ -3,11 +3,10 @@
 module Config where
 
 import Data.Aeson
-import GHC.Generics
+import GHC.Generics (Generic)
 
 newtype Config = Config
-  { rules :: [String]
-  }
+  {rule :: String}
   deriving (Show, Generic)
 
 instance FromJSON Config

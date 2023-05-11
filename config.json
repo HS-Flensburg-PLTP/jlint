@@ -1,32 +1,77 @@
-{
-    "rules": [
-        "AvoidMultipleTopLevelDecl",
-        "AvoidMultipleVarDecl",
-        "AvoidMultipleTopLevelDecl",
-        "AvoidMultipleVarDecl",
-        "AvoidNegations",
-        "AvoidStarImport",
-        "CheckNonFinalMethodAttributes",
-        "CheckNonPrivateAttributes",
-        "ConsistentOverrideEqualsHashCode",
-        "DefaultComesLast",
-        "EmptyLoopBody",
-        "InitializeVariables",
-        "NamingConventions",
-        "NeedBraces",
-        "NoLoopBreak",
-        "NoNullPointerExceptionsForControl",
-        "ParameterNumber",
-        "PreferExpressions",
-        "ReduceScope",
-        "RedundantModifiers",
-        "SameExecutionsInIf",
-        "SimplifyBooleanReturn",
-        "UnusedLocalVariable",
-        "UseAssignOp",
-        "UseElse",
-        "UseIncrementDecrementOperator",
-        "UseJavaArrayTypeStyle",
-        "UsePostIncrementDecrement"
-    ]
-}
+[
+    {
+        "rule": "AvoidMultipleTopLevelDecl"
+    },
+    {
+        "rule": "AvoidMultipleVarDecl"
+    },
+    {
+        "rule": "AvoidNegations"
+    },
+    {
+        "rule": "AvoidStarImport"
+    },
+    {
+        "rule": "CheckNonFinalMethodAttributes"
+    },
+    {
+        "rule": "CheckNonPrivateAttributes"
+    },
+    {
+        "rule": "ConsistentOverrideEqualsHashCode"
+    },
+    {
+        "rule": "DefaultComesLast"
+    },
+    {
+        "rule": "EmptyLoopBody"
+    },
+    {
+        "rule": "InitializeVariables"
+    },
+    {
+        "rule": "NamingConventions"
+    },
+    {
+        "rule": "NeedBraces"
+    },
+    {
+        "rule": "NoLoopBreak"
+    },
+    {
+        "rule": "NoNullPointerExceptionsForControl"
+    },
+    {
+        "rule": "ParameterNumber"
+    },
+    {
+        "rule": "PreferExpressions"
+    },
+    {
+        "rule": "ReduceScope"
+    },
+    {
+        "rule": "RedundantModifiers"
+    },
+    {
+        "rule": "SameExecutionsInIf"
+    },
+    {
+        "rule": "SimplifyBooleanReturn"
+    },
+    {
+        "rule": "UseAssignOp"
+    },
+    {
+        "rule": "UseElse"
+    },
+    {
+        "rule": "UseIncrementDecrementOperator"
+    },
+    {
+        "rule": "UseJavaArrayTypeStyle"
+    },
+    {
+        "rule": "UsePostIncrementDecrement"
+    }
+]

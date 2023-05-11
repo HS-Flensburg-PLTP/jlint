@@ -125,10 +125,10 @@ parseJava rootDir pretty showAST checkstyleDiags =
         diagnostics <- do
           if configExists
             then do
-              config <- decodeFileStrict "config.json" :: IO (Maybe Config)
+              config <- decodeFileStrict "config.json" :: IO (Maybe [Config])
               case config of
                 Nothing -> return (concatMap (uncurry checkAll) cUnitResults)
-                Just config -> return (concatMap (uncurry (checkWithConfig (rules config))) cUnitResults)
+                Just config -> return (concatMap (uncurry (checkWithConfig (extractRuleNames config))) cUnitResults)
             else return (concatMap (uncurry checkAll) cUnitResults)
 
         let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
@@ -153,3 +153,6 @@ parseJava rootDir pretty showAST checkstyleDiags =
           else do
             hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
             exitWith (ExitFailure numberOfHints)
+
+extractRuleNames :: [Config] -> [String]
+extractRuleNames = map rule
