@@ -4,6 +4,7 @@ import Control.Monad (MonadPlus (..))
 import Data.Function ((&))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.AST (extractMethods, extractVarName)
+import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
@@ -17,7 +18,7 @@ extractMethodVariables methodBody = do
   names <- universeBi methodBody
   extractNames names
   where
-    extractNames (LocalVars _ _ _ varDecls) = map (\(VarDecl varId _) -> extractVarName varId) varDecls
+    extractNames (LocalVars _ _ _ varDecls) = map (\(VarDecl _ varId _) -> extractVarName varId) varDecls
     extractNames _ = mzero
 
 extractMethodVariableUsages :: MethodBody -> [String]
@@ -25,7 +26,7 @@ extractMethodVariableUsages methodBody = do
   usedVariables <- universeBi methodBody
   extractUsedVariables usedVariables
   where
-    extractUsedVariables (Name varList) = map (\(Ident n) -> n) varList
+    extractUsedVariables (Name _ varList) = map (\(Ident _ n) -> n) varList
 
 checkIfMethodVarsAreUsed :: [String] -> [String] -> String -> FilePath -> [RDF.Diagnostic]
 checkIfMethodVarsAreUsed declaredVars usedVars _ path =
@@ -56,7 +57,7 @@ extractClassVars cUnit = do
   variables <- universeBi cUnit
   extractVars variables
   where
-    extractVars (FieldDecl _ _ _ varDecls) = map (\(VarDecl varId _) -> extractVarName varId) varDecls
+    extractVars (FieldDecl _ _ _ varDecls) = map (\(VarDecl _ varId _) -> extractVarName varId) varDecls
     extractVars _ = mzero
 
 checkClassVarUsageInMethod :: String -> [String] -> [String] -> Bool

@@ -3,6 +3,7 @@ module Language.Java.Rules.SameExecutionsInIf (check) where
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.AST (extractMethods)
+import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
@@ -27,7 +28,7 @@ checkMethodBlocks (_, methodBody) path = do
 
 checkAllStatements :: [[BlockStmt]] -> Int -> Int
 checkAllStatements list counter
-  | all (== head (map (\(firstStmtList : _) -> firstStmtList) list)) (concatMap (take 1) list) = if all (\statements -> length statements >= 2) list then checkAllStatements (map tail list) (counter + 1) else counter + 1
+  | all (eq IgnoreSourceSpan (head (map (\(firstStmtList : _) -> firstStmtList) list))) (concatMap (take 1) list) = if all (\statements -> length statements >= 2) list then checkAllStatements (map tail list) (counter + 1) else counter + 1
   | otherwise = counter
 
 extractStmt :: Stmt -> [[BlockStmt]]

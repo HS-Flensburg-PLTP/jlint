@@ -1,6 +1,8 @@
 module Language.Java.Rules.CheckNonPrivateAttributes (check) where
 
+import Data.List.Extra (none)
 import Language.Java.AST (extractAttributes)
+import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
@@ -19,5 +21,5 @@ checkAttributes (varNames, mods) path =
           (varname ++ " is not declared as private")
           dummySourceSpan
           path
-        | Private `notElem` modifier
+        | none (eq IgnoreSourceSpan Private) modifier
       ]

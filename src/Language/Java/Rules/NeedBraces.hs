@@ -1,36 +1,51 @@
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-
 module Language.Java.Rules.NeedBraces (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
-import Language.Java.AST (extractMethods)
+import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
+import qualified Language.Java.Syntax.Stmt as Stmt
 import qualified RDF
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  methods <- extractMethods cUnit
-  checkStatements methods path
+  stmt <- universeBi cUnit
+  checkStmt stmt path
 
-checkStatements :: (String, MethodBody) -> FilePath -> [RDF.Diagnostic]
-checkStatements (_, methodBody) path = do
-  stmt <- universeBi methodBody
-  checkStatement stmt
-  where
-    checkStatement (Do (StmtBlock _) _) = mzero
-    checkStatement (Do _ _) = return (RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces" "A Do-Part contains no braces." dummySourceSpan path)
-    checkStatement (While _ (StmtBlock _)) = mzero
-    checkStatement (While _ _) = return (RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces" "A While-Part contains no braces." dummySourceSpan path)
-    checkStatement (BasicFor _ _ _ (StmtBlock _)) = mzero
-    checkStatement (BasicFor {}) = return (RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces" "A For-Part contains no braces." dummySourceSpan path)
-    checkStatement (EnhancedFor _ _ _ _ (StmtBlock _)) = mzero
-    checkStatement (EnhancedFor {}) = return (RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces" "A ForEach-Part contains no braces." dummySourceSpan path)
-    checkStatement (IfThen _ _ (StmtBlock _)) = mzero
-    checkStatement (IfThen {}) = return (RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces" "A IfThen-Part contains no braces." dummySourceSpan path)
-    checkStatement (IfThenElse _ _ (StmtBlock _) (StmtBlock _)) = mzero
-    checkStatement (IfThenElse _ _ _ (StmtBlock _)) = return (RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces" "A IfThenElse-Part contains no braces." dummySourceSpan path)
-    checkStatement (IfThenElse _ _ (StmtBlock _) _) = return (RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces" "A IfThenElse-Part contains no braces." dummySourceSpan path)
-    checkStatement (IfThenElse {}) = return (RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces" "A IfThenElse-Part contains no braces." dummySourceSpan path)
-    checkStatement _ = mzero
+checkStmt :: Stmt -> FilePath -> [RDF.Diagnostic]
+checkStmt (IfThen _ _ stmt) path = checkConditionalThen stmt path
+checkStmt (IfThenElse _ _ stmt1 stmt2) path =
+  checkConditionalThen stmt1 path ++ checkConditionalElse stmt2 path
+checkStmt (While span _ stmt) path = checkLoopBody stmt span path
+checkStmt (BasicFor span _ _ _ stmt) path = checkLoopBody stmt span path
+checkStmt (EnhancedFor span _ _ _ _ stmt) path = checkLoopBody stmt span path
+checkStmt (Do span stmt _) path = checkLoopBody stmt span path
+checkStmt _ _ = mzero
+
+checkConditionalThen :: Stmt -> FilePath -> [RDF.Diagnostic]
+checkConditionalThen = checkConditionalBody
+
+checkConditionalElse :: Stmt -> FilePath -> [RDF.Diagnostic]
+checkConditionalElse (IfThen {}) _ = mzero
+checkConditionalElse (IfThenElse {}) _ = mzero
+checkConditionalElse stmt path = checkConditionalBody stmt path
+
+checkConditionalBody :: Stmt -> FilePath -> [RDF.Diagnostic]
+checkConditionalBody (StmtBlock _) _ = mzero
+checkConditionalBody Empty _ = mzero
+checkConditionalBody stmt path = return (diagnostic bracesMessage (Stmt.sourceSpan stmt) path)
+
+checkLoopBody :: Stmt -> SourceSpan -> FilePath -> [RDF.Diagnostic]
+checkLoopBody (StmtBlock _) _ _ = mzero
+checkLoopBody Empty loopSpan path = return (diagnostic emptyLoopMessage loopSpan path)
+checkLoopBody stmt _ path = return (diagnostic bracesMessage (Stmt.sourceSpan stmt) path)
+
+diagnostic :: String -> SourceSpan -> FilePath -> RDF.Diagnostic
+diagnostic =
+  RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces"
+
+bracesMessage :: String
+bracesMessage = "Code-Blöcke sollten auch dann geklammert werden, wenn sie weniger als zwei Anweisungen enthalten."
+
+emptyLoopMessage :: String
+emptyLoopMessage = "Schleifen sollten Anweisungen enthalten."
