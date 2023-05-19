@@ -3,7 +3,7 @@ module Main where
 import CheckstyleXML (toRDF)
 import Config
 import Control.Monad (MonadPlus (..), unless, when)
-import Data.Aeson (decodeFileStrict)
+import Data.Aeson (decodeFileStrict, eitherDecodeFileStrict)
 import qualified Data.ByteString.Lazy.Char8 as C
 import Data.Semigroup ((<>))
 import Language.Java.Parser (compilationUnit, modifier, parser)
@@ -121,14 +121,16 @@ parseJava rootDir pretty showAST checkstyleDiags =
       then do
         print cUnitResults
       else do
-        configExists <- doesFileExist "config.json"
+        configExists <- doesFileExist configFile
         diagnostics <- do
           if configExists
             then do
-              config <- decodeFileStrict "config.json" :: IO (Maybe [Config])
+              config <- eitherDecodeFileStrict configFile :: IO (Either String [Config])
               case config of
-                Nothing -> return (concatMap (uncurry checkAll) cUnitResults)
-                Just config -> return (concatMap (uncurry (checkWithConfig (extractRuleNames config))) cUnitResults)
+                Left error -> do
+                  putStrLn ("Error beim parsen der Config-Datei: " ++ error)
+                  return (concatMap (uncurry checkAll) cUnitResults)
+                Right config -> return (concatMap (uncurry (checkWithConfig config)) cUnitResults)
             else return (concatMap (uncurry checkAll) cUnitResults)
 
         let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
@@ -154,5 +156,5 @@ parseJava rootDir pretty showAST checkstyleDiags =
             hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
             exitWith (ExitFailure numberOfHints)
 
-extractRuleNames :: [Config] -> [String]
-extractRuleNames = map rule
+configFile :: String
+configFile = "config.json"

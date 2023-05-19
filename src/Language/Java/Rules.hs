@@ -1,5 +1,6 @@
 module Language.Java.Rules where
 
+import Config
 import Data.Map (Map, findWithDefault, fromList)
 import qualified Language.Java.Rules.AvoidMultipleTopLevelDecl as AvoidMultipleTopLevelDecl
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
@@ -59,8 +60,8 @@ checks =
 checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkAll cUnit path = concatMap (\f -> f cUnit path) checks
 
-checkWithConfig :: [String] -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
-checkWithConfig rules cUnit path = concatMap (\f -> f cUnit path) (checkRule rules)
+checkWithConfig :: [Config] -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkWithConfig config cUnit path = concatMap (\f -> f cUnit path) (checkRule (extractRuleNames config))
 
 checkRule :: [String] -> [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checkRule = map (\s -> findWithDefault (\_ _ -> []) s checkMapping)
@@ -93,3 +94,6 @@ checkMapping =
       ("UseJavaArrayTypeStyle", UseJavaArrayTypeStyle.check),
       ("UsePostIncrementDecrement", UsePostIncrementDecrement.check)
     ]
+
+extractRuleNames :: [Config] -> [String]
+extractRuleNames = map rule
