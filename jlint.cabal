@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       CheckstyleXML
+      Config
       Control.Monad.Extra
       Data.List.Extra
       Language.Java.AST
@@ -77,6 +78,7 @@ library
     , base >=4.7 && <5
     , bytestring >=0.10.12.1 && <0.11
     , containers >=0.6.4.1 && <0.7
+    , directory
     , filemanip >=0.3.6.3 && <0.4
     , language-java >=0.2.9 && <3
     , mtl >=2.2.2 && <2.3
@@ -99,6 +101,7 @@ executable jlint
     , base >=4.7 && <5
     , bytestring >=0.10.12.1 && <0.11
     , containers >=0.6.4.1 && <0.7
+    , directory
     , filemanip >=0.3.6.3 && <0.4
     , jlint
     , language-java >=0.2.9 && <3
