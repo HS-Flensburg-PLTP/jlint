@@ -1,6 +1,7 @@
 module Language.Java.Rules where
 
 import Config
+import Config (ParameterNumberConfig (ParameterNumberConfig))
 import Data.Map (Map, findWithDefault, fromList)
 import qualified Language.Java.Rules.AvoidMultipleTopLevelDecl as AvoidMultipleTopLevelDecl
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
@@ -45,7 +46,7 @@ checks =
     InitializeVariables.check,
     ModifiedControlVariable.check,
     NoNullPointerExceptionsForControl.check,
-    ParameterNumber.check,
+    ParameterNumber.check (ParameterNumberConfig (Just 7)),
     PreferExpressions.check,
     ReduceScope.check,
     RedundantModifiers.check,
@@ -60,40 +61,35 @@ checks =
 checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkAll cUnit path = concatMap (\f -> f cUnit path) checks
 
-checkWithConfig :: [Config] -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
-checkWithConfig config cUnit path = concatMap (\f -> f cUnit path) (checkRule (extractRuleNames config))
+checkWithConfig :: [Config] -> (CompilationUnit -> FilePath -> [RDF.Diagnostic])
+checkWithConfig config cUnit path = concatMap (\f -> f cUnit path) (checkRule config)
 
-checkRule :: [String] -> [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
-checkRule = map (\s -> findWithDefault (\_ _ -> []) s checkMapping)
+checkRule :: [Config] -> [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
+checkRule = map foo
 
-checkMapping :: Map String (CompilationUnit -> FilePath -> [RDF.Diagnostic])
-checkMapping =
-  fromList
-    [ ("AvoidMultipleTopLevelDecl", AvoidMultipleTopLevelDecl.check),
-      ("AvoidMultipleVarDecl", AvoidMultipleVarDecl.check),
-      ("AvoidNegations", AvoidNegations.check),
-      ("AvoidStarImport", AvoidStarImport.check),
-      ("CheckNonFinalMethodAttributes", CheckNonFinalMethodAttributes.check),
-      ("CheckNonPrivateAttributes", CheckNonPrivateAttributes.check),
-      ("ConsistentOverrideEqualsHashCode", ConsistentOverrideEqualsHashCode.check),
-      ("DefaultComesLast", DefaultComesLast.check),
-      ("InitializeVariables", InitializeVariables.check),
-      ("NamingConventions", NamingConventions.check),
-      ("NeedBraces", NeedBraces.check),
-      ("NoLoopBreak", NoLoopBreak.check),
-      ("NoNullPointerExceptionsForControl", NoNullPointerExceptionsForControl.check),
-      ("ParameterNumber", ParameterNumber.check),
-      ("PreferExpressions", PreferExpressions.check),
-      ("ReduceScope", ReduceScope.check),
-      ("RedundantModifiers", RedundantModifiers.check),
-      ("SameExecutionsInIf", SameExecutionsInIf.check),
-      ("SimplifyBooleanReturn", SimplifyBooleanReturn.check),
-      ("UseAssignOp", UseAssignOp.check),
-      ("UseElse", UseElse.check),
-      ("UseIncrementDecrementOperator", UseIncrementDecrementOperator.check),
-      ("UseJavaArrayTypeStyle", UseJavaArrayTypeStyle.check),
-      ("UsePostIncrementDecrement", UsePostIncrementDecrement.check)
-    ]
-
-extractRuleNames :: [Config] -> [String]
-extractRuleNames = map rule
+foo :: Config -> (CompilationUnit -> FilePath -> [RDF.Diagnostic])
+foo (Config "AvoidMultipleTopLevelDecl" _) = AvoidMultipleTopLevelDecl.check
+foo (Config "AvoidMultipleVarDecl" _) = AvoidMultipleVarDecl.check
+foo (Config "AvoidNegations" _) = AvoidNegations.check
+foo (Config "AvoidStarImport" _) = AvoidStarImport.check
+foo (Config "CheckNonFinalMethodAttributes" _) = CheckNonFinalMethodAttributes.check
+foo (Config "CheckNonPrivateAttributes" _) = CheckNonPrivateAttributes.check
+foo (Config "ConsistentOverrideEqualsHashCode" _) = ConsistentOverrideEqualsHashCode.check
+foo (Config "DefaultComesLast" _) = DefaultComesLast.check
+foo (Config "InitializeVariables" _) = InitializeVariables.check
+foo (Config "NamingConventions" _) = NamingConventions.check
+foo (Config "NeedBraces" _) = NeedBraces.check
+foo (Config "NoLoopBreak" _) = NoLoopBreak.check
+foo (Config "NoNullPointerExceptionsForControl" _) = NoNullPointerExceptionsForControl.check
+foo (Config "ParameterNumber" mMax) = ParameterNumber.check (ParameterNumberConfig mMax)
+foo (Config "PreferExpressions" _) = PreferExpressions.check
+foo (Config "ReduceScope" _) = ReduceScope.check
+foo (Config "RedundantModifiers" _) = RedundantModifiers.check
+foo (Config "SameExecutionsInIf" _) = SameExecutionsInIf.check
+foo (Config "SimplifyBooleanReturn" _) = SimplifyBooleanReturn.check
+foo (Config "UseAssignOp" _) = UseAssignOp.check
+foo (Config "UseElse" _) = UseElse.check
+foo (Config "UseIncrementDecrementOperator" _) = UseIncrementDecrementOperator.check
+foo (Config "UseJavaArrayTypeStyle" _) = UseJavaArrayTypeStyle.check
+foo (Config "UsePostIncrementDecrement" _) = UsePostIncrementDecrement.check
+foo (Config _ _) = \_ _ -> []
