@@ -1,8 +1,6 @@
 module Language.Java.Rules where
 
-import Config
-import Config (ParameterNumberConfig (ParameterNumberConfig))
-import Data.Map (Map, findWithDefault, fromList)
+import Config (Config (Config), ParameterNumberConfig (ParameterNumberConfig))
 import qualified Language.Java.Rules.AvoidMultipleTopLevelDecl as AvoidMultipleTopLevelDecl
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
