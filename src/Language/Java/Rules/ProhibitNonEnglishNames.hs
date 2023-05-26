@@ -15,10 +15,9 @@ import Network.Wreq
 import qualified RDF
 import Text.RE.TDFA.String
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit -> FilePath -> IO [RDF.Diagnostic]
 check cUnit path = do
-  ident <- universeBi cUnit
-  splitIdent ident path
+  return []
 
 {-
 https://api.dictionaryapi.dev/api/v2/entries/en/<word>

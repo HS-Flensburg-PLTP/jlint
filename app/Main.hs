@@ -6,7 +6,7 @@ import qualified Data.ByteString.Lazy.Char8 as C
 import Data.Semigroup ((<>))
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
-import Language.Java.Rules (checkAll)
+import Language.Java.Rules (checkAll, checkAllIO)
 import Language.Java.Syntax (CompilationUnit)
 import Options.Applicative
 import RDF
@@ -120,7 +120,8 @@ parseJava rootDir pretty showAST checkstyleDiags =
       else do
         let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
         let diagnostics = concatMap (uncurry checkAll) cUnitResults
-        let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
+        diagnosticsIO <- concatIORules cUnitResults
+        let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors ++ diagnosticsIO
         C.putStrLn
           ( RDF.encodetojson
               ( DiagnosticResult
@@ -141,3 +142,10 @@ parseJava rootDir pretty showAST checkstyleDiags =
           else do
             hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
             exitWith (ExitFailure numberOfHints)
+
+concatIORules :: [(CompilationUnit, FilePath)] -> IO [Diagnostic]
+concatIORules [] = return []
+concatIORules ((cUnit, path) : cUnitResults) = do
+  result <- checkAllIO cUnit path
+  results <- concatIORules cUnitResults
+  return (result ++ results)

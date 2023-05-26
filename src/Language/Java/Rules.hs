@@ -27,27 +27,42 @@ annotationswhitelist = ["Override"]
 
 checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checks =
-  [ {-AvoidMultipleTopLevelDecl.check,
-    AvoidMultipleVarDecl.check,
-    AvoidNegations.check,
-    AvoidStarImport.check,
-    ConsistentOverrideEqualsHashCode.check,
-    InitializeVariables.check,
-    ModifiedControlVariable.check,
-    NoNullPointerExceptionsForControl.check,
-    ParameterNumber.check,
-    PreferExpressions.check,
-    ReduceScope.check,
-    RedundantModifiers.check,
-    UseAssignOp.check,
-    UseElse.check,
-    DeclarationOrder.check,
-    UseIncrementDecrementOperator.check,
-    ProhibitAnnotations.check annotationswhitelist,
-    UseJavaArrayTypeStyle.check,
-    ProhibitMyIdentPrefix.check, -}
-    ProhibitNonEnglishNames.check
+  []
+
+{-AvoidMultipleTopLevelDecl.check,
+AvoidMultipleVarDecl.check,
+AvoidNegations.check,
+AvoidStarImport.check,
+ConsistentOverrideEqualsHashCode.check,
+InitializeVariables.check,
+ModifiedControlVariable.check,
+NoNullPointerExceptionsForControl.check,
+ParameterNumber.check,
+PreferExpressions.check,
+ReduceScope.check,
+RedundantModifiers.check,
+UseAssignOp.check,
+UseElse.check,
+DeclarationOrder.check,
+UseIncrementDecrementOperator.check,
+ProhibitAnnotations.check annotationswhitelist,
+UseJavaArrayTypeStyle.check,
+ProhibitMyIdentPrefix.check, -}
+
+checksIO :: [CompilationUnit -> FilePath -> IO [RDF.Diagnostic]]
+checksIO =
+  [ ProhibitNonEnglishNames.check
   ]
 
 checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkAll cUnit path = concatMap (\f -> f cUnit path) checks
+
+checkAllIO :: CompilationUnit -> FilePath -> IO [RDF.Diagnostic]
+checkAllIO = executeAll checksIO
+
+executeAll :: [CompilationUnit -> FilePath -> IO [RDF.Diagnostic]] -> CompilationUnit -> FilePath -> IO [RDF.Diagnostic]
+executeAll [] _ _ = return []
+executeAll (check : checks) cUnit path = do
+  result <- check cUnit path
+  results <- executeAll checks cUnit path
+  return (result ++ results)
