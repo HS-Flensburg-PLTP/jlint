@@ -1,17 +1,18 @@
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 
 module Language.Java.Rules.ProhibitNonEnglishNames where
 
 import qualified Control.Lens as Lens
-import Data.ByteString
+import Control.Monad (MonadPlus (mzero))
+import Data.Char (toLower)
 import Data.Generics.Uniplate.Data (universeBi)
-import qualified Data.Text
+import Language.Java.Rules.Dictionary as Dictionary
 import Language.Java.SourceSpan
 import Language.Java.Syntax
 import Network.Wreq
 import qualified RDF
-import Text.Parsec.Token (GenLanguageDef (identStart))
 import Text.RE.TDFA.String
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
@@ -27,22 +28,22 @@ https://api.dictionaryapi.dev/api/v2/entries/en/<word>
 return (RDF.rangeDiagnostic "nonenglish" ("Name: " ++ identString) sourceSpan path)
 -}
 
-checkIdentString :: p1 -> p2 -> p3 -> [RDF.Diagnostic]
-checkIdentString identString sourceSpan path =
+checkIdentString :: String -> SourceSpan -> FilePath -> [RDF.Diagnostic]
+checkIdentString identString sourceSpan path = if map toLower identString `elem` Dictionary.dict then mzero else return (RDF.rangeDiagnostic "nonenglish" ("Name: " ++ identString) sourceSpan path)
+
+{-
   do
     r <- get "https://api.dictionaryapi.dev/api/v2/entries/en/"
     case r Lens.^. responseStatus . statusCode of
-      200 -> []
-      _ -> []
-
-responseStatCode :: IO ByteString -> RDF.Diagnostic
-responseStatCode io = case io of {}
+      200 -> mzero
+      _ -> mzero
 
 response = get "https://api.dictionaryapi.dev/api/v2/entries/en/"
+-}
 
 splitIdent :: Ident -> FilePath -> [RDF.Diagnostic]
 splitIdent (Ident sourceSpan ident) path =
-  concatMap
+  Prelude.concatMap
     ( ( \case
           Just string -> checkIdentString string sourceSpan path
           Nothing -> []
