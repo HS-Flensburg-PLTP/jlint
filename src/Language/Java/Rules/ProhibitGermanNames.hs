@@ -2,54 +2,66 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 
-module Language.Java.Rules.ProhibitNonEnglishNames where
+module Language.Java.Rules.ProhibitGermanNames where
 
-import qualified Control.Lens as Lens
 import Control.Monad (MonadPlus (mzero))
 import Data.Char (toLower)
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.Graph (path)
 import Language.Java.Rules.Dictionary as Dictionary
 import Language.Java.SourceSpan
 import Language.Java.Syntax
-import Network.Wreq
+import RDF (Source)
 import qualified RDF
+import System.Process
 import Text.RE.TDFA.String
 
 check :: CompilationUnit -> FilePath -> IO [RDF.Diagnostic]
 check cUnit path = do
-  return []
+  idents <- extractIdents cUnit
+  let matches = map splitIdent idents
+  checkMatches matches path
 
-{-
-https://api.dictionaryapi.dev/api/v2/entries/en/<word>
-404 = not found
-200 = found + json
+checkIdentString :: String -> SourceSpan -> FilePath -> IO [RDF.Diagnostic]
+checkIdentString identString sourceSpan path =
+  if map toLower identString `elem` Dictionary.dict
+    then mzero
+    else return [RDF.rangeDiagnostic "nonenglish" ("Name: " ++ identString) sourceSpan path]
 
-return (RDF.rangeDiagnostic "nonenglish" ("Name: " ++ identString) sourceSpan path)
--}
+splitIdent :: Ident -> ([Match String], SourceSpan)
+splitIdent (Ident sourceSpan ident) =
+  (allMatches (ident *=~ [re|([a-z]|[A-Z])[a-z]*|]), sourceSpan)
 
-checkIdentString :: String -> SourceSpan -> FilePath -> [RDF.Diagnostic]
-checkIdentString identString sourceSpan path = if map toLower identString `elem` Dictionary.dict then mzero else return (RDF.rangeDiagnostic "nonenglish" ("Name: " ++ identString) sourceSpan path)
+-- Prelude.concatMap
+-- ( ( \case
+--       Just string -> checkIdentString string sourceSpan path
+--       Nothing -> mzero
+--   )
+--     . matchedText
+--   )
+--   (allMatches (ident *=~ [re|([a-z]|[A-Z])[a-z]*|]))
 
-{-
-  do
-    r <- get "https://api.dictionaryapi.dev/api/v2/entries/en/"
-    case r Lens.^. responseStatus . statusCode of
-      200 -> mzero
-      _ -> mzero
+checkMatches :: [([Match String], SourceSpan)] -> FilePath -> IO [RDF.Diagnostic]
+checkMatches [] _ = return []
+checkMatches (([], _) : matchPairs) path = checkMatches matchPairs path
+checkMatches ((match : matches, sourceSpan) : matchPairs) path = do
+  result <- checkMatch path (matchedText match) sourceSpan
+  results <- checkMatches ((matches, sourceSpan) : matchPairs) path
+  return (result ++ results)
 
-response = get "https://api.dictionaryapi.dev/api/v2/entries/en/"
--}
+checkMatch :: FilePath -> Maybe String -> SourceSpan -> IO [RDF.Diagnostic]
+checkMatch _ Nothing _ = mzero
+checkMatch path (Just string) sourceSpan = checkIdentString string sourceSpan path
 
-splitIdent :: Ident -> FilePath -> [RDF.Diagnostic]
-splitIdent (Ident sourceSpan ident) path =
-  Prelude.concatMap
-    ( ( \case
-          Just string -> checkIdentString string sourceSpan path
-          Nothing -> []
-      )
-        . matchedText
+extractIdents :: CompilationUnit -> IO [Ident]
+extractIdents cUnit =
+  return
+    ( do
+        ident <- universeBi cUnit
+        extractIdent ident
     )
-    (allMatches (ident *=~ [re|([a-z]|[A-Z])[a-z]*|]))
+
+extractIdent ident = ident
 
 --allMatches
 {-

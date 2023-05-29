@@ -12,7 +12,7 @@ import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNull
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations
-import qualified Language.Java.Rules.ProhibitNonEnglishNames as ProhibitNonEnglishNames
+import qualified Language.Java.Rules.ProhibitGermanNames as ProhibitGermanNames
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
@@ -51,7 +51,7 @@ ProhibitMyIdentPrefix.check, -}
 
 checksIO :: [CompilationUnit -> FilePath -> IO [RDF.Diagnostic]]
 checksIO =
-  [ ProhibitNonEnglishNames.check
+  [ ProhibitGermanNames.check
   ]
 
 checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
