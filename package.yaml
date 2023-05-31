@@ -34,7 +34,6 @@ dependencies:
   - HaXml ^>=1.25.9
   - process >= 1
   - text >= 1.2.5
-  - lens >= 5.0.1
 
 library:
   source-dirs: src
