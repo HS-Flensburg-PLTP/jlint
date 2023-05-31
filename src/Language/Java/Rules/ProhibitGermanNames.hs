@@ -15,7 +15,7 @@ import Text.RE.TDFA.String
 check :: CompilationUnit -> FilePath -> IO [RDF.Diagnostic]
 check cUnit path = do
   let idents = universeBi cUnit
-  let matches = map splitIdent idents
+  let matches = concatMap splitIdent idents
   checkMatchSourceSpanPairs matches path
 
 checkIdentString :: String -> SourceSpan -> FilePath -> IO [RDF.Diagnostic]
@@ -42,23 +42,39 @@ checkAspellResult string =
     )
     (allMatches (string *=~ [re|\n(.)\n\n|]))
 
-splitIdent :: Ident -> ([Match String], SourceSpan)
+splitIdent :: Ident -> [(String, SourceSpan)]
 splitIdent (Ident sourceSpan ident) =
-  (allMatches (ident *=~ [re|([a-z]|[A-Z])[a-z]*|]), sourceSpan)
+  calculateSourceSpans
+    (allMatches (ident *=~ [re|([a-z]|[A-Z])[a-z]*|]))
+    sourceSpan
 
-checkMatchSourceSpanPairs :: [([Match String], SourceSpan)] -> FilePath -> IO [RDF.Diagnostic]
+calculateSourceSpans :: [Match String] -> SourceSpan -> [(String, SourceSpan)]
+calculateSourceSpans [] _ = []
+calculateSourceSpans (match : matches) (Location fileStart lineStart colStart, Location fileEnd lineEnd colEnd) = case matchedText match of
+  Nothing -> []
+  Just string ->
+    ( string,
+      ( Location fileStart lineStart colStart,
+        Location fileEnd lineEnd (colStart + length string - 1)
+      )
+    ) :
+    calculateSourceSpans
+      matches
+      (Location fileStart lineStart (colStart + length string), Location fileEnd lineEnd colEnd)
+
+checkMatchSourceSpanPairs :: [(String, SourceSpan)] -> FilePath -> IO [RDF.Diagnostic]
 checkMatchSourceSpanPairs [] _ = return []
-checkMatchSourceSpanPairs (matchPair : matchPairs) path = do
-  result <- checkMatches path matchPair
+checkMatchSourceSpanPairs ((string, sourceSpan) : matchPairs) path = do
+  result <- checkIdentString string sourceSpan path
   results <- checkMatchSourceSpanPairs matchPairs path
   return (result ++ results)
 
-checkMatches :: FilePath -> ([Match String], SourceSpan) -> IO [RDF.Diagnostic]
-checkMatches _ ([], _) = return []
-checkMatches path (match : matches, sourceSpan) =
-  case matchedText match of
-    Nothing -> mzero
-    Just string -> do
-      result <- checkIdentString string sourceSpan path
-      results <- checkMatches path (matches, sourceSpan)
-      return (result ++ results)
+-- checkMatchPair :: FilePath -> ([Match String], SourceSpan) -> IO [RDF.Diagnostic]
+-- checkMatchPair _ ([], _) = return []
+-- checkMatchPair path (match : matches, sourceSpan) =
+--   case matchedText match of
+--     Nothing -> mzero
+--     Just string -> do
+--       result <- checkIdentString string sourceSpan path
+--       results <- checkMatchPair path (matches, sourceSpan)
+--       return (result ++ results)
