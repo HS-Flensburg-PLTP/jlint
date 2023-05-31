@@ -49,7 +49,7 @@ library
       Language.Java.Rules.ParameterNumber
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ProhibitAnnotations
-      Language.Java.Rules.ProhibitNonEnglishNames
+      Language.Java.Rules.ProhibitGermanNames
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.RedundantModifiers
       Language.Java.Rules.SameExecutionsInIf
@@ -81,14 +81,12 @@ library
     , containers >=0.6.4.1 && <0.7
     , filemanip >=0.3.6.3 && <0.4
     , language-java >=0.2.9 && <3
-    , lens >=5.0.1
     , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
     , parsec >=3.1.14.0 && <3.2
+    , process >=1
     , regex >=1.1.0 && <1.2
-    , text >=1.2.5
     , uniplate >=1.6.11 && <1.7
-    , wreq >=0.5.3.3
   default-language: Haskell2010
 
 executable jlint
@@ -107,14 +105,12 @@ executable jlint
     , filemanip >=0.3.6.3 && <0.4
     , jlint
     , language-java >=0.2.9 && <3
-    , lens >=5.0.1
     , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
     , parsec >=3.1.14.0 && <3.2
+    , process >=1
     , regex >=1.1.0 && <1.2
-    , text >=1.2.5
     , uniplate >=1.6.11 && <1.7
-    , wreq >=0.5.3.3
   default-language: Haskell2010
 
 test-suite jlint-test
@@ -140,6 +136,7 @@ test-suite jlint-test
       ParameterNumberTests
       PreferExpressionsTests
       ProhibitAnnotationsTests
+      ProhibitGermanNamesTests
       ProhibitMyIdentPrefix
       ReduceScopeTests
       RedundantModifiersTests
@@ -168,14 +165,12 @@ test-suite jlint-test
     , filepath >=1.4.2.1 && <1.5
     , jlint
     , language-java >=0.2.9 && <3
-    , lens >=5.0.1
     , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
     , parsec >=3.1.14.0 && <3.2
+    , process >=1
     , regex >=1.1.0 && <1.2
     , split >=0.2.3.4 && <0.3
-    , text >=1.2.5
     , uniplate >=1.6.11 && <1.7
     , unliftio >=0.2.21.0 && <1
-    , wreq >=0.5.3.3
   default-language: Haskell2010
