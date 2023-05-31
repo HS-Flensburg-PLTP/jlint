@@ -60,32 +60,32 @@ checkWithConfig :: [Config] -> (CompilationUnit -> FilePath -> [RDF.Diagnostic])
 checkWithConfig config cUnit path = concatMap (\f -> f cUnit path) (checkRule config)
 
 checkRule :: [Config] -> [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
-checkRule = map foo
+checkRule = map checkFromConfig
 
-foo :: Config -> (CompilationUnit -> FilePath -> [RDF.Diagnostic])
-foo (Config "AvoidMultipleTopLevelDecl" _ _) = AvoidMultipleTopLevelDecl.check
-foo (Config "AvoidMultipleVarDecl" _ _) = AvoidMultipleVarDecl.check
-foo (Config "AvoidNegations" _ _) = AvoidNegations.check
-foo (Config "AvoidStarImport" _ _) = AvoidStarImport.check
-foo (Config "CheckNonFinalMethodAttributes" _ _) = CheckNonFinalMethodAttributes.check
-foo (Config "CheckNonPrivateAttributes" _ _) = CheckNonPrivateAttributes.check
-foo (Config "ConsistentOverrideEqualsHashCode" _ _) = ConsistentOverrideEqualsHashCode.check
-foo (Config "DefaultComesLast" _ _) = DefaultComesLast.check
-foo (Config "InitializeVariables" _ _) = InitializeVariables.check
-foo (Config "NamingConventions" _ _) = NamingConventions.check
-foo (Config "NeedBraces" _ _) = NeedBraces.check
-foo (Config "NoLoopBreak" _ _) = NoLoopBreak.check
-foo (Config "NoNullPointerExceptionsForControl" _ _) = NoNullPointerExceptionsForControl.check
-foo (Config "ParameterNumber" mMax _) = ParameterNumber.check (ParameterNumberConfig mMax)
-foo (Config "PreferExpressions" _ _) = PreferExpressions.check
-foo (Config "ProhibitAnnotations" _ whitelist) = ProhibitAnnotations.check (ProhibitAnnotationsConfig whitelist)
-foo (Config "ReduceScope" _ _) = ReduceScope.check
-foo (Config "RedundantModifiers" _ _) = RedundantModifiers.check
-foo (Config "SameExecutionsInIf" _ _) = SameExecutionsInIf.check
-foo (Config "SimplifyBooleanReturn" _ _) = SimplifyBooleanReturn.check
-foo (Config "UseAssignOp" _ _) = UseAssignOp.check
-foo (Config "UseElse" _ _) = UseElse.check
-foo (Config "UseIncrementDecrementOperator" _ _) = UseIncrementDecrementOperator.check
-foo (Config "UseJavaArrayTypeStyle" _ _) = UseJavaArrayTypeStyle.check
-foo (Config "UsePostIncrementDecrement" _ _) = UsePostIncrementDecrement.check
-foo (Config {}) = \_ _ -> []
+checkFromConfig :: Config -> (CompilationUnit -> FilePath -> [RDF.Diagnostic])
+checkFromConfig (Config "AvoidMultipleTopLevelDecl" _ _) = AvoidMultipleTopLevelDecl.check
+checkFromConfig (Config "AvoidMultipleVarDecl" _ _) = AvoidMultipleVarDecl.check
+checkFromConfig (Config "AvoidNegations" _ _) = AvoidNegations.check
+checkFromConfig (Config "AvoidStarImport" _ _) = AvoidStarImport.check
+checkFromConfig (Config "CheckNonFinalMethodAttributes" _ _) = CheckNonFinalMethodAttributes.check
+checkFromConfig (Config "CheckNonPrivateAttributes" _ _) = CheckNonPrivateAttributes.check
+checkFromConfig (Config "ConsistentOverrideEqualsHashCode" _ _) = ConsistentOverrideEqualsHashCode.check
+checkFromConfig (Config "DefaultComesLast" _ _) = DefaultComesLast.check
+checkFromConfig (Config "InitializeVariables" _ _) = InitializeVariables.check
+checkFromConfig (Config "NamingConventions" _ _) = NamingConventions.check
+checkFromConfig (Config "NeedBraces" _ _) = NeedBraces.check
+checkFromConfig (Config "NoLoopBreak" _ _) = NoLoopBreak.check
+checkFromConfig (Config "NoNullPointerExceptionsForControl" _ _) = NoNullPointerExceptionsForControl.check
+checkFromConfig (Config "ParameterNumber" mMax _) = ParameterNumber.check (ParameterNumberConfig mMax)
+checkFromConfig (Config "PreferExpressions" _ _) = PreferExpressions.check
+checkFromConfig (Config "ProhibitAnnotations" _ whitelist) = ProhibitAnnotations.check (ProhibitAnnotationsConfig whitelist)
+checkFromConfig (Config "ReduceScope" _ _) = ReduceScope.check
+checkFromConfig (Config "RedundantModifiers" _ _) = RedundantModifiers.check
+checkFromConfig (Config "SameExecutionsInIf" _ _) = SameExecutionsInIf.check
+checkFromConfig (Config "SimplifyBooleanReturn" _ _) = SimplifyBooleanReturn.check
+checkFromConfig (Config "UseAssignOp" _ _) = UseAssignOp.check
+checkFromConfig (Config "UseElse" _ _) = UseElse.check
+checkFromConfig (Config "UseIncrementDecrementOperator" _ _) = UseIncrementDecrementOperator.check
+checkFromConfig (Config "UseJavaArrayTypeStyle" _ _) = UseJavaArrayTypeStyle.check
+checkFromConfig (Config "UsePostIncrementDecrement" _ _) = UsePostIncrementDecrement.check
+checkFromConfig (Config {}) = \_ _ -> []
