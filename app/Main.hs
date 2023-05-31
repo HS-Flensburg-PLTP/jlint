@@ -134,7 +134,7 @@ parseJava rootDir pretty showAST checkstyleDiags =
         unless (null parsingErrors) $ print parsingErrors
         when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
 
-        let numberOfHints = length diagnostics
+        let numberOfHints = length diagnostics + length diagnosticsIO
         if numberOfHints == 0
           then do
             hPutStrLn stderr ("jlint did not generate any hints for the Java code in directory " ++ rootDir)
