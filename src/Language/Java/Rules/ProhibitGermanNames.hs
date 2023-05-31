@@ -4,7 +4,6 @@
 
 module Language.Java.Rules.ProhibitGermanNames where
 
-import Control.Monad (MonadPlus (mzero))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.SourceSpan
 import Language.Java.Syntax
@@ -16,35 +15,48 @@ check :: CompilationUnit -> FilePath -> IO [RDF.Diagnostic]
 check cUnit path = do
   let idents = universeBi cUnit
   let matches = concatMap splitIdent idents
-  checkMatchSourceSpanPairs matches path
+  checkAllMatches matches path
 
-checkIdentString :: String -> SourceSpan -> FilePath -> IO [RDF.Diagnostic]
-checkIdentString identString sourceSpan path = do
-  result <- readProcess "aspell" ["-a", "-d", "de_DE"] identString
-  if checkAspellResult result
-    then do
-      result <- readProcess "aspell" ["-a", "-d", "en_US"] identString
-      if checkAspellResult result
-        then return []
-        else
-          return
-            [ RDF.rangeDiagnostic
-                "Language.Java.Rules.ProhibitGermanNames"
-                ("Deutsches Wort gefunden: " ++ identString)
-                sourceSpan
-                path
-            ]
-    else return []
-
-checkAspellResult :: String -> Bool
-checkAspellResult string =
-  any
-    ( \x ->
-        case matchedText x of
-          Nothing -> False
-          Just _ -> True
+checkAllMatches :: [(String, SourceSpan)] -> FilePath -> IO [RDF.Diagnostic]
+checkAllMatches matches path = do
+  nonGermanWords <-
+    readProcess
+      "aspell"
+      ["list", "-d", "de_DE", "--ignore-case"]
+      (unwords (map fst matches))
+  let germanWords =
+        concatMap
+          ( \(string, sourceSpan) ->
+              ([(string, sourceSpan) | string `notElem` lines nonGermanWords])
+          )
+          matches
+  nonEnglishWords <-
+    readProcess
+      "aspell"
+      ["list", "-d", "en_US", "--ignore-case"]
+      ( unwords
+          ( map
+              fst
+              germanWords
+          )
+      )
+  let definitelyGermanWords =
+        concatMap
+          ( \(string, sourceSpan) ->
+              ([(string, sourceSpan) | string `elem` lines nonEnglishWords])
+          )
+          germanWords
+  return
+    ( map
+        ( \(string, sourceSpan) ->
+            RDF.rangeDiagnostic
+              "Language.Java.Rules.ProhibitGermanNames"
+              ("Deutsches Wort gefunden: " ++ string)
+              sourceSpan
+              path
+        )
+        definitelyGermanWords
     )
-    (allMatches (string *=~ [re|\n(.)\n\n|]))
 
 splitIdent :: Ident -> [(String, SourceSpan)]
 splitIdent (Ident sourceSpan ident) =
@@ -65,10 +77,3 @@ calculateSourceSpans (match : matches) (Location fileStart lineStart colStart, L
     calculateSourceSpans
       matches
       (Location fileStart lineStart (colStart + length string), Location fileEnd lineEnd colEnd)
-
-checkMatchSourceSpanPairs :: [(String, SourceSpan)] -> FilePath -> IO [RDF.Diagnostic]
-checkMatchSourceSpanPairs [] _ = return []
-checkMatchSourceSpanPairs ((string, sourceSpan) : matchPairs) path = do
-  result <- checkIdentString string sourceSpan path
-  results <- checkMatchSourceSpanPairs matchPairs path
-  return (result ++ results)
