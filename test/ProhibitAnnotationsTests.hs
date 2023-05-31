@@ -1,5 +1,6 @@
 module ProhibitAnnotationsTests where
 
+import Config (ProhibitAnnotationsConfig (ProhibitAnnotationsConfig))
 import Control.Monad.Identity (zipWithM_)
 import Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations (check)
 import Language.Java.Syntax (CompilationUnit)
@@ -8,15 +9,12 @@ import Test.HUnit
 import Tests
 import qualified Tests
 
-whitelist :: [String]
-whitelist = ["FooBar", "Override"]
-
 tests :: Test
 tests =
   rangesTest
     expectedRanges
     "ProhibitAnnotations.java"
-    (ProhibitAnnotations.check whitelist)
+    (ProhibitAnnotations.check (ProhibitAnnotationsConfig (Just ["FooBar", "Override"])))
 
 expectedRanges :: [RDF.Range]
 expectedRanges =

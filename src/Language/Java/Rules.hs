@@ -1,6 +1,6 @@
 module Language.Java.Rules where
 
-import Config (Config (Config), ParameterNumberConfig (ParameterNumberConfig))
+import Config (Config (Config), ParameterNumberConfig (ParameterNumberConfig), ProhibitAnnotationsConfig (ProhibitAnnotationsConfig))
 import qualified Language.Java.Rules.AvoidMultipleTopLevelDecl as AvoidMultipleTopLevelDecl
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
@@ -31,9 +31,6 @@ import qualified Language.Java.Rules.UsePostIncrementDecrement as UsePostIncreme
 import Language.Java.Syntax
 import qualified RDF
 
-annotationswhitelist :: [String]
-annotationswhitelist = ["Override"]
-
 checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checks =
   [ AvoidMultipleTopLevelDecl.check,
@@ -46,13 +43,13 @@ checks =
     NoNullPointerExceptionsForControl.check,
     ParameterNumber.check (ParameterNumberConfig (Just 7)),
     PreferExpressions.check,
+    ProhibitAnnotations.check (ProhibitAnnotationsConfig (Just ["Override"])),
     ReduceScope.check,
     RedundantModifiers.check,
     UseAssignOp.check,
     UseElse.check,
     DeclarationOrder.check,
     UseIncrementDecrementOperator.check,
-    ProhibitAnnotations.check annotationswhitelist,
     UseJavaArrayTypeStyle.check
   ]
 
@@ -66,28 +63,29 @@ checkRule :: [Config] -> [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checkRule = map foo
 
 foo :: Config -> (CompilationUnit -> FilePath -> [RDF.Diagnostic])
-foo (Config "AvoidMultipleTopLevelDecl" _) = AvoidMultipleTopLevelDecl.check
-foo (Config "AvoidMultipleVarDecl" _) = AvoidMultipleVarDecl.check
-foo (Config "AvoidNegations" _) = AvoidNegations.check
-foo (Config "AvoidStarImport" _) = AvoidStarImport.check
-foo (Config "CheckNonFinalMethodAttributes" _) = CheckNonFinalMethodAttributes.check
-foo (Config "CheckNonPrivateAttributes" _) = CheckNonPrivateAttributes.check
-foo (Config "ConsistentOverrideEqualsHashCode" _) = ConsistentOverrideEqualsHashCode.check
-foo (Config "DefaultComesLast" _) = DefaultComesLast.check
-foo (Config "InitializeVariables" _) = InitializeVariables.check
-foo (Config "NamingConventions" _) = NamingConventions.check
-foo (Config "NeedBraces" _) = NeedBraces.check
-foo (Config "NoLoopBreak" _) = NoLoopBreak.check
-foo (Config "NoNullPointerExceptionsForControl" _) = NoNullPointerExceptionsForControl.check
-foo (Config "ParameterNumber" mMax) = ParameterNumber.check (ParameterNumberConfig mMax)
-foo (Config "PreferExpressions" _) = PreferExpressions.check
-foo (Config "ReduceScope" _) = ReduceScope.check
-foo (Config "RedundantModifiers" _) = RedundantModifiers.check
-foo (Config "SameExecutionsInIf" _) = SameExecutionsInIf.check
-foo (Config "SimplifyBooleanReturn" _) = SimplifyBooleanReturn.check
-foo (Config "UseAssignOp" _) = UseAssignOp.check
-foo (Config "UseElse" _) = UseElse.check
-foo (Config "UseIncrementDecrementOperator" _) = UseIncrementDecrementOperator.check
-foo (Config "UseJavaArrayTypeStyle" _) = UseJavaArrayTypeStyle.check
-foo (Config "UsePostIncrementDecrement" _) = UsePostIncrementDecrement.check
-foo (Config _ _) = \_ _ -> []
+foo (Config "AvoidMultipleTopLevelDecl" _ _) = AvoidMultipleTopLevelDecl.check
+foo (Config "AvoidMultipleVarDecl" _ _) = AvoidMultipleVarDecl.check
+foo (Config "AvoidNegations" _ _) = AvoidNegations.check
+foo (Config "AvoidStarImport" _ _) = AvoidStarImport.check
+foo (Config "CheckNonFinalMethodAttributes" _ _) = CheckNonFinalMethodAttributes.check
+foo (Config "CheckNonPrivateAttributes" _ _) = CheckNonPrivateAttributes.check
+foo (Config "ConsistentOverrideEqualsHashCode" _ _) = ConsistentOverrideEqualsHashCode.check
+foo (Config "DefaultComesLast" _ _) = DefaultComesLast.check
+foo (Config "InitializeVariables" _ _) = InitializeVariables.check
+foo (Config "NamingConventions" _ _) = NamingConventions.check
+foo (Config "NeedBraces" _ _) = NeedBraces.check
+foo (Config "NoLoopBreak" _ _) = NoLoopBreak.check
+foo (Config "NoNullPointerExceptionsForControl" _ _) = NoNullPointerExceptionsForControl.check
+foo (Config "ParameterNumber" mMax _) = ParameterNumber.check (ParameterNumberConfig mMax)
+foo (Config "PreferExpressions" _ _) = PreferExpressions.check
+foo (Config "ProhibitAnnotations" _ whitelist) = ProhibitAnnotations.check (ProhibitAnnotationsConfig whitelist)
+foo (Config "ReduceScope" _ _) = ReduceScope.check
+foo (Config "RedundantModifiers" _ _) = RedundantModifiers.check
+foo (Config "SameExecutionsInIf" _ _) = SameExecutionsInIf.check
+foo (Config "SimplifyBooleanReturn" _ _) = SimplifyBooleanReturn.check
+foo (Config "UseAssignOp" _ _) = UseAssignOp.check
+foo (Config "UseElse" _ _) = UseElse.check
+foo (Config "UseIncrementDecrementOperator" _ _) = UseIncrementDecrementOperator.check
+foo (Config "UseJavaArrayTypeStyle" _ _) = UseJavaArrayTypeStyle.check
+foo (Config "UsePostIncrementDecrement" _ _) = UsePostIncrementDecrement.check
+foo (Config {}) = \_ _ -> []
