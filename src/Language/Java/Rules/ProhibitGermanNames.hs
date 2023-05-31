@@ -46,15 +46,6 @@ splitIdent :: Ident -> ([Match String], SourceSpan)
 splitIdent (Ident sourceSpan ident) =
   (allMatches (ident *=~ [re|([a-z]|[A-Z])[a-z]*|]), sourceSpan)
 
--- Prelude.concatMap
--- ( ( \case
---       Just string -> checkIdentString string sourceSpan path
---       Nothing -> mzero
---   )
---     . matchedText
---   )
---   (allMatches (ident *=~ [re|([a-z]|[A-Z])[a-z]*|]))
-
 checkMatchSourceSpanPairs :: [([Match String], SourceSpan)] -> FilePath -> IO [RDF.Diagnostic]
 checkMatchSourceSpanPairs [] _ = return []
 checkMatchSourceSpanPairs (matchPair : matchPairs) path = do
@@ -71,10 +62,3 @@ checkMatches path (match : matches, sourceSpan) =
       result <- checkIdentString string sourceSpan path
       results <- checkMatches path (matches, sourceSpan)
       return (result ++ results)
-
---allMatches
-{-
-([A-Z]|[a-z])[a-z]*{*}
-
-([a-z]|[A-Z])[a-z]*
--}
