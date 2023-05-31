@@ -22,14 +22,18 @@ checkIdentString :: String -> SourceSpan -> FilePath -> IO [RDF.Diagnostic]
 checkIdentString identString sourceSpan path = do
   result <- readProcess "aspell" ["-a", "-d", "de_DE"] identString
   if checkAspellResult result
-    then
-      return
-        [ RDF.rangeDiagnostic
-            "Language.Java.Rules.ProhibitGermanNames"
-            ("Deutsches Wort gefunden: " ++ identString)
-            sourceSpan
-            path
-        ]
+    then do
+      result <- readProcess "aspell" ["-a", "-d", "en_US"] identString
+      if checkAspellResult result
+        then return []
+        else
+          return
+            [ RDF.rangeDiagnostic
+                "Language.Java.Rules.ProhibitGermanNames"
+                ("Deutsches Wort gefunden: " ++ identString)
+                sourceSpan
+                path
+            ]
     else return []
 
 checkAspellResult :: String -> Bool
@@ -68,13 +72,3 @@ checkMatchSourceSpanPairs ((string, sourceSpan) : matchPairs) path = do
   result <- checkIdentString string sourceSpan path
   results <- checkMatchSourceSpanPairs matchPairs path
   return (result ++ results)
-
--- checkMatchPair :: FilePath -> ([Match String], SourceSpan) -> IO [RDF.Diagnostic]
--- checkMatchPair _ ([], _) = return []
--- checkMatchPair path (match : matches, sourceSpan) =
---   case matchedText match of
---     Nothing -> mzero
---     Just string -> do
---       result <- checkIdentString string sourceSpan path
---       results <- checkMatchPair path (matches, sourceSpan)
---       return (result ++ results)
