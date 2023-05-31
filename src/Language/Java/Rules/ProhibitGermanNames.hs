@@ -25,9 +25,9 @@ checkAllMatches matches path = do
       ["list", "-d", "de_DE", "--ignore-case"]
       (unwords (map fst matches))
   let germanWords =
-        concatMap
-          ( \(string, sourceSpan) ->
-              ([(string, sourceSpan) | string `notElem` lines nonGermanWords])
+        filter
+          ( \(word, _) ->
+              word `notElem` lines nonGermanWords
           )
           matches
   nonEnglishWords <-
@@ -41,9 +41,9 @@ checkAllMatches matches path = do
           )
       )
   let definitelyGermanWords =
-        concatMap
-          ( \(string, sourceSpan) ->
-              ([(string, sourceSpan) | string `elem` lines nonEnglishWords])
+        filter
+          ( \(word, _) ->
+              word `elem` lines nonEnglishWords
           )
           germanWords
   return
