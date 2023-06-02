@@ -133,7 +133,7 @@ test-suite jlint-test
       ParameterNumberTests
       PreferExpressionsTests
       ProhibitAnnotationsTests
-      ProhibitMyIdentPrefix
+      ProhibitMyIdentPrefixTests
       ReduceScopeTests
       RedundantModifiersTests
       SameExecutionsInIfTests
