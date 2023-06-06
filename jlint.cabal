@@ -46,6 +46,7 @@ library
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNullPointerExceptionsForControl
+      Language.Java.Rules.NoPostIncDecInExpression
       Language.Java.Rules.ParameterNumber
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ProhibitAnnotations

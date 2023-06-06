@@ -17,6 +17,7 @@ import qualified Language.Java.Rules.NamingConventions as NamingConventions
 import qualified Language.Java.Rules.NeedBraces as NeedBraces
 import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
+import qualified Language.Java.Rules.NoPostIncDecInExpression as NoPostIncDecInExpression
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations
@@ -45,6 +46,7 @@ checks =
     InitializeVariables.check,
     ModifiedControlVariable.check,
     NoNullPointerExceptionsForControl.check,
+    NoPostIncDecInExpression.check,
     ParameterNumber.check,
     PreferExpressions.check,
     ReduceScope.check,
@@ -82,6 +84,7 @@ checkMapping =
       ("NeedBraces", NeedBraces.check),
       ("NoLoopBreak", NoLoopBreak.check),
       ("NoNullPointerExceptionsForControl", NoNullPointerExceptionsForControl.check),
+      ("NoPostIncDecInExpression", NoPostIncDecInExpression.check),
       ("ParameterNumber", ParameterNumber.check),
       ("PreferExpressions", PreferExpressions.check),
       ("ReduceScope", ReduceScope.check),
