@@ -36,10 +36,35 @@ import qualified RDF
 annotationswhitelist :: [String]
 annotationswhitelist = ["Override"]
 
+checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
+checks =
+  [ AvoidMultipleTopLevelDecl.check,
+    AvoidMultipleVarDecl.check,
+    AvoidNegations.check,
+    AvoidStarImport.check,
+    ConsistentOverrideEqualsHashCode.check,
+    DeclarationOrder.check,
+    InitializeVariables.check,
+    ModifiedControlVariable.check,
+    NoNullPointerExceptionsForControl.check,
+    ParameterNumber.check,
+    PreferExpressions.check,
+    ProhibitAnnotations.check annotationswhitelist,
+    ReduceScope.check,
+    RedundantModifiers.check,
+    UseAssignOp.check,
+    UseElse.check,
+    UseIncrementDecrementOperator.check,
+    UseJavaArrayTypeStyle.check
+  ]
+
 checksIO :: [CompilationUnit -> FilePath -> IO [RDF.Diagnostic]]
 checksIO =
   [ ProhibitGermanNames.check
   ]
+
+checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkAll cUnit path = concatMap (\f -> f cUnit path) checks
 
 checkAllIO :: CompilationUnit -> FilePath -> IO [RDF.Diagnostic]
 checkAllIO = executeAll checksIO
@@ -67,10 +92,9 @@ checkMapping =
       ("CheckNonFinalMethodAttributes", CheckNonFinalMethodAttributes.check),
       ("CheckNonPrivateAttributes", CheckNonPrivateAttributes.check),
       ("ConsistentOverrideEqualsHashCode", ConsistentOverrideEqualsHashCode.check),
-      ("DefaultComesLast", DefaultComesLast.check),
       ("DeclarationOrder", DeclarationOrder.check),
+      ("DefaultComesLast", DefaultComesLast.check),
       ("InitializeVariables", InitializeVariables.check),
-      ("ModifiedControlVariable", ModifiedControlVariable.check),
       ("NamingConventions", NamingConventions.check),
       ("NeedBraces", NeedBraces.check),
       ("NoLoopBreak", NoLoopBreak.check),
