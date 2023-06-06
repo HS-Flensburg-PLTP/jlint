@@ -3,13 +3,6 @@ module Language.Java.Rules.UseAssignOp (check) where
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
-  ( AssignOp (..),
-    CompilationUnit,
-    Exp (Assign, BinOp, ExpName),
-    Lhs (NameLhs),
-    Op (..),
-    Stmt (ExpStmt),
-  )
 import qualified RDF
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
@@ -18,7 +11,7 @@ check cUnit path = do
   checkStmt stmt
   where
     checkStmt (ExpStmt range (Assign _ (NameLhs name1) EqualA (BinOp (ExpName name2) op _))) =
-      if name1 == name2
+      if eq IgnoreSourceSpan name1 name2
         then case equalVariant op of
           Just assignOp ->
             return

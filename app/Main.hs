@@ -1,15 +1,18 @@
 module Main where
 
 import CheckstyleXML (toRDF)
+import Config
 import Control.Monad (MonadPlus (..), unless, when)
+import Data.Aeson (decodeFileStrict, eitherDecodeFileStrict)
 import qualified Data.ByteString.Lazy.Char8 as C
 import Data.Semigroup ((<>))
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
-import Language.Java.Rules (checkAll, checkAllIO)
+import Language.Java.Rules (checkAll, checkAllIO, checkWithConfig)
 import Language.Java.Syntax (CompilationUnit)
 import Options.Applicative
 import RDF
+import System.Directory
 import System.Exit (ExitCode (ExitFailure), exitSuccess, exitWith)
 import System.FilePath.Find (always, extension, find, (==?))
 import System.IO (IOMode (ReadMode), char8, hGetContents, hPutStrLn, hSetEncoding, openFile, stderr)
@@ -118,8 +121,19 @@ parseJava rootDir pretty showAST checkstyleDiags =
       then do
         print cUnitResults
       else do
+        configExists <- doesFileExist configFile
+        diagnostics <- do
+          if configExists
+            then do
+              config <- eitherDecodeFileStrict configFile :: IO (Either String [Config])
+              case config of
+                Left error -> do
+                  putStrLn ("Error beim parsen der Config-Datei: " ++ error)
+                  return (concatMap (uncurry checkAll) cUnitResults)
+                Right config -> return (concatMap (uncurry (checkWithConfig config)) cUnitResults)
+            else return (concatMap (uncurry checkAll) cUnitResults)
+
         let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
-        let diagnostics = concatMap (uncurry checkAll) cUnitResults
         diagnosticsIO <- concatIORules cUnitResults
         let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors ++ diagnosticsIO
         C.putStrLn
@@ -149,3 +163,6 @@ concatIORules ((cUnit, path) : cUnitResults) = do
   result <- checkAllIO cUnit path
   results <- concatIORules cUnitResults
   return (result ++ results)
+
+configFile :: String
+configFile = "config.json"

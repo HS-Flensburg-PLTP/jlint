@@ -7,6 +7,7 @@ module Language.Java.Rules.NamingConventions (check) where
 import Control.Monad (MonadPlus (..))
 import Data.Function ((&))
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.List.Extra (none)
 import Language.Java.AST (extractMethods)
 import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
@@ -103,7 +104,7 @@ extractStaticFieldNames cUnit = do
   extractMemberDecl fieldNames
   where
     extractMemberDecl (FieldDecl _ modifier _ varDecls)
-      | Static `elem` modifier = map extractVarName varDecls
+      | any (eq IgnoreSourceSpan Static) modifier = map extractVarName varDecls
       | otherwise = mzero
     extractMemberDecl _ = mzero
 
@@ -125,7 +126,7 @@ extractLocalFinalVariableNames2 (_, methodBody) path = do
   extractMemberDecl fieldNames
   where
     extractMemberDecl (LocalVars _ modifier _ varDecls)
-      | Final `elem` modifier =
+      | any (eq IgnoreSourceSpan Final) modifier =
           map extractVarName varDecls
             & filter (\name -> not (matched (name ?=~ reCamelCase)))
             & map (\name -> RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" ("Local final variable " ++ name ++ " doesn't match the specifications") dummySourceSpan path)
@@ -148,7 +149,7 @@ extractNonStaticFieldNames cUnit = do
   extractMemberDecl fieldNames
   where
     extractMemberDecl (FieldDecl _ modifier _ varDecls)
-      | Static `notElem` modifier = map extractVarName varDecls
+      | none (eq IgnoreSourceSpan Static) modifier = map extractVarName varDecls
       | otherwise = mzero
     extractMemberDecl _ = mzero
 
