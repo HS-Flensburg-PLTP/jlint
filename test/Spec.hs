@@ -17,6 +17,7 @@ import qualified NoNullPointerExceptionsForControlTests
 import qualified ParameterNumberTests
 import qualified PreferExpressionsTests
 import qualified ProhibitAnnotationsTests
+import qualified ProhibitGermanNamesTests
 import qualified ReduceScopeTests
 import qualified RedundantModifiersTests
 import qualified SameExecutionsInIfTests
@@ -60,5 +61,6 @@ tests =
       "UseElse" ~: UseElseTests.tests,
       "UseIncrementDecrementOperator" ~: UseIncrementDecrementOperatorTests.tests,
       "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests,
-      "DeclarationOrder" ~: DeclarationOrderTests.tests
+      "DeclarationOrder" ~: DeclarationOrderTests.tests,
+      "ProhibitGermanNames" ~: ProhibitGermanNamesTests.tests
     ]

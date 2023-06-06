@@ -1,4 +1,4 @@
-module ProhibitAnnotationsTests where
+module ProhibitGermanNamesTests where
 
 import Control.Monad.Identity (zipWithM_)
 import GHC.IO (unsafePerformIO)
@@ -11,7 +11,7 @@ import qualified Tests
 
 tests :: Test
 tests =
-  rangesTest
+  rangesIOTest
     expectedRanges
     "ProhibitGermanNames.java"
     ProhibitGermanNames.check

@@ -27,27 +27,25 @@ annotationswhitelist = ["Override"]
 
 checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checks =
-  []
-
-{-AvoidMultipleTopLevelDecl.check,
-AvoidMultipleVarDecl.check,
-AvoidNegations.check,
-AvoidStarImport.check,
-ConsistentOverrideEqualsHashCode.check,
-InitializeVariables.check,
-ModifiedControlVariable.check,
-NoNullPointerExceptionsForControl.check,
-ParameterNumber.check,
-PreferExpressions.check,
-ReduceScope.check,
-RedundantModifiers.check,
-UseAssignOp.check,
-UseElse.check,
-DeclarationOrder.check,
-UseIncrementDecrementOperator.check,
-ProhibitAnnotations.check annotationswhitelist,
-UseJavaArrayTypeStyle.check,
-ProhibitMyIdentPrefix.check, -}
+  [ AvoidMultipleTopLevelDecl.check,
+    AvoidMultipleVarDecl.check,
+    AvoidNegations.check,
+    AvoidStarImport.check,
+    ConsistentOverrideEqualsHashCode.check,
+    InitializeVariables.check,
+    ModifiedControlVariable.check,
+    NoNullPointerExceptionsForControl.check,
+    ParameterNumber.check,
+    PreferExpressions.check,
+    ReduceScope.check,
+    RedundantModifiers.check,
+    UseAssignOp.check,
+    UseElse.check,
+    DeclarationOrder.check,
+    UseIncrementDecrementOperator.check,
+    ProhibitAnnotations.check annotationswhitelist,
+    UseJavaArrayTypeStyle.check
+  ]
 
 checksIO :: [CompilationUnit -> FilePath -> IO [RDF.Diagnostic]]
 checksIO =
