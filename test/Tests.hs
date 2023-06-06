@@ -1,4 +1,4 @@
-module Tests (rangesTest) where
+module Tests (rangesTest, rangesIOTest) where
 
 import Control.Monad (zipWithM_)
 import Language.Java.Parser (compilationUnit, parser)
@@ -14,6 +14,22 @@ javaTestDirectory = "test" </> "java"
 rangesTest :: [RDF.Range] -> FilePath -> (CompilationUnit -> FilePath -> [RDF.Diagnostic]) -> Test
 rangesTest testRanges =
   ruleTest (justifyRanges testRanges)
+
+rangesIOTest :: [RDF.Range] -> FilePath -> (CompilationUnit -> FilePath -> IO [RDF.Diagnostic]) -> Test
+rangesIOTest testRanges =
+  ruleIOTest (justifyRanges testRanges)
+
+ruleIOTest :: ([RDF.Diagnostic] -> Assertion) -> FilePath -> (CompilationUnit -> FilePath -> IO [RDF.Diagnostic]) -> Test
+ruleIOTest justify path check =
+  path ~: do
+    dir <- getCurrentDirectory
+    let file = dir </> javaTestDirectory </> path
+    content <- readFile file
+    case parser compilationUnit file content of
+      Left error ->
+        assertFailure ("Parsing " ++ file ++ " failed with error:" ++ show error)
+      Right cUnit -> do
+        justify <$> check cUnit path
 
 ruleTest :: ([RDF.Diagnostic] -> Assertion) -> FilePath -> (CompilationUnit -> FilePath -> [RDF.Diagnostic]) -> Test
 ruleTest justify path check =

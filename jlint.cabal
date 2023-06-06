@@ -137,7 +137,6 @@ test-suite jlint-test
       PreferExpressionsTests
       ProhibitAnnotationsTests
       ProhibitGermanNamesTests
-      ProhibitMyIdentPrefix
       ReduceScopeTests
       RedundantModifiersTests
       SameExecutionsInIfTests
