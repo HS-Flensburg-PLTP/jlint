@@ -132,6 +132,7 @@ test-suite jlint-test
       NeedBracesTests
       NoLoopBreakTests
       NoNullPointerExceptionsForControlTests
+      NoPostIncDecInExpressionTests
       ParameterNumberTests
       PreferExpressionsTests
       ProhibitAnnotationsTests

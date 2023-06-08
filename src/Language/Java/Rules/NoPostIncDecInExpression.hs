@@ -14,6 +14,18 @@ checkVarInits (InitExp exp) path = checkExpression exp path
 checkVarInits _ _ = []
 
 checkExpression :: Exp -> FilePath -> [RDF.Diagnostic]
-checkExpression (PostIncrement sourceSpan exp) path = RDF.rangeDiagnostic "NoPostIncDecInExpression" "Post Increment ++ ist nicht in Variablenzuweisungen erlaubt" sourceSpan path : checkExpression exp path
-checkExpression (PostDecrement sourceSpan exp) path = RDF.rangeDiagnostic "NoPostIncDecInExpression" "Post Decrement -- ist nicht in Variablenzuweisungen erlaubt" sourceSpan path : checkExpression exp path
+checkExpression (PostIncrement sourceSpan exp) path =
+  RDF.rangeDiagnostic
+    "Language.Java.Rules.NoPostIncDecInExpression"
+    "Post Increment ++ ist nicht in Variablenzuweisungen erlaubt."
+    sourceSpan
+    path :
+  checkExpression exp path
+checkExpression (PostDecrement sourceSpan exp) path =
+  RDF.rangeDiagnostic
+    "Language.Java.Rules.NoPostIncDecInExpression"
+    "Post Decrement -- ist nicht in Variablenzuweisungen erlaubt."
+    sourceSpan
+    path :
+  checkExpression exp path
 checkExpression _ _ = []
