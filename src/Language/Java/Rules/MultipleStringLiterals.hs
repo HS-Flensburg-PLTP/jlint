@@ -7,21 +7,16 @@ import qualified RDF
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  let varDecls = universeBi cUnit
-  let assignments = universeBi cUnit
-  let pairs = concatMap checkVarDecl varDecls ++ concatMap checkAssigment assignments
-  checkForDuplicates pairs pairs path
+  let exps = universeBi cUnit
+  let pairs = concatMap checkStringLiteral exps
+  checkForDuplicates pairs [] path
 
-checkVarDecl :: VarDecl -> [(SourceSpan, String)]
-checkVarDecl (VarDecl sourceSpan _ (Just (InitExp (Lit (String string))))) = [(sourceSpan, string)]
-checkVarDecl _ = []
-
-checkAssigment :: Exp -> [(SourceSpan, String)]
-checkAssigment (Assign sourceSpan (NameLhs _) EqualA (Lit (String string))) = [(sourceSpan, string)]
-checkAssigment _ = []
+checkStringLiteral :: Exp -> [(SourceSpan, String)]
+checkStringLiteral (Lit (String string)) = [(dummySourceSpan, string)]
+checkStringLiteral _ = []
 
 checkForDuplicates :: [(SourceSpan, String)] -> [(SourceSpan, String)] -> FilePath -> [RDF.Diagnostic]
-checkForDuplicates ((sourceSpan, string) : xs) allPairs path =
+checkForDuplicates ((sourceSpan, string) : xs) precedors path =
   [ RDF.rangeDiagnostic
       "Language.Java.Rules.MultipleStringLiterals"
       ( "Mehrfaches Vorkommen gleicher Stringliterale (== Inhalt von Strings gleich) nicht erlaubt: '"
@@ -31,12 +26,7 @@ checkForDuplicates ((sourceSpan, string) : xs) allPairs path =
       sourceSpan
       path
     | string
-        `elem` map
-          snd
-          ( filter
-              (\(span, _) -> span /= sourceSpan)
-              allPairs
-          )
+        `elem` map snd (precedors ++ xs)
   ]
-    ++ checkForDuplicates xs allPairs path
+    ++ checkForDuplicates xs (precedors ++ [(sourceSpan, string)]) path
 checkForDuplicates [] _ _ = []
