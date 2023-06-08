@@ -1,14 +1,14 @@
 module Language.Java.Rules.ParameterNumber (check) where
 
-import Config (ParameterNumberConfig (ParameterNumberConfig))
+import Config
 import Control.Monad (MonadPlus (mzero))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
 import qualified RDF
 
-check :: ParameterNumberConfig -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
-check (ParameterNumberConfig (Just max)) cUnit path = doCheck max cUnit path
-check (ParameterNumberConfig Nothing) cUnit path = doCheck maxNumber cUnit path
+check :: Rule -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check (ParameterNumber max) cUnit path = doCheck max cUnit path
+check _ cUnit path = doCheck maxNumber cUnit path
 
 doCheck :: Int -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
 doCheck max cUnit path = do

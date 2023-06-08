@@ -1,16 +1,46 @@
-{-# LANGUAGE DeriveGeneric #-}
-
 module Config where
 
+import Control.Monad (unless)
 import Data.Aeson
-import GHC.Generics (Generic)
+import Data.Aeson.Key (fromString)
+import Data.Aeson.KeyMap (keys)
+import Data.Aeson.Types
+import Data.List ((\\))
 
-data Config = Config
-  {rule :: String, max :: Maybe Int, whitelist :: Maybe [String]}
-  deriving (Show, Generic)
+data Rule
+  = ParameterNumber {max :: Int}
+  | ProhibitAnnotations {whitelist :: [String]}
 
-instance FromJSON Config
+instance FromJSON Rule where
+  parseJSON = withObject "Rule" $ \obj -> do
+    rule <- obj .: fromString "rule"
+    case rule of
+      "ParameterNumber" -> parseParameterNumber obj
+      "ProhibitAnnotations" -> parseProhibitAnnotations obj
+      _ -> fail ("Unknown Rule: " ++ rule)
 
-newtype ParameterNumberConfig = ParameterNumberConfig {maxParameterNumber :: Maybe Int}
+parseParameterNumber :: Object -> Parser Rule
+parseParameterNumber obj = do
+  hasMax <- obj .:? fromString "max"
+  case hasMax of
+    Just max -> do
+      checkNoExtraKeys obj [fromString "max"]
+      pure (ParameterNumber max)
+    Nothing -> fail "Required field 'max' is missing"
 
-newtype ProhibitAnnotationsConfig = ProhibitAnnotationsConfig {annotationWhitelist :: Maybe [String]}
+parseProhibitAnnotations :: Object -> Parser Rule
+parseProhibitAnnotations obj = do
+  hasWhitelist <- obj .:? fromString "whitelist"
+  case hasWhitelist of
+    Just whitelistVal -> do
+      checkNoExtraKeys obj [fromString "whitelist"]
+      pure (ProhibitAnnotations whitelistVal)
+    Nothing -> fail "Required field 'whitelist' is missing"
+
+checkNoExtraKeys :: Object -> [Key] -> Parser ()
+checkNoExtraKeys obj allowedKeys = do
+  let objKeys = keys obj
+  let extraKeys = objKeys \\ (fromString "rule" : allowedKeys)
+  unless (null extraKeys) $
+    fail $
+      "Unexpected keys: " ++ show extraKeys

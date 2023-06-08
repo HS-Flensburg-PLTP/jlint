@@ -1,6 +1,6 @@
 module Language.Java.Rules.ProhibitAnnotations where
 
-import Config (ProhibitAnnotationsConfig (ProhibitAnnotationsConfig))
+import Config (Rule (ProhibitAnnotations))
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Pretty (prettyPrint)
@@ -8,9 +8,9 @@ import Language.Java.SourceSpan (sourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
-check :: ProhibitAnnotationsConfig -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
-check (ProhibitAnnotationsConfig (Just whitelist)) cUnit path = doCheck whitelist cUnit path
-check (ProhibitAnnotationsConfig Nothing) cUnit path = doCheck annotationWhitelist cUnit path
+check :: Rule -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check (ProhibitAnnotations whitelist) cUnit path = doCheck whitelist cUnit path
+check _ cUnit path = doCheck annotationWhitelist cUnit path
 
 doCheck :: [String] -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
 doCheck whitelist cUnit path = do
