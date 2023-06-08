@@ -13,6 +13,7 @@ import qualified Language.Java.Rules.DeclarationOrder as DeclarationOrder
 import qualified Language.Java.Rules.DefaultComesLast as DefaultComesLast
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
 import qualified Language.Java.Rules.ModifiedControlVariable as ModifiedControlVariable
+import qualified Language.Java.Rules.MultipleStringLiterals as MultipleStringLiterals
 import qualified Language.Java.Rules.NamingConventions as NamingConventions
 import qualified Language.Java.Rules.NeedBraces as NeedBraces
 import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
@@ -44,6 +45,7 @@ checks =
     ConsistentOverrideEqualsHashCode.check,
     InitializeVariables.check,
     ModifiedControlVariable.check,
+    MultipleStringLiterals.check,
     NoNullPointerExceptionsForControl.check,
     ParameterNumber.check,
     PreferExpressions.check,
@@ -78,6 +80,7 @@ checkMapping =
       ("ConsistentOverrideEqualsHashCode", ConsistentOverrideEqualsHashCode.check),
       ("DefaultComesLast", DefaultComesLast.check),
       ("InitializeVariables", InitializeVariables.check),
+      ("MultipleStringLiterals", MultipleStringLiterals.check),
       ("NamingConventions", NamingConventions.check),
       ("NeedBraces", NeedBraces.check),
       ("NoLoopBreak", NoLoopBreak.check),

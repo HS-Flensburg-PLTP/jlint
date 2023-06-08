@@ -42,6 +42,7 @@ library
       Language.Java.Rules.DefaultComesLast
       Language.Java.Rules.InitializeVariables
       Language.Java.Rules.ModifiedControlVariable
+      Language.Java.Rules.MultipleStringLiterals
       Language.Java.Rules.NamingConventions
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoLoopBreak

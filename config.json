@@ -70,5 +70,8 @@
     },
     {
         "rule": "UsePostIncrementDecrement"
+    },
+    {
+        "rule": "MultipleStringLiterals"
     }
 ]
