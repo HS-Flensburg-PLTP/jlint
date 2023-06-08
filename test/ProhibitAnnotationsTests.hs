@@ -1,6 +1,6 @@
 module ProhibitAnnotationsTests where
 
-import Config (ProhibitAnnotationsConfig (ProhibitAnnotationsConfig))
+import Config (Rule (ProhibitAnnotations))
 import Control.Monad.Identity (zipWithM_)
 import Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations (check)
 import Language.Java.Syntax (CompilationUnit)
@@ -14,7 +14,7 @@ tests =
   rangesTest
     expectedRanges
     "ProhibitAnnotations.java"
-    (ProhibitAnnotations.check (ProhibitAnnotationsConfig (Just ["FooBar", "Override"])))
+    (ProhibitAnnotations.check (ProhibitAnnotations ["FooBar", "Override"]))
 
 expectedRanges :: [RDF.Range]
 expectedRanges =
