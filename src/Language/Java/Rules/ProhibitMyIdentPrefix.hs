@@ -13,13 +13,14 @@ check cUnit path = do
   checkIdent ident path
 
 checkIdent :: Ident -> FilePath -> [RDF.Diagnostic]
-checkIdent (Ident sourceSpan ident) path
-  | matched (ident ?=~ [re|^([Mm]y)|MY|]) =
-    return
-      ( RDF.rangeDiagnostic
-          "Language.Java.Rules.ProhibitMyIdentPrefix"
-          ("Nicht erlaubtes 'My'-Prefix gefunden: " ++ ident)
-          sourceSpan
-          path
-      )
-  | otherwise = []
+checkIdent (Ident sourceSpan ident) path =
+  if matched (ident ?=~ [re|^([Mm]y)|MY|])
+    then
+      return
+        ( RDF.rangeDiagnostic
+            "Language.Java.Rules.ProhibitMyIdentPrefix"
+            ("Nicht erlaubtes 'My'-Prefix gefunden: " ++ ident)
+            sourceSpan
+            path
+        )
+    else []
