@@ -6,10 +6,10 @@ import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
 import qualified RDF
 
-check :: Rule -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
-check (ParameterNumber (Just max) (Just min)) cUnit path = doCheck max cUnit path
-check (ParameterNumber Nothing Nothing) cUnit path = doCheck maxNumber cUnit path
-check _ cUnit path = doCheck maxNumber cUnit path
+check :: Maybe Int -> Maybe Int -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check (Just max) (Just min) cUnit path = doCheck max cUnit path
+check Nothing Nothing cUnit path = doCheck maxNumber cUnit path
+check _ _ cUnit path = doCheck maxNumber cUnit path
 
 checkWithDefaultValue :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkWithDefaultValue = doCheck maxNumber

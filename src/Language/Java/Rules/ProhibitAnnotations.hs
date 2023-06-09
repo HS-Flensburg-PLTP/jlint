@@ -8,15 +8,11 @@ import Language.Java.SourceSpan (sourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
-check :: Rule -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
-check (ProhibitAnnotations whitelist) cUnit path = doCheck whitelist cUnit path
-check _ cUnit path = doCheck annotationWhitelist cUnit path
-
 checkWithDefaultValue :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
-checkWithDefaultValue = doCheck annotationWhitelist
+checkWithDefaultValue = check annotationWhitelist
 
-doCheck :: [String] -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
-doCheck whitelist cUnit path = do
+check :: [String] -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check whitelist cUnit path = do
   annotation <- universeBi cUnit
   checkAnnotation whitelist annotation path
 

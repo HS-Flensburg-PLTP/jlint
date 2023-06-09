@@ -54,5 +54,5 @@ checkRule :: [Rule] -> [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checkRule = map checkFromConfig
 
 checkFromConfig :: Rule -> (CompilationUnit -> FilePath -> [RDF.Diagnostic])
-checkFromConfig (ParameterNumber max min) = ParameterNumber.check (ParameterNumber max min)
-checkFromConfig (ProhibitAnnotations whitelist) = ProhibitAnnotations.check (ProhibitAnnotations whitelist)
+checkFromConfig (ParameterNumber max min) = ParameterNumber.check max min
+checkFromConfig (ProhibitAnnotations whitelist) = ProhibitAnnotations.check whitelist

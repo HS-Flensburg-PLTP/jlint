@@ -2,6 +2,8 @@ module Main where
 
 import CheckstyleXML (toRDF)
 import Config (Rule)
+import Control.Exception
+import Control.Exception (SomeException (SomeException))
 import Control.Monad (MonadPlus (..), unless, when)
 import Data.Aeson (decodeFileStrict, eitherDecodeFileStrict)
 import qualified Data.ByteString.Lazy.Char8 as C
@@ -13,7 +15,7 @@ import Language.Java.Syntax (CompilationUnit)
 import Options.Applicative
 import RDF
 import System.Directory
-import System.Exit (ExitCode (ExitFailure), exitSuccess, exitWith)
+import System.Exit (ExitCode (ExitFailure), exitFailure, exitSuccess, exitWith)
 import System.FilePath.Find (always, extension, find, (==?))
 import System.IO (IOMode (ReadMode), char8, hGetContents, hPutStrLn, hSetEncoding, openFile, stderr)
 import Text.Parsec.Error (ParseError)
@@ -129,7 +131,7 @@ parseJava rootDir pretty showAST checkstyleDiags =
               case config of
                 Left error -> do
                   hPutStrLn stderr ("Error beim parsen der Config-Datei: " ++ error)
-                  return (concatMap (uncurry checkAll) cUnitResults)
+                  exitFailure
                 Right config -> do
                   return (concatMap (uncurry (checkWithConfig config)) cUnitResults)
             else return (concatMap (uncurry checkAll) cUnitResults)
