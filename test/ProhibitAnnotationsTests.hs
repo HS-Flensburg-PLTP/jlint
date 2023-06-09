@@ -14,7 +14,7 @@ tests =
   rangesTest
     expectedRanges
     "ProhibitAnnotations.java"
-    (ProhibitAnnotations.check (ProhibitAnnotations ["FooBar", "Override"]))
+    (ProhibitAnnotations.check ["FooBar", "Override"])
 
 expectedRanges :: [RDF.Range]
 expectedRanges =
