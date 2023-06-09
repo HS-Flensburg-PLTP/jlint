@@ -1,4 +1,4 @@
-module Language.Java.Rules.ParameterNumber (check) where
+module Language.Java.Rules.ParameterNumber (check, checkWithDefaultValue) where
 
 import Config
 import Control.Monad (MonadPlus (mzero))
@@ -7,8 +7,12 @@ import Language.Java.Syntax
 import qualified RDF
 
 check :: Rule -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
-check (ParameterNumber max) cUnit path = doCheck max cUnit path
+check (ParameterNumber (Just max) (Just min)) cUnit path = doCheck max cUnit path
+check (ParameterNumber Nothing Nothing) cUnit path = doCheck maxNumber cUnit path
 check _ cUnit path = doCheck maxNumber cUnit path
+
+checkWithDefaultValue :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkWithDefaultValue = doCheck maxNumber
 
 doCheck :: Int -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
 doCheck max cUnit path = do

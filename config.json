@@ -1,7 +1,8 @@
 [
     {
         "rule": "ParameterNumber",
-        "max": 6
+        "min": 6,
+        "max": 5
     },
     {
         "rule": "ProhibitAnnotations",

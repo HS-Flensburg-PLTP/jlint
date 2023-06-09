@@ -128,10 +128,9 @@ parseJava rootDir pretty showAST checkstyleDiags =
               config <- eitherDecodeFileStrict configFile :: IO (Either String [Rule])
               case config of
                 Left error -> do
-                  putStrLn ("Error beim parsen der Config-Datei: " ++ error)
+                  hPutStrLn stderr ("Error beim parsen der Config-Datei: " ++ error)
                   return (concatMap (uncurry checkAll) cUnitResults)
                 Right config -> do
-                  putStrLn ("Config wurde erfolgreich geparsed")
                   return (concatMap (uncurry (checkWithConfig config)) cUnitResults)
             else return (concatMap (uncurry checkAll) cUnitResults)
 

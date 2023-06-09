@@ -32,9 +32,9 @@ checks =
     InitializeVariables.check,
     ModifiedControlVariable.check,
     NoNullPointerExceptionsForControl.check,
-    ParameterNumber.check (ParameterNumber 7),
+    ParameterNumber.checkWithDefaultValue,
     PreferExpressions.check,
-    ProhibitAnnotations.check (ProhibitAnnotations []),
+    ProhibitAnnotations.checkWithDefaultValue,
     ReduceScope.check,
     RedundantModifiers.check,
     UseAssignOp.check,
@@ -54,5 +54,5 @@ checkRule :: [Rule] -> [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
 checkRule = map checkFromConfig
 
 checkFromConfig :: Rule -> (CompilationUnit -> FilePath -> [RDF.Diagnostic])
-checkFromConfig (ParameterNumber max) = ParameterNumber.check (ParameterNumber max)
+checkFromConfig (ParameterNumber max min) = ParameterNumber.check (ParameterNumber max min)
 checkFromConfig (ProhibitAnnotations whitelist) = ProhibitAnnotations.check (ProhibitAnnotations whitelist)

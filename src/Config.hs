@@ -1,3 +1,5 @@
+{-# LANGUAGE BlockArguments #-}
+
 module Config where
 
 import Control.Monad (unless)
@@ -8,7 +10,7 @@ import Data.Aeson.Types
 import Data.List ((\\))
 
 data Rule
-  = ParameterNumber {max :: Int}
+  = ParameterNumber {max :: Maybe Int, min :: Maybe Int}
   | ProhibitAnnotations {whitelist :: [String]}
 
 instance FromJSON Rule where
@@ -22,11 +24,18 @@ instance FromJSON Rule where
 parseParameterNumber :: Object -> Parser Rule
 parseParameterNumber obj = do
   hasMax <- obj .:? fromString "max"
-  case hasMax of
-    Just max -> do
-      checkNoExtraKeys obj [fromString "max"]
-      pure (ParameterNumber max)
-    Nothing -> fail "Required field 'max' is missing"
+  hasMin <- obj .:? fromString "min"
+  case (hasMax, hasMin) of
+    (Just maxVal, Nothing) -> do
+      checkNoExtraKeys obj [fromString "max", fromString "min"]
+      pure (ParameterNumber maxVal Nothing)
+    (Nothing, Just minVal) -> do
+      checkNoExtraKeys obj [fromString "max", fromString "min"]
+      pure (ParameterNumber Nothing minVal)
+    (Just maxVal, Just minVal) -> do
+      checkNoExtraKeys obj [fromString "max", fromString "min"]
+      pure (ParameterNumber maxVal minVal)
+    (Nothing, Nothing) -> fail "Required field 'max' or 'min' is missing"
 
 parseProhibitAnnotations :: Object -> Parser Rule
 parseProhibitAnnotations obj = do
