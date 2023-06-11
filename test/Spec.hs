@@ -16,6 +16,7 @@ import qualified NoNullPointerExceptionsForControlTests
 import qualified ParameterNumberTests
 import qualified PreferExpressionsTests
 import qualified ProhibitAnnotationsTests
+import qualified PullInNegationsTests
 import qualified ReduceScopeTests
 import qualified RedundantModifiersTests
 import qualified SameExecutionsInIfTests
@@ -50,6 +51,7 @@ tests =
       "ParameterNumber" ~: ParameterNumberTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ProhibitAnnotations" ~: ProhibitAnnotationsTests.tests,
+      "PullInNegations" ~: PullInNegationsTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
       "RedundantModifiers" ~: RedundantModifiersTests.tests,
       "SameExecutionsInIf" ~: SameExecutionsInIfTests.tests,

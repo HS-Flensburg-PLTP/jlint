@@ -45,6 +45,9 @@
         "rule": "PreferExpressions"
     },
     {
+        "rule": "PullInNegations"
+    },
+    {
         "rule": "ReduceScope"
     },
     {

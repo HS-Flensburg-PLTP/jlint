@@ -20,6 +20,7 @@ import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNull
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations
+import qualified Language.Java.Rules.PullInNegations as PullInNegations
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.SameExecutionsInIf as SameExecutionsInIf
@@ -47,6 +48,7 @@ checks =
     NoNullPointerExceptionsForControl.check,
     ParameterNumber.check,
     PreferExpressions.check,
+    PullInNegations.check,
     ReduceScope.check,
     RedundantModifiers.check,
     UseAssignOp.check,
@@ -84,6 +86,7 @@ checkMapping =
       ("NoNullPointerExceptionsForControl", NoNullPointerExceptionsForControl.check),
       ("ParameterNumber", ParameterNumber.check),
       ("PreferExpressions", PreferExpressions.check),
+      ("PullInNegations", PullInNegations.check),
       ("ReduceScope", ReduceScope.check),
       ("RedundantModifiers", RedundantModifiers.check),
       ("SameExecutionsInIf", SameExecutionsInIf.check),
