@@ -5,6 +5,7 @@ import Data.Map (Map, findWithDefault, fromList)
 import qualified Language.Java.Rules.AvoidMultipleTopLevelDecl as AvoidMultipleTopLevelDecl
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
+import qualified Language.Java.Rules.AvoidOuterNegations as AvoidOuterNegations
 import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
 import qualified Language.Java.Rules.CheckNonFinalMethodAttributes as CheckNonFinalMethodAttributes
 import qualified Language.Java.Rules.CheckNonPrivateAttributes as CheckNonPrivateAttributes
@@ -20,7 +21,6 @@ import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNull
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations
-import qualified Language.Java.Rules.PullInNegations as PullInNegations
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.SameExecutionsInIf as SameExecutionsInIf
@@ -48,7 +48,7 @@ checks =
     NoNullPointerExceptionsForControl.check,
     ParameterNumber.check,
     PreferExpressions.check,
-    PullInNegations.check,
+    AvoidOuterNegations.check,
     ReduceScope.check,
     RedundantModifiers.check,
     UseAssignOp.check,
@@ -74,6 +74,7 @@ checkMapping =
     [ ("AvoidMultipleTopLevelDecl", AvoidMultipleTopLevelDecl.check),
       ("AvoidMultipleVarDecl", AvoidMultipleVarDecl.check),
       ("AvoidNegations", AvoidNegations.check),
+      ("AvoidOuterNegations", AvoidOuterNegations.check),
       ("AvoidStarImport", AvoidStarImport.check),
       ("CheckNonFinalMethodAttributes", CheckNonFinalMethodAttributes.check),
       ("CheckNonPrivateAttributes", CheckNonPrivateAttributes.check),
@@ -86,7 +87,6 @@ checkMapping =
       ("NoNullPointerExceptionsForControl", NoNullPointerExceptionsForControl.check),
       ("ParameterNumber", ParameterNumber.check),
       ("PreferExpressions", PreferExpressions.check),
-      ("PullInNegations", PullInNegations.check),
       ("ReduceScope", ReduceScope.check),
       ("RedundantModifiers", RedundantModifiers.check),
       ("SameExecutionsInIf", SameExecutionsInIf.check),

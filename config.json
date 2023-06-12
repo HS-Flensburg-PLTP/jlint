@@ -9,6 +9,9 @@
         "rule": "AvoidNegations"
     },
     {
+        "rule": "AvoidOuterNegations"
+    },
+    {
         "rule": "AvoidStarImport"
     },
     {
@@ -43,9 +46,6 @@
     },
     {
         "rule": "PreferExpressions"
-    },
-    {
-        "rule": "PullInNegations"
     },
     {
         "rule": "ReduceScope"

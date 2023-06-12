@@ -1,4 +1,4 @@
-class PullInNegations {
+class AvoidOuterNegations {
     
     
     boolean foo(final T test) {
@@ -28,6 +28,15 @@ class PullInNegations {
     boolean barfoo(final T e) {
         var temp = this.first;
         if (!(temp == null)) {
+            temp = temp.next;
+        }
+        return temp != null;
+    }
+
+    boolean foofoo(final T e) {
+        var temp = this.first;
+        boolean foo = true;
+        if (!foo) {
             temp = temp.next;
         }
         return temp != null;

@@ -1,6 +1,6 @@
-module PullInNegationsTests (tests) where
+module AvoidOuterNegationsTests (tests) where
 
-import qualified Language.Java.Rules.PullInNegations as PullInNegations
+import qualified Language.Java.Rules.AvoidOuterNegations as AvoidOuterNegations
 import qualified RDF
 import Test.HUnit (Test)
 import Tests
@@ -9,8 +9,8 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "PullInNegations.java"
-    PullInNegations.check
+    "AvoidOuterNegations.java"
+    AvoidOuterNegations.check
 
 expectedRanges :: [RDF.Range]
 expectedRanges =

@@ -1,4 +1,4 @@
-module Language.Java.Rules.PullInNegations where
+module Language.Java.Rules.AvoidOuterNegations where
 
 import Control.Monad (MonadPlus (mzero))
 import Data.Generics.Uniplate.Data (universeBi)
@@ -15,7 +15,7 @@ check cUnit path = do
     checkExp (PreNot (BinOp _ COr _)) path =
       return
         ( RDF.rangeDiagnostic
-            "Language.Java.Rules.PullInNegations"
+            "Language.Java.Rules.AvoidOuterNegations"
             "Für einen Ausdruck `!(a || b)` kann die DeMorgan-Regel angewendet und `!a && !b` verwendet werden. Generell sollten Negation immer so weit wie möglich nach innen gezogen werden."
             dummySourceSpan
             path
@@ -23,7 +23,7 @@ check cUnit path = do
     checkExp (PreNot (BinOp _ CAnd _)) path =
       return
         ( RDF.rangeDiagnostic
-            "Language.Java.Rules.PullInNegations"
+            "Language.Java.Rules.AvoidOuterNegations"
             "Für einen Ausdruck `!(a && b)` kann die DeMorgan-Regel angewendet und `!a || !b` verwendet werden. Generell sollten Negation immer so weit wie möglich nach innen gezogen werden."
             dummySourceSpan
             path
@@ -33,7 +33,7 @@ check cUnit path = do
         Just invertedOp ->
           return
             ( RDF.rangeDiagnostic
-                "Language.Java.Rules.PullInNegations"
+                "Language.Java.Rules.AvoidOuterNegations"
                 (message op invertedOp)
                 dummySourceSpan
                 path

@@ -34,6 +34,7 @@ library
       Language.Java.Rules.AvoidMultipleTopLevelDecl
       Language.Java.Rules.AvoidMultipleVarDecl
       Language.Java.Rules.AvoidNegations
+      Language.Java.Rules.AvoidOuterNegations
       Language.Java.Rules.AvoidStarImport
       Language.Java.Rules.CheckNonFinalMethodAttributes
       Language.Java.Rules.CheckNonPrivateAttributes
@@ -49,7 +50,6 @@ library
       Language.Java.Rules.ParameterNumber
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ProhibitAnnotations
-      Language.Java.Rules.PullInNegations
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.RedundantModifiers
       Language.Java.Rules.SameExecutionsInIf
@@ -120,6 +120,7 @@ test-suite jlint-test
       AvoidMultipleTopLevelDeclTests
       AvoidMultipleVarDeclTests
       AvoidNegationsTests
+      AvoidOuterNegationsTests
       AvoidStarImportTests
       CheckNonFinalMethodAttributesTests
       CheckNonPrivateAttributesTests
@@ -135,7 +136,6 @@ test-suite jlint-test
       ParameterNumberTests
       PreferExpressionsTests
       ProhibitAnnotationsTests
-      PullInNegationsTests
       ReduceScopeTests
       RedundantModifiersTests
       SameExecutionsInIfTests
