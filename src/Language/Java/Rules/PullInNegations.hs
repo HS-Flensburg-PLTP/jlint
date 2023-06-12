@@ -2,6 +2,7 @@ module Language.Java.Rules.PullInNegations where
 
 import Control.Monad (MonadPlus (mzero))
 import Data.Generics.Uniplate.Data (universeBi)
+import Language.Java.Pretty (prettyPrint)
 import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
@@ -43,9 +44,9 @@ check cUnit path = do
 message :: Op -> Op -> String
 message op invertedOp =
   "Für einen Ausdruck `!(a "
-    ++ prettyOp op
+    ++ prettyPrint op
     ++ " b)` kann die Negation nach innen gezogen und `a "
-    ++ prettyOp invertedOp
+    ++ prettyPrint invertedOp
     ++ " b` angewendet werden. Generell sollten Negation immer so weit wie möglich nach innen gezogen werden."
 
 invertOp :: Op -> Maybe Op
@@ -58,14 +59,3 @@ invertOp NotEq = Just Equal
 invertOp CAnd = Just COr
 invertOp COr = Just CAnd
 invertOp _ = Nothing
-
-prettyOp :: Op -> String
-prettyOp LThan = "<"
-prettyOp GThan = ">"
-prettyOp LThanE = "<="
-prettyOp GThanE = ">="
-prettyOp Equal = "=="
-prettyOp NotEq = "!="
-prettyOp CAnd = "&&"
-prettyOp COr = "||"
-prettyOp _ = ""
