@@ -9,7 +9,7 @@ public class MultipleStringLiterals {
         c = "foobar";
     }
 
-    public void kotlinHasMoreFun() {
+    public void aMethod() {
         c = "Foo" + "Bar";
     }
 }
