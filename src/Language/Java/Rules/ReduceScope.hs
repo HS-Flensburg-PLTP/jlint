@@ -15,7 +15,7 @@ import qualified Language.Java.Syntax.VarDecl as VarDecl
 import qualified Markdown
 import qualified RDF (Diagnostic, rangeDiagnostic)
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit filePath = do
   blockStmts <- universeBi cUnit
   checkBlockStmts blockStmts
@@ -24,7 +24,7 @@ check cUnit filePath = do
       reduceScopeInBlockStmts (map VarDecl.ident vars) stmts filePath
     checkBlockStmts _ = mzero
 
-reduceScopeInBlockStmts :: [Ident] -> [BlockStmt] -> FilePath -> [RDF.Diagnostic]
+reduceScopeInBlockStmts :: [Ident] -> [BlockStmt Parsed] -> FilePath -> [RDF.Diagnostic]
 reduceScopeInBlockStmts declVars (BlockStmt span stmt : blockStmts) filePath =
   let varsNotInStmt = filter (\declVar -> none (eq IgnoreSourceSpan declVar) (variables stmt)) declVars
       varsNotInStmts = filter (\declVar -> none (eq IgnoreSourceSpan declVar) (variables blockStmts)) declVars
@@ -43,7 +43,7 @@ reduceScopeInBlockStmts declVars (BlockStmt span stmt : blockStmts) filePath =
                 )
                 varsNotInStmt
         else reduceScopeInIf varsNotInStmts stmt filePath
-reduceScopeInBlockStmts declVars (blockStmt@(LocalVars _ _ _ _) : blockStmts) filePath =
+reduceScopeInBlockStmts declVars (blockStmt@(LocalVars {}) : blockStmts) filePath =
   let varsNotInStmt = filter (\declVar -> none (eq IgnoreSourceSpan declVar) (variables blockStmt)) declVars
    in {- We could be more precise in checking the side effects of the right-hand sides of the declarations separately. -}
       if BlockStmt.hasNoSideEffect blockStmt && null varsNotInStmt
@@ -51,7 +51,7 @@ reduceScopeInBlockStmts declVars (blockStmt@(LocalVars _ _ _ _) : blockStmts) fi
         else reduceScopeInBlockStmts varsNotInStmt blockStmts filePath
 reduceScopeInBlockStmts _ _ _ = mzero
 
-reduceScopeInIf :: [Ident] -> Stmt -> FilePath -> [RDF.Diagnostic]
+reduceScopeInIf :: [Ident] -> Stmt Parsed -> FilePath -> [RDF.Diagnostic]
 reduceScopeInIf declVars (IfThenElse span condition thenStmt elseStmt) path =
   let varsNotInCondition = filter (\declVar -> none (eq IgnoreSourceSpan declVar) (variables condition)) declVars
    in if Exp.hasNoSideEffect condition
