@@ -3,7 +3,6 @@ module Main where
 import CheckstyleXML (toRDF)
 import Config (Rule)
 import Control.Exception
-import Control.Exception (SomeException (SomeException))
 import Control.Monad (MonadPlus (..), unless, when)
 import Data.Aeson (decodeFileStrict, eitherDecodeFileStrict)
 import qualified Data.ByteString.Lazy.Char8 as C
@@ -131,7 +130,7 @@ parseJava rootDir pretty showAST checkstyleDiags =
               case config of
                 Left error -> do
                   hPutStrLn stderr ("Error beim parsen der Config-Datei: " ++ error)
-                  exitFailure
+                  exitWith (ExitFailure 65)
                 Right config -> do
                   return (concatMap (uncurry (checkWithConfig config)) cUnitResults)
             else return (concatMap (uncurry checkAll) cUnitResults)
