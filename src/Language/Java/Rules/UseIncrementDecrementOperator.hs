@@ -7,7 +7,7 @@ import Language.Java.SourceSpan (SourceSpan, dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   exp <- universeBi cUnit
   checkExp exp
@@ -24,7 +24,7 @@ check cUnit path = do
       message assign (assignOpToPostIncDec op name) span path
     checkExp _ = mzero
 
-message :: Exp -> Maybe Exp -> SourceSpan -> FilePath -> [RDF.Diagnostic]
+message :: Exp Parsed -> Maybe (Exp Parsed) -> SourceSpan -> FilePath -> [RDF.Diagnostic]
 message assign (Just postIncDec) span path =
   return
     ( RDF.rangeDiagnostic
@@ -35,12 +35,12 @@ message assign (Just postIncDec) span path =
     )
 message _ Nothing _ _ = mzero
 
-opToPostIncDec :: Op -> Name -> Maybe Exp
+opToPostIncDec :: Op -> Name -> Maybe (Exp Parsed)
 opToPostIncDec Add name = Just (PostIncrement dummySourceSpan (ExpName name))
 opToPostIncDec Sub name = Just (PostDecrement dummySourceSpan (ExpName name))
 opToPostIncDec _ _ = Nothing
 
-assignOpToPostIncDec :: AssignOp -> Name -> Maybe Exp
+assignOpToPostIncDec :: AssignOp -> Name -> Maybe (Exp Parsed)
 assignOpToPostIncDec AddA name = Just (PostIncrement dummySourceSpan (ExpName name))
 assignOpToPostIncDec SubA name = Just (PostDecrement dummySourceSpan (ExpName name))
 assignOpToPostIncDec _ _ = Nothing
