@@ -1,25 +1,27 @@
 module Language.Java.Rules.CheckNonPrivateAttributes (check) where
 
-import Data.List.Extra (none)
-import Language.Java.AST (extractAttributes)
-import Language.Java.SourceSpan (dummySourceSpan)
+import Control.Monad (MonadPlus (mzero))
+import Data.Generics.Uniplate.Data (universeBi)
+import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
+import Language.Java.Syntax.Ident as Ident
+import Language.Java.Syntax.VarDecl as VarDecl
 import qualified RDF
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  attributes <- extractAttributes cUnit
-  checkAttributes attributes path
+  FieldDecl span modifier _ varid <- universeBi cUnit
+  checkAttributes modifier varid path span
 
-checkAttributes :: ([String], [Modifier]) -> FilePath -> [RDF.Diagnostic]
-checkAttributes (varNames, mods) path =
-  concatMap (checkModifier mods) varNames
-  where
-    checkModifier modifier varname =
+checkAttributes :: [Modifier] -> [VarDecl] -> FilePath -> SourceSpan -> [RDF.Diagnostic]
+checkAttributes modifier vardecls path span = do
+  vardecl <- vardecls
+  if any (eq IgnoreSourceSpan Private) modifier
+    then mzero
+    else
       [ RDF.rangeDiagnostic
           "Language.Java.Rules.CheckNonPrivateAttributes"
-          (varname ++ " is not declared as private")
-          dummySourceSpan
+          (Ident.name (VarDecl.ident vardecl) ++ " ist nicht als Privat deklariert.")
+          span
           path
-        | none (eq IgnoreSourceSpan Private) modifier
       ]
