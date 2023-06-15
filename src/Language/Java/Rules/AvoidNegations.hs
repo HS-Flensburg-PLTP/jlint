@@ -5,10 +5,10 @@ import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = checkStatement cUnit path ++ checkExpression cUnit path
 
-checkStatement :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkStatement :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkStatement cUnit path = do
   stmt <- universeBi cUnit
   checkIfThenElse stmt path
@@ -26,7 +26,7 @@ checkStatement cUnit path = do
         else mzero
     checkIfThenElse _ _ = mzero
 
-checkExpression :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkExpression :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkExpression cUnit path = do
   stmt <- universeBi cUnit
   checkCond stmt path
@@ -44,7 +44,7 @@ checkExpression cUnit path = do
         else mzero
     checkCond _ _ = mzero
 
-isNegation :: Exp -> Bool
-isNegation (PreNot _) = True
+isNegation :: Exp Parsed -> Bool
+isNegation (PreNot _ _) = True
 isNegation (BinOp _ NotEq _) = True
 isNegation _ = False
