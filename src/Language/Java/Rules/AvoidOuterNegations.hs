@@ -1,41 +1,42 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Language.Java.Rules.AvoidOuterNegations where
 
 import Control.Monad (MonadPlus (mzero))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Pretty (prettyPrint)
-import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  exp <- universeBi cUnit
+  exp :: Exp Parsed <- universeBi cUnit
   checkExp exp path
   where
-    checkExp (PreNot (BinOp _ COr _)) path =
+    checkExp (PreNot span (BinOp _ COr _)) path =
       return
         ( RDF.rangeDiagnostic
             "Language.Java.Rules.AvoidOuterNegations"
             "Für einen Ausdruck `!(a || b)` kann die DeMorgan-Regel angewendet und `!a && !b` verwendet werden. Generell sollten Negation immer so weit wie möglich nach innen gezogen werden."
-            dummySourceSpan
+            span
             path
         )
-    checkExp (PreNot (BinOp _ CAnd _)) path =
+    checkExp (PreNot span (BinOp _ CAnd _)) path =
       return
         ( RDF.rangeDiagnostic
             "Language.Java.Rules.AvoidOuterNegations"
             "Für einen Ausdruck `!(a && b)` kann die DeMorgan-Regel angewendet und `!a || !b` verwendet werden. Generell sollten Negation immer so weit wie möglich nach innen gezogen werden."
-            dummySourceSpan
+            span
             path
         )
-    checkExp (PreNot (BinOp _ op _)) path =
+    checkExp (PreNot span (BinOp _ op _)) path =
       case invertOp op of
         Just invertedOp ->
           return
             ( RDF.rangeDiagnostic
                 "Language.Java.Rules.AvoidOuterNegations"
                 (message op invertedOp)
-                dummySourceSpan
+                span
                 path
             )
         Nothing -> mzero
