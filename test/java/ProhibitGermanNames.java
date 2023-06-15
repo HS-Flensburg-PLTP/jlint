@@ -1,6 +1,6 @@
 class EineSuperDeutscheKlasse {
-    myString testString = "Ahhhhh";
-    VarDecl myRunsVar = 1;
+    String testString = "Ahhhhh";
+    int myRunsVar = 1;
     private final int WIRD_DAS_HIER_AUCH_GEFUNDEN = 1337;
     private final String ANANAS = "ENDE";
 
@@ -9,7 +9,7 @@ class EineSuperDeutscheKlasse {
     }
 
     public void MyFunction() {
-        for (int Maus = 0; maus < 10; maus++) {
+        for (int maus = 0; maus < 10; maus++) {
             String meineZeichenfolge = "Hier";
         }
     }
