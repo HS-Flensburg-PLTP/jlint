@@ -1,7 +1,5 @@
 module ProhibitGermanNamesTests where
 
-import Control.Monad.Identity (zipWithM_)
-import GHC.IO (unsafePerformIO)
 import Language.Java.Rules.ProhibitGermanNames as ProhibitGermanNames (check)
 import Language.Java.Syntax (CompilationUnit)
 import qualified RDF
