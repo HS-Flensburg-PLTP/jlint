@@ -1,15 +1,15 @@
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 
 module Language.Java.Rules.ProhibitGermanNames where
 
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.Text (pack, replace, unpack)
 import Language.Java.SourceSpan
 import Language.Java.Syntax
 import qualified RDF
 import System.Process
-import Text.RE.TDFA.String
+import Text.RE.TDFA
 
 data DictLanguage
   = DE
@@ -37,10 +37,21 @@ checkAllMatches matches path = do
     dictionaryLookup
       DE
       (unwords (map fst matches))
+  nonGermanWordsWithUmlautCheck <-
+    dictionaryLookup
+      DE
+      ( unpack
+          ( replace "ue" "ü"
+              . replace "ae" "ä"
+              . replace "oe" "ö"
+              . replace "ss" "ß"
+              $ pack nonGermanWords
+          )
+      )
   let germanWords =
         filter
           ( \(word, _) ->
-              word `notElem` lines nonGermanWords
+              word `notElem` lines nonGermanWordsWithUmlautCheck
           )
           matches
   nonEnglishWords <-
