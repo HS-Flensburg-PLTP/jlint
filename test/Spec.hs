@@ -25,6 +25,7 @@ import qualified UseAssignOpTests
 import qualified UseElseTests
 import qualified UseIncrementDecrementOperatorTests
 import qualified UseJavaArrayTypeStyleTests
+import qualified UsePostIncrementDecrementTests
 
 main :: IO ()
 main = do
@@ -58,5 +59,6 @@ tests =
       "UseElse" ~: UseElseTests.tests,
       "UseIncrementDecrementOperator" ~: UseIncrementDecrementOperatorTests.tests,
       "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests,
+      "UsePostIncrementDecrement" ~: UsePostIncrementDecrementTests.tests,
       "DeclarationOrder" ~: DeclarationOrderTests.tests
     ]
