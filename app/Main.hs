@@ -157,7 +157,7 @@ parseJava rootDir pretty showAST checkstyleDiags =
             hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
             exitWith (ExitFailure numberOfHints)
 
-concatIORules :: [(CompilationUnit, FilePath)] -> IO [Diagnostic]
+concatIORules :: [(CompilationUnit Parsed, FilePath)] -> IO [Diagnostic]
 concatIORules [] = return []
 concatIORules ((cUnit, path) : cUnitResults) = do
   result <- checkAllIO cUnit path
