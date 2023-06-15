@@ -25,7 +25,7 @@ dictionaryLookup language =
     "aspell"
     ["list", "-d", resolveDict language, "--ignore-case"]
 
-check :: CompilationUnit -> FilePath -> IO [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
 check cUnit path = do
   let idents = universeBi cUnit
   let matches = concatMap splitIdent idents
