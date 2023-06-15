@@ -12,8 +12,8 @@ javaTestDirectory :: FilePath
 javaTestDirectory = "test" </> "java"
 
 rangesTest :: [RDF.Range] -> FilePath -> (CompilationUnit -> FilePath -> [RDF.Diagnostic]) -> Test
-rangesTest testRanges =
-  ruleTest (justifyRanges testRanges)
+rangesTest testRanges path check =
+  rangesIOTest testRanges path (\cUnit path -> return $ check cUnit path)
 
 rangesIOTest :: [RDF.Range] -> FilePath -> (CompilationUnit -> FilePath -> IO [RDF.Diagnostic]) -> Test
 rangesIOTest testRanges =
@@ -30,18 +30,6 @@ ruleIOTest justify path check =
         assertFailure ("Parsing " ++ file ++ " failed with error:" ++ show error)
       Right cUnit -> do
         justify <$> check cUnit path
-
-ruleTest :: ([RDF.Diagnostic] -> Assertion) -> FilePath -> (CompilationUnit -> FilePath -> [RDF.Diagnostic]) -> Test
-ruleTest justify path check =
-  path ~: do
-    dir <- getCurrentDirectory
-    let file = dir </> javaTestDirectory </> path
-    content <- readFile file
-    case parser compilationUnit file content of
-      Left error ->
-        assertFailure ("Parsing " ++ file ++ " failed with error:" ++ show error)
-      Right cUnit ->
-        justify (check cUnit path)
 
 justifyRanges :: [RDF.Range] -> [RDF.Diagnostic] -> Assertion
 justifyRanges expectedRanges diagnostic = do
