@@ -5,14 +5,12 @@ class EineSuperDeutscheKlasse {
     private final String ANANAS = "ENDE";
 
     public EineSuperDeutscheKlasse() {
-
+        String wuerfel = "Würfel";
     }
 
     public void MyFunction() {
         for (int Maus = 0; maus < 10; maus++) {
             String meineZeichenfolge = "Hier";
         }
-
-        String wuerfel = "WÜRFEL";
     }
 }
