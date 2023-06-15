@@ -31,15 +31,15 @@ rankToString InstancePrivateField = "private Variable"
 rankToString Constructor = "Konstruktor"
 rankToString Method = "Methode"
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = checkRank path (extractMemberDecls cUnit)
 
-extractMemberDecls :: CompilationUnit -> [(Rank, SourceSpan)]
+extractMemberDecls :: CompilationUnit Parsed -> [(Rank, SourceSpan)]
 extractMemberDecls cUnit = do
   toplvlDecl <- universeBi cUnit
   maybeToList (checkTopLvlStmts toplvlDecl)
 
-checkTopLvlStmts :: MemberDecl -> Maybe (Rank, SourceSpan)
+checkTopLvlStmts :: MemberDecl Parsed -> Maybe (Rank, SourceSpan)
 checkTopLvlStmts toplvlDecl = case toplvlDecl of
   FieldDecl sourceSpan mods _ _ ->
     if any (eq IgnoreSourceSpan Static) mods
@@ -67,7 +67,7 @@ checkTopLvlStmts toplvlDecl = case toplvlDecl of
   MethodDecl sourceSpan _ _ _ _ _ _ _ _ -> Just (Method, sourceSpan)
   _ -> Nothing
 
-checkForPublic :: [Modifier] -> Bool
+checkForPublic :: [Modifier Parsed] -> Bool
 checkForPublic =
   any
     ( \mod ->

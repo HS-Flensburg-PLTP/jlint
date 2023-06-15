@@ -3,18 +3,9 @@ module Language.Java.Rules.NoNullPointerExceptionsForControl (check) where
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
-  ( Catch (Catch),
-    ClassType (ClassType),
-    CompilationUnit,
-    FormalParam (FormalParam),
-    Ident (Ident),
-    RefType (ClassRefType),
-    Stmt (..),
-    Type (RefType),
-  )
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   blocks <- universeBi cUnit
   checkStatement blocks
@@ -32,7 +23,7 @@ check cUnit path = do
         else mzero
     checkStatement _ = mzero
 
-catchesNullPointerException :: Catch -> Bool
+catchesNullPointerException :: Catch Parsed -> Bool
 catchesNullPointerException (Catch (FormalParam _ _ (RefType (ClassRefType (ClassType typeName))) _ _) _) =
   isNullPointerExceptionName (map fst typeName)
 catchesNullPointerException _ = False

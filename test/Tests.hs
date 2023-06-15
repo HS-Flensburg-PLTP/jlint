@@ -2,7 +2,7 @@ module Tests (rangesTest, rangesIOTest) where
 
 import Control.Monad (zipWithM_)
 import Language.Java.Parser (compilationUnit, parser)
-import Language.Java.Syntax (CompilationUnit)
+import Language.Java.Syntax (CompilationUnit, Parsed)
 import qualified RDF
 import System.Directory (getCurrentDirectory)
 import System.FilePath ((</>))

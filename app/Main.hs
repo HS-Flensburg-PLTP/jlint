@@ -9,7 +9,7 @@ import Data.Semigroup ((<>))
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Rules (checkAll, checkAllIO, checkWithConfig)
-import Language.Java.Syntax (CompilationUnit)
+import Language.Java.Syntax (CompilationUnit, Parsed)
 import Options.Applicative
 import RDF
 import System.Directory
@@ -95,9 +95,9 @@ readAllFiles paths =
             readAllFilesHelp restPaths ((file, path) : fileList)
    in readAllFilesHelp paths mzero
 
-parseAllFiles :: [(String, FilePath)] -> ([(Text.Parsec.Error.ParseError, FilePath)], [(CompilationUnit, FilePath)])
+parseAllFiles :: [(String, FilePath)] -> ([(Text.Parsec.Error.ParseError, FilePath)], [(CompilationUnit Parsed, FilePath)])
 parseAllFiles files =
-  let parseAllfilesHelp :: [(String, FilePath)] -> ([(Text.Parsec.Error.ParseError, FilePath)], [(CompilationUnit, FilePath)]) -> ([(Text.Parsec.Error.ParseError, FilePath)], [(CompilationUnit, FilePath)])
+  let parseAllfilesHelp :: [(String, FilePath)] -> ([(Text.Parsec.Error.ParseError, FilePath)], [(CompilationUnit Parsed, FilePath)]) -> ([(Text.Parsec.Error.ParseError, FilePath)], [(CompilationUnit Parsed, FilePath)])
       parseAllfilesHelp fileList (errorList, cUnitList) =
         case fileList of
           [] ->

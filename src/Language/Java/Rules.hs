@@ -36,7 +36,7 @@ import qualified RDF
 annotationswhitelist :: [String]
 annotationswhitelist = ["Override"]
 
-checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
+checks :: [CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]]
 checks =
   [ AvoidMultipleTopLevelDecl.check,
     AvoidMultipleVarDecl.check,
@@ -58,11 +58,6 @@ checks =
     UseJavaArrayTypeStyle.check
   ]
 
-checksIO :: [CompilationUnit -> FilePath -> IO [RDF.Diagnostic]]
-checksIO =
-  [ ProhibitGermanNames.check
-  ]
-
 checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
 checkAll cUnit path = concatMap (\f -> f cUnit path) checks
 
@@ -76,13 +71,13 @@ executeAll (check : checks) cUnit path = do
   results <- executeAll checks cUnit path
   return (result ++ results)
 
-checkWithConfig :: [Config] -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkWithConfig :: [Config] -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkWithConfig config cUnit path = concatMap (\f -> f cUnit path) (checkRule (extractRuleNames config))
 
-checkRule :: [String] -> [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
+checkRule :: [String] -> [CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]]
 checkRule = map (\s -> findWithDefault (\_ _ -> []) s checkMapping)
 
-checkMapping :: Map String (CompilationUnit -> FilePath -> [RDF.Diagnostic])
+checkMapping :: Map String (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic])
 checkMapping =
   fromList
     [ ("AvoidMultipleTopLevelDecl", AvoidMultipleTopLevelDecl.check),
