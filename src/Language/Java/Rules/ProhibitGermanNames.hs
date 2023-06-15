@@ -61,7 +61,7 @@ checkAllMatches matches path = do
 splitIdent :: Ident -> [(String, SourceSpan)]
 splitIdent (Ident sourceSpan ident) =
   calculateSourceSpans
-    (allMatches (ident *=~ [re|([a-z]|[A-Z])[a-z]*|]))
+    (allMatches (ident *=~ [re|([a-z]|[A-Z])[a-z]+|([A-Z]{2,})+|]))
     sourceSpan
 
 calculateSourceSpans :: [Match String] -> SourceSpan -> [(String, SourceSpan)]
