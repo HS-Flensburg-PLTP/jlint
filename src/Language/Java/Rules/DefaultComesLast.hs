@@ -14,7 +14,7 @@ check cUnit path = do
   (Switch _ _ blocks) <- universeBi cUnit
   checkDefaultComesLast blocks path
 
-checkDefaultComesLast :: [SwitchBlock] -> FilePath -> [RDF.Diagnostic]
+checkDefaultComesLast :: [SwitchBlock Parsed] -> FilePath -> [RDF.Diagnostic]
 checkDefaultComesLast blocks path =
   case blocks of
     [] -> mzero
