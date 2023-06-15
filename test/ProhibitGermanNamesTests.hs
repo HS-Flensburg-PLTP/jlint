@@ -7,7 +7,6 @@ import Language.Java.Syntax (CompilationUnit)
 import qualified RDF
 import Test.HUnit
 import Tests
-import qualified Tests
 
 tests :: Test
 tests =
