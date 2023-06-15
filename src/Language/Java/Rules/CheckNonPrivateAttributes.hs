@@ -8,12 +8,12 @@ import Language.Java.Syntax.Ident as Ident
 import Language.Java.Syntax.VarDecl as VarDecl
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   FieldDecl span modifier _ varid <- universeBi cUnit
   checkAttributes modifier varid path span
 
-checkAttributes :: [Modifier] -> [VarDecl] -> FilePath -> SourceSpan -> [RDF.Diagnostic]
+checkAttributes :: [Modifier Parsed] -> [VarDecl Parsed] -> FilePath -> SourceSpan -> [RDF.Diagnostic]
 checkAttributes modifier vardecls path span = do
   vardecl <- vardecls
   if any (eq IgnoreSourceSpan Private) modifier
