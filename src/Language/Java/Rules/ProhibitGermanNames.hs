@@ -7,10 +7,23 @@ module Language.Java.Rules.ProhibitGermanNames where
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.SourceSpan
 import Language.Java.Syntax
-import RDF (Diagnostic (source))
 import qualified RDF
 import System.Process
 import Text.RE.TDFA.String
+
+data DictLanguage
+  = DE
+  | EN
+
+resolveDict :: DictLanguage -> String
+resolveDict DE = "de_DE"
+resolveDict EN = "en_US"
+
+dictionaryLookup :: DictLanguage -> String -> IO String
+dictionaryLookup language =
+  readProcess
+    "aspell"
+    ["list", "-d", resolveDict language, "--ignore-case"]
 
 check :: CompilationUnit -> FilePath -> IO [RDF.Diagnostic]
 check cUnit path = do
@@ -21,9 +34,8 @@ check cUnit path = do
 checkAllMatches :: [(String, SourceSpan)] -> FilePath -> IO [RDF.Diagnostic]
 checkAllMatches matches path = do
   nonGermanWords <-
-    readProcess
-      "aspell"
-      ["list", "-d", "de_DE", "--ignore-case"]
+    dictionaryLookup
+      DE
       (unwords (map fst matches))
   let germanWords =
         filter
@@ -32,9 +44,8 @@ checkAllMatches matches path = do
           )
           matches
   nonEnglishWords <-
-    readProcess
-      "aspell"
-      ["list", "-d", "en_US", "--ignore-case"]
+    dictionaryLookup
+      EN
       ( unwords
           ( map
               fst
