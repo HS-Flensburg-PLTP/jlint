@@ -4,6 +4,9 @@ class EineSuperDeutscheKlasse {
 
     public EineSuperDeutscheKlasse() {
         String wuerfel = "Würfel";
+        int aepfelCounter = 3;
+        String oeffentlich = "public";
+        String strasse = "Straße";
     }
 
     public void MyFunction() {
