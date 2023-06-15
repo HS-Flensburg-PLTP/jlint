@@ -11,15 +11,15 @@ import Test.HUnit
 javaTestDirectory :: FilePath
 javaTestDirectory = "test" </> "java"
 
-rangesTest :: [RDF.Range] -> FilePath -> (CompilationUnit -> FilePath -> [RDF.Diagnostic]) -> Test
+rangesTest :: [RDF.Range] -> FilePath -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]) -> Test
 rangesTest testRanges path check =
   rangesIOTest testRanges path (\cUnit path -> return $ check cUnit path)
 
-rangesIOTest :: [RDF.Range] -> FilePath -> (CompilationUnit -> FilePath -> IO [RDF.Diagnostic]) -> Test
+rangesIOTest :: [RDF.Range] -> FilePath -> (CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]) -> Test
 rangesIOTest testRanges =
   ruleIOTest (justifyRanges testRanges)
 
-ruleIOTest :: ([RDF.Diagnostic] -> Assertion) -> FilePath -> (CompilationUnit -> FilePath -> IO [RDF.Diagnostic]) -> Test
+ruleIOTest :: ([RDF.Diagnostic] -> Assertion) -> FilePath -> (CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]) -> Test
 ruleIOTest justify path check =
   path ~: do
     dir <- getCurrentDirectory
