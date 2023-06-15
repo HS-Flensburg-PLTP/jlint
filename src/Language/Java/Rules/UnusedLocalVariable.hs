@@ -1,3 +1,5 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Language.Java.Rules.UnusedLocalVariable where
 
 import Control.Monad (MonadPlus (..))
@@ -8,20 +10,20 @@ import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
-checkMethodVars :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkMethodVars :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkMethodVars cUnit path = do
   (methodName, methodBody) <- extractMethods cUnit
   checkIfMethodVarsAreUsed (extractMethodVariables methodBody) (extractMethodVariableUsages methodBody) methodName path
 
-extractMethodVariables :: MethodBody -> [String]
+extractMethodVariables :: MethodBody Parsed -> [String]
 extractMethodVariables methodBody = do
-  names <- universeBi methodBody
+  names :: BlockStmt Parsed <- universeBi methodBody
   extractNames names
   where
     extractNames (LocalVars _ _ _ varDecls) = map (\(VarDecl _ varId _) -> extractVarName varId) varDecls
     extractNames _ = mzero
 
-extractMethodVariableUsages :: MethodBody -> [String]
+extractMethodVariableUsages :: MethodBody Parsed -> [String]
 extractMethodVariableUsages methodBody = do
   usedVariables <- universeBi methodBody
   extractUsedVariables usedVariables
@@ -34,7 +36,7 @@ checkIfMethodVarsAreUsed declaredVars usedVars _ path =
     & filter (`notElem` usedVars)
     & map (\var -> RDF.rangeDiagnostic "Language.Java.Rules.UnusedLocalVariable" ("Variable " ++ var ++ " is declared but never used.") dummySourceSpan path)
 
-checkClassVars :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkClassVars :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkClassVars cUnit path =
   concatMap
     ( \var ->
@@ -44,7 +46,7 @@ checkClassVars cUnit path =
     )
     (extractClassVars cUnit)
 
-checkClassVarUsages :: [(String, MethodBody)] -> String -> Bool
+checkClassVarUsages :: [(String, MethodBody Parsed)] -> String -> Bool
 checkClassVarUsages methods var =
   methods
     & any
@@ -52,9 +54,9 @@ checkClassVarUsages methods var =
           checkClassVarUsageInMethod var (extractMethodVariables body) (extractMethodVariableUsages body)
       )
 
-extractClassVars :: CompilationUnit -> [String]
+extractClassVars :: CompilationUnit Parsed -> [String]
 extractClassVars cUnit = do
-  variables <- universeBi cUnit
+  variables :: MemberDecl Parsed <- universeBi cUnit
   extractVars variables
   where
     extractVars (FieldDecl _ _ _ varDecls) = map (\(VarDecl _ varId _) -> extractVarName varId) varDecls

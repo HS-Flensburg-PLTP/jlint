@@ -4,17 +4,17 @@ module Language.Java.Syntax.BlockStmt
   )
 where
 
-import Language.Java.Pretty (prettyPrint)
+import Language.Java.Pretty (PrettyExtension, prettyPrint)
 import Language.Java.Syntax (BlockStmt (..), Stmt (..))
 import qualified Language.Java.Syntax.Stmt as Stmt
 import qualified Language.Java.Syntax.VarDecl as VarDecl
 
-name :: BlockStmt -> String
+name :: PrettyExtension p => BlockStmt p -> String
 name (BlockStmt _ stmt) = stmtName stmt
 name (LocalClass _) = "lokale Klasse"
 name (LocalVars {}) = "Variablendeklaration"
 
-stmtName :: Stmt -> String
+stmtName :: PrettyExtension p => Stmt p -> String
 stmtName (Return _ _) = "return"
 stmtName (Throw _) = "throw"
 stmtName (StmtBlock _) = "block"
@@ -34,7 +34,7 @@ stmtName (Assert {}) = "assert"
 stmtName (Break {}) = "break"
 stmtName (Continue {}) = "continue"
 
-hasNoSideEffect :: BlockStmt -> Bool
+hasNoSideEffect :: BlockStmt p -> Bool
 hasNoSideEffect (BlockStmt _ stmt) = Stmt.hasNoSideEffect stmt
 hasNoSideEffect (LocalClass _) = False
 hasNoSideEffect (LocalVars _ _ _ varDecls) = all VarDecl.hasNoSideEffect varDecls
