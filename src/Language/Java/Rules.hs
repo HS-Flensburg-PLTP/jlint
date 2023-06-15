@@ -58,13 +58,18 @@ checks =
     UseJavaArrayTypeStyle.check
   ]
 
-checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checksIO :: [CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]]
+checksIO =
+  [ ProhibitGermanNames.check
+  ]
+
+checkAll :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkAll cUnit path = concatMap (\f -> f cUnit path) checks
 
-checkAllIO :: CompilationUnit -> FilePath -> IO [RDF.Diagnostic]
+checkAllIO :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
 checkAllIO = executeAll checksIO
 
-executeAll :: [CompilationUnit -> FilePath -> IO [RDF.Diagnostic]] -> CompilationUnit -> FilePath -> IO [RDF.Diagnostic]
+executeAll :: [CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]] -> CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
 executeAll [] _ _ = return []
 executeAll (check : checks) cUnit path = do
   result <- check cUnit path
