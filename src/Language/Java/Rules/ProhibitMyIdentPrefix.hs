@@ -8,7 +8,7 @@ import qualified Markdown
 import qualified RDF
 import Text.RE.TDFA.String (matched, re, (?=~))
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   ident <- universeBi cUnit
   checkIdent ident path
