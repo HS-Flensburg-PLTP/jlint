@@ -1,19 +1,21 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Language.Java.Rules.NamingConventions (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Function ((&))
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.List.Extra (none)
 import Language.Java.AST (extractMethods)
 import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 import Text.RE.TDFA.String
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path =
   concatMap
     (\c -> c cUnit path)
@@ -28,7 +30,7 @@ check cUnit path =
 
 {- Package Name -}
 
-checkPackageName :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkPackageName :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkPackageName (CompilationUnit (Just pDeckl) _ _) path = checkTLD (extractPackageNames pDeckl) path
 checkPackageName (CompilationUnit {}) _ = []
 
@@ -57,7 +59,7 @@ extractPackageNames (PackageDecl (Name _ packageNames)) = map (\(Ident _ name) -
 
 {- MethodName -}
 
-checkMethodName :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkMethodName :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkMethodName cUnit path = do
   (methodName, _) <- extractMethods cUnit
   checkMethodNames methodName path
@@ -71,14 +73,14 @@ checkMethodNames name path
 
 {- ParameterName -}
 
-checkParameterName :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkParameterName :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkParameterName cUnit path = do
   method <- extractFormalParams cUnit
   checkParameterNames method path
 
-extractFormalParams :: CompilationUnit -> [(String, [String])]
+extractFormalParams :: CompilationUnit Parsed -> [(String, [String])]
 extractFormalParams cUnit = do
-  membDecl <- universeBi cUnit
+  membDecl :: MemberDecl Parsed <- universeBi cUnit
   extractBody membDecl
   where
     extractBody (MethodDecl _ _ _ _ (Ident _ n) formalParams _ _ _) = return (n, map (\(FormalParam _ _ _ _ varDeclIds) -> extractFormalParamName varDeclIds) formalParams)
@@ -92,18 +94,18 @@ checkParameterNames (_, formalParams) path =
 
 {- StaticVariableName -}
 
-checkStaticVariableName :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkStaticVariableName :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkStaticVariableName cUnit path = do
   membDecl <- extractStaticFieldNames cUnit
   checkStaticVariableNames membDecl path
 
-extractStaticFieldNames :: CompilationUnit -> [String]
+extractStaticFieldNames :: CompilationUnit Parsed -> [String]
 extractStaticFieldNames cUnit = do
   fieldNames <- universeBi cUnit
   extractMemberDecl fieldNames
   where
     extractMemberDecl (FieldDecl _ modifier _ varDecls)
-      | Static `elem` modifier = map extractVarName varDecls
+      | any (eq IgnoreSourceSpan Static) modifier = map extractVarName varDecls
       | otherwise = mzero
     extractMemberDecl _ = mzero
 
@@ -114,18 +116,18 @@ checkStaticVariableNames name path
 
 {- LocalFinalVariableName & LocalVariableName -}
 
-checkLocalName :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkLocalName :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkLocalName cUnit path = do
   method <- extractMethods cUnit
   extractLocalFinalVariableNames2 method path
 
-extractLocalFinalVariableNames2 :: (String, MethodBody) -> FilePath -> [RDF.Diagnostic]
+extractLocalFinalVariableNames2 :: (String, MethodBody Parsed) -> FilePath -> [RDF.Diagnostic]
 extractLocalFinalVariableNames2 (_, methodBody) path = do
   fieldNames <- universeBi methodBody
   extractMemberDecl fieldNames
   where
     extractMemberDecl (LocalVars _ modifier _ varDecls)
-      | Final `elem` modifier =
+      | any (eq IgnoreSourceSpan Final) modifier =
           map extractVarName varDecls
             & filter (\name -> not (matched (name ?=~ reCamelCase)))
             & map (\name -> RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" ("Local final variable " ++ name ++ " doesn't match the specifications") dummySourceSpan path)
@@ -137,18 +139,18 @@ extractLocalFinalVariableNames2 (_, methodBody) path = do
 
 {- MemberName -}
 
-checkMemberName :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkMemberName :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkMemberName cUnit path = do
   varNames <- extractNonStaticFieldNames cUnit
   checkMemberNames varNames path
 
-extractNonStaticFieldNames :: CompilationUnit -> [String]
+extractNonStaticFieldNames :: CompilationUnit Parsed -> [String]
 extractNonStaticFieldNames cUnit = do
   fieldNames <- universeBi cUnit
   extractMemberDecl fieldNames
   where
     extractMemberDecl (FieldDecl _ modifier _ varDecls)
-      | Static `notElem` modifier = map extractVarName varDecls
+      | none (eq IgnoreSourceSpan Static) modifier = map extractVarName varDecls
       | otherwise = mzero
     extractMemberDecl _ = mzero
 
@@ -159,21 +161,21 @@ checkMemberNames name path
 
 {- TypeName -}
 
-checkTypeName :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkTypeName :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkTypeName cUnit = checkTypeNames (extractCLassesAndInterfaces cUnit ++ extractEnums cUnit)
 
-extractCLassesAndInterfaces :: CompilationUnit -> [String]
+extractCLassesAndInterfaces :: CompilationUnit Parsed -> [String]
 extractCLassesAndInterfaces cUnit = do
-  classesAndInterfaces <- universeBi cUnit
+  classesAndInterfaces :: TypeDecl Parsed <- universeBi cUnit
   extractCLassAndInterface classesAndInterfaces
   where
     extractCLassAndInterface (ClassTypeDecl (ClassDecl _ _ (Ident _ n) _ _ _ _)) = return n
     extractCLassAndInterface (InterfaceTypeDecl (InterfaceDecl _ _ _ (Ident _ n) _ _ _ _)) = return n
     extractCLassAndInterface _ = mzero
 
-extractEnums :: CompilationUnit -> [String]
+extractEnums :: CompilationUnit Parsed -> [String]
 extractEnums cUnit = do
-  enums <- universeBi cUnit
+  enums :: ClassDecl Parsed <- universeBi cUnit
   extractEnum enums
   where
     extractEnum (EnumDecl _ _ (Ident _ n) _ _) = return n
@@ -201,7 +203,7 @@ rePascalCase = [re|^[A-Z][a-zA-Z0-9]*$|]
 
 {- Helper -}
 
-extractVarName :: VarDecl -> String
+extractVarName :: VarDecl Parsed -> String
 extractVarName (VarDecl _ id _) = extractFormalParamName id
 
 extractFormalParamName :: VarDeclId -> String

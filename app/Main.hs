@@ -1,15 +1,18 @@
 module Main where
 
 import CheckstyleXML (toRDF)
+import Config
 import Control.Monad (MonadPlus (..), unless, when)
+import Data.Aeson (decodeFileStrict, eitherDecodeFileStrict)
 import qualified Data.ByteString.Lazy.Char8 as C
 import Data.Semigroup ((<>))
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
-import Language.Java.Rules (checkAll)
-import Language.Java.Syntax (CompilationUnit)
+import Language.Java.Rules (checkAll, checkWithConfig)
+import Language.Java.Syntax (CompilationUnit, Parsed)
 import Options.Applicative
 import RDF
+import System.Directory
 import System.Exit (ExitCode (ExitFailure), exitSuccess, exitWith)
 import System.FilePath.Find (always, extension, find, (==?))
 import System.IO (IOMode (ReadMode), char8, hGetContents, hPutStrLn, hSetEncoding, openFile, stderr)
@@ -92,9 +95,9 @@ readAllFiles paths =
             readAllFilesHelp restPaths ((file, path) : fileList)
    in readAllFilesHelp paths mzero
 
-parseAllFiles :: [(String, FilePath)] -> ([(Text.Parsec.Error.ParseError, FilePath)], [(CompilationUnit, FilePath)])
+parseAllFiles :: [(String, FilePath)] -> ([(Text.Parsec.Error.ParseError, FilePath)], [(CompilationUnit Parsed, FilePath)])
 parseAllFiles files =
-  let parseAllfilesHelp :: [(String, FilePath)] -> ([(Text.Parsec.Error.ParseError, FilePath)], [(CompilationUnit, FilePath)]) -> ([(Text.Parsec.Error.ParseError, FilePath)], [(CompilationUnit, FilePath)])
+  let parseAllfilesHelp :: [(String, FilePath)] -> ([(Text.Parsec.Error.ParseError, FilePath)], [(CompilationUnit Parsed, FilePath)]) -> ([(Text.Parsec.Error.ParseError, FilePath)], [(CompilationUnit Parsed, FilePath)])
       parseAllfilesHelp fileList (errorList, cUnitList) =
         case fileList of
           [] ->
@@ -118,8 +121,19 @@ parseJava rootDir pretty showAST checkstyleDiags =
       then do
         print cUnitResults
       else do
+        configExists <- doesFileExist configFile
+        diagnostics <- do
+          if configExists
+            then do
+              config <- eitherDecodeFileStrict configFile :: IO (Either String [Config])
+              case config of
+                Left error -> do
+                  putStrLn ("Error beim parsen der Config-Datei: " ++ error)
+                  return (concatMap (uncurry checkAll) cUnitResults)
+                Right config -> return (concatMap (uncurry (checkWithConfig config)) cUnitResults)
+            else return (concatMap (uncurry checkAll) cUnitResults)
+
         let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
-        let diagnostics = concatMap (uncurry checkAll) cUnitResults
         let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
         C.putStrLn
           ( RDF.encodetojson
@@ -141,3 +155,6 @@ parseJava rootDir pretty showAST checkstyleDiags =
           else do
             hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
             exitWith (ExitFailure numberOfHints)
+
+configFile :: String
+configFile = "config.json"

@@ -5,13 +5,8 @@ module Language.Java.Rules.ReduceScope (check) where
 import Control.Monad (MonadPlus (..))
 import Data.Data (Data)
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.List.Extra (none)
 import Language.Java.Syntax
-  ( BlockStmt (BlockStmt, LocalVars),
-    CompilationUnit,
-    Ident,
-    Name (Name),
-    Stmt (..),
-  )
 import qualified Language.Java.Syntax.BlockStmt as BlockStmt
 import qualified Language.Java.Syntax.Exp as Exp
 import qualified Language.Java.Syntax.Ident as Ident
@@ -20,7 +15,7 @@ import qualified Language.Java.Syntax.VarDecl as VarDecl
 import qualified Markdown
 import qualified RDF (Diagnostic, rangeDiagnostic)
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit filePath = do
   blockStmts <- universeBi cUnit
   checkBlockStmts blockStmts
@@ -29,10 +24,10 @@ check cUnit filePath = do
       reduceScopeInBlockStmts (map VarDecl.ident vars) stmts filePath
     checkBlockStmts _ = mzero
 
-reduceScopeInBlockStmts :: [Ident] -> [BlockStmt] -> FilePath -> [RDF.Diagnostic]
+reduceScopeInBlockStmts :: [Ident] -> [BlockStmt Parsed] -> FilePath -> [RDF.Diagnostic]
 reduceScopeInBlockStmts declVars (BlockStmt span stmt : blockStmts) filePath =
-  let varsNotInStmt = filter (`notElem` variables stmt) declVars
-      varsNotInStmts = filter (`notElem` variables blockStmts) declVars
+  let varsNotInStmt = filter (\declVar -> none (eq IgnoreSourceSpan declVar) (variables stmt)) declVars
+      varsNotInStmts = filter (\declVar -> none (eq IgnoreSourceSpan declVar) (variables blockStmts)) declVars
    in if Stmt.hasNoSideEffect stmt
         then
           if null varsNotInStmt
@@ -48,17 +43,17 @@ reduceScopeInBlockStmts declVars (BlockStmt span stmt : blockStmts) filePath =
                 )
                 varsNotInStmt
         else reduceScopeInIf varsNotInStmts stmt filePath
-reduceScopeInBlockStmts declVars (blockStmt@(LocalVars _ _ _ _) : blockStmts) filePath =
-  let varsNotInStmt = filter (`notElem` variables blockStmt) declVars
+reduceScopeInBlockStmts declVars (blockStmt@(LocalVars {}) : blockStmts) filePath =
+  let varsNotInStmt = filter (\declVar -> none (eq IgnoreSourceSpan declVar) (variables blockStmt)) declVars
    in {- We could be more precise in checking the side effects of the right-hand sides of the declarations separately. -}
       if BlockStmt.hasNoSideEffect blockStmt && null varsNotInStmt
         then mzero
         else reduceScopeInBlockStmts varsNotInStmt blockStmts filePath
 reduceScopeInBlockStmts _ _ _ = mzero
 
-reduceScopeInIf :: [Ident] -> Stmt -> FilePath -> [RDF.Diagnostic]
+reduceScopeInIf :: [Ident] -> Stmt Parsed -> FilePath -> [RDF.Diagnostic]
 reduceScopeInIf declVars (IfThenElse span condition thenStmt elseStmt) path =
-  let varsNotInCondition = filter (`notElem` variables condition) declVars
+  let varsNotInCondition = filter (\declVar -> none (eq IgnoreSourceSpan declVar) (variables condition)) declVars
    in if Exp.hasNoSideEffect condition
         then
           if null varsNotInCondition
@@ -66,7 +61,7 @@ reduceScopeInIf declVars (IfThenElse span condition thenStmt elseStmt) path =
             else
               let varsNotInThenOrElse =
                     filter
-                      (\var -> var `notElem` variables thenStmt || var `notElem` variables elseStmt)
+                      (\var -> none (eq IgnoreSourceSpan var) (variables thenStmt) || none (eq IgnoreSourceSpan var) (variables elseStmt))
                       varsNotInCondition
                in if null varsNotInThenOrElse
                     then mzero

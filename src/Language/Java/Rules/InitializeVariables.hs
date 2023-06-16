@@ -1,25 +1,18 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Language.Java.Rules.InitializeVariables (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
-  ( AssignOp (EqualA),
-    BlockStmt (BlockStmt, LocalVars),
-    CompilationUnit,
-    Exp (..),
-    Ident,
-    Lhs (NameLhs),
-    Name (Name),
-    Stmt (ExpStmt),
-  )
 import qualified Language.Java.Syntax.Ident as Ident
 import qualified Language.Java.Syntax.VarDecl as VarDecl
 import qualified Markdown
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  blocks <- universeBi cUnit
+  blocks :: [BlockStmt Parsed] <- universeBi cUnit
   checkBlocks blocks
   where
     checkBlocks
@@ -28,7 +21,7 @@ check cUnit path = do
           : _
         ) =
         let nonInitializedIdents = map VarDecl.ident (filter (not . VarDecl.isInitialized) varDecls)
-         in if ident `elem` nonInitializedIdents
+         in if any (eq IgnoreSourceSpan ident) nonInitializedIdents
               then
                 [ RDF.rangeDiagnostic
                     "Language.Java.Rules.InitializeVariables"

@@ -4,19 +4,14 @@ import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.List (intercalate)
 import Language.Java.Syntax
-  ( Block (Block),
-    BlockStmt (BlockStmt),
-    CompilationUnit,
-    Stmt (..),
-  )
 import Language.Java.Syntax.BlockStmt as BlockStmt (name)
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path =
   checkIfWithoutElse cUnit path ++ checkCodeAfterIfThenElse cUnit path
 
-checkIfWithoutElse :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkIfWithoutElse :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkIfWithoutElse cUnit path = do
   blocks <- universeBi cUnit
   checkBlocks blocks
@@ -35,7 +30,7 @@ checkIfWithoutElse cUnit path = do
         else mzero
     checkBlocks _ = mzero
 
-checkCodeAfterIfThenElse :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkCodeAfterIfThenElse :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkCodeAfterIfThenElse cUnit path = do
   blocks <- universeBi cUnit
   checkBlocks blocks
@@ -54,11 +49,11 @@ checkCodeAfterIfThenElse cUnit path = do
         else mzero
     checkBlocks _ = mzero
 
-message :: [BlockStmt] -> String
+message :: [BlockStmt Parsed] -> String
 message blockStmts =
   "Der `then`- oder der `else`-Zweig der `if`-Anweisung verlässt immer die Methode. Daher sollte nach der gesamten `if`-Anweisung keine weitere Anweisung folgen. Auf die `if`-Anweisung folgen: " ++ intercalate ", " (map BlockStmt.name blockStmts)
 
-doesAlwaysExit :: Stmt -> Bool
+doesAlwaysExit :: Stmt Parsed -> Bool
 doesAlwaysExit (Return _ _) = True
 doesAlwaysExit (Throw _) = True
 doesAlwaysExit (StmtBlock (Block [])) = False
@@ -78,6 +73,6 @@ doesAlwaysExit (Try {}) = False
 doesAlwaysExit (Labeled _ stmt) = doesAlwaysExit stmt
 doesAlwaysExit _ = False
 
-doesBlockAlwaysExit :: BlockStmt -> Bool
+doesBlockAlwaysExit :: BlockStmt Parsed -> Bool
 doesBlockAlwaysExit (BlockStmt _ stmt) = doesAlwaysExit stmt
 doesBlockAlwaysExit _ = False

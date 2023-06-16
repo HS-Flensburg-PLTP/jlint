@@ -1,23 +1,18 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Language.Java.Rules.PreferExpressions (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Data (Data)
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.List.Extra (none)
 import Language.Java.Syntax
-  ( BlockStmt (BlockStmt, LocalVars),
-    CompilationUnit,
-    Exp (..),
-    Ident,
-    Lhs (NameLhs),
-    Name (Name),
-    Stmt (ExpStmt),
-  )
 import qualified Language.Java.Syntax.Ident as Ident
 import qualified Language.Java.Syntax.VarDecl as VarDecl
 import qualified Markdown
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   blocks <- universeBi cUnit
   checkBlocks blocks
@@ -31,7 +26,7 @@ check cUnit path = do
           Nothing -> mzero
           Just var ->
             let declVars = map VarDecl.ident (filter VarDecl.isInitialized vars)
-             in if var `elem` declVars
+             in if any (eq IgnoreSourceSpan var) declVars
                   then
                     return
                       ( RDF.rangeDiagnostic
@@ -50,7 +45,7 @@ check cUnit path = do
           (Nothing, _) -> mzero
           (Just _, Nothing) -> mzero
           (Just ident1, Just ident2) ->
-            if ident1 == ident2
+            if eq IgnoreSourceSpan ident1 ident2
               then
                 return
                   ( RDF.rangeDiagnostic
@@ -68,9 +63,9 @@ check cUnit path = do
         case filterVarUpdate exp of
           Nothing -> mzero
           Just ident ->
-            if length (filter (== ident) (variablesRead stmt)) == 1
-              && ident `notElem` variablesWritten stmt
-              && ident `notElem` variablesRead stmts
+            if length (filter (eq IgnoreSourceSpan ident) (variablesRead stmt)) == 1
+              && none (eq IgnoreSourceSpan ident) (variablesWritten stmt)
+              && none (eq IgnoreSourceSpan ident) (variablesRead stmts)
               then
                 return
                   ( RDF.rangeDiagnostic
@@ -82,7 +77,7 @@ check cUnit path = do
               else mzero
     checkBlocks _ = mzero
 
-filterVarUpdate :: Exp -> Maybe Ident
+filterVarUpdate :: Exp Parsed -> Maybe Ident
 filterVarUpdate (PostIncrement _ (ExpName (Name _ [ident]))) = Just ident
 filterVarUpdate (PostDecrement _ (ExpName (Name _ [ident]))) = Just ident
 filterVarUpdate (PreIncrement _ (ExpName (Name _ [ident]))) = Just ident
@@ -91,10 +86,10 @@ filterVarUpdate (Assign _ (NameLhs (Name _ [ident])) _ _) = Just ident
 filterVarUpdate _ = Nothing
 
 variablesRead :: (Data a) => a -> [Ident]
-variablesRead parent = [ident | ExpName (Name _ idents) <- universeBi parent, ident <- idents]
+variablesRead parent = [ident | ExpName (Name _ idents) :: Exp Parsed <- universeBi parent, ident <- idents]
 
 variablesWritten :: (Data a) => a -> [Ident]
-variablesWritten parent = [ident | Assign _ (NameLhs (Name _ [ident])) _ _ <- universeBi parent]
+variablesWritten parent = [ident | Assign _ (NameLhs (Name _ [ident])) _ _ :: Exp Parsed <- universeBi parent]
 
 assignedTwiceMessage :: Ident -> String
 assignedTwiceMessage ident =
