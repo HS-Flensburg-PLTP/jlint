@@ -4,6 +4,7 @@ module Language.Java.Rules.ProhibitMyIdentPrefix where
 
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
+import qualified Markdown
 import qualified RDF
 import Text.RE.TDFA.String (matched, re, (?=~))
 
