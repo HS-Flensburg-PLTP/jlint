@@ -5,7 +5,7 @@ import Language.Java.SourceSpan (SourceSpan, sourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check (CompilationUnit _ _ (_ : typeDecl : _)) path = [message (sourceSpan typeDecl) path]
 check _ _ = mzero
 

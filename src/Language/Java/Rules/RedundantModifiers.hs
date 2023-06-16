@@ -1,3 +1,5 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Language.Java.Rules.RedundantModifiers (check) where
 
 import Control.Monad (MonadPlus (..))
@@ -7,18 +9,18 @@ import Language.Java.Syntax
 import qualified Markdown
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  InterfaceDecl _ InterfaceNormal _ _ _ _ _ body <- universeBi cUnit
+  InterfaceDecl _ InterfaceNormal _ _ _ _ _ body :: InterfaceDecl Parsed <- universeBi cUnit
   memberDecl <- universeBi body
   mod <- methodModifiers memberDecl
   checkModifier path mod
 
-methodModifiers :: MemberDecl -> [Modifier]
+methodModifiers :: MemberDecl Parsed -> [Modifier Parsed]
 methodModifiers (MethodDecl _ modifiers _ _ _ _ _ _ _) = modifiers
 methodModifiers _ = []
 
-checkModifier :: FilePath -> Modifier -> [RDF.Diagnostic]
+checkModifier :: FilePath -> Modifier Parsed -> [RDF.Diagnostic]
 checkModifier path mod@(Public span) = return (diagnostic path span (show mod))
 checkModifier path mod@(Abstract span) = return (diagnostic path span (show mod))
 checkModifier _ _ = mzero
