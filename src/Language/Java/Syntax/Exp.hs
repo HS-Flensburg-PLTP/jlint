@@ -3,7 +3,7 @@ module Language.Java.Syntax.Exp (hasNoSideEffect) where
 import Language.Java.Syntax (Exp (..))
 
 hasNoSideEffect :: Exp p -> Bool
-hasNoSideEffect (Lit _) = True
+hasNoSideEffect (Lit _ _) = True
 hasNoSideEffect (ClassLit _) = False
 hasNoSideEffect This = False
 hasNoSideEffect (ThisClass {}) = False
