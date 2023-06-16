@@ -5,13 +5,13 @@ import Language.Java.SourceSpan
 import Language.Java.Syntax
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   let exps = universeBi cUnit
   let pairs = concatMap checkStringLiteral exps
   checkForDuplicates pairs [] path
 
-checkStringLiteral :: Exp -> [(SourceSpan, String)]
+checkStringLiteral :: Exp Parsed -> [(SourceSpan, String)]
 checkStringLiteral (Lit (String string)) = [(dummySourceSpan, string)]
 checkStringLiteral _ = []
 
