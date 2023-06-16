@@ -3,7 +3,7 @@ module Language.Java.Syntax.Stmt (hasNoSideEffect) where
 import Language.Java.Syntax (Stmt (..))
 
 -- Identifies statements that do not cause side effects concerning class attributes
-hasNoSideEffect :: Stmt -> Bool
+hasNoSideEffect :: Stmt p -> Bool
 hasNoSideEffect (StmtBlock {}) = False
 hasNoSideEffect (IfThen {}) = False
 hasNoSideEffect (IfThenElse {}) = False
