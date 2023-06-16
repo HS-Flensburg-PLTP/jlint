@@ -9,6 +9,7 @@ import qualified DeclarationOrderTests
 import qualified DefaultComesLastTests
 import qualified InitializeVariablesTests
 import qualified ModifiedControlVariableTests
+import qualified MultipleStringLiteralsTests
 import qualified NamingConventionsTests
 import qualified NeedBracesTests
 import qualified NoLoopBreakTests
