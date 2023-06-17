@@ -21,6 +21,9 @@
         "rule": "ConsistentOverrideEqualsHashCode"
     },
     {
+        "rule": "ConstantPropagation"
+    },
+    {
         "rule": "DefaultComesLast"
     },
     {

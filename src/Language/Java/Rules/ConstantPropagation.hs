@@ -2,8 +2,11 @@ module Language.Java.Rules.ConstantPropagation (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
-import Language.Java.SourceSpan (dummySourceSpan)
+import Data.List (intercalate)
+import Language.Java.Pretty (prettyPrint)
+import Language.Java.SourceSpan
 import Language.Java.Syntax
+import qualified Language.Java.Syntax.Ident as Ident
 import qualified RDF
 
 check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
@@ -11,24 +14,22 @@ check cUnit path = do
   stmt <- universeBi cUnit
   checkStmt stmt
   where
-    checkStmt (IfThen _ (BinOp otherExp Equal (Lit lit)) thenStmt) = do
-      test <- universeBi thenStmt
-      case test of
-        (MethodCall _ [innerExp]) ->
-          if innerExp == otherExp
-            then
-              [ RDF.rangeDiagnostic
-                  "Language.Java.Rules.ConstantPropagation"
-                  "ConstantPropagation"
-                  dummySourceSpan
-                  path
-              ]
-            else mzero
-        _ -> mzero
-    checkStmt (IfThen _ (BinOp (Lit lit) Equal otherExp) thenStmt) =
-      mzero
-    checkStmt (IfThenElse _ (BinOp otherExp Equal (Lit lit)) thenStmt elseStmt) =
-      mzero
-    checkStmt (IfThenElse _ (BinOp (Lit lit) Equal otherExp) thenStmt elseStmt) =
-      mzero
+    checkStmt (IfThen span (BinOp (ExpName outerName) Equal (Lit lit)) thenStmt) = checkInnerStmt span path thenStmt outerName lit
+    checkStmt (IfThen span (BinOp (Lit lit) Equal (ExpName outerName)) thenStmt) = checkInnerStmt span path thenStmt outerName lit
     checkStmt _ = mzero
+
+checkInnerStmt :: SourceSpan -> FilePath -> Stmt -> Name -> Literal -> [RDF.Diagnostic]
+checkInnerStmt span path thenStmt outerName@(Name _ ident) lit = do
+  exp <- universeBi thenStmt
+  case exp of
+    (ExpName innerName) ->
+      if eq IgnoreSourceSpan outerName innerName
+        then
+          [ RDF.rangeDiagnostic
+              "Language.Java.Rules.ConstantPropagation"
+              ("Anstatt im then-Fall erneut " ++ intercalate ", " (map Ident.name ident) ++ " zu verwenden, kann hier direkt das Literal " ++ prettyPrint lit ++ " verwendet werden.")
+              span
+              path
+          ]
+        else mzero
+    _ -> mzero

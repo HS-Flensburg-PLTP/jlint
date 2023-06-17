@@ -9,6 +9,7 @@ import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
 import qualified Language.Java.Rules.CheckNonFinalMethodAttributes as CheckNonFinalMethodAttributes
 import qualified Language.Java.Rules.CheckNonPrivateAttributes as CheckNonPrivateAttributes
 import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
+import qualified Language.Java.Rules.ConstantPropagation as ConstantPropagation
 import qualified Language.Java.Rules.DeclarationOrder as DeclarationOrder
 import qualified Language.Java.Rules.DefaultComesLast as DefaultComesLast
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
@@ -42,6 +43,7 @@ checks =
     AvoidNegations.check,
     AvoidStarImport.check,
     ConsistentOverrideEqualsHashCode.check,
+    ConstantPropagation.check,
     InitializeVariables.check,
     ModifiedControlVariable.check,
     NoNullPointerExceptionsForControl.check,
@@ -76,6 +78,7 @@ checkMapping =
       ("CheckNonFinalMethodAttributes", CheckNonFinalMethodAttributes.check),
       ("CheckNonPrivateAttributes", CheckNonPrivateAttributes.check),
       ("ConsistentOverrideEqualsHashCode", ConsistentOverrideEqualsHashCode.check),
+      ("ConstantPropagation", ConstantPropagation.check),
       ("DefaultComesLast", DefaultComesLast.check),
       ("InitializeVariables", InitializeVariables.check),
       ("NamingConventions", NamingConventions.check),
