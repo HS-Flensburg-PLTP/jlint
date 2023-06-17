@@ -1,11 +1,53 @@
 [
     {
+        "rule": "AvoidMultipleTopLevelDecl"
+    },
+    {
+        "rule": "AvoidMultipleVarDecl"
+    },
+    {
+        "rule": "AvoidNegations"
+    },
+    {
+        "rule": "AvoidStarImport"
+    },
+    {
+        "rule": "ConsistentOverrideEqualsHashCode"
+    },
+    {
+        "rule": "InitializeVariables"
+    },
+    {
+        "rule": "NoNullPointerExceptionsForControl"
+    },
+    {
         "rule": "ParameterNumber",
-        "min": 6,
-        "max": 5
+        "min": 0,
+        "max": 6
+    },
+    {
+        "rule": "PreferExpressions"
     },
     {
         "rule": "ProhibitAnnotations",
         "whitelist": []
+    },
+    {
+        "rule": "ReduceScope"
+    },
+    {
+        "rule": "RedundantModifiers"
+    },
+    {
+        "rule": "UseAssignOp"
+    },
+    {
+        "rule": "UseElse"
+    },
+    {
+        "rule": "UseIncrementDecrementOperator"
+    },
+    {
+        "rule": "UseJavaArrayTypeStyle"
     }
 ]

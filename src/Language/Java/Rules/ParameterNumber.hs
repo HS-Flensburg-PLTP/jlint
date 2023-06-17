@@ -1,21 +1,20 @@
 module Language.Java.Rules.ParameterNumber (check, checkWithDefaultValue) where
 
-import Config
 import Control.Monad (MonadPlus (mzero))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
 import qualified RDF
 
 check :: Maybe Int -> Maybe Int -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
-check (Just max) (Just min) cUnit path = doCheck max cUnit path
-check Nothing Nothing cUnit path = doCheck maxNumber cUnit path
-check _ _ cUnit path = doCheck maxNumber cUnit path
+check (Just max) (Just min) cUnit path = doCheck min max cUnit path
+check Nothing Nothing cUnit path = doCheck minNumber maxNumber cUnit path
+check _ _ cUnit path = doCheck minNumber maxNumber cUnit path
 
 checkWithDefaultValue :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
-checkWithDefaultValue = doCheck maxNumber
+checkWithDefaultValue = doCheck minNumber maxNumber
 
-doCheck :: Int -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
-doCheck max cUnit path = do
+doCheck :: Int -> Int -> CompilationUnit -> FilePath -> [RDF.Diagnostic]
+doCheck min max cUnit path = do
   MethodDecl span _ _ _ _ paramList _ _ _ <- universeBi cUnit
   if length paramList > max
     then
@@ -26,7 +25,20 @@ doCheck max cUnit path = do
             span
             path
         )
-    else mzero
+    else
+      if length paramList < min
+        then
+          return
+            ( RDF.rangeDiagnostic
+                "Language.Java.Rules.ParameterNumber"
+                ("Es sollten nicht weniger als " ++ show min ++ " Parameter für eine Funktion verwendet werden.")
+                span
+                path
+            )
+        else mzero
 
 maxNumber :: Int
 maxNumber = 7
+
+minNumber :: Int
+minNumber = 0
