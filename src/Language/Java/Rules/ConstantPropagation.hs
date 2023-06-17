@@ -1,3 +1,5 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Language.Java.Rules.ConstantPropagation (check) where
 
 import Control.Monad (MonadPlus (..))
@@ -9,7 +11,7 @@ import Language.Java.Syntax
 import qualified Language.Java.Syntax.Ident as Ident
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   stmt <- universeBi cUnit
   checkStmt stmt
@@ -18,9 +20,9 @@ check cUnit path = do
     checkStmt (IfThen span (BinOp (Lit lit) Equal (ExpName outerName)) thenStmt) = checkInnerStmt span path thenStmt outerName lit
     checkStmt _ = mzero
 
-checkInnerStmt :: SourceSpan -> FilePath -> Stmt -> Name -> Literal -> [RDF.Diagnostic]
+checkInnerStmt :: SourceSpan -> FilePath -> Stmt Parsed -> Name -> Literal -> [RDF.Diagnostic]
 checkInnerStmt span path thenStmt outerName@(Name _ ident) lit = do
-  exp <- universeBi thenStmt
+  exp :: Exp Parsed <- universeBi thenStmt
   case exp of
     (ExpName innerName) ->
       if eq IgnoreSourceSpan outerName innerName
