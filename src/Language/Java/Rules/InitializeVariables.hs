@@ -1,3 +1,5 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Language.Java.Rules.InitializeVariables (check) where
 
 import Control.Monad (MonadPlus (..))
@@ -8,9 +10,9 @@ import qualified Language.Java.Syntax.VarDecl as VarDecl
 import qualified Markdown
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  blocks <- universeBi cUnit
+  blocks :: [BlockStmt Parsed] <- universeBi cUnit
   checkBlocks blocks
   where
     checkBlocks

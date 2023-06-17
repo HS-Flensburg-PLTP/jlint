@@ -2,7 +2,7 @@ module Tests (rangesTest) where
 
 import Control.Monad (zipWithM_)
 import Language.Java.Parser (compilationUnit, parser)
-import Language.Java.Syntax (CompilationUnit)
+import Language.Java.Syntax (CompilationUnit, Parsed)
 import qualified RDF
 import System.Directory (getCurrentDirectory)
 import System.FilePath ((</>))
@@ -11,11 +11,11 @@ import Test.HUnit
 javaTestDirectory :: FilePath
 javaTestDirectory = "test" </> "java"
 
-rangesTest :: [RDF.Range] -> FilePath -> (CompilationUnit -> FilePath -> [RDF.Diagnostic]) -> Test
+rangesTest :: [RDF.Range] -> FilePath -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]) -> Test
 rangesTest testRanges =
   ruleTest (justifyRanges testRanges)
 
-ruleTest :: ([RDF.Diagnostic] -> Assertion) -> FilePath -> (CompilationUnit -> FilePath -> [RDF.Diagnostic]) -> Test
+ruleTest :: ([RDF.Diagnostic] -> Assertion) -> FilePath -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]) -> Test
 ruleTest justify path check =
   path ~: do
     dir <- getCurrentDirectory

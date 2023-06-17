@@ -1,3 +1,5 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Language.Java.Rules.UseAssignOp (check) where
 
 import Control.Monad (MonadPlus (..))
@@ -6,9 +8,9 @@ import Language.Java.Pretty (prettyPrint)
 import Language.Java.Syntax
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  stmt <- universeBi cUnit
+  stmt :: Stmt Parsed <- universeBi cUnit
   checkStmt stmt
   where
     checkStmt (ExpStmt range (Assign _ (NameLhs name1) EqualA (BinOp (ExpName name2) op _))) =
