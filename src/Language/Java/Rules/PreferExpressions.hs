@@ -1,3 +1,5 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Language.Java.Rules.PreferExpressions (check) where
 
 import Control.Monad (MonadPlus (..))
@@ -10,7 +12,7 @@ import qualified Language.Java.Syntax.VarDecl as VarDecl
 import qualified Markdown
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   blocks <- universeBi cUnit
   checkBlocks blocks
@@ -75,7 +77,7 @@ check cUnit path = do
               else mzero
     checkBlocks _ = mzero
 
-filterVarUpdate :: Exp -> Maybe Ident
+filterVarUpdate :: Exp Parsed -> Maybe Ident
 filterVarUpdate (PostIncrement _ (ExpName (Name _ [ident]))) = Just ident
 filterVarUpdate (PostDecrement _ (ExpName (Name _ [ident]))) = Just ident
 filterVarUpdate (PreIncrement _ (ExpName (Name _ [ident]))) = Just ident
@@ -84,10 +86,10 @@ filterVarUpdate (Assign _ (NameLhs (Name _ [ident])) _ _) = Just ident
 filterVarUpdate _ = Nothing
 
 variablesRead :: (Data a) => a -> [Ident]
-variablesRead parent = [ident | ExpName (Name _ idents) <- universeBi parent, ident <- idents]
+variablesRead parent = [ident | ExpName (Name _ idents) :: Exp Parsed <- universeBi parent, ident <- idents]
 
 variablesWritten :: (Data a) => a -> [Ident]
-variablesWritten parent = [ident | Assign _ (NameLhs (Name _ [ident])) _ _ <- universeBi parent]
+variablesWritten parent = [ident | Assign _ (NameLhs (Name _ [ident])) _ _ :: Exp Parsed <- universeBi parent]
 
 assignedTwiceMessage :: Ident -> String
 assignedTwiceMessage ident =

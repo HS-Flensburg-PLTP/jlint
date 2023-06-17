@@ -1,3 +1,5 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Language.Java.Rules.ModifiedControlVariable where
 
 import Control.Monad (MonadPlus (..))
@@ -8,14 +10,14 @@ import Language.Java.Syntax
 import qualified Language.Java.Syntax.VarDecl as VarDecl
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   stmt <- universeBi cUnit
   checkBasicFor stmt path
 
-checkBasicFor :: Stmt -> FilePath -> [RDF.Diagnostic]
+checkBasicFor :: Stmt Parsed -> FilePath -> [RDF.Diagnostic]
 checkBasicFor (BasicFor _ (Just (ForLocalVars _ _ forVarDecls)) _ _ forStmt) path = do
-  expr <- universeBi forStmt
+  expr :: Exp Parsed <- universeBi forStmt
   checkBasicForExprForModifiedControlVariable expr
   where
     controlVariables = map VarDecl.ident forVarDecls
