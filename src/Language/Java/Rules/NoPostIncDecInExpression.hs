@@ -4,16 +4,17 @@ import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  varInit <- universeBi cUnit
-  checkVarInits varInit path
+  statement <- universeBi cUnit
+  checkStatement statement path
 
-checkVarInits :: VarInit -> FilePath -> [RDF.Diagnostic]
-checkVarInits (InitExp exp) path = checkExpression exp path
-checkVarInits _ _ = []
+checkStatement :: Stmt Parsed -> FilePath -> [RDF.Diagnostic]
+checkStatement (ExpStmt _ expression) path = checkExpression expression path
+checkStatement (BasicFor _ _ _ (Just expressions) _) path = concatMap (`checkExpression` path) expressions
+checkStatement _ _ = []
 
-checkExpression :: Exp -> FilePath -> [RDF.Diagnostic]
+checkExpression :: Exp Parsed -> FilePath -> [RDF.Diagnostic]
 checkExpression (PostIncrement sourceSpan exp) path =
   RDF.rangeDiagnostic
     "Language.Java.Rules.NoPostIncDecInExpression"
@@ -29,3 +30,9 @@ checkExpression (PostDecrement sourceSpan exp) path =
     path :
   checkExpression exp path
 checkExpression _ _ = []
+
+{-
+ExpStmt Exp
+BasicFor (Maybe ForInit) (Maybe Exp) (Maybe [Exp]) Stmt
+
+-}
