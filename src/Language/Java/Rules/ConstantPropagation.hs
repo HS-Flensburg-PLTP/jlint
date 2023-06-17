@@ -16,12 +16,14 @@ check cUnit path = do
   stmt <- universeBi cUnit
   checkStmt stmt
   where
-    checkStmt (IfThen span (BinOp (ExpName outerName) Equal (Lit lit)) thenStmt) = checkInnerStmt span path thenStmt outerName lit
-    checkStmt (IfThen span (BinOp (Lit lit) Equal (ExpName outerName)) thenStmt) = checkInnerStmt span path thenStmt outerName lit
+    checkStmt (IfThen span (BinOp (ExpName outerName) Equal (Lit lit)) thenStmt) = checkInnerStmt span path thenStmt outerName lit "then"
+    checkStmt (IfThen span (BinOp (Lit lit) Equal (ExpName outerName)) thenStmt) = checkInnerStmt span path thenStmt outerName lit "then"
+    checkStmt (IfThenElse span (BinOp (ExpName outerName) NotEq (Lit lit)) _ elseStmt) = checkInnerStmt span path elseStmt outerName lit "else"
+    checkStmt (IfThenElse span (BinOp (Lit lit) NotEq (ExpName outerName)) _ elseStmt) = checkInnerStmt span path elseStmt outerName lit "else"
     checkStmt _ = mzero
 
-checkInnerStmt :: SourceSpan -> FilePath -> Stmt Parsed -> Name -> Literal -> [RDF.Diagnostic]
-checkInnerStmt span path thenStmt outerName@(Name _ ident) lit = do
+checkInnerStmt :: SourceSpan -> FilePath -> Stmt Parsed -> Name -> Literal -> String -> [RDF.Diagnostic]
+checkInnerStmt span path thenStmt outerName@(Name _ ident) lit ifcase = do
   exp :: Exp Parsed <- universeBi thenStmt
   case exp of
     (ExpName innerName) ->
@@ -29,7 +31,7 @@ checkInnerStmt span path thenStmt outerName@(Name _ ident) lit = do
         then
           [ RDF.rangeDiagnostic
               "Language.Java.Rules.ConstantPropagation"
-              ("Anstatt im then-Fall erneut " ++ intercalate ", " (map Ident.name ident) ++ " zu verwenden, kann hier direkt das Literal " ++ prettyPrint lit ++ " verwendet werden.")
+              ("Anstatt im " ++ ifcase ++ "-Fall erneut " ++ intercalate ", " (map Ident.name ident) ++ " zu verwenden, kann hier direkt das Literal " ++ prettyPrint lit ++ " verwendet werden.")
               span
               path
           ]

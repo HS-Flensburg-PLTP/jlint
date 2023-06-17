@@ -11,6 +11,20 @@ class ConstantPropagation {
 
         }
 
+        if (index != 0) {
+            this.first = new DLNode<T>(null, value, null);
+            this.last = this.first;
+        } else {
+            this.first = new DLNode<T>(null, value, nodeAt(index));
+        }
+
+        if (0 != index) {
+            this.first = new DLNode<T>(null, value, null);
+            this.last = this.first;
+        } else {
+            this.first = new DLNode<T>(null, value, nodeAt(index));
+        }
+
         if (0 == index) {
             this.first = new DLNode<T>(null, value, null);
             this.last = this.first;
