@@ -4,11 +4,9 @@ module Language.Java.Rules.ConstantPropagation (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
-import Data.List (intercalate)
 import Language.Java.Pretty (prettyPrint)
 import Language.Java.SourceSpan
 import Language.Java.Syntax
-import qualified Language.Java.Syntax.Ident as Ident
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -23,7 +21,7 @@ check cUnit path = do
     checkStmt _ = mzero
 
 checkInnerStmt :: SourceSpan -> FilePath -> Stmt Parsed -> Name -> Literal -> String -> [RDF.Diagnostic]
-checkInnerStmt span path thenStmt outerName@(Name _ ident) lit ifcase = do
+checkInnerStmt span path thenStmt outerName lit ifcase = do
   exp :: Exp Parsed <- universeBi thenStmt
   case exp of
     (ExpName innerName) ->
@@ -31,7 +29,7 @@ checkInnerStmt span path thenStmt outerName@(Name _ ident) lit ifcase = do
         then
           [ RDF.rangeDiagnostic
               "Language.Java.Rules.ConstantPropagation"
-              ("Anstatt im " ++ ifcase ++ "-Fall erneut " ++ intercalate ", " (map Ident.name ident) ++ " zu verwenden, kann hier direkt das Literal " ++ prettyPrint lit ++ " verwendet werden.")
+              ("Anstatt im " ++ ifcase ++ "-Fall erneut `" ++ prettyPrint outerName ++ "` zu verwenden, kann hier direkt das Literal `" ++ prettyPrint lit ++ "` verwendet werden.")
               span
               path
           ]
