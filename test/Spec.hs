@@ -9,6 +9,7 @@ import qualified DeclarationOrderTests
 import qualified DefaultComesLastTests
 import qualified InitializeVariablesTests
 import qualified ModifiedControlVariableTests
+import qualified MultipleStringLiteralsTests
 import qualified NamingConventionsTests
 import qualified NeedBracesTests
 import qualified NoLoopBreakTests
@@ -40,6 +41,7 @@ tests =
       "CheckNonFinalMethodAttributes" ~: CheckNonFinalMethodAttributesTests.tests,
       "CheckNonPrivateAttributes" ~: CheckNonPrivateAttributesTests.tests,
       "ConsistentOverrideEqualsHashCode" ~: ConsistentOverrideEqualsHashCodeTests.tests,
+      "DeclarationOrder" ~: DeclarationOrderTests.tests,
       "DefaultComesLast" ~: DefaultComesLastTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
       "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
@@ -57,6 +59,5 @@ tests =
       "UseAssignOp" ~: UseAssignOpTests.tests,
       "UseElse" ~: UseElseTests.tests,
       "UseIncrementDecrementOperator" ~: UseIncrementDecrementOperatorTests.tests,
-      "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests,
-      "DeclarationOrder" ~: DeclarationOrderTests.tests
+      "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests
     ]
