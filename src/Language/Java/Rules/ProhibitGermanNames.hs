@@ -4,7 +4,7 @@
 module Language.Java.Rules.ProhibitGermanNames where
 
 import Data.Generics.Uniplate.Data (universeBi)
-import Data.Text (pack, replace, unpack)
+import Data.Text (Text, pack, replace, unpack)
 import Language.Java.SourceSpan
 import Language.Java.Syntax
 import qualified RDF
@@ -34,16 +34,7 @@ checkIdents idents path = do
   nonGermanWords <-
     dictionaryLookup DE (unwords (map fst matches))
   nonGermanWordsWithUmlautCheck <-
-    dictionaryLookup
-      DE
-      ( unpack
-          ( replace "ue" "ü"
-              . replace "ae" "ä"
-              . replace "oe" "ö"
-              . replace "ss" "ß"
-              $ pack nonGermanWords
-          )
-      )
+    dictionaryLookup DE (replaceUmlautsInString nonGermanWords)
   let germanWords =
         filter
           ( \(word, _) ->
@@ -86,3 +77,12 @@ splitIdent (Ident sourceSpan ident) =
           [(string, sourceSpan)]
     )
     (allMatches (ident *=~ [re|([a-z]|[A-Z])[a-z]+|([A-Z]{2,})+|]))
+
+replaceUmlautsInString :: String -> String
+replaceUmlautsInString text =
+  unpack
+    ( replace "ue" "ü" $
+        replace "ae" "ä" $
+          replace "oe" "ö" $
+            replace "ss" "ß" (pack text)
+    )
