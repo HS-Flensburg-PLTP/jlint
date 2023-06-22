@@ -9,11 +9,13 @@ import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  statement <- universeBi cUnit
-  let allowedExpressions = checkStatement statement
-  postIncDec <- universeBi cUnit
-  if any (\allowExp -> sourceSpan postIncDec == sourceSpan allowExp) allowedExpressions
-    then mzero
+  let statements = universeBi cUnit
+  let allowedExpressions = concatMap checkStatement statements
+  let allExpressions = universeBi cUnit
+  let allPostIncDec = concatMap checkExpression allExpressions
+  postIncDec <- allPostIncDec
+  if any (\allowedExp -> sourceSpan allowedExp == sourceSpan postIncDec) allowedExpressions
+    then []
     else createDiagnostic postIncDec path
 
 checkStatement :: Stmt Parsed -> [Exp Parsed]
