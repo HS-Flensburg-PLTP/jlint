@@ -21,9 +21,7 @@ resolveDict EN = "en_US"
 
 dictionaryLookup :: DictLanguage -> String -> IO String
 dictionaryLookup language =
-  readProcess
-    "aspell"
-    ["list", "-d", resolveDict language, "--ignore-case"]
+  readProcess "aspell" ["list", "-d", resolveDict language, "--ignore-case"]
 
 check :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
 check cUnit path = do
@@ -34,9 +32,7 @@ checkIdents :: [Ident] -> FilePath -> IO [RDF.Diagnostic]
 checkIdents idents path = do
   let matches = concatMap splitIdent idents
   nonGermanWords <-
-    dictionaryLookup
-      DE
-      (unwords (map fst matches))
+    dictionaryLookup DE (unwords (map fst matches))
   nonGermanWordsWithUmlautCheck <-
     dictionaryLookup
       DE
