@@ -13,7 +13,7 @@ javaTestDirectory = "test" </> "java"
 
 rangesTest :: [RDF.Range] -> FilePath -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]) -> Test
 rangesTest testRanges path check =
-  rangesIOTest testRanges path (\cUnit path -> return $ check cUnit path)
+  rangesIOTest testRanges path (\cUnit path -> return (check cUnit path))
 
 rangesIOTest :: [RDF.Range] -> FilePath -> (CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]) -> Test
 rangesIOTest testRanges =
