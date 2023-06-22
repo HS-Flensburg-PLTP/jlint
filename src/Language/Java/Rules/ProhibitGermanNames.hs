@@ -28,11 +28,11 @@ dictionaryLookup language =
 check :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
 check cUnit path = do
   let idents = universeBi cUnit
-  let matches = concatMap splitIdent idents
-  checkAllMatches matches path
+  checkIdents idents path
 
-checkAllMatches :: [(String, SourceSpan)] -> FilePath -> IO [RDF.Diagnostic]
-checkAllMatches matches path = do
+checkIdents :: [Ident] -> FilePath -> IO [RDF.Diagnostic]
+checkIdents idents path = do
+  let matches = concatMap splitIdent idents
   nonGermanWords <-
     dictionaryLookup
       DE
