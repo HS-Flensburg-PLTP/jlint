@@ -4,7 +4,7 @@
 module Language.Java.Rules.ProhibitGermanNames where
 
 import Data.Generics.Uniplate.Data (universeBi)
-import Data.Text (Text, pack, replace, unpack)
+import Data.Text (pack, replace, unpack)
 import Language.Java.SourceSpan
 import Language.Java.Syntax
 import qualified RDF
