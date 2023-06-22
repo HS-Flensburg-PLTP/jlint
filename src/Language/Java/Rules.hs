@@ -21,6 +21,7 @@ import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations
 import qualified Language.Java.Rules.ProhibitGermanNames as ProhibitGermanNames
+import qualified Language.Java.Rules.ProhibitMyIdentPrefix as ProhibitMyIdentPrefix
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.SameExecutionsInIf as SameExecutionsInIf
@@ -55,7 +56,8 @@ checks =
     UseAssignOp.check,
     UseElse.check,
     UseIncrementDecrementOperator.check,
-    UseJavaArrayTypeStyle.check
+    UseJavaArrayTypeStyle.check,
+    ProhibitMyIdentPrefix.check
   ]
 
 checksIO :: [CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]]
