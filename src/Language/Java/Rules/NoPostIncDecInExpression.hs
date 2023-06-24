@@ -24,8 +24,8 @@ checkStatement (BasicFor _ _ _ (Just expressions) _) = concatMap checkExpression
 checkStatement _ = mzero
 
 checkExpression :: Exp Parsed -> [Exp Parsed]
-checkExpression (PostIncrement sourceSpan exp) = return (PostIncrement sourceSpan exp)
-checkExpression (PostDecrement sourceSpan exp) = return (PostDecrement sourceSpan exp)
+checkExpression expr@(PostIncrement _ _) = return expr
+checkExpression expr@(PostDecrement _ _) = return expr
 checkExpression _ = mzero
 
 createDiagnostic :: Exp Parsed -> FilePath -> [RDF.Diagnostic]
