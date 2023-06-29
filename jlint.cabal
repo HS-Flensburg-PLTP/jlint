@@ -128,6 +128,7 @@ test-suite jlint-test
       DefaultComesLastTests
       InitializeVariablesTests
       ModifiedControlVariableTests
+      MultipleStringLiteralsTests
       NamingConventionsTests
       NeedBracesTests
       NoLoopBreakTests
