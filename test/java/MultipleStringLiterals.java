@@ -1,15 +1,17 @@
 public class MultipleStringLiterals {
-    private String a = "Foo";
-    private String b = "Bar";
-    private String c = "Bar";
+    private String a;
+    private String b;
+    private String c;
 
     public MultipleStringLiterals() {
         a = "Foo";
         b = "Bar";
         c = "foobar";
+
+        this.aMethod("Foo");
     }
 
-    public void aMethod() {
-        c = "Foo" + "Bar";
+    public void aMethod(String string) {
+        c = string + "Bar";
     }
 }
