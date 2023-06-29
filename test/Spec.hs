@@ -46,6 +46,7 @@ tests =
       "DefaultComesLast" ~: DefaultComesLastTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
       "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
+      "MultipleStringLiteralsTests" ~: MultipleStringLiteralsTests.tests,
       "NamingConventions" ~: NamingConventionsTests.tests,
       "NeedBraces" ~: NeedBracesTests.tests,
       "NoLoopBreak" ~: NoLoopBreakTests.tests,
