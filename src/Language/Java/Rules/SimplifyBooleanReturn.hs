@@ -29,7 +29,7 @@ checkStatements (methodName, methodBody) classVars path = do
       | otherwise = mzero
     checkStatement _ = mzero
 
-    isReturnBool (Return _ (Just (Lit (Boolean _)))) = True
+    isReturnBool (Return _ (Just (Lit _ (Boolean _)))) = True
     isReturnBool (Return _ (Just (ExpName (Name _ varName))))
       | ((\(Ident _ name) -> name) (head varName), True) `elem` extractMethodVars methodBody =
           True
