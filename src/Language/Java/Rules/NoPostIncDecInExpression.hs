@@ -37,7 +37,7 @@ createDiagnostic (expr, sourceSpan) path =
   return
     ( RDF.rangeDiagnostic
         "Language.Java.Rules.NoPostIncDecInExpression"
-        ("Der Operator " ++ Markdown.code expr ++ " ist an dieser Stelle nicht erlaubt, da es zu unleserlichem sowie unverständlichem Code führt.")
+        ("Die Verwendung von " ++ Markdown.code expr ++ " ist an dieser Stelle nicht erlaubt, da es zu unleserlichem sowie unverständlichem Code führt.")
         sourceSpan
         path
     )
