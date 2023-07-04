@@ -32,6 +32,30 @@ class Test {
                 break;
         }
     }
+
+    public void cheese() {
+        switch (i) {
+            case 1:
+                break;
+            case 2:
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void mouse() {
+        switch (i) {
+            case 1:
+                break;
+            case 2:
+                break;
+            default:
+                break;
+            default:
+                break;
+        }
+    }
     
 }
 
