@@ -6,7 +6,7 @@ import qualified Language.Java.Rules.AvoidMultipleTopLevelDecl as AvoidMultipleT
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
 import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
-import qualified Language.Java.Rules.CheckNonFinalMethodAttributes as CheckNonFinalMethodAttributes
+import qualified Language.Java.Rules.CheckNonFinalMethodParameters as CheckNonFinalMethodParameters
 import qualified Language.Java.Rules.CheckNonPrivateAttributes as CheckNonPrivateAttributes
 import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
 import qualified Language.Java.Rules.DeclarationOrder as DeclarationOrder
@@ -75,7 +75,7 @@ checkMapping =
       ("AvoidMultipleVarDecl", AvoidMultipleVarDecl.check),
       ("AvoidNegations", AvoidNegations.check),
       ("AvoidStarImport", AvoidStarImport.check),
-      ("CheckNonFinalMethodAttributes", CheckNonFinalMethodAttributes.check),
+      ("CheckNonFinalMethodParameters", CheckNonFinalMethodParameters.check),
       ("CheckNonPrivateAttributes", CheckNonPrivateAttributes.check),
       ("ConsistentOverrideEqualsHashCode", ConsistentOverrideEqualsHashCode.check),
       ("DefaultComesLast", DefaultComesLast.check),

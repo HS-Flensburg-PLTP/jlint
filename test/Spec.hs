@@ -2,7 +2,7 @@ import qualified AvoidMultipleTopLevelDeclTests
 import qualified AvoidMultipleVarDeclTests
 import qualified AvoidNegationsTests
 import qualified AvoidStarImportTests
-import qualified CheckNonFinalMethodAttributesTests
+import qualified CheckNonFinalMethodParametersTests
 import qualified CheckNonPrivateAttributesTests
 import qualified ConsistentOverrideEqualsHashCodeTests
 import qualified DeclarationOrderTests
@@ -38,7 +38,7 @@ tests =
       "AvoidMultipleVarDecl" ~: AvoidMultipleVarDeclTests.tests,
       "AvoidNegations" ~: AvoidNegationsTests.tests,
       "AvoidStarImport" ~: AvoidStarImportTests.tests,
-      "CheckNonFinalMethodAttributes" ~: CheckNonFinalMethodAttributesTests.tests,
+      "CheckNonFinalMethodParameters" ~: CheckNonFinalMethodParametersTests.tests,
       "CheckNonPrivateAttributes" ~: CheckNonPrivateAttributesTests.tests,
       "ConsistentOverrideEqualsHashCode" ~: ConsistentOverrideEqualsHashCodeTests.tests,
       "DefaultComesLast" ~: DefaultComesLastTests.tests,

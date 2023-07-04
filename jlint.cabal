@@ -35,7 +35,7 @@ library
       Language.Java.Rules.AvoidMultipleVarDecl
       Language.Java.Rules.AvoidNegations
       Language.Java.Rules.AvoidStarImport
-      Language.Java.Rules.CheckNonFinalMethodAttributes
+      Language.Java.Rules.CheckNonFinalMethodParameters
       Language.Java.Rules.CheckNonPrivateAttributes
       Language.Java.Rules.ConsistentOverrideEqualsHashCode
       Language.Java.Rules.DeclarationOrder
@@ -121,7 +121,7 @@ test-suite jlint-test
       AvoidMultipleVarDeclTests
       AvoidNegationsTests
       AvoidStarImportTests
-      CheckNonFinalMethodAttributesTests
+      CheckNonFinalMethodParametersTests
       CheckNonPrivateAttributesTests
       ConsistentOverrideEqualsHashCodeTests
       DeclarationOrderTests
