@@ -38,9 +38,9 @@ library
       Language.Java.Rules.CheckNonFinalMethodAttributes
       Language.Java.Rules.CheckNonPrivateAttributes
       Language.Java.Rules.ConsistentOverrideEqualsHashCode
-      Language.Java.Rules.ConstantPropagation
       Language.Java.Rules.DeclarationOrder
       Language.Java.Rules.DefaultComesLast
+      Language.Java.Rules.ExplicitValue
       Language.Java.Rules.InitializeVariables
       Language.Java.Rules.ModifiedControlVariable
       Language.Java.Rules.NamingConventions
@@ -124,9 +124,9 @@ test-suite jlint-test
       CheckNonFinalMethodAttributesTests
       CheckNonPrivateAttributesTests
       ConsistentOverrideEqualsHashCodeTests
-      ConstantPropagationTests
       DeclarationOrderTests
       DefaultComesLastTests
+      ExplicitValueTests
       InitializeVariablesTests
       ModifiedControlVariableTests
       NamingConventionsTests

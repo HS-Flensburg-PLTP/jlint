@@ -1,4 +1,4 @@
-class ConstantPropagation {
+class ExplicitValue {
 
     public void add(int index, T value) {
         if (0 == index) {
@@ -34,6 +34,30 @@ class ConstantPropagation {
             this.last = new DLNode<T>(nodeAt(index - 1), value, null);
             this.last.getPrev().setNext(this.last);
 
+        }
+
+        if (!(0 == index)) {
+            this.first = new DLNode<T>(null, value, nodeAt(index));
+            this.last = this.first;
+        }
+
+        if (!(0 != index)) {
+            this.first = new DLNode<T>(null, value, nodeAt(index));
+            this.last = this.first;
+        }
+
+        if (!(index != 0)) {
+            this.first = new DLNode<T>(null, value, nodeAt(index));
+            this.last = this.first;
+        } else {
+            this.first = new DLNode<T>(null, value, nodeAt(index));
+        }
+
+        if (!(index == 0)) {
+            this.first = new DLNode<T>(null, value, nodeAt(index));
+            this.last = this.first;
+        } else {
+            this.first = new DLNode<T>(null, value, nodeAt(index));
         }
     }
 

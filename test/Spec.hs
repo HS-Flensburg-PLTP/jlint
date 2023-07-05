@@ -5,9 +5,9 @@ import qualified AvoidStarImportTests
 import qualified CheckNonFinalMethodAttributesTests
 import qualified CheckNonPrivateAttributesTests
 import qualified ConsistentOverrideEqualsHashCodeTests
-import qualified ConstantPropagationTests
 import qualified DeclarationOrderTests
 import qualified DefaultComesLastTests
+import qualified ExplicitValueTests
 import qualified InitializeVariablesTests
 import qualified ModifiedControlVariableTests
 import qualified NamingConventionsTests
@@ -41,8 +41,8 @@ tests =
       "CheckNonFinalMethodAttributes" ~: CheckNonFinalMethodAttributesTests.tests,
       "CheckNonPrivateAttributes" ~: CheckNonPrivateAttributesTests.tests,
       "ConsistentOverrideEqualsHashCode" ~: ConsistentOverrideEqualsHashCodeTests.tests,
-      "ConstantPropagation" ~: ConstantPropagationTests.tests,
       "DefaultComesLast" ~: DefaultComesLastTests.tests,
+      "ExplicitValue" ~: ExplicitValueTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
       "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
       "NamingConventions" ~: NamingConventionsTests.tests,
