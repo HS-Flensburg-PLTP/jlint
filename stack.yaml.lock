@@ -5,7 +5,7 @@
 
 packages:
 - completed:
-    commit: 27c541577079daa788006c7d680eddff2f126bb1
+    commit: 630cb2da4beb3e81253080b3270191cb63589da3
     git: https://github.com/hsfl-pltp/language-java.git
     name: language-java
     pantry-tree:
@@ -13,7 +13,7 @@ packages:
       size: 4900
     version: 0.2.9
   original:
-    commit: 27c541577079daa788006c7d680eddff2f126bb1
+    commit: 630cb2da4beb3e81253080b3270191cb63589da3
     git: https://github.com/hsfl-pltp/language-java.git
 snapshots:
 - completed:

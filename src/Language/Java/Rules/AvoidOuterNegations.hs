@@ -13,24 +13,24 @@ check cUnit path = do
   exp :: Exp Parsed <- universeBi cUnit
   checkExp exp path
   where
-    checkExp (PreNot span (BinOp _ COr _)) path =
-      return
-        ( RDF.rangeDiagnostic
-            "Language.Java.Rules.AvoidOuterNegations"
-            "Für einen Ausdruck `!(a || b)` kann die DeMorgan-Regel angewendet und `!a && !b` verwendet werden. Generell sollten Negation immer so weit wie möglich nach innen gezogen werden."
-            span
-            path
-        )
-    checkExp (PreNot span (BinOp _ CAnd _)) path =
-      return
-        ( RDF.rangeDiagnostic
-            "Language.Java.Rules.AvoidOuterNegations"
-            "Für einen Ausdruck `!(a && b)` kann die DeMorgan-Regel angewendet und `!a || !b` verwendet werden. Generell sollten Negation immer so weit wie möglich nach innen gezogen werden."
-            span
-            path
-        )
     checkExp (PreNot span (BinOp _ op _)) path =
       case invertOp op of
+        Just CAnd ->
+          return
+            ( RDF.rangeDiagnostic
+                "Language.Java.Rules.AvoidOuterNegations"
+                (deMorganMessage op CAnd)
+                span
+                path
+            )
+        Just COr ->
+          return
+            ( RDF.rangeDiagnostic
+                "Language.Java.Rules.AvoidOuterNegations"
+                (deMorganMessage op COr)
+                span
+                path
+            )
         Just invertedOp ->
           return
             ( RDF.rangeDiagnostic
@@ -48,7 +48,15 @@ message op invertedOp =
     ++ prettyPrint op
     ++ " b)` kann die Negation nach innen gezogen und `a "
     ++ prettyPrint invertedOp
-    ++ " b` angewendet werden. Generell sollten Negation immer so weit wie möglich nach innen gezogen werden."
+    ++ " b` angewendet werden. Generell sollten Negationen immer so weit wie möglich nach innen gezogen werden."
+
+deMorganMessage :: Op -> Op -> String
+deMorganMessage op invertedOp =
+  "Für einen Ausdrcuk `!(a "
+    ++ prettyPrint op
+    ++ " b)` kann die DeMorgan-Regel angewendet und `!a "
+    ++ prettyPrint invertedOp
+    ++ " !b` verwendet werden. Generell sollten Negationen immer so weit wie möglich nach innen gezogen werden."
 
 invertOp :: Op -> Maybe Op
 invertOp LThan = Just GThanE
