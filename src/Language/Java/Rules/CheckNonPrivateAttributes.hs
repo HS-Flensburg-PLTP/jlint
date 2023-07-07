@@ -6,12 +6,12 @@ import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   attributes <- extractAttributes cUnit
   checkAttributes attributes path
 
-checkAttributes :: ([String], [Modifier]) -> FilePath -> [RDF.Diagnostic]
+checkAttributes :: ([String], [Modifier Parsed]) -> FilePath -> [RDF.Diagnostic]
 checkAttributes (varNames, mods) path =
   concatMap (checkModifier mods) varNames
   where

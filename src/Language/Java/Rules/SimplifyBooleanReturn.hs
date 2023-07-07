@@ -1,5 +1,6 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Language.Java.Rules.SimplifyBooleanReturn (check) where
 
@@ -10,14 +11,14 @@ import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   methods <- extractMethods cUnit
   checkStatements methods (extractClassVars cUnit) path
 
-checkStatements :: (String, MethodBody) -> [(String, Bool)] -> FilePath -> [RDF.Diagnostic]
+checkStatements :: (String, MethodBody Parsed) -> [(String, Bool)] -> FilePath -> [RDF.Diagnostic]
 checkStatements (methodName, methodBody) classVars path = do
-  stmt <- universeBi methodBody
+  stmt :: Stmt Parsed <- universeBi methodBody
   checkStatement stmt
   where
     checkStatement (IfThenElse _ _ a b)
@@ -38,21 +39,21 @@ checkStatements (methodName, methodBody) classVars path = do
     isReturnBool (StmtBlock (Block [BlockStmt _ a])) = isReturnBool a
     isReturnBool _ = False
 
-checkIfVarIsBool :: String -> MethodBody -> Bool
+checkIfVarIsBool :: String -> MethodBody Parsed -> Bool
 checkIfVarIsBool varName methodBody = (varName, True) `elem` extractMethodVars methodBody
 
-extractMethodVars :: MethodBody -> [(String, Bool)]
+extractMethodVars :: MethodBody Parsed -> [(String, Bool)]
 extractMethodVars methodBody = do
-  var <- universeBi methodBody
+  var :: BlockStmt Parsed <- universeBi methodBody
   checkVars var
   where
     checkVars (LocalVars _ _ (PrimType BooleanT) varDecl) = concatMap (\(VarDecl _ varDeclId _) -> [(extractVarName varDeclId, True)]) varDecl
     checkVars (LocalVars _ _ _ varDecl) = concatMap (\(VarDecl _ varDeclId _) -> [(extractVarName varDeclId, False)]) varDecl
     checkVars _ = []
 
-extractClassVars :: CompilationUnit -> [(String, Bool)]
+extractClassVars :: CompilationUnit Parsed -> [(String, Bool)]
 extractClassVars cUnit = do
-  classDecl <- universeBi cUnit
+  classDecl :: MemberDecl Parsed <- universeBi cUnit
   checkVars classDecl
   where
     checkVars (FieldDecl _ _ (PrimType BooleanT) varDecl) = concatMap (\(VarDecl _ varDeclId _) -> [(extractVarName varDeclId, True)]) varDecl

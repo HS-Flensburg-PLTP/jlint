@@ -6,7 +6,7 @@ import Language.Java.Pretty (prettyPrint)
 import Language.Java.Syntax
 import qualified RDF
 
-check :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   importDecl <- universeBi cUnit
   checkImport importDecl

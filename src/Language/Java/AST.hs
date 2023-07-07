@@ -3,17 +3,8 @@ module Language.Java.AST where
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
-  ( CompilationUnit,
-    FormalParam,
-    Ident (Ident),
-    MemberDecl (FieldDecl, MethodDecl),
-    MethodBody,
-    Modifier,
-    VarDecl (VarDecl),
-    VarDeclId (..),
-  )
 
-extractMethods :: CompilationUnit -> [(String, MethodBody)]
+extractMethods :: CompilationUnit Parsed -> [(String, MethodBody Parsed)]
 extractMethods cUnit = do
   membDecl <- universeBi cUnit
   extractBody membDecl
@@ -21,7 +12,7 @@ extractMethods cUnit = do
     extractBody (MethodDecl _ _ _ _ (Ident _ n) _ _ _ b) = return (n, b)
     extractBody _ = mzero
 
-extractAttributes :: CompilationUnit -> [([String], [Modifier])]
+extractAttributes :: CompilationUnit Parsed -> [([String], [Modifier Parsed])]
 extractAttributes cUnit = do
   membDecl <- universeBi cUnit
   extractField membDecl
@@ -29,7 +20,7 @@ extractAttributes cUnit = do
     extractField (FieldDecl _ mods _ vardecl) = return (map (\(VarDecl _ vardeclId _) -> extractVarName vardeclId) vardecl, mods)
     extractField _ = mzero
 
-extractMethodParameters :: CompilationUnit -> [(String, [FormalParam])]
+extractMethodParameters :: CompilationUnit Parsed -> [(String, [FormalParam Parsed])]
 extractMethodParameters cUnit = do
   membDecl <- universeBi cUnit
   extractFormalParam membDecl

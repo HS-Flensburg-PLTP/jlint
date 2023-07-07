@@ -19,6 +19,7 @@ import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNull
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations
+import qualified Language.Java.Rules.ProhibitMyIdentPrefix as ProhibitMyIdentPrefix
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.SameExecutionsInIf as SameExecutionsInIf
@@ -32,7 +33,7 @@ import qualified Language.Java.Rules.UsePostIncrementDecrement as UsePostIncreme
 import Language.Java.Syntax
 import qualified RDF
 
-checks :: [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
+checks :: [CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]]
 checks =
   [ AvoidMultipleTopLevelDecl.check,
     AvoidMultipleVarDecl.check,
@@ -51,19 +52,20 @@ checks =
     UseElse.check,
     DeclarationOrder.check,
     UseIncrementDecrementOperator.check,
-    UseJavaArrayTypeStyle.check
+    UseJavaArrayTypeStyle.check,
+    ProhibitMyIdentPrefix.check
   ]
 
-checkAll :: CompilationUnit -> FilePath -> [RDF.Diagnostic]
+checkAll :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkAll cUnit path = concatMap (\f -> f cUnit path) checks
 
-checkWithConfig :: [Rule] -> (CompilationUnit -> FilePath -> [RDF.Diagnostic])
+checkWithConfig :: [Rule] -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic])
 checkWithConfig config cUnit path = concatMap (\f -> f cUnit path) (checkRule config)
 
-checkRule :: [Rule] -> [CompilationUnit -> FilePath -> [RDF.Diagnostic]]
+checkRule :: [Rule] -> [CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]]
 checkRule = map checkFromConfig
 
-checkFromConfig :: Rule -> (CompilationUnit -> FilePath -> [RDF.Diagnostic])
+checkFromConfig :: Rule -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic])
 checkFromConfig AvoidMultipleTopLevelDecl = AvoidMultipleTopLevelDecl.check
 checkFromConfig AvoidMultipleVarDecl = AvoidMultipleVarDecl.check
 checkFromConfig AvoidNegations = AvoidNegations.check
