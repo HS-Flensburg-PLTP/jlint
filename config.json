@@ -9,10 +9,25 @@
         "rule": "AvoidNegations"
     },
     {
+        "rule": "AvoidOuterNegations"
+    },
+    {
         "rule": "AvoidStarImport"
     },
     {
+        "rule": "CheckNonFinalMethodAttributes"
+    },
+    {
+        "rule": "CheckNonPrivateAttributes"
+    },
+    {
         "rule": "ConsistentOverrideEqualsHashCode"
+    },
+    {
+        "rule": "ConstantPropagation"
+    },
+    {
+        "rule": "DefaultComesLast"
     },
     {
         "rule": "InitializeVariables"
