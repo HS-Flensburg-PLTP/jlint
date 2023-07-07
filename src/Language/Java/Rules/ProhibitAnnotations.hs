@@ -1,6 +1,5 @@
 module Language.Java.Rules.ProhibitAnnotations where
 
-import Config (Rule (ProhibitAnnotations))
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Pretty (prettyPrint)

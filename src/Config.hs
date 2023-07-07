@@ -1,5 +1,3 @@
-{-# LANGUAGE BlockArguments #-}
-
 module Config where
 
 import Control.Monad (unless)
@@ -25,7 +23,7 @@ data Rule
   | NeedBraces
   | NoLoopBreak
   | NoNullPointerExceptionsForControl
-  | ParameterNumber {max :: Maybe Int, min :: Maybe Int}
+  | ParameterNumber {max :: Maybe Int}
   | PreferExpressions
   | ProhibitAnnotations {whitelist :: [String]}
   | ReduceScope
@@ -75,28 +73,15 @@ instance FromJSON Rule where
 
 parseParameterNumber :: Object -> Parser Rule
 parseParameterNumber obj = do
-  hasMax <- obj .:? fromString "max"
-  hasMin <- obj .:? fromString "min"
-  case (hasMax, hasMin) of
-    (Just maxVal, Nothing) -> do
-      checkNoExtraKeys obj [fromString "max", fromString "min"]
-      pure (ParameterNumber maxVal Nothing)
-    (Nothing, Just minVal) -> do
-      checkNoExtraKeys obj [fromString "max", fromString "min"]
-      pure (ParameterNumber Nothing minVal)
-    (Just maxVal, Just minVal) -> do
-      checkNoExtraKeys obj [fromString "max", fromString "min"]
-      pure (ParameterNumber maxVal minVal)
-    (Nothing, Nothing) -> fail "Required field 'max' or 'min' is missing"
+  max <- obj .:! fromString "max"
+  checkNoExtraKeys obj [fromString "max"]
+  pure (ParameterNumber max)
 
 parseProhibitAnnotations :: Object -> Parser Rule
 parseProhibitAnnotations obj = do
-  hasWhitelist <- obj .:? fromString "whitelist"
-  case hasWhitelist of
-    Just whitelistVal -> do
-      checkNoExtraKeys obj [fromString "whitelist"]
-      pure (ProhibitAnnotations whitelistVal)
-    Nothing -> fail "Required field 'whitelist' is missing"
+  whitelistVal <- obj .: fromString "whitelist"
+  checkNoExtraKeys obj [fromString "whitelist"]
+  pure (ProhibitAnnotations whitelistVal)
 
 checkNoExtraKeys :: Object -> [Key] -> Parser ()
 checkNoExtraKeys obj allowedKeys = do

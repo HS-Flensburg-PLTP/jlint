@@ -1,6 +1,5 @@
 module ProhibitAnnotationsTests where
 
-import Config (Rule (ProhibitAnnotations))
 import Control.Monad.Identity (zipWithM_)
 import Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations (check)
 import Language.Java.Syntax (CompilationUnit)

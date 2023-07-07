@@ -1,6 +1,5 @@
 module ParameterNumberTests (tests) where
 
-import Config (Rule (ParameterNumber))
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified RDF
 import Test.HUnit (Test)
@@ -11,7 +10,7 @@ tests =
   rangesTest
     expectedRanges
     "ParameterNumber.java"
-    ParameterNumber.checkWithDefaultValue
+    (ParameterNumber.check Nothing)
 
 expectedRanges :: [RDF.Range]
 expectedRanges =

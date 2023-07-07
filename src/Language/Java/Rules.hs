@@ -42,7 +42,7 @@ checks =
     InitializeVariables.check,
     ModifiedControlVariable.check,
     NoNullPointerExceptionsForControl.check,
-    ParameterNumber.checkWithDefaultValue,
+    ParameterNumber.check Nothing,
     PreferExpressions.check,
     ProhibitAnnotations.checkWithDefaultValue,
     ReduceScope.check,
@@ -79,7 +79,7 @@ checkFromConfig NamingConventions = NamingConventions.check
 checkFromConfig NeedBraces = NeedBraces.check
 checkFromConfig NoLoopBreak = NoLoopBreak.check
 checkFromConfig NoNullPointerExceptionsForControl = NoNullPointerExceptionsForControl.check
-checkFromConfig (ParameterNumber max min) = ParameterNumber.check max min
+checkFromConfig (ParameterNumber max) = ParameterNumber.check max
 checkFromConfig PreferExpressions = PreferExpressions.check
 checkFromConfig (ProhibitAnnotations whitelist) = ProhibitAnnotations.check whitelist
 checkFromConfig ReduceScope = ReduceScope.check
