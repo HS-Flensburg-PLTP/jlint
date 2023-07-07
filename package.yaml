@@ -36,6 +36,7 @@ dependencies:
 - process >= 1
 - text >= 1.2.4.1
 
+
 library:
   source-dirs: src
   ghc-options:

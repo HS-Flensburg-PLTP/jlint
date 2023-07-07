@@ -20,6 +20,7 @@ import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNull
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations
+import qualified Language.Java.Rules.ProhibitGermanNames as ProhibitGermanNames
 import qualified Language.Java.Rules.ProhibitMyIdentPrefix as ProhibitMyIdentPrefix
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
@@ -43,24 +44,39 @@ checks =
     AvoidNegations.check,
     AvoidStarImport.check,
     ConsistentOverrideEqualsHashCode.check,
+    DeclarationOrder.check,
     InitializeVariables.check,
     ModifiedControlVariable.check,
     NoNullPointerExceptionsForControl.check,
     ParameterNumber.check,
     PreferExpressions.check,
+    ProhibitAnnotations.check annotationswhitelist,
     ReduceScope.check,
     RedundantModifiers.check,
     UseAssignOp.check,
     UseElse.check,
-    DeclarationOrder.check,
     UseIncrementDecrementOperator.check,
-    ProhibitAnnotations.check annotationswhitelist,
     UseJavaArrayTypeStyle.check,
     ProhibitMyIdentPrefix.check
   ]
 
+checksIO :: [CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]]
+checksIO =
+  [ ProhibitGermanNames.check
+  ]
+
 checkAll :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkAll cUnit path = concatMap (\f -> f cUnit path) checks
+
+checkAllIO :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
+checkAllIO = executeAll checksIO
+
+executeAll :: [CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]] -> CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
+executeAll [] _ _ = return []
+executeAll (check : checks) cUnit path = do
+  result <- check cUnit path
+  results <- executeAll checks cUnit path
+  return (result ++ results)
 
 checkWithConfig :: [Config] -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkWithConfig config cUnit path = concatMap (\f -> f cUnit path) (checkRule (extractRuleNames config))
@@ -78,6 +94,7 @@ checkMapping =
       ("CheckNonFinalMethodAttributes", CheckNonFinalMethodAttributes.check),
       ("CheckNonPrivateAttributes", CheckNonPrivateAttributes.check),
       ("ConsistentOverrideEqualsHashCode", ConsistentOverrideEqualsHashCode.check),
+      ("DeclarationOrder", DeclarationOrder.check),
       ("DefaultComesLast", DefaultComesLast.check),
       ("InitializeVariables", InitializeVariables.check),
       ("NamingConventions", NamingConventions.check),
@@ -86,6 +103,7 @@ checkMapping =
       ("NoNullPointerExceptionsForControl", NoNullPointerExceptionsForControl.check),
       ("ParameterNumber", ParameterNumber.check),
       ("PreferExpressions", PreferExpressions.check),
+      ("ProhibitAnnotations", ProhibitAnnotations.check annotationswhitelist),
       ("ReduceScope", ReduceScope.check),
       ("RedundantModifiers", RedundantModifiers.check),
       ("SameExecutionsInIf", SameExecutionsInIf.check),

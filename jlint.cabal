@@ -50,6 +50,7 @@ library
       Language.Java.Rules.PredictMethodNames
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ProhibitAnnotations
+      Language.Java.Rules.ProhibitGermanNames
       Language.Java.Rules.ProhibitMyIdentPrefix
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.RedundantModifiers
@@ -140,6 +141,7 @@ test-suite jlint-test
       ParameterNumberTests
       PreferExpressionsTests
       ProhibitAnnotationsTests
+      ProhibitGermanNamesTests
       ProhibitMyIdentPrefixTests
       ReduceScopeTests
       RedundantModifiersTests

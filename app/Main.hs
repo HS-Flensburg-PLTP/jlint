@@ -8,7 +8,7 @@ import qualified Data.ByteString.Lazy.Char8 as C
 import Data.Semigroup ((<>))
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
-import Language.Java.Rules (checkAll, checkWithConfig)
+import Language.Java.Rules (checkAll, checkAllIO, checkWithConfig)
 import Language.Java.Syntax (CompilationUnit, Parsed)
 import Options.Applicative
 import RDF
@@ -134,7 +134,8 @@ parseJava rootDir pretty showAST checkstyleDiags =
             else return (concatMap (uncurry checkAll) cUnitResults)
 
         let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
-        let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
+        diagnosticsIO <- concatIORules cUnitResults
+        let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors ++ diagnosticsIO
         C.putStrLn
           ( RDF.encodetojson
               ( DiagnosticResult
@@ -147,7 +148,7 @@ parseJava rootDir pretty showAST checkstyleDiags =
         unless (null parsingErrors) $ print parsingErrors
         when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
 
-        let numberOfHints = length diagnostics
+        let numberOfHints = length diagnostics + length diagnosticsIO
         if numberOfHints == 0
           then do
             hPutStrLn stderr ("jlint did not generate any hints for the Java code in directory " ++ rootDir)
@@ -155,6 +156,13 @@ parseJava rootDir pretty showAST checkstyleDiags =
           else do
             hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
             exitWith (ExitFailure numberOfHints)
+
+concatIORules :: [(CompilationUnit Parsed, FilePath)] -> IO [Diagnostic]
+concatIORules [] = return []
+concatIORules ((cUnit, path) : cUnitResults) = do
+  result <- checkAllIO cUnit path
+  results <- concatIORules cUnitResults
+  return (result ++ results)
 
 configFile :: String
 configFile = "config.json"
