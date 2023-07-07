@@ -12,6 +12,7 @@ import qualified Language.Java.Rules.CheckNonPrivateAttributes as CheckNonPrivat
 import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
 import qualified Language.Java.Rules.DeclarationOrder as DeclarationOrder
 import qualified Language.Java.Rules.DefaultComesLast as DefaultComesLast
+import qualified Language.Java.Rules.ExplicitValue as ExplicitValue
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
 import qualified Language.Java.Rules.ModifiedControlVariable as ModifiedControlVariable
 import qualified Language.Java.Rules.NamingConventions as NamingConventions
@@ -44,6 +45,7 @@ checks =
     AvoidNegations.check,
     AvoidStarImport.check,
     ConsistentOverrideEqualsHashCode.check,
+    ExplicitValue.check,
     InitializeVariables.check,
     ModifiedControlVariable.check,
     NoNullPointerExceptionsForControl.check,
@@ -82,6 +84,7 @@ checkMapping =
       ("CheckNonPrivateAttributes", CheckNonPrivateAttributes.check),
       ("ConsistentOverrideEqualsHashCode", ConsistentOverrideEqualsHashCode.check),
       ("DefaultComesLast", DefaultComesLast.check),
+      ("ExplicitValue", ExplicitValue.check),
       ("InitializeVariables", InitializeVariables.check),
       ("NamingConventions", NamingConventions.check),
       ("NeedBraces", NeedBraces.check),

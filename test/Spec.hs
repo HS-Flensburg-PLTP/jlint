@@ -8,6 +8,7 @@ import qualified CheckNonPrivateAttributesTests
 import qualified ConsistentOverrideEqualsHashCodeTests
 import qualified DeclarationOrderTests
 import qualified DefaultComesLastTests
+import qualified ExplicitValueTests
 import qualified InitializeVariablesTests
 import qualified ModifiedControlVariableTests
 import qualified NamingConventionsTests
@@ -45,6 +46,7 @@ tests =
       "CheckNonPrivateAttributes" ~: CheckNonPrivateAttributesTests.tests,
       "ConsistentOverrideEqualsHashCode" ~: ConsistentOverrideEqualsHashCodeTests.tests,
       "DefaultComesLast" ~: DefaultComesLastTests.tests,
+      "ExplicitValue" ~: ExplicitValueTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
       "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
       "NamingConventions" ~: NamingConventionsTests.tests,
