@@ -5,6 +5,7 @@ import Data.Map (Map, findWithDefault, fromList)
 import qualified Language.Java.Rules.AvoidMultipleTopLevelDecl as AvoidMultipleTopLevelDecl
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
+import qualified Language.Java.Rules.AvoidOuterNegations as AvoidOuterNegations
 import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
 import qualified Language.Java.Rules.CheckNonFinalMethodAttributes as CheckNonFinalMethodAttributes
 import qualified Language.Java.Rules.CheckNonPrivateAttributes as CheckNonPrivateAttributes
@@ -48,6 +49,7 @@ checks =
     NoNullPointerExceptionsForControl.check,
     ParameterNumber.check,
     PreferExpressions.check,
+    AvoidOuterNegations.check,
     ReduceScope.check,
     RedundantModifiers.check,
     UseAssignOp.check,
@@ -74,6 +76,7 @@ checkMapping =
     [ ("AvoidMultipleTopLevelDecl", AvoidMultipleTopLevelDecl.check),
       ("AvoidMultipleVarDecl", AvoidMultipleVarDecl.check),
       ("AvoidNegations", AvoidNegations.check),
+      ("AvoidOuterNegations", AvoidOuterNegations.check),
       ("AvoidStarImport", AvoidStarImport.check),
       ("CheckNonFinalMethodAttributes", CheckNonFinalMethodAttributes.check),
       ("CheckNonPrivateAttributes", CheckNonPrivateAttributes.check),

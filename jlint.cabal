@@ -34,6 +34,7 @@ library
       Language.Java.Rules.AvoidMultipleTopLevelDecl
       Language.Java.Rules.AvoidMultipleVarDecl
       Language.Java.Rules.AvoidNegations
+      Language.Java.Rules.AvoidOuterNegations
       Language.Java.Rules.AvoidStarImport
       Language.Java.Rules.CheckNonFinalMethodAttributes
       Language.Java.Rules.CheckNonPrivateAttributes
@@ -120,6 +121,7 @@ test-suite jlint-test
       AvoidMultipleTopLevelDeclTests
       AvoidMultipleVarDeclTests
       AvoidNegationsTests
+      AvoidOuterNegationsTests
       AvoidStarImportTests
       CheckNonFinalMethodAttributesTests
       CheckNonPrivateAttributesTests

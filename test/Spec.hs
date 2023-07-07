@@ -1,6 +1,7 @@
 import qualified AvoidMultipleTopLevelDeclTests
 import qualified AvoidMultipleVarDeclTests
 import qualified AvoidNegationsTests
+import qualified AvoidOuterNegationsTests
 import qualified AvoidStarImportTests
 import qualified CheckNonFinalMethodAttributesTests
 import qualified CheckNonPrivateAttributesTests
@@ -26,6 +27,7 @@ import qualified UseAssignOpTests
 import qualified UseElseTests
 import qualified UseIncrementDecrementOperatorTests
 import qualified UseJavaArrayTypeStyleTests
+import qualified UsePostIncrementDecrementTests
 
 main :: IO ()
 main = do
@@ -37,6 +39,7 @@ tests =
     [ "AvoidMultipleTopLevelDecl" ~: AvoidMultipleTopLevelDeclTests.tests,
       "AvoidMultipleVarDecl" ~: AvoidMultipleVarDeclTests.tests,
       "AvoidNegations" ~: AvoidNegationsTests.tests,
+      "AvoidOuterNegations" ~: AvoidOuterNegationsTests.tests,
       "AvoidStarImport" ~: AvoidStarImportTests.tests,
       "CheckNonFinalMethodAttributes" ~: CheckNonFinalMethodAttributesTests.tests,
       "CheckNonPrivateAttributes" ~: CheckNonPrivateAttributesTests.tests,
@@ -60,5 +63,6 @@ tests =
       "UseElse" ~: UseElseTests.tests,
       "UseIncrementDecrementOperator" ~: UseIncrementDecrementOperatorTests.tests,
       "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests,
+      "UsePostIncrementDecrement" ~: UsePostIncrementDecrementTests.tests,
       "DeclarationOrder" ~: DeclarationOrderTests.tests
     ]
