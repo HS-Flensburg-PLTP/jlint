@@ -26,6 +26,7 @@ data Rule
   | ParameterNumber {max :: Maybe Int}
   | PreferExpressions
   | ProhibitAnnotations {whitelist :: [String]}
+  | ProhibitMyIdentPrefix
   | ReduceScope
   | RedundantModifiers
   | SameExecutionsInIf
@@ -59,6 +60,7 @@ instance FromJSON Rule where
       "ParameterNumber" -> parseParameterNumber obj
       "PreferExpressions" -> pure PreferExpressions
       "ProhibitAnnotations" -> parseProhibitAnnotations obj
+      "ProhibitMyIdentPrefix" -> pure ProhibitMyIdentPrefix
       "ReduceScope" -> pure ReduceScope
       "RedundantModifiers" -> pure RedundantModifiers
       "SameExecutionsInIf" -> pure SameExecutionsInIf

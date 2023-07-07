@@ -32,6 +32,9 @@
         "whitelist": []
     },
     {
+        "rule": "ProhibitMyIdentPrefix"
+    },
+    {
         "rule": "ReduceScope"
     },
     {

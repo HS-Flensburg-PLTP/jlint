@@ -46,14 +46,14 @@ checks =
     ParameterNumber.check Nothing,
     PreferExpressions.check,
     ProhibitAnnotations.checkWithDefaultValue,
+    ProhibitMyIdentPrefix.check,
     ReduceScope.check,
     RedundantModifiers.check,
     UseAssignOp.check,
     UseElse.check,
     DeclarationOrder.check,
     UseIncrementDecrementOperator.check,
-    UseJavaArrayTypeStyle.check,
-    ProhibitMyIdentPrefix.check
+    UseJavaArrayTypeStyle.check
   ]
 
 checkAll :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -84,6 +84,7 @@ checkFromConfig NoNullPointerExceptionsForControl = NoNullPointerExceptionsForCo
 checkFromConfig (ParameterNumber max) = ParameterNumber.check max
 checkFromConfig PreferExpressions = PreferExpressions.check
 checkFromConfig (ProhibitAnnotations whitelist) = ProhibitAnnotations.check whitelist
+checkFromConfig ProhibitMyIdentPrefix = ProhibitMyIdentPrefix.check
 checkFromConfig ReduceScope = ReduceScope.check
 checkFromConfig RedundantModifiers = RedundantModifiers.check
 checkFromConfig SameExecutionsInIf = SameExecutionsInIf.check
