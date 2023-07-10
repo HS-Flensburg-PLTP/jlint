@@ -1,16 +1,17 @@
 module Language.Java.Rules where
 
-import Config
-import Data.Map (Map, findWithDefault, fromList)
+import Config (Rule (..))
 import qualified Language.Java.Rules.AvoidMultipleTopLevelDecl as AvoidMultipleTopLevelDecl
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
+import qualified Language.Java.Rules.AvoidOuterNegations as AvoidOuterNegations
 import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
 import qualified Language.Java.Rules.CheckNonFinalMethodParameters as CheckNonFinalMethodParameters
 import qualified Language.Java.Rules.CheckNonPrivateAttributes as CheckNonPrivateAttributes
 import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
 import qualified Language.Java.Rules.DeclarationOrder as DeclarationOrder
 import qualified Language.Java.Rules.DefaultComesLast as DefaultComesLast
+import qualified Language.Java.Rules.ExplicitValue as ExplicitValue
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
 import qualified Language.Java.Rules.ModifiedControlVariable as ModifiedControlVariable
 import qualified Language.Java.Rules.NamingConventions as NamingConventions
@@ -25,6 +26,7 @@ import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.SameExecutionsInIf as SameExecutionsInIf
 import qualified Language.Java.Rules.SimplifyBooleanReturn as SimplifyBooleanReturn
+import qualified Language.Java.Rules.UnusedLocalVariable as UnusedLocalVariable
 import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import Language.Java.Rules.UseElse as UseElse (check)
 import qualified Language.Java.Rules.UseIncrementDecrementOperator as UseIncrementDecrementOperator
@@ -33,69 +35,68 @@ import qualified Language.Java.Rules.UsePostIncrementDecrement as UsePostIncreme
 import Language.Java.Syntax
 import qualified RDF
 
-annotationswhitelist :: [String]
-annotationswhitelist = ["Override"]
-
 checks :: [CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]]
 checks =
   [ AvoidMultipleTopLevelDecl.check,
     AvoidMultipleVarDecl.check,
     AvoidNegations.check,
+    AvoidOuterNegations.check,
     AvoidStarImport.check,
     ConsistentOverrideEqualsHashCode.check,
+    CheckNonFinalMethodParameters.check,
+    ExplicitValue.check,
     InitializeVariables.check,
     ModifiedControlVariable.check,
     NoNullPointerExceptionsForControl.check,
-    ParameterNumber.check,
+    ParameterNumber.check Nothing,
     PreferExpressions.check,
+    ProhibitAnnotations.checkWithDefaultValue,
+    ProhibitMyIdentPrefix.check,
     ReduceScope.check,
     RedundantModifiers.check,
     UseAssignOp.check,
     UseElse.check,
     DeclarationOrder.check,
     UseIncrementDecrementOperator.check,
-    ProhibitAnnotations.check annotationswhitelist,
-    UseJavaArrayTypeStyle.check,
-    ProhibitMyIdentPrefix.check
+    UseJavaArrayTypeStyle.check
   ]
 
 checkAll :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkAll cUnit path = concatMap (\f -> f cUnit path) checks
 
-checkWithConfig :: [Config] -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-checkWithConfig config cUnit path = concatMap (\f -> f cUnit path) (checkRule (extractRuleNames config))
+checkWithConfig :: [Rule] -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic])
+checkWithConfig config cUnit path = concatMap (\f -> f cUnit path) (checkRule config)
 
-checkRule :: [String] -> [CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]]
-checkRule = map (\s -> findWithDefault (\_ _ -> []) s checkMapping)
+checkRule :: [Rule] -> [CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]]
+checkRule = map checkFromConfig
 
-checkMapping :: Map String (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic])
-checkMapping =
-  fromList
-    [ ("AvoidMultipleTopLevelDecl", AvoidMultipleTopLevelDecl.check),
-      ("AvoidMultipleVarDecl", AvoidMultipleVarDecl.check),
-      ("AvoidNegations", AvoidNegations.check),
-      ("AvoidStarImport", AvoidStarImport.check),
-      ("CheckNonFinalMethodParameters", CheckNonFinalMethodParameters.check),
-      ("CheckNonPrivateAttributes", CheckNonPrivateAttributes.check),
-      ("ConsistentOverrideEqualsHashCode", ConsistentOverrideEqualsHashCode.check),
-      ("DefaultComesLast", DefaultComesLast.check),
-      ("InitializeVariables", InitializeVariables.check),
-      ("NamingConventions", NamingConventions.check),
-      ("NeedBraces", NeedBraces.check),
-      ("NoLoopBreak", NoLoopBreak.check),
-      ("NoNullPointerExceptionsForControl", NoNullPointerExceptionsForControl.check),
-      ("ParameterNumber", ParameterNumber.check),
-      ("PreferExpressions", PreferExpressions.check),
-      ("ReduceScope", ReduceScope.check),
-      ("RedundantModifiers", RedundantModifiers.check),
-      ("SameExecutionsInIf", SameExecutionsInIf.check),
-      ("SimplifyBooleanReturn", SimplifyBooleanReturn.check),
-      ("UseAssignOp", UseAssignOp.check),
-      ("UseElse", UseElse.check),
-      ("UseIncrementDecrementOperator", UseIncrementDecrementOperator.check),
-      ("UseJavaArrayTypeStyle", UseJavaArrayTypeStyle.check),
-      ("UsePostIncrementDecrement", UsePostIncrementDecrement.check)
-    ]
-
-extractRuleNames :: [Config] -> [String]
-extractRuleNames = map rule
+checkFromConfig :: Rule -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic])
+checkFromConfig AvoidMultipleTopLevelDecl = AvoidMultipleTopLevelDecl.check
+checkFromConfig AvoidMultipleVarDecl = AvoidMultipleVarDecl.check
+checkFromConfig AvoidNegations = AvoidNegations.check
+checkFromConfig AvoidStarImport = AvoidStarImport.check
+checkFromConfig CheckNonFinalMethodParameters = CheckNonFinalMethodParameters.check
+checkFromConfig CheckNonPrivateAttributes = CheckNonPrivateAttributes.check
+checkFromConfig ConsistentOverrideEqualsHashCode = ConsistentOverrideEqualsHashCode.check
+checkFromConfig DeclarationOrder = DeclarationOrder.check
+checkFromConfig DefaultComesLast = DefaultComesLast.check
+checkFromConfig InitializeVariables = InitializeVariables.check
+checkFromConfig ModifiedControlVariable = ModifiedControlVariable.check
+checkFromConfig NamingConventions = NamingConventions.check
+checkFromConfig NeedBraces = NeedBraces.check
+checkFromConfig NoLoopBreak = NoLoopBreak.check
+checkFromConfig NoNullPointerExceptionsForControl = NoNullPointerExceptionsForControl.check
+checkFromConfig (ParameterNumber max) = ParameterNumber.check max
+checkFromConfig PreferExpressions = PreferExpressions.check
+checkFromConfig (ProhibitAnnotations whitelist) = ProhibitAnnotations.check whitelist
+checkFromConfig ProhibitMyIdentPrefix = ProhibitMyIdentPrefix.check
+checkFromConfig ReduceScope = ReduceScope.check
+checkFromConfig RedundantModifiers = RedundantModifiers.check
+checkFromConfig SameExecutionsInIf = SameExecutionsInIf.check
+checkFromConfig SimplifyBooleanReturn = SimplifyBooleanReturn.check
+checkFromConfig UnusedLocalVariable = UnusedLocalVariable.checkMethodVars
+checkFromConfig UseAssignOp = UseAssignOp.check
+checkFromConfig UseElse = UseElse.check
+checkFromConfig UseIncrementDecrementOperator = UseIncrementDecrementOperator.check
+checkFromConfig UseJavaArrayTypeStyle = UseJavaArrayTypeStyle.check
+checkFromConfig UsePostIncrementDecrement = UsePostIncrementDecrement.check

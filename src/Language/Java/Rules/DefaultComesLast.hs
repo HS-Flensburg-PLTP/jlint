@@ -4,30 +4,18 @@
 
 module Language.Java.Rules.DefaultComesLast (check) where
 
-import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
-import Language.Java.AST (extractMethods)
-import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  methods <- extractMethods cUnit
-  checkDefaultComesLast methods path
+  Switch _ _ blocks <- universeBi cUnit
+  map (message path) (filter checkForDefault (init blocks))
 
-checkDefaultComesLast :: (String, MethodBody Parsed) -> FilePath -> [RDF.Diagnostic]
-checkDefaultComesLast (_, methodBody) path = do
-  (Switch _ _ blocks) :: Stmt Parsed <- universeBi methodBody
-  checkSwitch blocks mzero
-  where
-    checkSwitch blocks diagnosticList =
-      case blocks of
-        [] ->
-          diagnosticList
-        (SwitchBlock _ Default _) : xs@[SwitchBlock {}] ->
-          checkSwitch
-            xs
-            (RDF.rangeDiagnostic "Language.Java.Rules.DefaultComesLast" "Defaultcase in Switch-Case is not defined last" dummySourceSpan path : diagnosticList)
-        _ : xs ->
-          checkSwitch xs diagnosticList
+message :: FilePath -> SwitchBlock Parsed -> RDF.Diagnostic
+message path (SwitchBlock span _ _) = RDF.rangeDiagnostic "Language.Java.Rules.DefaultComesLast" "Der Default Fall sollte in einem Switch Case zuletzt definiert werden." span path
+
+checkForDefault :: SwitchBlock Parsed -> Bool
+checkForDefault (SwitchBlock _ Default _) = True
+checkForDefault (SwitchBlock {}) = False
