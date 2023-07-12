@@ -19,12 +19,13 @@ checkAttributes modifier vardecl path span = do
   if any isPrivate modifier
     then mzero
     else
-      [ RDF.rangeDiagnostic
-          "Language.Java.Rules.CheckNonPrivateAttributes"
-          (Ident.name (VarDecl.ident vardecl) ++ " ist nicht als Privat deklariert.")
-          span
-          path
-      ]
+      return
+        ( RDF.rangeDiagnostic
+            "Language.Java.Rules.CheckNonPrivateAttributes"
+            (Ident.name (VarDecl.ident vardecl) ++ " ist nicht als Privat deklariert.")
+            span
+            path
+        )
 
 isPrivate :: Modifier Parsed -> Bool
 isPrivate Private = True
