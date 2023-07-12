@@ -30,9 +30,9 @@ check cUnit path = do
 
 checkIdents :: [Ident] -> FilePath -> IO [RDF.Diagnostic]
 checkIdents idents path = do
-  let matches = concatMap splitIdent idents
+  let words = concatMap splitIdent idents
   nonGermanWords <-
-    dictionaryLookup DE (unwords (map fst matches))
+    dictionaryLookup DE (unwords (map fst words))
   nonGermanWordsWithUmlautCheck <-
     dictionaryLookup DE (replaceUmlautsInString nonGermanWords)
   let germanWords =
@@ -40,7 +40,7 @@ checkIdents idents path = do
           ( \(word, _) ->
               word `notElem` lines nonGermanWordsWithUmlautCheck
           )
-          matches
+          words
   nonEnglishWords <-
     dictionaryLookup
       EN
