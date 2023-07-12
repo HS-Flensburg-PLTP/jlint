@@ -19,9 +19,9 @@ resolveDict :: DictLanguage -> String
 resolveDict DE = "de_DE"
 resolveDict EN = "en_US"
 
-dictionaryLookup :: DictLanguage -> String -> IO String
+dictionaryLookup :: DictLanguage -> [String] -> IO String
 dictionaryLookup language =
-  readProcess "aspell" ["list", "-d", resolveDict language, "--ignore-case"]
+  readProcess "aspell" ["list", "-d", resolveDict language, "--ignore-case"] . unwords
 
 check :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
 check cUnit path = do
@@ -31,7 +31,7 @@ check cUnit path = do
 checkIdents :: [Ident] -> FilePath -> IO [RDF.Diagnostic]
 checkIdents idents path = do
   let words = concatMap splitIdent idents
-  nonGermanWords <- dictionaryLookup DE (unwords (map fst words))
+  nonGermanWords <- dictionaryLookup DE (map fst words)
   nonGermanWordsWithUmlautCheck <-
     dictionaryLookup DE (replaceUmlautsInString nonGermanWords)
   let germanWords =
@@ -40,15 +40,7 @@ checkIdents idents path = do
               word `notElem` lines nonGermanWordsWithUmlautCheck
           )
           words
-  nonEnglishWords <-
-    dictionaryLookup
-      EN
-      ( unwords
-          ( map
-              fst
-              germanWords
-          )
-      )
+  nonEnglishWords <- dictionaryLookup EN (map fst germanWords)
   let definitelyGermanWords =
         filter
           ( \(word, _) ->
@@ -77,11 +69,13 @@ splitIdent (Ident sourceSpan ident) =
     )
     (allMatches (ident *=~ [re|([a-z]|[A-Z])[a-z]+|([A-Z]{2,})+|]))
 
-replaceUmlautsInString :: String -> String
+replaceUmlautsInString :: String -> [String]
 replaceUmlautsInString text =
-  unpack
-    ( replace "ue" "ü" $
-        replace "ae" "ä" $
-          replace "oe" "ö" $
-            replace "ss" "ß" (pack text)
+  words
+    ( unpack
+        ( replace "ue" "ü" $
+            replace "ae" "ä" $
+              replace "oe" "ö" $
+                replace "ss" "ß" (pack text)
+        )
     )
