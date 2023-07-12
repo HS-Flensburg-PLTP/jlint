@@ -31,8 +31,7 @@ check cUnit path = do
 checkIdents :: [Ident] -> FilePath -> IO [RDF.Diagnostic]
 checkIdents idents path = do
   let words = concatMap splitIdent idents
-  nonGermanWords <-
-    dictionaryLookup DE (unwords (map fst words))
+  nonGermanWords <- dictionaryLookup DE (unwords (map fst words))
   nonGermanWordsWithUmlautCheck <-
     dictionaryLookup DE (replaceUmlautsInString nonGermanWords)
   let germanWords =
