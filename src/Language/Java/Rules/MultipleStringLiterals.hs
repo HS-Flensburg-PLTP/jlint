@@ -2,7 +2,7 @@ module Language.Java.Rules.MultipleStringLiterals where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
-import Data.List (groupBy, sortBy)
+import Data.List (groupBy, intercalate, sortBy)
 import Language.Java.SourceSpan
 import Language.Java.Syntax
 import qualified Markdown
@@ -23,18 +23,22 @@ checkStringLiteral _ = []
 checkForDuplicates :: [(SourceSpan, String)] -> FilePath -> [RDF.Diagnostic]
 checkForDuplicates pairs path =
   concatMap
-    ( \xs ->
-        if length xs > 1
+    ( \(x : xs) ->
+        if length (x : xs) > 1
           then do
-            (sourceSpan, string) <- xs
+            let lines = map (\((Location _ line _, _), _) -> show line) xs
             return
               ( RDF.rangeDiagnostic
                   "Language.Java.Rules.MultipleStringLiterals"
                   ( "Das String-Literal "
-                      ++ Markdown.code string
-                      ++ " wird mehrfach verwendet. Bitte eine Konstante dafür einführen."
+                      ++ Markdown.code (snd x)
+                      ++ " wird an "
+                      ++ show (length xs + 1)
+                      ++ " Stellen verwendet. Auch noch in den Zeilen "
+                      ++ intercalate ", " lines
+                      ++ ". Bitte eine Konstante dafür einführen."
                   )
-                  sourceSpan
+                  (fst x)
                   path
               )
           else mzero

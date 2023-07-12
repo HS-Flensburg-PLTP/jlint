@@ -12,6 +12,8 @@ public class MultipleStringLiterals {
     }
 
     public void aMethod(String string) {
+        String d = "Foo";
+
         c = string + "Bar";
     }
 }
