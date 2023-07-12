@@ -5,6 +5,8 @@ module Language.Java.Rules.PredictMethodNames where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.List.Split
+import Language.Java.Pretty (prettyPrint)
 import Language.Java.Syntax
 import qualified RDF
 import System.Process
@@ -12,45 +14,40 @@ import System.Process
 whitelist :: [String]
 whitelist = [""]
 
-data DictLanguage
-  = DE
-  | EN
+data PredictionSet
+  = PredictionSet String [Prediction]
 
-resolveDict :: DictLanguage -> String
-resolveDict DE = "de_DE"
-resolveDict EN = "en_US"
+data Prediction
+  = Prediction String Float
 
-predictMethodNames :: MemberDecl Parsed -> IO String
-predictMethodNames methodDecl = do
-  writeToFile methodDecl
-  readProcess "python3" ["--predict"] ""
-
-{- or to json -}
-writeToFile :: MemberDecl Parsed -> IO ()
-writeToFile methodDecl@(MethodDecl {}) = mzero
-writeToFile _ = mzero
+predictMethodNames :: [MemberDecl Parsed] -> IO [PredictionSet]
+predictMethodNames methodDecls = do
+  response <-
+    readProcess
+      "/home/averodas/Schreibtisch/haskell/code2seqFork/.venv/bin/python3.6"
+      [ "/home/averodas/Schreibtisch/haskell/code2seqFork/code2seq.py",
+        "--load",
+        "/home/averodas/Schreibtisch/haskell/code2seqFork/models/java-large-model/model_iter52.release",
+        "--predict",
+        "--code",
+        concatMap prettyPrint methodDecls
+      ]
+      ""
+  let responses = splitOn "Predicted: " response
+  putStrLn (concatMap (\s -> show ("HALLO" ++ s)) responses)
+  mzero
 
 check :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
 check cUnit path = do
-  let memberDecls = universeBi cUnit
-  checkMemberDecls memberDecls path
+  let methodDecls = concatMap checkMethodDecl (universeBi cUnit)
+  response <- predictMethodNames methodDecls
+  return []
 
-checkMemberDecls :: [MemberDecl Parsed] -> FilePath -> IO [RDF.Diagnostic]
-checkMemberDecls [] _ = return []
-checkMemberDecls (memberDecl : memberDecls) path = do
-  result <- checkMemberDecl memberDecl path
-  results <- checkMemberDecls memberDecls path
-  return (result ++ results)
+checkMethodDecl :: MemberDecl Parsed -> [MemberDecl Parsed]
+checkMethodDecl methodDecl@(MethodDecl _ _ _ _ (Ident _ ident) _ _ _ _) =
+  [methodDecl | ident `notElem` whitelist]
+checkMethodDecl _ = []
 
-checkMemberDecl :: MemberDecl Parsed -> FilePath -> IO [RDF.Diagnostic]
-checkMemberDecl methodDecl@(MethodDecl _ _ _ _ (Ident _ ident) _ _ _ _) path =
-  if ident `elem` whitelist
-    then mzero
-    else checkMethodDecl methodDecl path
-checkMemberDecl _ _ = mzero
-
-checkMethodDecl :: MemberDecl Parsed -> FilePath -> IO [RDF.Diagnostic]
-checkMethodDecl methodDecl path = do
-  result <- predictMethodNames methodDecl
-  mzero
-checkMethodDecl _ _ = mzero
+{-
+.venv/bin/python3.6 code2seq.py --load models/java-large-model/model_iter52.release --predict --code 'public String getName() { return name; } public String getAnotherName() { return name; }'
+-}
