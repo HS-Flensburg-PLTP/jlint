@@ -2,39 +2,20 @@ module Language.Java.Rules.SameExecutionsInIf (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
-import Language.Java.AST (extractMethods)
-import Language.Java.SourceSpan (dummySourceSpan)
+import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  methods <- extractMethods cUnit
-  checkMethodBlocks methods path
+  (IfThenElse span _ stmt1 stmt2) <- universeBi cUnit
+  compareStmts stmt1 stmt2 span path
 
-checkMethodBlocks :: (String, MethodBody Parsed) -> FilePath -> [RDF.Diagnostic]
-checkMethodBlocks (_, methodBody) path = do
-  blockStmts <- universeBi methodBody
-  checkStmts (extractIfThenElseBlocks blockStmts)
-  where
-    extractIfThenElseBlocks (BlockStmt _ stmt) = extractStmt stmt
-    extractIfThenElseBlocks _ = mzero
-    checkStmts [] = []
-    checkStmts list = createDiagnostic (checkAllStatements list 0 + checkAllStatements (reverseList list) 0) (length (head list))
-    createDiagnostic counter listLength
-      | counter > 0 && counter < listLength = [RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" ("In an if-then-else statement, " ++ show counter ++ " line(s) of code is/are the same and can be swapped out.") dummySourceSpan path]
-      | counter >= listLength = [RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" "In an if-then-else statement, all lines of code are the same and can be swapped out." dummySourceSpan path]
-      | otherwise = []
-
-checkAllStatements :: [[BlockStmt Parsed]] -> Int -> Int
-checkAllStatements list counter
-  | all (eq IgnoreSourceSpan (head (map (\(firstStmtList : _) -> firstStmtList) list))) (concatMap (take 1) list) = if all (\statements -> length statements >= 2) list then checkAllStatements (map tail list) (counter + 1) else counter + 1
-  | otherwise = counter
-
-extractStmt :: Stmt Parsed -> [[BlockStmt Parsed]]
-extractStmt (IfThenElse _ _ (StmtBlock (Block blockA)) (StmtBlock (Block blockB))) = [blockA, blockB]
-extractStmt (IfThenElse _ _ (StmtBlock (Block blockA)) ifThenElse) = blockA : extractStmt ifThenElse
-extractStmt _ = []
-
-reverseList :: [[BlockStmt Parsed]] -> [[BlockStmt Parsed]]
-reverseList = map reverse
+compareStmts :: Stmt Parsed -> Stmt Parsed -> SourceSpan -> FilePath -> [RDF.Diagnostic]
+compareStmts stmt1 stmt2 span path
+  | eq IgnoreSourceSpan stmt1 stmt2 =
+      [RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" "Die Fallunterscheidung ist unnötig, da der Code identisch ist." span path]
+compareStmts (StmtBlock (Block blockstmts)) (StmtBlock (Block blockstmts2)) span path
+  | eq IgnoreSourceSpan (head blockstmts) (head blockstmts2) || eq IgnoreSourceSpan (last blockstmts) (last blockstmts2) =
+      [RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" "In dem If Else Block befindet sich identischer Code, welcher ausgelagert werden kann." span path]
+compareStmts _ _ _ _ = mzero
