@@ -1,77 +1,76 @@
 [
-    {
-        "rule": "AvoidMultipleTopLevelDecl"
-    },
-    {
-        "rule": "AvoidMultipleVarDecl"
-    },
-    {
-        "rule": "AvoidNegations"
-    },
-    {
-        "rule": "AvoidStarImport"
-    },
-    {
-        "rule": "CheckNonFinalMethodAttributes"
-    },
-    {
-        "rule": "CheckNonPrivateAttributes"
-    },
-    {
-        "rule": "ConsistentOverrideEqualsHashCode"
-    },
-    {
-        "rule": "DefaultComesLast"
-    },
-    {
-        "rule": "InitializeVariables"
-    },
-    {
-        "rule": "NamingConventions"
-    },
-    {
-        "rule": "NeedBraces"
-    },
-    {
-        "rule": "NoLoopBreak"
-    },
-    {
-        "rule": "NoNullPointerExceptionsForControl"
-    },
-    {
-        "rule": "ParameterNumber"
-    },
-    {
-        "rule": "PreferExpressions"
-    },
-    {
-        "rule": "ReduceScope"
-    },
-    {
-        "rule": "RedundantModifiers"
-    },
-    {
-        "rule": "SameExecutionsInIf"
-    },
-    {
-        "rule": "SimplifyBooleanReturn"
-    },
-    {
-        "rule": "UseAssignOp"
-    },
-    {
-        "rule": "UseElse"
-    },
-    {
-        "rule": "UseIncrementDecrementOperator"
-    },
-    {
-        "rule": "UseJavaArrayTypeStyle"
-    },
-    {
-        "rule": "UsePostIncrementDecrement"
-    },
-    {
-        "rule": "MultipleStringLiterals"
-    }
+  {
+    "rule": "AvoidMultipleTopLevelDecl"
+  },
+  {
+    "rule": "AvoidMultipleVarDecl"
+  },
+  {
+    "rule": "AvoidNegations"
+  },
+  {
+    "rule": "AvoidOuterNegations"
+  },
+  {
+    "rule": "AvoidStarImport"
+  },
+  {
+    "rule": "CheckNonFinalMethodAttributes"
+  },
+  {
+    "rule": "CheckNonPrivateAttributes"
+  },
+  {
+    "rule": "ConsistentOverrideEqualsHashCode"
+  },
+  {
+    "rule": "ConstantPropagation"
+  },
+  {
+    "rule": "DefaultComesLast"
+  },
+  {
+    "rule": "InitializeVariables"
+  },
+  {
+    "rule": "NoNullPointerExceptionsForControl"
+  },
+  {
+    "rule": "ParameterNumber",
+    "max": 6
+  },
+  {
+    "rule": "PreferExpressions"
+  },
+  {
+    "rule": "ProhibitAnnotations",
+    "whitelist": []
+  },
+  {
+    "rule": "ProhibitMyIdentPrefix"
+  },
+  {
+    "rule": "ReduceScope"
+  },
+  {
+    "rule": "RedundantModifiers"
+  },
+  {
+    "rule": "UseAssignOp"
+  },
+  {
+    "rule": "UseElse"
+  },
+  {
+    "rule": "UseIncrementDecrementOperator"
+  },
+  {
+    "rule": "UseJavaArrayTypeStyle"
+  },
+  {
+    "rule": "UsePostIncrementDecrement"
+  },
+  {
+    "rule": "MultipleStringLiterals"
+  }
 ]

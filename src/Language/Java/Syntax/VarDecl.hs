@@ -2,6 +2,7 @@ module Language.Java.Syntax.VarDecl
   ( isInitialized,
     hasNoSideEffect,
     ident,
+    varDeclIdIdent,
   )
 where
 

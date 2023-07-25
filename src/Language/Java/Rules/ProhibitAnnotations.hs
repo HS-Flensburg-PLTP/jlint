@@ -12,6 +12,9 @@ check whitelist cUnit path = do
   annotation <- universeBi cUnit
   checkAnnotation whitelist annotation path
 
+checkWithDefaultValue :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
+checkWithDefaultValue = check annotationWhitelist
+
 annotationName :: Annotation Parsed -> Name
 annotationName (NormalAnnotation _ name _) = name
 annotationName (SingleElementAnnotation _ name _) = name
@@ -24,3 +27,6 @@ checkAnnotation whitelist annotation path =
    in if name `elem` whitelist
         then mzero
         else return (RDF.rangeDiagnostic "Language.Java.Rules.ProhibitAnnotations" ("Nicht erlaubte Annotation gefunden: " ++ name) sourcespan path)
+
+annotationWhitelist :: [String]
+annotationWhitelist = ["Override"]

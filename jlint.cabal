@@ -34,12 +34,14 @@ library
       Language.Java.Rules.AvoidMultipleTopLevelDecl
       Language.Java.Rules.AvoidMultipleVarDecl
       Language.Java.Rules.AvoidNegations
+      Language.Java.Rules.AvoidOuterNegations
       Language.Java.Rules.AvoidStarImport
       Language.Java.Rules.CheckNonFinalMethodAttributes
       Language.Java.Rules.CheckNonPrivateAttributes
       Language.Java.Rules.ConsistentOverrideEqualsHashCode
       Language.Java.Rules.DeclarationOrder
       Language.Java.Rules.DefaultComesLast
+      Language.Java.Rules.ExplicitValue
       Language.Java.Rules.InitializeVariables
       Language.Java.Rules.ModifiedControlVariable
       Language.Java.Rules.MultipleStringLiterals
@@ -121,12 +123,14 @@ test-suite jlint-test
       AvoidMultipleTopLevelDeclTests
       AvoidMultipleVarDeclTests
       AvoidNegationsTests
+      AvoidOuterNegationsTests
       AvoidStarImportTests
       CheckNonFinalMethodAttributesTests
       CheckNonPrivateAttributesTests
       ConsistentOverrideEqualsHashCodeTests
       DeclarationOrderTests
       DefaultComesLastTests
+      ExplicitValueTests
       InitializeVariablesTests
       ModifiedControlVariableTests
       MultipleStringLiteralsTests
