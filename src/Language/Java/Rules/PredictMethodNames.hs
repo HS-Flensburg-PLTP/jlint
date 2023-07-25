@@ -22,15 +22,14 @@ data Prediction
 
 predictMethodNames :: [MemberDecl Parsed] -> IO [PredictionSet]
 predictMethodNames methodDecls = do
+  writeFile "/home/averodas/Schreibtisch/haskell/Code2VeqFork/Input.java" (concatMap prettyPrint methodDecls)
   response <-
     readProcess
-      "/home/averodas/Schreibtisch/haskell/code2seqFork/.venv/bin/python3.6"
-      [ "/home/averodas/Schreibtisch/haskell/code2seqFork/code2seq.py",
+      "/home/averodas/Schreibtisch/haskell/Code2VeqFork/.venv/bin/python3.6"
+      [ "/home/averodas/Schreibtisch/haskell/Code2VeqFork/code2vec.py",
         "--load",
-        "/home/averodas/Schreibtisch/haskell/code2seqFork/models/java-large-model/model_iter52.release",
-        "--predict",
-        "--code",
-        concatMap prettyPrint methodDecls
+        "/home/averodas/Schreibtisch/haskell/Code2VeqFork/models/java14_model/saved_model_iter8.release",
+        "--predict"
       ]
       ""
   let responses = splitOn "Predicted: " response

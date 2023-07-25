@@ -18,6 +18,7 @@ import qualified Language.Java.Rules.NeedBraces as NeedBraces
 import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
+import qualified Language.Java.Rules.PredictMethodNames as PredictMethodNames
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations
 import qualified Language.Java.Rules.ProhibitGermanNames as ProhibitGermanNames
@@ -62,7 +63,8 @@ checks =
 
 checksIO :: [CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]]
 checksIO =
-  [ ProhibitGermanNames.check
+  [ ProhibitGermanNames.check,
+    PredictMethodNames.check
   ]
 
 checkAll :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
