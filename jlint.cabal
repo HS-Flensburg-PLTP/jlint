@@ -89,6 +89,7 @@ library
     , parsec >=3.1.14.0 && <3.2
     , process >=1
     , regex >=1.1.0 && <1.2
+    , split >=0.2.3.4
     , text >=1.2.4.1
     , uniplate >=1.6.11 && <1.7
   default-language: Haskell2010
@@ -115,6 +116,7 @@ executable jlint
     , parsec >=3.1.14.0 && <3.2
     , process >=1
     , regex >=1.1.0 && <1.2
+    , split >=0.2.3.4
     , text >=1.2.4.1
     , uniplate >=1.6.11 && <1.7
   default-language: Haskell2010
