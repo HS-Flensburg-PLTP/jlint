@@ -1,5 +1,73 @@
 [
   {
+    "rule": "AvoidMultipleTopLevelDecl"
+  },
+  {
+    "rule": "AvoidMultipleVarDecl"
+  },
+  {
+    "rule": "AvoidNegations"
+  },
+  {
+    "rule": "AvoidOuterNegations"
+  },
+  {
+    "rule": "AvoidStarImport"
+  },
+  {
+    "rule": "CheckNonFinalMethodAttributes"
+  },
+  {
+    "rule": "CheckNonPrivateAttributes"
+  },
+  {
+    "rule": "ConsistentOverrideEqualsHashCode"
+  },
+  {
+    "rule": "ConstantPropagation"
+  },
+  {
+    "rule": "DefaultComesLast"
+  },
+  {
+    "rule": "InitializeVariables"
+  },
+  {
+    "rule": "NoNullPointerExceptionsForControl"
+  },
+  {
     "rule": "NoPostIncDecInExpression"
+  },
+  {
+    "rule": "ParameterNumber",
+    "max": 6
+  },
+  {
+    "rule": "PreferExpressions"
+  },
+  {
+    "rule": "ProhibitAnnotations",
+    "whitelist": []
+  },
+  {
+    "rule": "ProhibitMyIdentPrefix"
+  },
+  {
+    "rule": "ReduceScope"
+  },
+  {
+    "rule": "RedundantModifiers"
+  },
+  {
+    "rule": "UseAssignOp"
+  },
+  {
+    "rule": "UseElse"
+  },
+  {
+    "rule": "UseIncrementDecrementOperator"
+  },
+  {
+    "rule": "UseJavaArrayTypeStyle"
   }
 ]
