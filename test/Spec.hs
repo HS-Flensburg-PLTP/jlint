@@ -17,6 +17,7 @@ import qualified NoNullPointerExceptionsForControlTests
 import qualified ParameterNumberTests
 import qualified PreferExpressionsTests
 import qualified ProhibitAnnotationsTests
+import qualified ProhibitMyIdentPrefixTests
 import qualified ReduceScopeTests
 import qualified RedundantModifiersTests
 import qualified SameExecutionsInIfTests
@@ -45,6 +46,7 @@ tests =
       "DefaultComesLast" ~: DefaultComesLastTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
       "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
+      "MultipleStringLiteralsTests" ~: MultipleStringLiteralsTests.tests,
       "NamingConventions" ~: NamingConventionsTests.tests,
       "NeedBraces" ~: NeedBracesTests.tests,
       "NoLoopBreak" ~: NoLoopBreakTests.tests,
@@ -52,6 +54,7 @@ tests =
       "ParameterNumber" ~: ParameterNumberTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ProhibitAnnotations" ~: ProhibitAnnotationsTests.tests,
+      "ProhibitMyIdentPrefix" ~: ProhibitMyIdentPrefixTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
       "RedundantModifiers" ~: RedundantModifiersTests.tests,
       "SameExecutionsInIf" ~: SameExecutionsInIfTests.tests,

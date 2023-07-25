@@ -50,6 +50,7 @@ library
       Language.Java.Rules.ParameterNumber
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ProhibitAnnotations
+      Language.Java.Rules.ProhibitMyIdentPrefix
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.RedundantModifiers
       Language.Java.Rules.SameExecutionsInIf
@@ -128,6 +129,7 @@ test-suite jlint-test
       DefaultComesLastTests
       InitializeVariablesTests
       ModifiedControlVariableTests
+      MultipleStringLiteralsTests
       NamingConventionsTests
       NeedBracesTests
       NoLoopBreakTests
@@ -135,6 +137,7 @@ test-suite jlint-test
       ParameterNumberTests
       PreferExpressionsTests
       ProhibitAnnotationsTests
+      ProhibitMyIdentPrefixTests
       ReduceScopeTests
       RedundantModifiersTests
       SameExecutionsInIfTests
