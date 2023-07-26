@@ -1,11 +1,13 @@
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE QuasiQuotes #-}
 
 module Language.Java.Rules.PredictMethodNames where
 
-import Control.Monad (MonadPlus (..))
+import Data.Aeson (FromJSON, decode)
+import qualified Data.ByteString.Lazy.Char8 as C (pack)
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.List.Split
+import GHC.Generics (Generic)
 import Language.Java.Pretty (prettyPrint)
 import Language.Java.Syntax
 import qualified RDF
@@ -14,11 +16,28 @@ import System.Process
 whitelist :: [String]
 whitelist = [""]
 
-data PredictionSet
-  = PredictionSet String [Prediction]
+newtype Result = Result
+  { predictionSets :: [PredictionSet]
+  }
+  deriving (Generic, Show)
 
-data Prediction
-  = Prediction String Float
+data PredictionSet = PredictionSet
+  { originalName :: String,
+    predictions :: [Prediction]
+  }
+  deriving (Generic, Show)
+
+data Prediction = Prediction
+  { predictedName :: String,
+    weight :: Float
+  }
+  deriving (Generic, Show)
+
+instance FromJSON Prediction
+
+instance FromJSON PredictionSet
+
+instance FromJSON Result
 
 predictMethodNames :: [MemberDecl Parsed] -> IO [PredictionSet]
 predictMethodNames methodDecls = do
@@ -32,8 +51,10 @@ predictMethodNames methodDecls = do
         "--predict"
       ]
       ""
-  let responses = splitOn "Predicted: " response
-  putStrLn (concatMap (\s -> show ("HALLO" ++ s)) responses)
+  let jsonData = splitOn "==========" response !! 1
+  let predictionSets = decode (C.pack jsonData) :: Maybe [PredictionSet]
+  putStrLn jsonData
+  print predictionSets
   return []
 
 check :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
