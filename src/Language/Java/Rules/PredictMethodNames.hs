@@ -9,26 +9,23 @@ import Data.Generics.Uniplate.Data (universeBi)
 import Data.List.Split
 import GHC.Generics (Generic)
 import Language.Java.Pretty (prettyPrint)
+import Language.Java.SourceSpan (SourceSpan, dummySourceSpan)
 import Language.Java.Syntax
+import qualified Markdown
 import qualified RDF
 import System.Process
 
 whitelist :: [String]
 whitelist = [""]
 
-newtype Result = Result
-  { predictionSets :: [PredictionSet]
-  }
-  deriving (Generic, Show)
-
 data PredictionSet = PredictionSet
-  { originalName :: String,
+  { originalName :: [String],
     predictions :: [Prediction]
   }
   deriving (Generic, Show)
 
 data Prediction = Prediction
-  { predictedName :: String,
+  { predictedName :: [String],
     weight :: Float
   }
   deriving (Generic, Show)
@@ -37,9 +34,7 @@ instance FromJSON Prediction
 
 instance FromJSON PredictionSet
 
-instance FromJSON Result
-
-predictMethodNames :: [MemberDecl Parsed] -> IO [PredictionSet]
+predictMethodNames :: [MemberDecl Parsed] -> IO [(PredictionSet, SourceSpan)]
 predictMethodNames methodDecls = do
   writeFile "../code2vec/Input.java" (concatMap prettyPrint methodDecls)
   response <-
@@ -53,15 +48,42 @@ predictMethodNames methodDecls = do
       ""
   let jsonData = splitOn "==========" response !! 1
   let predictionSets = decode (C.pack jsonData) :: Maybe [PredictionSet]
-  putStrLn jsonData
-  print predictionSets
-  return []
+  case predictionSets of
+    Nothing -> return []
+    Just pss ->
+      return
+        ( zipWith
+            (\((MethodDecl _ _ _ _ (Ident sourceSpan _) _ _ _ _)) predictionSet -> (predictionSet, sourceSpan))
+            methodDecls
+            pss
+        )
 
 check :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
 check cUnit path = do
   let methodDecls = concatMap checkMethodDecl (universeBi cUnit)
-  response <- predictMethodNames methodDecls
-  return []
+  predictionSets <- predictMethodNames methodDecls
+  return
+    ( map
+        ( \(PredictionSet originalName _, sourceSpan) ->
+            RDF.rangeDiagnostic
+              "Language.Java.Rules.PredictMethodNames"
+              ("Der Name " ++ Markdown.code (unwords originalName) ++ " ist schlecht gewählt. Folgende Vorschläge eignen sich vielleicht besser: ")
+              sourceSpan
+              path
+        )
+        ( filter
+            ( \(PredictionSet originalName predictions, _) ->
+                not
+                  ( any
+                      ( \(Prediction predictedName _) ->
+                          originalName == predictedName
+                      )
+                      predictions
+                  )
+            )
+            predictionSets
+        )
+    )
 
 checkMethodDecl :: MemberDecl Parsed -> [MemberDecl Parsed]
 checkMethodDecl methodDecl@(MethodDecl _ _ _ _ (Ident _ ident) _ _ _ _) =
