@@ -9,7 +9,7 @@ import Data.Generics.Uniplate.Data (universeBi)
 import Data.List.Split
 import GHC.Generics (Generic)
 import Language.Java.Pretty (prettyPrint)
-import Language.Java.SourceSpan (SourceSpan, dummySourceSpan)
+import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
 import qualified Markdown
 import qualified RDF
