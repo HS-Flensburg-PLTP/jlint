@@ -22,19 +22,19 @@ data Prediction
 
 predictMethodNames :: [MemberDecl Parsed] -> IO [PredictionSet]
 predictMethodNames methodDecls = do
-  writeFile "/home/averodas/Schreibtisch/haskell/Code2VeqFork/Input.java" (concatMap prettyPrint methodDecls)
+  writeFile "../code2vec/Input.java" (concatMap prettyPrint methodDecls)
   response <-
     readProcess
-      "/home/averodas/Schreibtisch/haskell/Code2VeqFork/.venv/bin/python3.6"
-      [ "/home/averodas/Schreibtisch/haskell/Code2VeqFork/code2vec.py",
+      "../code2vec/.venv/bin/python3.6"
+      [ "../code2vec/code2vec.py",
         "--load",
-        "/home/averodas/Schreibtisch/haskell/Code2VeqFork/models/java14_model/saved_model_iter8.release",
+        "../code2vec/models/java14_model/saved_model_iter8.release",
         "--predict"
       ]
       ""
   let responses = splitOn "Predicted: " response
   putStrLn (concatMap (\s -> show ("HALLO" ++ s)) responses)
-  mzero
+  return []
 
 check :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
 check cUnit path = do
