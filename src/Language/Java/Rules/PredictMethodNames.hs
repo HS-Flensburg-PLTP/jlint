@@ -5,6 +5,7 @@ module Language.Java.Rules.PredictMethodNames where
 
 import Data.Aeson (FromJSON, decode)
 import qualified Data.ByteString.Lazy.Char8 as C (pack)
+import Data.Char (toLower, toUpper)
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.List.Split
 import GHC.Generics (Generic)
@@ -17,6 +18,12 @@ import System.Process
 
 whitelist :: [String]
 whitelist = [""]
+
+minimumSuggestions :: Int
+minimumSuggestions = 3
+
+thresholdSuggestions :: Float
+thresholdSuggestions = 0.75
 
 data PredictionSet = PredictionSet
   { originalName :: [String],
@@ -74,22 +81,68 @@ check cUnit path = do
                 )
           )
           predictionSets
+  let filteredPredictionSets' = checkPredictionSets filteredPredictionSets
   return
     ( map
-        ( \(PredictionSet originalName _, sourceSpan) ->
+        ( \(PredictionSet originalName predictions, sourceSpan) ->
             RDF.rangeDiagnostic
               "Language.Java.Rules.PredictMethodNames"
-              ("Der Name " ++ Markdown.code (unwords originalName) ++ " ist schlecht gewählt. Folgende Vorschläge eignen sich vielleicht besser: ")
+              ( "Der Name "
+                  ++ Markdown.code (toCamelCase originalName)
+                  ++ " ist schlecht gewählt. Folgende Vorschläge eignen sich vielleicht besser: "
+                  ++ unwords
+                    ( map
+                        ( \(Prediction name _) ->
+                            Markdown.code (toCamelCase name)
+                        )
+                        predictions
+                    )
+              )
               sourceSpan
               path
         )
-        filteredPredictionSets
+        filteredPredictionSets'
     )
+
+toCamelCase :: [String] -> String
+toCamelCase (x : xs) =
+  x
+    ++ concatMap
+      ( \(n : ns) ->
+          toUpper n : map toLower ns
+      )
+      xs
+toCamelCase [] = []
 
 checkMethodDecl :: MemberDecl Parsed -> [MemberDecl Parsed]
 checkMethodDecl methodDecl@(MethodDecl _ _ _ _ (Ident _ ident) _ _ _ _) =
   [methodDecl | ident `notElem` whitelist]
 checkMethodDecl _ = []
+
+checkPredictionSets :: [(PredictionSet, SourceSpan)] -> [(PredictionSet, SourceSpan)]
+checkPredictionSets =
+  map
+    ( \(PredictionSet originalName predictions, sourceSpan) ->
+        ( PredictionSet
+            { originalName = originalName,
+              predictions = calculatePredictions predictions
+            },
+          sourceSpan
+        )
+    )
+
+calculatePredictions :: [Prediction] -> [Prediction]
+calculatePredictions preds = calculatePredictions' preds [] 0 0.0
+  where
+    calculatePredictions' :: [Prediction] -> [Prediction] -> Int -> Float -> [Prediction]
+    calculatePredictions' [] akk _ _ = akk
+    calculatePredictions' (x@(Prediction _ weight) : xs) akk count accumulatedWeight =
+      if accumulatedWeight >= thresholdSuggestions
+        then
+          if count < minimumSuggestions
+            then calculatePredictions' xs (akk ++ [x]) (count + 1) (accumulatedWeight + weight)
+            else akk
+        else calculatePredictions' xs (akk ++ [x]) (count + 1) (accumulatedWeight + weight)
 
 {-
 .venv/bin/python3.6 code2seq.py --load models/java-large-model/model_iter52.release --predict --code 'public String getName() { return name; } public String getAnotherName() { return name; }'
