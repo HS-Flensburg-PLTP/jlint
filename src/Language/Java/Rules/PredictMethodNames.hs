@@ -62,6 +62,18 @@ check :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
 check cUnit path = do
   let methodDecls = concatMap checkMethodDecl (universeBi cUnit)
   predictionSets <- predictMethodNames methodDecls
+  let filteredPredictionSets =
+        filter
+          ( \(PredictionSet originalName predictions, _) ->
+              not
+                ( any
+                    ( \(Prediction predictedName _) ->
+                        originalName == predictedName
+                    )
+                    predictions
+                )
+          )
+          predictionSets
   return
     ( map
         ( \(PredictionSet originalName _, sourceSpan) ->
@@ -71,18 +83,7 @@ check cUnit path = do
               sourceSpan
               path
         )
-        ( filter
-            ( \(PredictionSet originalName predictions, _) ->
-                not
-                  ( any
-                      ( \(Prediction predictedName _) ->
-                          originalName == predictedName
-                      )
-                      predictions
-                  )
-            )
-            predictionSets
-        )
+        filteredPredictionSets
     )
 
 checkMethodDecl :: MemberDecl Parsed -> [MemberDecl Parsed]
