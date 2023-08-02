@@ -16,6 +16,7 @@ import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
 import qualified Language.Java.Rules.ModifiedControlVariable as ModifiedControlVariable
 import qualified Language.Java.Rules.NamingConventions as NamingConventions
 import qualified Language.Java.Rules.NeedBraces as NeedBraces
+import qualified Language.Java.Rules.NoFurtherDataStructures as NoFurtherDataStructures
 import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
@@ -46,6 +47,7 @@ checks =
     ExplicitValue.check,
     InitializeVariables.check,
     ModifiedControlVariable.check,
+    NoFurtherDataStructures.checkWithDefaultValue,
     NoNullPointerExceptionsForControl.check,
     ParameterNumber.check Nothing,
     PreferExpressions.check,
@@ -83,6 +85,7 @@ checkFromConfig InitializeVariables = InitializeVariables.check
 checkFromConfig ModifiedControlVariable = ModifiedControlVariable.check
 checkFromConfig NamingConventions = NamingConventions.check
 checkFromConfig NeedBraces = NeedBraces.check
+checkFromConfig (NoFurtherDataStructures methodNames) = NoFurtherDataStructures.check methodNames
 checkFromConfig NoLoopBreak = NoLoopBreak.check
 checkFromConfig NoNullPointerExceptionsForControl = NoNullPointerExceptionsForControl.check
 checkFromConfig (ParameterNumber max) = ParameterNumber.check max

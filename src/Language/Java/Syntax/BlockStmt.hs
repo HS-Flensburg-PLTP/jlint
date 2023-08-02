@@ -1,11 +1,12 @@
 module Language.Java.Syntax.BlockStmt
   ( name,
     hasNoSideEffect,
+    extractVarDecls,
   )
 where
 
 import Language.Java.Pretty (PrettyExtension, prettyPrint)
-import Language.Java.Syntax (BlockStmt (..), Stmt (..))
+import Language.Java.Syntax (BlockStmt (..), Parsed, Stmt (..), VarDecl)
 import qualified Language.Java.Syntax.Stmt as Stmt
 import qualified Language.Java.Syntax.VarDecl as VarDecl
 
@@ -38,3 +39,7 @@ hasNoSideEffect :: BlockStmt p -> Bool
 hasNoSideEffect (BlockStmt _ stmt) = Stmt.hasNoSideEffect stmt
 hasNoSideEffect (LocalClass _) = False
 hasNoSideEffect (LocalVars _ _ _ varDecls) = all VarDecl.hasNoSideEffect varDecls
+
+extractVarDecls :: BlockStmt Parsed -> [VarDecl Parsed]
+extractVarDecls (LocalVars _ _ _ vardecls) = vardecls
+extractVarDecls _ = []

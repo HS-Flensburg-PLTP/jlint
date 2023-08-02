@@ -33,6 +33,12 @@
         "rule": "InitializeVariables"
     },
     {
+        "rule": "NoFurtherDataStructures",
+        "methodNames": [
+            "set"
+        ]
+    },
+    {
         "rule": "NoNullPointerExceptionsForControl"
     },
     {

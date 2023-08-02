@@ -13,6 +13,7 @@ import qualified InitializeVariablesTests
 import qualified ModifiedControlVariableTests
 import qualified NamingConventionsTests
 import qualified NeedBracesTests
+import qualified NoFurtherDataStructuresTests as NoFurtherDataStructures
 import qualified NoLoopBreakTests
 import qualified NoNullPointerExceptionsForControlTests
 import qualified ParameterNumberTests
@@ -51,6 +52,7 @@ tests =
       "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
       "NamingConventions" ~: NamingConventionsTests.tests,
       "NeedBraces" ~: NeedBracesTests.tests,
+      "NoFurtherDataStructures" ~: NoFurtherDataStructures.tests,
       "NoLoopBreak" ~: NoLoopBreakTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "ParameterNumber" ~: ParameterNumberTests.tests,

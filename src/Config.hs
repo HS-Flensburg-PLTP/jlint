@@ -21,6 +21,7 @@ data Rule
   | ModifiedControlVariable
   | NamingConventions
   | NeedBraces
+  | NoFurtherDataStructures {methodNames :: [String]}
   | NoLoopBreak
   | NoNullPointerExceptionsForControl
   | ParameterNumber {max :: Maybe Int}
@@ -55,6 +56,7 @@ instance FromJSON Rule where
       "ModifiedControlVariable" -> pure ModifiedControlVariable
       "NamingConventions" -> pure NamingConventions
       "NeedBraces" -> pure NeedBraces
+      "NoFurtherDataStructures" -> parseMethodNames obj
       "NoLoopBreak" -> pure NoLoopBreak
       "NoNullPointerExceptionsForControl" -> pure NoNullPointerExceptionsForControl
       "ParameterNumber" -> parseParameterNumber obj
@@ -84,6 +86,12 @@ parseProhibitAnnotations obj = do
   whitelistVal <- obj .: fromString "whitelist"
   checkNoExtraKeys obj [fromString "whitelist"]
   pure (ProhibitAnnotations whitelistVal)
+
+parseMethodNames :: Object -> Parser Rule
+parseMethodNames obj = do
+  methodNames <- obj .: fromString "methodNames"
+  checkNoExtraKeys obj [fromString "methodNames"]
+  pure (NoFurtherDataStructures methodNames)
 
 checkNoExtraKeys :: Object -> [Key] -> Parser ()
 checkNoExtraKeys obj allowedKeys = do
