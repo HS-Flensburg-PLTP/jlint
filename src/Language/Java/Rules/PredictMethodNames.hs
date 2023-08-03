@@ -16,8 +16,19 @@ import qualified Markdown
 import qualified RDF
 import System.Process
 
-whitelist :: [String]
-whitelist = [""]
+data WhitelistEntry = WhitelistEntry
+  { methodName :: String,
+    formalParamTypes :: [String]
+  }
+  deriving (Eq)
+
+whitelist :: [WhitelistEntry]
+whitelist =
+  [ WhitelistEntry
+      { methodName = "newElementArrayList",
+        formalParamTypes = ["ArrayList<T>", "T"]
+      }
+  ]
 
 minimumSuggestions :: Int
 minimumSuggestions = 3
@@ -68,41 +79,44 @@ predictMethodNames methodDecls = do
 check :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
 check cUnit path = do
   let methodDecls = concatMap checkMethodDecl (universeBi cUnit)
-  predictionSets <- predictMethodNames methodDecls
-  let filteredPredictionSets =
-        filter
-          ( \(PredictionSet originalName predictions, _) ->
-              not
-                ( any
-                    ( \(Prediction predictedName _) ->
-                        originalName == predictedName
-                    )
-                    predictions
-                )
-          )
-          predictionSets
-  let filteredPredictionSets' = checkPredictionSets filteredPredictionSets
-  return
-    ( map
-        ( \(PredictionSet originalName predictions, sourceSpan) ->
-            RDF.rangeDiagnostic
-              "Language.Java.Rules.PredictMethodNames"
-              ( "Der Name "
-                  ++ Markdown.code (toCamelCase originalName)
-                  ++ " ist schlecht gewählt. Folgende Vorschläge eignen sich vielleicht besser: "
-                  ++ unwords
-                    ( map
-                        ( \(Prediction name _) ->
-                            Markdown.code (toCamelCase name)
+  if null methodDecls
+    then return []
+    else do
+      predictionSets <- predictMethodNames methodDecls
+      let filteredPredictionSets =
+            filter
+              ( \(PredictionSet originalName predictions, _) ->
+                  not
+                    ( any
+                        ( \(Prediction predictedName _) ->
+                            originalName == predictedName
                         )
                         predictions
                     )
               )
-              sourceSpan
-              path
+              predictionSets
+      let filteredPredictionSets' = checkPredictionSets filteredPredictionSets
+      return
+        ( map
+            ( \(PredictionSet originalName predictions, sourceSpan) ->
+                RDF.rangeDiagnostic
+                  "Language.Java.Rules.PredictMethodNames"
+                  ( "Der Name "
+                      ++ Markdown.code (toCamelCase originalName)
+                      ++ " ist schlecht gewählt. Folgende Vorschläge eignen sich vielleicht besser: "
+                      ++ unwords
+                        ( map
+                            ( \(Prediction name _) ->
+                                Markdown.code (toCamelCase name)
+                            )
+                            predictions
+                        )
+                  )
+                  sourceSpan
+                  path
+            )
+            filteredPredictionSets'
         )
-        filteredPredictionSets'
-    )
 
 toCamelCase :: [String] -> String
 toCamelCase (x : xs) =
@@ -115,8 +129,14 @@ toCamelCase (x : xs) =
 toCamelCase [] = []
 
 checkMethodDecl :: MemberDecl Parsed -> [MemberDecl Parsed]
-checkMethodDecl methodDecl@(MethodDecl _ _ _ _ (Ident _ ident) _ _ _ _) =
-  [methodDecl | ident `notElem` whitelist]
+checkMethodDecl methodDecl@(MethodDecl _ _ _ _ (Ident _ ident) formalParams _ _ _) =
+  [ methodDecl
+    | WhitelistEntry
+        { methodName = ident,
+          formalParamTypes = map (\(FormalParam _ _ t _ _) -> prettyPrint t) formalParams
+        }
+        `notElem` whitelist
+  ]
 checkMethodDecl _ = []
 
 checkPredictionSets :: [(PredictionSet, SourceSpan)] -> [(PredictionSet, SourceSpan)]
@@ -147,3 +167,14 @@ calculatePredictions preds = calculatePredictions' preds [] 0 0.0
 {-
 .venv/bin/python3.6 code2seq.py --load models/java-large-model/model_iter52.release --predict --code 'public String getName() { return name; } public String getAnotherName() { return name; }'
 -}
+
+-- putStrLn
+--   ( concatMap
+--       ( \((MethodDecl _ _ _ _ (Ident _ ident) formalParams _ _ _)) ->
+--           ident
+--             ++ concatMap
+--               (\(FormalParam _ _ typpe _ _) -> prettyPrint typpe)
+--               formalParams
+--       )
+--       methodDecls
+--   )
