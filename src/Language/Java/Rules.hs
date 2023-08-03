@@ -81,9 +81,6 @@ executeAll (check : checks) cUnit path = do
   results <- executeAll checks cUnit path
   return (result ++ results)
 
-checkWithConfig :: [Config] -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-checkWithConfig config cUnit path = concatMap (\f -> f cUnit path) (checkRule (extractRuleNames config))
-
 checkWithConfig :: [Rule] -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic])
 checkWithConfig config cUnit path = concatMap (\f -> f cUnit path) (checkRule config)
 
