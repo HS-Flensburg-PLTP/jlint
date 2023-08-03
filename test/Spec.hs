@@ -1,12 +1,14 @@
 import qualified AvoidMultipleTopLevelDeclTests
 import qualified AvoidMultipleVarDeclTests
 import qualified AvoidNegationsTests
+import qualified AvoidOuterNegationsTests
 import qualified AvoidStarImportTests
 import qualified CheckNonFinalMethodAttributesTests
 import qualified CheckNonPrivateAttributesTests
 import qualified ConsistentOverrideEqualsHashCodeTests
 import qualified DeclarationOrderTests
 import qualified DefaultComesLastTests
+import qualified ExplicitValueTests
 import qualified InitializeVariablesTests
 import qualified ModifiedControlVariableTests
 import qualified NamingConventionsTests
@@ -27,6 +29,7 @@ import qualified UseAssignOpTests
 import qualified UseElseTests
 import qualified UseIncrementDecrementOperatorTests
 import qualified UseJavaArrayTypeStyleTests
+import qualified UsePostIncrementDecrementTests
 
 main :: IO ()
 main = do
@@ -38,11 +41,14 @@ tests =
     [ "AvoidMultipleTopLevelDecl" ~: AvoidMultipleTopLevelDeclTests.tests,
       "AvoidMultipleVarDecl" ~: AvoidMultipleVarDeclTests.tests,
       "AvoidNegations" ~: AvoidNegationsTests.tests,
+      "AvoidOuterNegations" ~: AvoidOuterNegationsTests.tests,
       "AvoidStarImport" ~: AvoidStarImportTests.tests,
       "CheckNonFinalMethodAttributes" ~: CheckNonFinalMethodAttributesTests.tests,
       "CheckNonPrivateAttributes" ~: CheckNonPrivateAttributesTests.tests,
       "ConsistentOverrideEqualsHashCode" ~: ConsistentOverrideEqualsHashCodeTests.tests,
+      "DeclarationOrder" ~: DeclarationOrderTests.tests,
       "DefaultComesLast" ~: DefaultComesLastTests.tests,
+      "ExplicitValue" ~: ExplicitValueTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
       "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
       "NamingConventions" ~: NamingConventionsTests.tests,
@@ -52,6 +58,7 @@ tests =
       "ParameterNumber" ~: ParameterNumberTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ProhibitAnnotations" ~: ProhibitAnnotationsTests.tests,
+      "ProhibitGermanNames" ~: ProhibitGermanNamesTests.tests,
       "ProhibitMyIdentPrefix" ~: ProhibitMyIdentPrefixTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
       "RedundantModifiers" ~: RedundantModifiersTests.tests,
@@ -61,6 +68,5 @@ tests =
       "UseElse" ~: UseElseTests.tests,
       "UseIncrementDecrementOperator" ~: UseIncrementDecrementOperatorTests.tests,
       "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests,
-      "DeclarationOrder" ~: DeclarationOrderTests.tests,
-      "ProhibitGermanNames" ~: ProhibitGermanNamesTests.tests
+      "UsePostIncrementDecrement" ~: UsePostIncrementDecrementTests.tests
     ]

@@ -8,15 +8,12 @@ import Test.HUnit
 import Tests
 import qualified Tests
 
-whitelist :: [String]
-whitelist = ["FooBar", "Override"]
-
 tests :: Test
 tests =
   rangesTest
     expectedRanges
     "ProhibitAnnotations.java"
-    (ProhibitAnnotations.check whitelist)
+    (ProhibitAnnotations.check ["FooBar", "Override"])
 
 expectedRanges :: [RDF.Range]
 expectedRanges =

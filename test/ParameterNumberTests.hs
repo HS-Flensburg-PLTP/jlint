@@ -10,7 +10,7 @@ tests =
   rangesTest
     expectedRanges
     "ParameterNumber.java"
-    ParameterNumber.check
+    (ParameterNumber.check Nothing)
 
 expectedRanges :: [RDF.Range]
 expectedRanges =
