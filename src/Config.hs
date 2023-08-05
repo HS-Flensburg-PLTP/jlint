@@ -11,12 +11,14 @@ data Rule
   = AvoidMultipleTopLevelDecl
   | AvoidMultipleVarDecl
   | AvoidNegations
+  | AvoidOuterNegations
   | AvoidStarImport
   | CheckNonFinalMethodAttributes
   | CheckNonPrivateAttributes
   | ConsistentOverrideEqualsHashCode
   | DeclarationOrder
   | DefaultComesLast
+  | ExplicitValue
   | InitializeVariables
   | MethodInvNumber {called :: String, limited :: String, maxInv :: Int}
   | ModifiedControlVariable
@@ -46,12 +48,14 @@ instance FromJSON Rule where
       "AvoidMultipleTopLevelDecl" -> pure AvoidMultipleTopLevelDecl
       "AvoidMultipleVarDecl" -> pure AvoidMultipleVarDecl
       "AvoidNegations" -> pure AvoidNegations
+      "AvoidOuterNegations" -> pure AvoidOuterNegations
       "AvoidStarImport" -> pure AvoidStarImport
       "CheckNonFinalMethodAttributes" -> pure CheckNonFinalMethodAttributes
       "CheckNonPrivateAttributes" -> pure CheckNonPrivateAttributes
       "ConsistentOverrideEqualsHashCode" -> pure ConsistentOverrideEqualsHashCode
       "DeclarationOrder" -> pure DeclarationOrder
       "DefaultComesLast" -> pure DefaultComesLast
+      "ExplicitValue" -> pure ExplicitValue
       "InitializeVariables" -> pure InitializeVariables
       "MethodInvNumber" -> parseMethodInvNumber obj
       "ModifiedControlVariable" -> pure ModifiedControlVariable

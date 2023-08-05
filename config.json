@@ -24,10 +24,10 @@
         "rule": "ConsistentOverrideEqualsHashCode"
     },
     {
-        "rule": "ConstantPropagation"
+        "rule": "DefaultComesLast"
     },
     {
-        "rule": "DefaultComesLast"
+        "rule": "ExplicitValue"
     },
     {
         "rule": "InitializeVariables"
