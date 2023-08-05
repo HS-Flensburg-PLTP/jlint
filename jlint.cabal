@@ -43,6 +43,7 @@ library
       Language.Java.Rules.DefaultComesLast
       Language.Java.Rules.ExplicitValue
       Language.Java.Rules.InitializeVariables
+      Language.Java.Rules.MethodInvNumber
       Language.Java.Rules.ModifiedControlVariable
       Language.Java.Rules.NamingConventions
       Language.Java.Rules.NeedBraces

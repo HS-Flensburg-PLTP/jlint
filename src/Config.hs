@@ -18,6 +18,7 @@ data Rule
   | DeclarationOrder
   | DefaultComesLast
   | InitializeVariables
+  | MethodInvNumber {called :: String, limited :: String, maxInv :: Int}
   | ModifiedControlVariable
   | NamingConventions
   | NeedBraces
@@ -52,6 +53,7 @@ instance FromJSON Rule where
       "DeclarationOrder" -> pure DeclarationOrder
       "DefaultComesLast" -> pure DefaultComesLast
       "InitializeVariables" -> pure InitializeVariables
+      "MethodInvNumber" -> parseMethodInvNumber obj
       "ModifiedControlVariable" -> pure ModifiedControlVariable
       "NamingConventions" -> pure NamingConventions
       "NeedBraces" -> pure NeedBraces
@@ -84,6 +86,14 @@ parseProhibitAnnotations obj = do
   whitelistVal <- obj .: fromString "whitelist"
   checkNoExtraKeys obj [fromString "whitelist"]
   pure (ProhibitAnnotations whitelistVal)
+
+parseMethodInvNumber :: Object -> Parser Rule
+parseMethodInvNumber obj = do
+  called <- obj .: fromString "called"
+  limited <- obj .: fromString "limited"
+  maxInv <- obj .: fromString "maxInv"
+  checkNoExtraKeys obj [fromString "called", fromString "limited", fromString "maxInv"]
+  pure (MethodInvNumber called limited maxInv)
 
 checkNoExtraKeys :: Object -> [Key] -> Parser ()
 checkNoExtraKeys obj allowedKeys = do

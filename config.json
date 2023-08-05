@@ -33,6 +33,12 @@
         "rule": "InitializeVariables"
     },
     {
+        "rule": "MethodInvNumber",
+        "called": "foo",
+        "limited": "bar",
+        "maxInv": 2
+    },
+    {
         "rule": "NoNullPointerExceptionsForControl"
     },
     {
