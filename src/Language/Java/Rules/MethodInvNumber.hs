@@ -7,23 +7,23 @@ import qualified RDF
 
 check :: String -> String -> Int -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check called limited maxInv cUnit path = do
-  memberDecl <- universeBi cUnit :: [MemberDecl Parsed]
-  checkMemberDecl memberDecl
+  (MethodDecl span _ _ _ (Ident _ ident) _ _ _ methodBody) <- universeBi cUnit :: [MemberDecl Parsed]
+  checkMemberDecl span ident methodBody
   where
-    checkMemberDecl (MethodDecl span _ _ _ (Ident _ ident) _ _ _ methodBody)
+    checkMemberDecl span ident methodBody
       | ident == called =
-          if length (filter (checkMethodInv limited) (universeBi methodBody)) > maxInv
-            then
-              return
-                ( RDF.rangeDiagnostic
-                    "Language.Java.Rules.MethodInvNumber"
-                    ("Die Methode " ++ called ++ " sollte die Methode " ++ limited ++ " maximal " ++ show maxInv ++ "x aufrufen.")
-                    span
-                    path
-                )
-            else mzero
+          let limitedLength = length (filter (checkMethodInv limited) (universeBi methodBody))
+           in if limitedLength > maxInv
+                then
+                  return
+                    ( RDF.rangeDiagnostic
+                        "Language.Java.Rules.MethodInvNumber"
+                        ("Die Methode " ++ called ++ " sollte die Methode " ++ limited ++ " maximal " ++ show maxInv ++ "x aufrufen. Hier wird sie aber " ++ show limitedLength ++ "x aufgerufen.")
+                        span
+                        path
+                    )
+                else mzero
       | otherwise = mzero
-    checkMemberDecl _ = mzero
 
 checkMethodInv :: String -> MethodInvocation Parsed -> Bool
 checkMethodInv limited (MethodCall _ (Ident _ ident) _) = ident == limited
