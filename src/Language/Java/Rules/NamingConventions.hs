@@ -14,6 +14,8 @@ import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 import Text.RE.TDFA.String
+import qualified Data.List.NonEmpty as NonEmpty
+import Data.List.NonEmpty (NonEmpty ((:|)))
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path =
@@ -34,9 +36,8 @@ checkPackageName :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkPackageName (CompilationUnit (Just pDeckl) _ _) path = checkTLD (extractPackageNames pDeckl) path
 checkPackageName (CompilationUnit {}) _ = []
 
-checkTLD :: [String] -> FilePath -> [RDF.Diagnostic]
-checkTLD [] _ = []
-checkTLD (ident : idents) path
+checkTLD :: NonEmpty String -> FilePath -> [RDF.Diagnostic]
+checkTLD (ident :| idents) path
   | matched (ident ?=~ reTopLevelDomain) = checkRestPN idents path
   | otherwise = RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" (packageNameMsg ident) dummySourceSpan path : checkRestPN idents path
 
@@ -54,8 +55,8 @@ checkRestPN idents path =
 packageNameMsg :: String -> String
 packageNameMsg name = "PackageName element " ++ name ++ " does not match the specifications."
 
-extractPackageNames :: PackageDecl -> [String]
-extractPackageNames (PackageDecl (Name _ packageNames)) = map (\(Ident _ name) -> name) packageNames
+extractPackageNames :: PackageDecl -> NonEmpty String
+extractPackageNames (PackageDecl (Name _ packageNames)) = NonEmpty.map (\(Ident _ name) -> name) packageNames
 
 {- MethodName -}
 
@@ -105,7 +106,7 @@ extractStaticFieldNames cUnit = do
   extractMemberDecl fieldNames
   where
     extractMemberDecl (FieldDecl _ modifier _ varDecls)
-      | any (eq IgnoreSourceSpan Static) modifier = map extractVarName varDecls
+      | any (eq IgnoreSourceSpan Static) modifier = map extractVarName (NonEmpty.toList varDecls)
       | otherwise = mzero
     extractMemberDecl _ = mzero
 
@@ -128,12 +129,12 @@ extractLocalFinalVariableNames2 (_, methodBody) path = do
   where
     extractMemberDecl (LocalVars _ modifier _ varDecls)
       | any (eq IgnoreSourceSpan Final) modifier =
-          map extractVarName varDecls
-            & filter (\name -> not (matched (name ?=~ reCamelCase)))
+          NonEmpty.map extractVarName varDecls
+            & NonEmpty.filter (\name -> not (matched (name ?=~ reCamelCase)))
             & map (\name -> RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" ("Local final variable " ++ name ++ " doesn't match the specifications") dummySourceSpan path)
       | otherwise =
-          map extractVarName varDecls
-            & filter (\name -> not (matched (name ?=~ reCamelCase)))
+          NonEmpty.map extractVarName varDecls
+            & NonEmpty.filter (\name -> not (matched (name ?=~ reCamelCase)))
             & map (\name -> RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" ("Local non-final variable " ++ name ++ " doesn't match the specifications") dummySourceSpan path)
     extractMemberDecl _ = mzero
 
@@ -150,7 +151,7 @@ extractNonStaticFieldNames cUnit = do
   extractMemberDecl fieldNames
   where
     extractMemberDecl (FieldDecl _ modifier _ varDecls)
-      | none (eq IgnoreSourceSpan Static) modifier = map extractVarName varDecls
+      | none (eq IgnoreSourceSpan Static) modifier = map extractVarName (NonEmpty.toList varDecls)
       | otherwise = mzero
     extractMemberDecl _ = mzero
 

@@ -12,15 +12,15 @@ check cUnit path = do
   exp <- universeBi cUnit
   checkExp exp
   where
-    checkExp assign@(Assign span (NameLhs name1) EqualA (BinOp (ExpName name2) op (Lit (Int 1)))) =
+    checkExp assign@(Assign span (NameLhs name1) EqualA (BinOp (ExpName name2) op (Lit (Int _ 1)))) =
       if eq IgnoreSourceSpan name1 name2
         then message assign (opToPostIncDec op name1) span path
         else mzero
-    checkExp assign@(Assign span (NameLhs name1) EqualA (BinOp (Lit (Int 1)) op (ExpName name2))) =
+    checkExp assign@(Assign span (NameLhs name1) EqualA (BinOp (Lit (Int _ 1)) op (ExpName name2))) =
       if eq IgnoreSourceSpan name1 name2
         then message assign (opToPostIncDec op name1) span path
         else mzero
-    checkExp assign@(Assign span (NameLhs name) op (Lit (Int 1))) =
+    checkExp assign@(Assign span (NameLhs name) op (Lit (Int _ 1))) =
       message assign (assignOpToPostIncDec op name) span path
     checkExp _ = mzero
 

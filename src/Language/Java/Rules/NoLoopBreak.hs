@@ -40,7 +40,7 @@ checkLoop (Break _ _) = do
 checkLoop stmt = checkStatement stmt
 
 extractLoopBody :: [BlockStmt Parsed] -> Reader (String, FilePath) [RDF.Diagnostic]
-extractLoopBody ((BlockStmt _ block) : xs) = do
+extractLoopBody ((BlockStmt block) : xs) = do
   stmtblock <- checkLoop block
   elb <- extractLoopBody xs
   return (stmtblock ++ elb)

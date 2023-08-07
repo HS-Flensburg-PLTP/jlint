@@ -10,7 +10,7 @@ import qualified Language.Java.Syntax.Stmt as Stmt
 import qualified Language.Java.Syntax.VarDecl as VarDecl
 
 name :: PrettyExtension p => BlockStmt p -> String
-name (BlockStmt _ stmt) = stmtName stmt
+name (BlockStmt stmt) = stmtName stmt
 name (LocalClass _) = "lokale Klasse"
 name (LocalVars {}) = "Variablendeklaration"
 
@@ -35,6 +35,6 @@ stmtName (Break {}) = "break"
 stmtName (Continue {}) = "continue"
 
 hasNoSideEffect :: BlockStmt p -> Bool
-hasNoSideEffect (BlockStmt _ stmt) = Stmt.hasNoSideEffect stmt
+hasNoSideEffect (BlockStmt stmt) = Stmt.hasNoSideEffect stmt
 hasNoSideEffect (LocalClass _) = False
 hasNoSideEffect (LocalVars _ _ _ varDecls) = all VarDecl.hasNoSideEffect varDecls

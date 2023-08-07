@@ -16,8 +16,8 @@ checkIfWithoutElse cUnit path = do
   blocks <- universeBi cUnit
   checkBlocks blocks
   where
-    checkBlocks [BlockStmt _ (IfThen {})] = mzero
-    checkBlocks (BlockStmt _ (IfThen range _ stmt) : _) = do
+    checkBlocks [BlockStmt (IfThen {})] = mzero
+    checkBlocks (BlockStmt (IfThen range _ stmt) : _) = do
       if doesAlwaysExit stmt
         then
           return
@@ -35,8 +35,8 @@ checkCodeAfterIfThenElse cUnit path = do
   blocks <- universeBi cUnit
   checkBlocks blocks
   where
-    checkBlocks [BlockStmt _ (IfThenElse {})] = mzero
-    checkBlocks (BlockStmt _ (IfThenElse range _ thenStmt elseStmt) : stmts) =
+    checkBlocks [BlockStmt (IfThenElse {})] = mzero
+    checkBlocks (BlockStmt (IfThenElse range _ thenStmt elseStmt) : stmts) =
       if doesAlwaysExit thenStmt || doesAlwaysExit elseStmt
         then
           return
@@ -74,5 +74,5 @@ doesAlwaysExit (Labeled _ stmt) = doesAlwaysExit stmt
 doesAlwaysExit _ = False
 
 doesBlockAlwaysExit :: BlockStmt Parsed -> Bool
-doesBlockAlwaysExit (BlockStmt _ stmt) = doesAlwaysExit stmt
+doesBlockAlwaysExit (BlockStmt stmt) = doesAlwaysExit stmt
 doesBlockAlwaysExit _ = False

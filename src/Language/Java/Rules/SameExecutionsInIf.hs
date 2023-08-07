@@ -17,7 +17,7 @@ checkMethodBlocks (_, methodBody) path = do
   blockStmts <- universeBi methodBody
   checkStmts (extractIfThenElseBlocks blockStmts)
   where
-    extractIfThenElseBlocks (BlockStmt _ stmt) = extractStmt stmt
+    extractIfThenElseBlocks (BlockStmt stmt) = extractStmt stmt
     extractIfThenElseBlocks _ = mzero
     checkStmts [] = []
     checkStmts list = createDiagnostic (checkAllStatements list 0 + checkAllStatements (reverseList list) 0) (length (head list))

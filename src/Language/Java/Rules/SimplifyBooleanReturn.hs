@@ -6,6 +6,7 @@ module Language.Java.Rules.SimplifyBooleanReturn (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
+import qualified Data.List.NonEmpty as NonEmpty
 import Language.Java.AST (extractMethods, extractVarName)
 import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
@@ -29,18 +30,15 @@ checkStatements (methodName, methodBody) classVars path = do
       | otherwise = mzero
     checkStatement _ = mzero
 
-    isReturnBool (Return _ (Just (Lit (Boolean _)))) = True
+    isReturnBool (Return _ (Just (Lit (Boolean _ _)))) = True
     isReturnBool (Return _ (Just (ExpName (Name _ varName))))
-      | ((\(Ident _ name) -> name) (head varName), True) `elem` extractMethodVars methodBody =
+      | ((\(Ident _ name) -> name) (NonEmpty.head varName), True) `elem` extractMethodVars methodBody =
           True
-      | ((\(Ident _ name) -> name) (head varName), False) `elem` extractMethodVars methodBody =
+      | ((\(Ident _ name) -> name) (NonEmpty.head varName), False) `elem` extractMethodVars methodBody =
           False
-      | otherwise = ((\(Ident _ name) -> name) (head varName), True) `elem` classVars
-    isReturnBool (StmtBlock (Block [BlockStmt _ a])) = isReturnBool a
+      | otherwise = ((\(Ident _ name) -> name) (NonEmpty.head varName), True) `elem` classVars
+    isReturnBool (StmtBlock (Block [BlockStmt a])) = isReturnBool a
     isReturnBool _ = False
-
-checkIfVarIsBool :: String -> MethodBody Parsed -> Bool
-checkIfVarIsBool varName methodBody = (varName, True) `elem` extractMethodVars methodBody
 
 extractMethodVars :: MethodBody Parsed -> [(String, Bool)]
 extractMethodVars methodBody = do
