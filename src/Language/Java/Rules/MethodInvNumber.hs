@@ -24,5 +24,5 @@ check called limited maxInv cUnit path = do
     else mzero
 
 checkMethodInv :: String -> MethodInvocation Parsed -> Bool
-checkMethodInv limited (MethodCall _ (Ident _ ident) _) = ident == limited
+checkMethodInv limited (MethodCall _ _ (Ident _ ident) _) = ident == limited
 checkMethodInv _ _ = False

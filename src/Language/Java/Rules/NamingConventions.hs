@@ -14,6 +14,7 @@ import qualified Data.List.NonEmpty as NonEmpty
 import Language.Java.AST (extractMethods)
 import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
+import qualified Language.Java.Syntax.Modifier as Modifier
 import qualified RDF
 import Text.RE.TDFA.String
 
@@ -106,7 +107,7 @@ extractStaticFieldNames cUnit = do
   extractMemberDecl fieldNames
   where
     extractMemberDecl (FieldDecl _ modifier _ varDecls)
-      | any (eq IgnoreSourceSpan Static) modifier = map extractVarName (NonEmpty.toList varDecls)
+      | any Modifier.isStatic modifier = map extractVarName (NonEmpty.toList varDecls)
       | otherwise = mzero
     extractMemberDecl _ = mzero
 
@@ -128,7 +129,7 @@ extractLocalFinalVariableNames2 (_, methodBody) path = do
   extractMemberDecl fieldNames
   where
     extractMemberDecl (LocalVars _ modifier _ varDecls)
-      | any (eq IgnoreSourceSpan Final) modifier =
+      | any Modifier.isFinal modifier =
           NonEmpty.map extractVarName varDecls
             & NonEmpty.filter (\name -> not (matched (name ?=~ reCamelCase)))
             & map (\name -> RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" ("Local final variable " ++ name ++ " doesn't match the specifications") dummySourceSpan path)
@@ -151,7 +152,7 @@ extractNonStaticFieldNames cUnit = do
   extractMemberDecl fieldNames
   where
     extractMemberDecl (FieldDecl _ modifier _ varDecls)
-      | none (eq IgnoreSourceSpan Static) modifier = map extractVarName (NonEmpty.toList varDecls)
+      | none Modifier.isStatic modifier = map extractVarName (NonEmpty.toList varDecls)
       | otherwise = mzero
     extractMemberDecl _ = mzero
 

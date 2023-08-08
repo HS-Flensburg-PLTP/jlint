@@ -4,6 +4,7 @@ import Data.List.Extra (none)
 import Language.Java.AST (extractMethodParameters, extractVarName)
 import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
+import qualified Language.Java.Syntax.Modifier as Modifier
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -20,5 +21,5 @@ checkFormalParamList (_, formalParams) path = concatMap checkFormalParam formalP
           (extractVarName varid ++ " is not declared as Final")
           dummySourceSpan
           path
-        | none (eq IgnoreSourceSpan Final) modifier
+        | none Modifier.isFinal modifier
       ]

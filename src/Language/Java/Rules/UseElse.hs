@@ -55,9 +55,9 @@ message blockStmts =
 
 doesAlwaysExit :: Stmt Parsed -> Bool
 doesAlwaysExit (Return _ _) = True
-doesAlwaysExit (Throw _) = True
-doesAlwaysExit (StmtBlock (Block [])) = False
-doesAlwaysExit (StmtBlock (Block blocks)) = doesBlockAlwaysExit (last blocks)
+doesAlwaysExit (Throw _ _) = True
+doesAlwaysExit (StmtBlock (Block _ [])) = False
+doesAlwaysExit (StmtBlock (Block _ blocks)) = doesBlockAlwaysExit (last blocks)
 doesAlwaysExit (IfThen _ _ stmt) = doesAlwaysExit stmt
 doesAlwaysExit (IfThenElse _ _ stmt1 stmt2) = doesAlwaysExit stmt1 && doesAlwaysExit stmt2
 doesAlwaysExit (While _ _ stmt) = doesAlwaysExit stmt
@@ -67,10 +67,10 @@ doesAlwaysExit (EnhancedFor _ _ _ _ _ stmt) = doesAlwaysExit stmt
 doesAlwaysExit (Switch {}) = False
 doesAlwaysExit (Do _ stmt _) = doesAlwaysExit stmt
 -- Currently not supported
-doesAlwaysExit (Synchronized _ _) = False
+doesAlwaysExit (Synchronized _ _ _) = False
 -- Currently not supported
 doesAlwaysExit (Try {}) = False
-doesAlwaysExit (Labeled _ stmt) = doesAlwaysExit stmt
+doesAlwaysExit (Labeled _ _ stmt) = doesAlwaysExit stmt
 doesAlwaysExit _ = False
 
 doesBlockAlwaysExit :: BlockStmt Parsed -> Bool

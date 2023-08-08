@@ -13,18 +13,18 @@ check cUnit path = do
   stmt <- universeBi cUnit :: [Stmt Parsed]
   checkStmt stmt
   where
-    checkStmt (IfThen _ (BinOp (ExpName outerName) Equal (Lit lit)) thenStmt) = checkInnerStmt thenStmt outerName lit path
-    checkStmt (IfThen _ (BinOp (Lit lit) Equal (ExpName outerName)) thenStmt) = checkInnerStmt thenStmt outerName lit path
-    checkStmt (IfThen _ (PreNot _ (BinOp (ExpName outerName) NotEq (Lit lit))) thenStmt) = checkInnerStmt thenStmt outerName lit path
-    checkStmt (IfThen _ (PreNot _ (BinOp (Lit lit) NotEq (ExpName outerName))) thenStmt) = checkInnerStmt thenStmt outerName lit path
-    checkStmt (IfThenElse _ (BinOp (ExpName outerName) Equal (Lit lit)) thenStmt _) = checkInnerStmt thenStmt outerName lit path
-    checkStmt (IfThenElse _ (BinOp (Lit lit) Equal (ExpName outerName)) thenStmt _) = checkInnerStmt thenStmt outerName lit path
-    checkStmt (IfThenElse _ (BinOp (ExpName outerName) NotEq (Lit lit)) _ elseStmt) = checkInnerStmt elseStmt outerName lit path
-    checkStmt (IfThenElse _ (BinOp (Lit lit) NotEq (ExpName outerName)) _ elseStmt) = checkInnerStmt elseStmt outerName lit path
-    checkStmt (IfThenElse _ (PreNot _ (BinOp (ExpName outerName) NotEq (Lit lit))) thenStmt _) = checkInnerStmt thenStmt outerName lit path
-    checkStmt (IfThenElse _ (PreNot _ (BinOp (Lit lit) NotEq (ExpName outerName))) thenStmt _) = checkInnerStmt thenStmt outerName lit path
-    checkStmt (IfThenElse _ (PreNot _ (BinOp (ExpName outerName) Equal (Lit lit))) _ elseStmt) = checkInnerStmt elseStmt outerName lit path
-    checkStmt (IfThenElse _ (PreNot _ (BinOp (Lit lit) Equal (ExpName outerName))) _ elseStmt) = checkInnerStmt elseStmt outerName lit path
+    checkStmt (IfThen _ (BinOp _ (ExpName outerName) Equal (Lit lit)) thenStmt) = checkInnerStmt thenStmt outerName lit path
+    checkStmt (IfThen _ (BinOp _ (Lit lit) Equal (ExpName outerName)) thenStmt) = checkInnerStmt thenStmt outerName lit path
+    checkStmt (IfThen _ (PreNot _ (BinOp _ (ExpName outerName) NotEq (Lit lit))) thenStmt) = checkInnerStmt thenStmt outerName lit path
+    checkStmt (IfThen _ (PreNot _ (BinOp _ (Lit lit) NotEq (ExpName outerName))) thenStmt) = checkInnerStmt thenStmt outerName lit path
+    checkStmt (IfThenElse _ (BinOp _ (ExpName outerName) Equal (Lit lit)) thenStmt _) = checkInnerStmt thenStmt outerName lit path
+    checkStmt (IfThenElse _ (BinOp _ (Lit lit) Equal (ExpName outerName)) thenStmt _) = checkInnerStmt thenStmt outerName lit path
+    checkStmt (IfThenElse _ (BinOp _ (ExpName outerName) NotEq (Lit lit)) _ elseStmt) = checkInnerStmt elseStmt outerName lit path
+    checkStmt (IfThenElse _ (BinOp _ (Lit lit) NotEq (ExpName outerName)) _ elseStmt) = checkInnerStmt elseStmt outerName lit path
+    checkStmt (IfThenElse _ (PreNot _ (BinOp _ (ExpName outerName) NotEq (Lit lit))) thenStmt _) = checkInnerStmt thenStmt outerName lit path
+    checkStmt (IfThenElse _ (PreNot _ (BinOp _ (Lit lit) NotEq (ExpName outerName))) thenStmt _) = checkInnerStmt thenStmt outerName lit path
+    checkStmt (IfThenElse _ (PreNot _ (BinOp _ (ExpName outerName) Equal (Lit lit))) _ elseStmt) = checkInnerStmt elseStmt outerName lit path
+    checkStmt (IfThenElse _ (PreNot _ (BinOp _ (Lit lit) Equal (ExpName outerName))) _ elseStmt) = checkInnerStmt elseStmt outerName lit path
     checkStmt _ = mzero
 
 checkInnerStmt :: Stmt Parsed -> Name -> Literal -> FilePath -> [RDF.Diagnostic]

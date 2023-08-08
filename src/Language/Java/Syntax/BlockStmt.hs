@@ -16,7 +16,7 @@ name (LocalVars {}) = "Variablendeklaration"
 
 stmtName :: PrettyExtension p => Stmt p -> String
 stmtName (Return _ _) = "return"
-stmtName (Throw _) = "throw"
+stmtName (Throw _ _) = "throw"
 stmtName (StmtBlock _) = "block"
 stmtName (IfThen {}) = "if-then"
 stmtName (IfThenElse {}) = "if-then-else"
@@ -28,7 +28,7 @@ stmtName (Do {}) = "do-while"
 stmtName (Synchronized {}) = "sychronized"
 stmtName (Try {}) = "try"
 stmtName (Labeled {}) = "label"
-stmtName Empty = "leere Anweisung"
+stmtName (Empty _) = "leere Anweisung"
 stmtName (ExpStmt _ exp) = prettyPrint exp
 stmtName (Assert {}) = "assert"
 stmtName (Break {}) = "break"
