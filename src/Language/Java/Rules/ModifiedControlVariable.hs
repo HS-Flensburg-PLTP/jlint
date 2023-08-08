@@ -5,12 +5,12 @@ module Language.Java.Rules.ModifiedControlVariable where
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.List.NonEmpty (NonEmpty ((:|)))
+import qualified Data.List.NonEmpty as NonEmpty
 import Language.Java.Pretty
 import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
 import qualified Language.Java.Syntax.VarDecl as VarDecl
 import qualified RDF
-import qualified Data.List.NonEmpty as NonEmpty
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
