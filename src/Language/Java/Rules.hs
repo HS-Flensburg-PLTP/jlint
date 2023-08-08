@@ -16,6 +16,7 @@ import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
 import qualified Language.Java.Rules.ModifiedControlVariable as ModifiedControlVariable
 import qualified Language.Java.Rules.NamingConventions as NamingConventions
 import qualified Language.Java.Rules.NeedBraces as NeedBraces
+import qualified Language.Java.Rules.NoCasts as NoCasts
 import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
@@ -83,6 +84,7 @@ checkFromConfig InitializeVariables = InitializeVariables.check
 checkFromConfig ModifiedControlVariable = ModifiedControlVariable.check
 checkFromConfig NamingConventions = NamingConventions.check
 checkFromConfig NeedBraces = NeedBraces.check
+checkFromConfig (NoCasts whitelist) = NoCasts.check whitelist
 checkFromConfig NoLoopBreak = NoLoopBreak.check
 checkFromConfig NoNullPointerExceptionsForControl = NoNullPointerExceptionsForControl.check
 checkFromConfig (ParameterNumber max) = ParameterNumber.check max

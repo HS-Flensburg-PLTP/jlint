@@ -9,9 +9,6 @@
         "rule": "AvoidNegations"
     },
     {
-        "rule": "AvoidOuterNegations"
-    },
-    {
         "rule": "AvoidStarImport"
     },
     {
@@ -24,9 +21,6 @@
         "rule": "ConsistentOverrideEqualsHashCode"
     },
     {
-        "rule": "ConstantPropagation"
-    },
-    {
         "rule": "DefaultComesLast"
     },
     {
@@ -34,6 +28,12 @@
     },
     {
         "rule": "NoNullPointerExceptionsForControl"
+    },
+    {
+        "rule": "NoCasts",
+        "whitelist": [
+            "foo"
+        ]
     },
     {
         "rule": "ParameterNumber",
