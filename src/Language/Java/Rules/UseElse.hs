@@ -67,7 +67,7 @@ doesAlwaysExit (EnhancedFor _ _ _ _ _ stmt) = doesAlwaysExit stmt
 doesAlwaysExit (Switch {}) = False
 doesAlwaysExit (Do _ stmt _) = doesAlwaysExit stmt
 -- Currently not supported
-doesAlwaysExit (Synchronized _ _ _) = False
+doesAlwaysExit (Synchronized {}) = False
 -- Currently not supported
 doesAlwaysExit (Try {}) = False
 doesAlwaysExit (Labeled _ _ stmt) = doesAlwaysExit stmt
