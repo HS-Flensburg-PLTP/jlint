@@ -7,7 +7,7 @@ import qualified RDF
 
 check :: String -> String -> Int -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check called limited maxInv cUnit path = do
-  (MethodDecl span _ _ _ (Ident _ ident) _ _ _ methodBody) <- universeBi cUnit :: [MemberDecl Parsed]
+  MethodDecl span _ _ _ (Ident _ ident) _ _ _ methodBody <- universeBi cUnit :: [MemberDecl Parsed]
   if ident == called
     then
       let limitedLength = length (filter (checkMethodInv limited) (universeBi methodBody))
