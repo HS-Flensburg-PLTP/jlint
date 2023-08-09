@@ -13,7 +13,7 @@ data Rule
   | AvoidNegations
   | AvoidOuterNegations
   | AvoidStarImport
-  | CheckNonFinalMethodAttributes
+  | CheckNonFinalMethodParameters
   | CheckNonPrivateAttributes
   | ConsistentOverrideEqualsHashCode
   | DeclarationOrder
@@ -50,7 +50,7 @@ instance FromJSON Rule where
       "AvoidNegations" -> pure AvoidNegations
       "AvoidOuterNegations" -> pure AvoidOuterNegations
       "AvoidStarImport" -> pure AvoidStarImport
-      "CheckNonFinalMethodAttributes" -> pure CheckNonFinalMethodAttributes
+      "CheckNonFinalMethodParameters" -> pure CheckNonFinalMethodParameters
       "CheckNonPrivateAttributes" -> pure CheckNonPrivateAttributes
       "ConsistentOverrideEqualsHashCode" -> pure ConsistentOverrideEqualsHashCode
       "DeclarationOrder" -> pure DeclarationOrder
