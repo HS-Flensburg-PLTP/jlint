@@ -14,6 +14,7 @@ import qualified MethodInvNumberTests
 import qualified ModifiedControlVariableTests
 import qualified NamingConventionsTests
 import qualified NeedBracesTests
+import qualified NoCastsTests
 import qualified NoLoopBreakTests
 import qualified NoNullPointerExceptionsForControlTests
 import qualified ParameterNumberTests
@@ -53,6 +54,7 @@ tests =
       "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
       "NamingConventions" ~: NamingConventionsTests.tests,
       "NeedBraces" ~: NeedBracesTests.tests,
+      "NoCasts" ~: NoCastsTests.tests,
       "NoLoopBreak" ~: NoLoopBreakTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "ParameterNumber" ~: ParameterNumberTests.tests,

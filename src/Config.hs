@@ -24,6 +24,7 @@ data Rule
   | ModifiedControlVariable
   | NamingConventions
   | NeedBraces
+  | NoCasts {whitelist :: [String]}
   | NoLoopBreak
   | NoNullPointerExceptionsForControl
   | ParameterNumber {max :: Maybe Int}
@@ -61,6 +62,7 @@ instance FromJSON Rule where
       "ModifiedControlVariable" -> pure ModifiedControlVariable
       "NamingConventions" -> pure NamingConventions
       "NeedBraces" -> pure NeedBraces
+      "NoCasts" -> parseNoCasts obj
       "NoLoopBreak" -> pure NoLoopBreak
       "NoNullPointerExceptionsForControl" -> pure NoNullPointerExceptionsForControl
       "ParameterNumber" -> parseParameterNumber obj
@@ -86,10 +88,16 @@ parseParameterNumber obj = do
   pure (ParameterNumber max)
 
 parseProhibitAnnotations :: Object -> Parser Rule
-parseProhibitAnnotations obj = do
+parseProhibitAnnotations obj = ProhibitAnnotations <$> parseWhitelist obj
+
+parseNoCasts :: Object -> Parser Rule
+parseNoCasts obj = NoCasts <$> parseWhitelist obj
+
+parseWhitelist :: Object -> Parser [String]
+parseWhitelist obj = do
   whitelistVal <- obj .: fromString "whitelist"
   checkNoExtraKeys obj [fromString "whitelist"]
-  pure (ProhibitAnnotations whitelistVal)
+  pure whitelistVal
 
 parseMethodInvNumber :: Object -> Parser Rule
 parseMethodInvNumber obj = do
