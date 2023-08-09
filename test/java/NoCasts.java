@@ -8,6 +8,7 @@ class NoCasts {
     public void bar() {
         double num = 9.78d;
         int casted = (int) num;
+        int cast = (int) (num + 1);
     }
 
 }

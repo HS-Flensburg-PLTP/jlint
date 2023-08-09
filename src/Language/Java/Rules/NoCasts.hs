@@ -8,8 +8,7 @@ import qualified RDF
 check :: [String] -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check whitelist cUnit path = do
   MethodDecl span _ _ _ (Ident _ methodName) _ _ _ methodBody <- universeBi cUnit :: [MemberDecl Parsed]
-  Cast _ _ <- universeBi methodBody :: [Exp Parsed]
-  if methodName `notElem` whitelist
+  if methodName `notElem` whitelist && any checkMethodCast (universeBi methodBody)
     then
       return
         ( RDF.rangeDiagnostic
@@ -19,3 +18,7 @@ check whitelist cUnit path = do
             path
         )
     else mzero
+
+checkMethodCast :: Exp Parsed -> Bool
+checkMethodCast (Cast _ _) = True
+checkMethodCast _ = False
