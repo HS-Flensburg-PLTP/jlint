@@ -18,9 +18,10 @@ checkFormalParams modifier varid path span =
   if any (eq IgnoreSourceSpan Final) modifier
     then mzero
     else
-      [ RDF.rangeDiagnostic
-          "Language.Java.Rules.CheckNonFinalMethodParameters"
-          (Ident.name (VarDecl.varDeclIdIdent varid) ++ " ist nicht als Final deklariert.")
-          span
-          path
-      ]
+      return
+        ( RDF.rangeDiagnostic
+            "Language.Java.Rules.CheckNonFinalMethodParameters"
+            (Ident.name (VarDecl.varDeclIdIdent varid) ++ " ist nicht als Final deklariert.")
+            span
+            path
+        )

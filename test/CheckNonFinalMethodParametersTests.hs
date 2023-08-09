@@ -14,8 +14,10 @@ tests =
 
 expectedRanges :: [RDF.Range]
 expectedRanges =
-  [ RDF.mkRange (2, 40) (2, 47),
-    RDF.mkRange (3, 21) (3, 32),
-    RDF.mkRange (4, 21) (4, 33),
-    RDF.mkRange (4, 35) (4, 47)
+  [ RDF.mkRange (9, 42) (9, 53),
+    RDF.mkRange (12, 40) (12, 47),
+    RDF.mkRange (15, 21) (15, 32),
+    RDF.mkRange (18, 21) (18, 33),
+    RDF.mkRange (18, 35) (18, 47),
+    RDF.mkRange (48, 18) (48, 30)
   ]
