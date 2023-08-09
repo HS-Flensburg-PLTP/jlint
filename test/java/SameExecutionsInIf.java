@@ -106,5 +106,14 @@ class SameExecutionsInIf {
         if (true) p = 5;
         else p = 5;
     }
+
+    public void foobar() {
+        if (true) {
+        } else {
+        }
+        if (true) ;
+        else {
+        }
+    }
 }
 

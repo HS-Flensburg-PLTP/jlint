@@ -14,22 +14,41 @@ check cUnit path = do
 compareStmts :: Stmt Parsed -> Stmt Parsed -> SourceSpan -> FilePath -> [RDF.Diagnostic]
 compareStmts stmt1 stmt2 span path
   | eq IgnoreSourceSpan stmt1 stmt2 =
-      return
-        (RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" "Die Fallunterscheidung ist unnötig, da der Code identisch ist." span path)
+      return (duplicateCodeMessage span path)
 compareStmts (StmtBlock (Block blockstmts)) (StmtBlock (Block blockstmts2)) span path
-  | eq IgnoreSourceSpan (head blockstmts) (head blockstmts2) || eq IgnoreSourceSpan (last blockstmts) (last blockstmts2) =
-      return
-        (RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" "In dem If Else Block befindet sich identischer Code, welcher ausgelagert werden kann." span path)
-compareStmts stmt (StmtBlock (Block blockstmts)) span path
-  | eq IgnoreSourceSpan stmt (extractStmt (head blockstmts)) || eq IgnoreSourceSpan stmt (extractStmt (last blockstmts)) =
-      return
-        (RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" "In dem If Else Block befindet sich identischer Code, welcher ausgelagert werden kann." span path)
-compareStmts (StmtBlock (Block blockstmts)) stmt span path
-  | eq IgnoreSourceSpan (extractStmt (head blockstmts)) stmt || eq IgnoreSourceSpan (extractStmt (last blockstmts)) stmt =
-      return
-        (RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" "In dem If Else Block befindet sich identischer Code, welcher ausgelagert werden kann." span path)
+  | not (null blockstmts) && not (null blockstmts2) && (eq IgnoreSourceSpan (head blockstmts) (head blockstmts2) || eq IgnoreSourceSpan (last blockstmts) (last blockstmts2)) =
+      return (partDuplicatedCodeMessage span path)
+compareStmts stmt (StmtBlock (Block blockstmts)) span path =
+  case blockstmts of
+    [] -> mzero
+    [blockstmt] ->
+      if checkStmt blockstmt stmt
+        then return (duplicateCodeMessage span path)
+        else mzero
+    _ ->
+      if checkStmt (head blockstmts) stmt || checkStmt (last blockstmts) stmt
+        then return (partDuplicatedCodeMessage span path)
+        else mzero
+compareStmts (StmtBlock (Block blockstmts)) stmt span path =
+  case blockstmts of
+    [] -> mzero
+    [blockstmt] ->
+      if checkStmt blockstmt stmt
+        then return (duplicateCodeMessage span path)
+        else mzero
+    _ ->
+      if checkStmt (head blockstmts) stmt || checkStmt (last blockstmts) stmt
+        then return (partDuplicatedCodeMessage span path)
+        else mzero
 compareStmts _ _ _ _ = mzero
 
-extractStmt :: BlockStmt Parsed -> Stmt Parsed
-extractStmt (BlockStmt _ stmt) = stmt
-extractStmt _ = Empty
+checkStmt :: BlockStmt Parsed -> Stmt Parsed -> Bool
+checkStmt (BlockStmt _ stmt2) stmt =
+  eq IgnoreSourceSpan stmt stmt2
+checkStmt _ _ = False
+
+duplicateCodeMessage :: SourceSpan -> FilePath -> RDF.Diagnostic
+duplicateCodeMessage = RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" "In dem If Else befindet sich identischer Code, welcher ausgelagert werden kann."
+
+partDuplicatedCodeMessage :: SourceSpan -> FilePath -> RDF.Diagnostic
+partDuplicatedCodeMessage = RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" "In dem If Else befindet sich zum Teil identischer Code, welcher ausgelagert werden kann."

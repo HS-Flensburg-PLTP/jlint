@@ -22,5 +22,6 @@ expectedRanges =
     RDF.mkRange (79, 9) (83, 22),
     RDF.mkRange (84, 9) (88, 22),
     RDF.mkRange (98, 9) (101, 10),
-    RDF.mkRange (106, 9) (107, 20)
+    RDF.mkRange (106, 9) (107, 20),
+    RDF.mkRange (111, 9) (113, 10)
   ]
