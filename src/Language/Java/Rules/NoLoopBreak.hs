@@ -14,11 +14,10 @@ check cUnit path = do
   checkStatement stmt path
 
 checkStatement :: Stmt Parsed -> FilePath -> [RDF.Diagnostic]
-checkStatement (While _ _ stmt) path = checkReturn stmt path ++ checkBreak stmt path
-checkStatement (Do _ stmt _) path = checkReturn stmt path ++ checkBreak stmt path
-checkStatement (BasicFor _ _ _ _ stmt) path = checkReturn stmt path ++ checkBreak stmt path
-checkStatement (EnhancedFor _ _ _ _ _ stmt) path = checkReturn stmt path ++ checkBreak stmt path
-checkStatement _ _ = mzero
+checkStatement stmt path =
+  case extractLoopBody stmt of
+    Just loopBody -> checkReturn loopBody path ++ checkBreak loopBody path
+    Nothing -> mzero
 
 checkReturn :: Stmt Parsed -> FilePath -> [RDF.Diagnostic]
 checkReturn stmt path = do
