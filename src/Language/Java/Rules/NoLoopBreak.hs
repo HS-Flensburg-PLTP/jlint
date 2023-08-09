@@ -4,6 +4,7 @@ module Language.Java.Rules.NoLoopBreak (check) where
 
 import Control.Monad.Reader
 import Data.Generics.Uniplate.Data (universeBi)
+import Language.Java.SourceSpan
 import Language.Java.Syntax
 import qualified RDF
 
@@ -21,34 +22,36 @@ checkStatement _ _ = mzero
 
 checkReturn :: Stmt Parsed -> FilePath -> [RDF.Diagnostic]
 checkReturn stmt path = do
-  let allReturns :: [Stmt Parsed] = universeBi stmt
-  stmt <- listDifference allReturns (checkLoops stmt)
-  returnMsg path stmt
+  stmt <- listDifference (universeBi stmt) (checkLoops stmt)
+  filterReturn stmt
+  where
+    filterReturn (Return span _) = returnMsg path span
+    filterReturn _ = mzero
 
 checkBreak :: Stmt Parsed -> FilePath -> [RDF.Diagnostic]
 checkBreak stmt path = do
-  let allBreaks :: [Stmt Parsed] = universeBi stmt
-  stmt <- listDifference allBreaks (checkSwitchBlock stmt ++ checkLoops stmt)
-  breakMsg path stmt
+  stmt <- listDifference (universeBi stmt) (checkSwitchBlock stmt ++ checkLoops stmt)
+  filterBreak stmt
+  where
+    filterBreak (Break span _) = breakMsg path span
+    filterBreak _ = mzero
 
 checkLoops :: Stmt Parsed -> [Stmt Parsed]
 checkLoops stmt = do
   loop <- universeBi stmt
-  loopBody <- extractLoopBody loop
-  universeBi loopBody
+  maybe mzero universeBi (extractLoopBody loop)
 
-extractLoopBody :: Stmt Parsed -> [Stmt Parsed]
-extractLoopBody (While _ _ stmt) = return stmt
-extractLoopBody (Do _ stmt _) = return stmt
-extractLoopBody (BasicFor _ _ _ _ stmt) = return stmt
-extractLoopBody (EnhancedFor _ _ _ _ _ stmt) = return stmt
-extractLoopBody _ = mzero
+extractLoopBody :: Stmt Parsed -> Maybe (Stmt Parsed)
+extractLoopBody (While _ _ stmt) = Just stmt
+extractLoopBody (Do _ stmt _) = Just stmt
+extractLoopBody (BasicFor _ _ _ _ stmt) = Just stmt
+extractLoopBody (EnhancedFor _ _ _ _ _ stmt) = Just stmt
+extractLoopBody _ = Nothing
 
 checkSwitchBlock :: Stmt Parsed -> [Stmt Parsed]
 checkSwitchBlock stmt = do
   Switch _ _ blocks :: Stmt Parsed <- universeBi stmt
-  let switchBreaks :: [Stmt Parsed] = universeBi blocks
-  switchBreaks
+  universeBi blocks
 
 listDifference :: [Stmt Parsed] -> [Stmt Parsed] -> [Stmt Parsed]
 listDifference completeList excludedList = do
@@ -57,10 +60,8 @@ listDifference completeList excludedList = do
     then mzero
     else return elem
 
-breakMsg :: FilePath -> Stmt Parsed -> [RDF.Diagnostic]
-breakMsg path (Break span _) = return (RDF.rangeDiagnostic "Language.Java.Rules.NoLoopBreak" "Eine Schleife sollte nicht mit einem Break beendet werden." span path)
-breakMsg _ _ = mzero
+breakMsg :: FilePath -> SourceSpan -> [RDF.Diagnostic]
+breakMsg path span = return (RDF.rangeDiagnostic "Language.Java.Rules.NoLoopBreak" "Eine Schleife sollte nicht mit einem Break beendet werden." span path)
 
-returnMsg :: FilePath -> Stmt Parsed -> [RDF.Diagnostic]
-returnMsg path (Return span _) = return (RDF.rangeDiagnostic "Language.Java.Rules.NoLoopBreak" "Eine Schleife sollte nicht mit einem Return beendet werden." span path)
-returnMsg _ _ = mzero
+returnMsg :: FilePath -> SourceSpan -> [RDF.Diagnostic]
+returnMsg path span = return (RDF.rangeDiagnostic "Language.Java.Rules.NoLoopBreak" "Eine Schleife sollte nicht mit einem Return beendet werden." span path)
