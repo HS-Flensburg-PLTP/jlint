@@ -1,6 +1,10 @@
-module Language.Java.Syntax.Exp (hasNoSideEffect) where
+module Language.Java.Syntax.Exp (hasNoSideEffect, isCast) where
 
 import Language.Java.Syntax (Exp (..))
+
+isCast :: Exp p -> Bool
+isCast (Cast {}) = True
+isCast _ = False
 
 hasNoSideEffect :: Exp p -> Bool
 hasNoSideEffect (Lit _) = True

@@ -44,11 +44,15 @@ checks =
     AvoidNegations.check,
     AvoidOuterNegations.check,
     AvoidStarImport.check,
-    ConsistentOverrideEqualsHashCode.check,
     CheckNonFinalMethodParameters.check,
+    CheckNonPrivateAttributes.check,
+    ConsistentOverrideEqualsHashCode.check,
+    DeclarationOrder.check,
+    DefaultComesLast.check,
     ExplicitValue.check,
     InitializeVariables.check,
     ModifiedControlVariable.check,
+    NeedBraces.check,
     NoNullPointerExceptionsForControl.check,
     ParameterNumber.check Nothing,
     PreferExpressions.check,
@@ -58,9 +62,9 @@ checks =
     RedundantModifiers.check,
     UseAssignOp.check,
     UseElse.check,
-    DeclarationOrder.check,
     UseIncrementDecrementOperator.check,
-    UseJavaArrayTypeStyle.check
+    UseJavaArrayTypeStyle.check,
+    UsePostIncrementDecrement.check
   ]
 
 checkAll :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
