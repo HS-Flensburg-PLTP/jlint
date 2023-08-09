@@ -25,7 +25,7 @@ checkStatement (EnhancedFor _ _ _ _ _ stmt) = checkLoop stmt
 checkStatement _ = return []
 
 checkLoop :: Stmt Parsed -> Reader (String, FilePath) [RDF.Diagnostic]
-checkLoop (StmtBlock (Block block)) = extractLoopBody block
+checkLoop (StmtBlock (Block _ block)) = extractLoopBody block
 checkLoop (IfThen _ _ stmt) = checkLoop stmt
 checkLoop (IfThenElse _ _ stmt1 stmt2) = do
   stm1 <- checkLoop stmt1
@@ -40,7 +40,7 @@ checkLoop (Break _ _) = do
 checkLoop stmt = checkStatement stmt
 
 extractLoopBody :: [BlockStmt Parsed] -> Reader (String, FilePath) [RDF.Diagnostic]
-extractLoopBody ((BlockStmt _ block) : xs) = do
+extractLoopBody ((BlockStmt block) : xs) = do
   stmtblock <- checkLoop block
   elb <- extractLoopBody xs
   return (stmtblock ++ elb)

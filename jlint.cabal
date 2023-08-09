@@ -67,6 +67,7 @@ library
       Language.Java.Syntax.BlockStmt
       Language.Java.Syntax.Exp
       Language.Java.Syntax.Ident
+      Language.Java.Syntax.Modifier
       Language.Java.Syntax.Stmt
       Language.Java.Syntax.VarDecl
       Language.Java.Syntax.VarInit
