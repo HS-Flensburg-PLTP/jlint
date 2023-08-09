@@ -6,7 +6,7 @@ import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDec
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
 import qualified Language.Java.Rules.AvoidOuterNegations as AvoidOuterNegations
 import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
-import qualified Language.Java.Rules.CheckNonFinalMethodAttributes as CheckNonFinalMethodAttributes
+import qualified Language.Java.Rules.CheckNonFinalMethodParameters as CheckNonFinalMethodParameters
 import qualified Language.Java.Rules.CheckNonPrivateAttributes as CheckNonPrivateAttributes
 import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
 import qualified Language.Java.Rules.DeclarationOrder as DeclarationOrder
@@ -44,6 +44,7 @@ checks =
     AvoidOuterNegations.check,
     AvoidStarImport.check,
     ConsistentOverrideEqualsHashCode.check,
+    CheckNonFinalMethodParameters.check,
     ExplicitValue.check,
     InitializeVariables.check,
     ModifiedControlVariable.check,
@@ -76,7 +77,7 @@ checkFromConfig AvoidMultipleVarDecl = AvoidMultipleVarDecl.check
 checkFromConfig AvoidNegations = AvoidNegations.check
 checkFromConfig AvoidOuterNegations = AvoidOuterNegations.check
 checkFromConfig AvoidStarImport = AvoidStarImport.check
-checkFromConfig CheckNonFinalMethodAttributes = CheckNonFinalMethodAttributes.check
+checkFromConfig CheckNonFinalMethodParameters = CheckNonFinalMethodParameters.check
 checkFromConfig CheckNonPrivateAttributes = CheckNonPrivateAttributes.check
 checkFromConfig ConsistentOverrideEqualsHashCode = ConsistentOverrideEqualsHashCode.check
 checkFromConfig DeclarationOrder = DeclarationOrder.check
