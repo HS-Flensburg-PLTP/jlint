@@ -23,18 +23,19 @@ checkMethod methodName ident body span path =
 checkMethodBody :: MethodBody Parsed -> String -> SourceSpan -> FilePath -> [RDF.Diagnostic]
 checkMethodBody (MethodBody (Just (Block blockstmts))) methodName span path = do
   blockstmt <- blockstmts
-  (VarDecl _ _ (Just varInit)) <- extractVarDecls blockstmt
+  VarDecl _ _ (Just varInit) <- extractVarDecls blockstmt
   checkVarInits varInit span path methodName
 checkMethodBody _ _ _ _ = mzero
 
 checkVarInits :: VarInit Parsed -> SourceSpan -> FilePath -> String -> [RDF.Diagnostic]
 checkVarInits (InitExp (InstanceCreation {})) span path methodName =
-  [ RDF.rangeDiagnostic
-      "Language.Java.Rules.NoFurtherDataStructures"
-      ("In der Funktion " ++ methodName ++ " sollten keine Datenstrukturen erzeugt werden.")
-      span
-      path
-  ]
+  return
+    ( RDF.rangeDiagnostic
+        "Language.Java.Rules.NoFurtherDataStructures"
+        ("In der Funktion " ++ methodName ++ " sollten keine Datenstrukturen erzeugt werden.")
+        span
+        path
+    )
 checkVarInits (InitExp (ArrayCreate {})) span path methodName =
   [ RDF.rangeDiagnostic
       "Language.Java.Rules.NoFurtherDataStructures"
@@ -43,9 +44,3 @@ checkVarInits (InitExp (ArrayCreate {})) span path methodName =
       path
   ]
 checkVarInits _ _ _ _ = mzero
-
-checkWithDefaultValue :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-checkWithDefaultValue = check defaultMethodNameList
-
-defaultMethodNameList :: [String]
-defaultMethodNameList = ["set"]

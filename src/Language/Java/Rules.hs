@@ -47,7 +47,6 @@ checks =
     ExplicitValue.check,
     InitializeVariables.check,
     ModifiedControlVariable.check,
-    NoFurtherDataStructures.checkWithDefaultValue,
     NoNullPointerExceptionsForControl.check,
     ParameterNumber.check Nothing,
     PreferExpressions.check,
