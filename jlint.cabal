@@ -47,6 +47,7 @@ library
       Language.Java.Rules.ModifiedControlVariable
       Language.Java.Rules.NamingConventions
       Language.Java.Rules.NeedBraces
+      Language.Java.Rules.NoCasts
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNullPointerExceptionsForControl
       Language.Java.Rules.ParameterNumber
@@ -136,6 +137,7 @@ test-suite jlint-test
       ModifiedControlVariableTests
       NamingConventionsTests
       NeedBracesTests
+      NoCastsTests
       NoLoopBreakTests
       NoNullPointerExceptionsForControlTests
       ParameterNumberTests
