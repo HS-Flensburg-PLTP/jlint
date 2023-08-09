@@ -11,4 +11,9 @@ class NoCasts {
         int cast = (int) (num + 1);
     }
 
+    public double bar() {
+        double num = 9.78d;
+        return num;
+    }
+
 }
