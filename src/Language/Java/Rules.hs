@@ -13,6 +13,7 @@ import qualified Language.Java.Rules.DeclarationOrder as DeclarationOrder
 import qualified Language.Java.Rules.DefaultComesLast as DefaultComesLast
 import qualified Language.Java.Rules.ExplicitValue as ExplicitValue
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
+import qualified Language.Java.Rules.MethodInvNumber as MethodInvNumber
 import qualified Language.Java.Rules.ModifiedControlVariable as ModifiedControlVariable
 import qualified Language.Java.Rules.NamingConventions as NamingConventions
 import qualified Language.Java.Rules.NeedBraces as NeedBraces
@@ -74,13 +75,16 @@ checkFromConfig :: Rule -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnosti
 checkFromConfig AvoidMultipleTopLevelDecl = AvoidMultipleTopLevelDecl.check
 checkFromConfig AvoidMultipleVarDecl = AvoidMultipleVarDecl.check
 checkFromConfig AvoidNegations = AvoidNegations.check
+checkFromConfig AvoidOuterNegations = AvoidOuterNegations.check
 checkFromConfig AvoidStarImport = AvoidStarImport.check
 checkFromConfig CheckNonFinalMethodAttributes = CheckNonFinalMethodAttributes.check
 checkFromConfig CheckNonPrivateAttributes = CheckNonPrivateAttributes.check
 checkFromConfig ConsistentOverrideEqualsHashCode = ConsistentOverrideEqualsHashCode.check
 checkFromConfig DeclarationOrder = DeclarationOrder.check
 checkFromConfig DefaultComesLast = DefaultComesLast.check
+checkFromConfig ExplicitValue = ExplicitValue.check
 checkFromConfig InitializeVariables = InitializeVariables.check
+checkFromConfig (MethodInvNumber called limited maxInv) = MethodInvNumber.check called limited maxInv
 checkFromConfig ModifiedControlVariable = ModifiedControlVariable.check
 checkFromConfig NamingConventions = NamingConventions.check
 checkFromConfig NeedBraces = NeedBraces.check

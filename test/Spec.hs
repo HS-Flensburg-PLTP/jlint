@@ -10,6 +10,7 @@ import qualified DeclarationOrderTests
 import qualified DefaultComesLastTests
 import qualified ExplicitValueTests
 import qualified InitializeVariablesTests
+import qualified MethodInvNumberTests
 import qualified ModifiedControlVariableTests
 import qualified NamingConventionsTests
 import qualified NeedBracesTests
@@ -49,6 +50,7 @@ tests =
       "DefaultComesLast" ~: DefaultComesLastTests.tests,
       "ExplicitValue" ~: ExplicitValueTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
+      "MethodInvNumber" ~: MethodInvNumberTests.tests,
       "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
       "NamingConventions" ~: NamingConventionsTests.tests,
       "NeedBraces" ~: NeedBracesTests.tests,
