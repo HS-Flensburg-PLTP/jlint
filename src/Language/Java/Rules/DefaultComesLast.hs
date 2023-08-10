@@ -10,7 +10,7 @@ import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  Switch _ _ blocks <- universeBi cUnit
+  Switch _ _ _ blocks <- universeBi cUnit
   map (message path) (filter checkForDefault (init blocks))
 
 message :: FilePath -> SwitchBlock Parsed -> RDF.Diagnostic

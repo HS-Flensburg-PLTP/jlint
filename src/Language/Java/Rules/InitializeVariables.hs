@@ -4,6 +4,8 @@ module Language.Java.Rules.InitializeVariables (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.List.NonEmpty (NonEmpty ((:|)))
+import qualified Data.List.NonEmpty as NonEmpty
 import Language.Java.Syntax
 import qualified Language.Java.Syntax.Ident as Ident
 import qualified Language.Java.Syntax.VarDecl as VarDecl
@@ -17,10 +19,10 @@ check cUnit path = do
   where
     checkBlocks
       ( LocalVars _ _ _ varDecls
-          : BlockStmt _ (ExpStmt range (Assign _ (NameLhs (Name _ [ident])) EqualA _))
+          : BlockStmt (ExpStmt range (Assign _ (NameLhs (Name _ (ident :| []))) EqualA _))
           : _
         ) =
-        let nonInitializedIdents = map VarDecl.ident (filter (not . VarDecl.isInitialized) varDecls)
+        let nonInitializedIdents = map VarDecl.ident (NonEmpty.filter (not . VarDecl.isInitialized) varDecls)
          in if any (eq IgnoreSourceSpan ident) nonInitializedIdents
               then
                 [ RDF.rangeDiagnostic

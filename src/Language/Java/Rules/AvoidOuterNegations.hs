@@ -13,7 +13,7 @@ check cUnit path = do
   exp :: Exp Parsed <- universeBi cUnit
   checkExp exp path
   where
-    checkExp (PreNot span (BinOp _ op _)) path =
+    checkExp (PreNot span (BinOp _ _ op _)) path =
       case invertOp op of
         Just CAnd ->
           return
