@@ -18,6 +18,7 @@ compareStmts stmt1 stmt2 span path
 compareStmts (StmtBlock (Block blockstmts@(blockstmt : _))) (StmtBlock (Block blockstmts2@(blockstmt2 : _))) span path
   | eq IgnoreSourceSpan blockstmt blockstmt2 || eq IgnoreSourceSpan (last blockstmts) (last blockstmts2) =
       return (partDuplicatedCodeMessage span path)
+  | otherwise = mzero
 compareStmts stmt (StmtBlock (Block blockstmts)) span path =
   case blockstmts of
     [] -> mzero
