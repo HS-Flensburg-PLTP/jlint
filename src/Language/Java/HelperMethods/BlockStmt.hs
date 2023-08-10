@@ -4,11 +4,10 @@ module Language.Java.HelperMethods.BlockStmt
   )
 where
 
-import Language.Java.Pretty (PrettyExtension, prettyPrint)
-import Language.Java.Syntax (BlockStmt (..), Stmt (..))
 import qualified Language.Java.HelperMethods.Stmt as Stmt
 import qualified Language.Java.HelperMethods.VarDecl as VarDecl
-
+import Language.Java.Pretty (PrettyExtension, prettyPrint)
+import Language.Java.Syntax (BlockStmt (..), Stmt (..))
 
 name :: PrettyExtension p => BlockStmt p -> String
 name (BlockStmt stmt) = stmtName stmt

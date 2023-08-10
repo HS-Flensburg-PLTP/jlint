@@ -32,8 +32,6 @@ library
       Language.Java.AST
       Language.Java.HelperMethods.BlockStmt
       Language.Java.HelperMethods.Exp
-      Language.Java.HelperMethods.Ident
-      Language.Java.HelperMethods.Modifier
       Language.Java.HelperMethods.Stmt
       Language.Java.HelperMethods.VarDecl
       Language.Java.HelperMethods.VarInit

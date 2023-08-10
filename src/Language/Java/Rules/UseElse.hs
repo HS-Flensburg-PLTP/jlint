@@ -3,7 +3,7 @@ module Language.Java.Rules.UseElse (check) where
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.List (intercalate)
-import Language.Java.HelperMethods.BlockStmt as BlockStmt (name)
+import qualified Language.Java.HelperMethods.BlockStmt as BlockStmt
 import Language.Java.Syntax
 import qualified RDF
 

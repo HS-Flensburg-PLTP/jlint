@@ -6,10 +6,10 @@ import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.List.NonEmpty as NonEmpty
-import qualified Language.Java.HelperMethods.VarDecl as VarDecl
 import Language.Java.Pretty
 import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
+import qualified Language.Java.Syntax.VarDecl as VarDecl
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
