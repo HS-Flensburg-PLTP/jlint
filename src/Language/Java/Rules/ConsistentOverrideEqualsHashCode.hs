@@ -2,6 +2,7 @@ module Language.Java.Rules.ConsistentOverrideEqualsHashCode (check) where
 
 import Control.Monad (MonadPlus (mzero))
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.List.NonEmpty (NonEmpty ((:|)))
 import Data.Maybe (maybeToList)
 import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
@@ -40,6 +41,6 @@ filterEqualsAndHashCode _ = Nothing
 
 -- checks if a classType is of Type Object or java.lang.Object
 isJavaLangObject :: ClassType -> Bool
-isJavaLangObject (ClassType [(Ident _ "Object", [])]) = True
-isJavaLangObject (ClassType [(Ident _ "java", []), (Ident _ "lang", []), (Ident _ "Object", [])]) = True
+isJavaLangObject (ClassType ((Ident _ "Object", []) :| [])) = True
+isJavaLangObject (ClassType ((Ident _ "java", []) :| [(Ident _ "lang", []), (Ident _ "Object", [])])) = True
 isJavaLangObject _ = False
