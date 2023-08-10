@@ -1,4 +1,4 @@
-module Language.Java.Syntax.Stmt (hasNoSideEffect, isBreak, isReturn) where
+module Language.Java.Syntax.Stmt (hasNoSideEffect) where
 
 import Language.Java.Syntax (Stmt (..))
 
@@ -22,11 +22,3 @@ hasNoSideEffect (Synchronized {}) = False
 hasNoSideEffect (Throw {}) = False
 hasNoSideEffect (Try {}) = False
 hasNoSideEffect (Labeled _ _ stmt) = hasNoSideEffect stmt
-
-isReturn :: Stmt p -> Bool
-isReturn (Return _ _) = True
-isReturn _ = False
-
-isBreak :: Stmt p -> Bool
-isBreak (Break _ _) = True
-isBreak _ = False
