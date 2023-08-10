@@ -17,7 +17,7 @@ check cUnit path = do
   checkForDuplicates pairs path
 
 checkStringLiteral :: Exp Parsed -> [(SourceSpan, String)]
-checkStringLiteral (Lit sourceSpan (String string)) = [(sourceSpan, string)]
+checkStringLiteral (Lit (String sourceSpan string)) = [(sourceSpan, string)]
 checkStringLiteral _ = []
 
 checkForDuplicates :: [(SourceSpan, String)] -> FilePath -> [RDF.Diagnostic]

@@ -22,6 +22,7 @@ data Rule
   | InitializeVariables
   | MethodInvNumber {called :: String, limited :: String, maxInv :: Int}
   | ModifiedControlVariable
+  | MultipleStringLiterals
   | NamingConventions
   | NeedBraces
   | NoCasts {whitelist :: [String]}

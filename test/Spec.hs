@@ -72,5 +72,5 @@ tests =
       "UseElse" ~: UseElseTests.tests,
       "UseIncrementDecrementOperator" ~: UseIncrementDecrementOperatorTests.tests,
       "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests,
-      "UsePostIncrementDecrement" ~: UsePostIncrementDecrementTests.tests,
+      "UsePostIncrementDecrement" ~: UsePostIncrementDecrementTests.tests
     ]
