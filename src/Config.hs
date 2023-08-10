@@ -27,6 +27,7 @@ data Rule
   | NoCasts {whitelist :: [String]}
   | NoLoopBreak
   | NoNullPointerExceptionsForControl
+  | NoPostIncDecInExpression
   | ParameterNumber {max :: Maybe Int}
   | PreferExpressions
   | ProhibitAnnotations {whitelist :: [String]}

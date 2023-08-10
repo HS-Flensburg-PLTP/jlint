@@ -24,7 +24,7 @@ check cUnit path = do
 
 checkStatement :: Stmt Parsed -> [(String, SourceSpan)]
 checkStatement (ExpStmt _ expression) = checkExpression expression
-checkStatement (BasicFor _ _ _ (Just expressions) _) = concatMap checkExpression expressions
+checkStatement (BasicFor _ _ _ expressions _) = concatMap checkExpression expressions
 checkStatement _ = mzero
 
 checkExpression :: Exp Parsed -> [(String, SourceSpan)]
