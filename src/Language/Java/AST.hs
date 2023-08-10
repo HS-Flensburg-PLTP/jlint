@@ -2,6 +2,7 @@ module Language.Java.AST where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
+import qualified Data.List.NonEmpty as NonEmpty
 import Language.Java.Syntax
 
 extractMethods :: CompilationUnit Parsed -> [(String, MethodBody Parsed)]
@@ -17,7 +18,7 @@ extractAttributes cUnit = do
   membDecl <- universeBi cUnit
   extractField membDecl
   where
-    extractField (FieldDecl _ mods _ vardecl) = return (map (\(VarDecl _ vardeclId _) -> extractVarName vardeclId) vardecl, mods)
+    extractField (FieldDecl _ mods _ vardecl) = return (map (\(VarDecl _ vardeclId _) -> extractVarName vardeclId) (NonEmpty.toList vardecl), mods)
     extractField _ = mzero
 
 extractMethodParameters :: CompilationUnit Parsed -> [(String, [FormalParam Parsed])]

@@ -6,17 +6,19 @@ import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDec
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
 import qualified Language.Java.Rules.AvoidOuterNegations as AvoidOuterNegations
 import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
-import qualified Language.Java.Rules.CheckNonFinalMethodAttributes as CheckNonFinalMethodAttributes
+import qualified Language.Java.Rules.CheckNonFinalMethodParameters as CheckNonFinalMethodParameters
 import qualified Language.Java.Rules.CheckNonPrivateAttributes as CheckNonPrivateAttributes
 import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
 import qualified Language.Java.Rules.DeclarationOrder as DeclarationOrder
 import qualified Language.Java.Rules.DefaultComesLast as DefaultComesLast
 import qualified Language.Java.Rules.ExplicitValue as ExplicitValue
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
+import qualified Language.Java.Rules.MethodInvNumber as MethodInvNumber
 import qualified Language.Java.Rules.ModifiedControlVariable as ModifiedControlVariable
 import qualified Language.Java.Rules.MultipleStringLiterals as MultipleStringLiterals
 import qualified Language.Java.Rules.NamingConventions as NamingConventions
 import qualified Language.Java.Rules.NeedBraces as NeedBraces
+import qualified Language.Java.Rules.NoCasts as NoCasts
 import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
@@ -43,11 +45,16 @@ checks =
     AvoidNegations.check,
     AvoidOuterNegations.check,
     AvoidStarImport.check,
+    CheckNonFinalMethodParameters.check,
+    CheckNonPrivateAttributes.check,
     ConsistentOverrideEqualsHashCode.check,
+    DeclarationOrder.check,
+    DefaultComesLast.check,
     ExplicitValue.check,
     InitializeVariables.check,
     ModifiedControlVariable.check,
     MultipleStringLiterals.check,
+    NeedBraces.check,
     NoNullPointerExceptionsForControl.check,
     ParameterNumber.check Nothing,
     PreferExpressions.check,
@@ -57,9 +64,9 @@ checks =
     RedundantModifiers.check,
     UseAssignOp.check,
     UseElse.check,
-    DeclarationOrder.check,
     UseIncrementDecrementOperator.check,
-    UseJavaArrayTypeStyle.check
+    UseJavaArrayTypeStyle.check,
+    UsePostIncrementDecrement.check
   ]
 
 checkAll :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -75,17 +82,21 @@ checkFromConfig :: Rule -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnosti
 checkFromConfig AvoidMultipleTopLevelDecl = AvoidMultipleTopLevelDecl.check
 checkFromConfig AvoidMultipleVarDecl = AvoidMultipleVarDecl.check
 checkFromConfig AvoidNegations = AvoidNegations.check
+checkFromConfig AvoidOuterNegations = AvoidOuterNegations.check
 checkFromConfig AvoidStarImport = AvoidStarImport.check
-checkFromConfig CheckNonFinalMethodAttributes = CheckNonFinalMethodAttributes.check
+checkFromConfig CheckNonFinalMethodParameters = CheckNonFinalMethodParameters.check
 checkFromConfig CheckNonPrivateAttributes = CheckNonPrivateAttributes.check
 checkFromConfig ConsistentOverrideEqualsHashCode = ConsistentOverrideEqualsHashCode.check
 checkFromConfig DeclarationOrder = DeclarationOrder.check
 checkFromConfig DefaultComesLast = DefaultComesLast.check
+checkFromConfig ExplicitValue = ExplicitValue.check
 checkFromConfig InitializeVariables = InitializeVariables.check
+checkFromConfig (MethodInvNumber called limited maxInv) = MethodInvNumber.check called limited maxInv
 checkFromConfig ModifiedControlVariable = ModifiedControlVariable.check
 checkFromConfig MultipleStringLiterals = MultipleStringLiterals.check
 checkFromConfig NamingConventions = NamingConventions.check
 checkFromConfig NeedBraces = NeedBraces.check
+checkFromConfig (NoCasts whitelist) = NoCasts.check whitelist
 checkFromConfig NoLoopBreak = NoLoopBreak.check
 checkFromConfig NoNullPointerExceptionsForControl = NoNullPointerExceptionsForControl.check
 checkFromConfig (ParameterNumber max) = ParameterNumber.check max

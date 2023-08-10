@@ -3,17 +3,19 @@ import qualified AvoidMultipleVarDeclTests
 import qualified AvoidNegationsTests
 import qualified AvoidOuterNegationsTests
 import qualified AvoidStarImportTests
-import qualified CheckNonFinalMethodAttributesTests
+import qualified CheckNonFinalMethodParametersTests
 import qualified CheckNonPrivateAttributesTests
 import qualified ConsistentOverrideEqualsHashCodeTests
 import qualified DeclarationOrderTests
 import qualified DefaultComesLastTests
 import qualified ExplicitValueTests
 import qualified InitializeVariablesTests
+import qualified MethodInvNumberTests
 import qualified ModifiedControlVariableTests
 import qualified MultipleStringLiteralsTests
 import qualified NamingConventionsTests
 import qualified NeedBracesTests
+import qualified NoCastsTests
 import qualified NoLoopBreakTests
 import qualified NoNullPointerExceptionsForControlTests
 import qualified ParameterNumberTests
@@ -43,17 +45,19 @@ tests =
       "AvoidNegations" ~: AvoidNegationsTests.tests,
       "AvoidOuterNegations" ~: AvoidOuterNegationsTests.tests,
       "AvoidStarImport" ~: AvoidStarImportTests.tests,
-      "CheckNonFinalMethodAttributes" ~: CheckNonFinalMethodAttributesTests.tests,
+      "CheckNonFinalMethodParameters" ~: CheckNonFinalMethodParametersTests.tests,
       "CheckNonPrivateAttributes" ~: CheckNonPrivateAttributesTests.tests,
       "ConsistentOverrideEqualsHashCode" ~: ConsistentOverrideEqualsHashCodeTests.tests,
       "DeclarationOrder" ~: DeclarationOrderTests.tests,
       "DefaultComesLast" ~: DefaultComesLastTests.tests,
       "ExplicitValue" ~: ExplicitValueTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
+      "MethodInvNumber" ~: MethodInvNumberTests.tests,
       "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
       "MultipleStringLiteralsTests" ~: MultipleStringLiteralsTests.tests,
       "NamingConventions" ~: NamingConventionsTests.tests,
       "NeedBraces" ~: NeedBracesTests.tests,
+      "NoCasts" ~: NoCastsTests.tests,
       "NoLoopBreak" ~: NoLoopBreakTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "ParameterNumber" ~: ParameterNumberTests.tests,

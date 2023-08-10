@@ -9,9 +9,6 @@
     "rule": "AvoidNegations"
   },
   {
-    "rule": "AvoidOuterNegations"
-  },
-  {
     "rule": "AvoidStarImport"
   },
   {
@@ -24,16 +21,31 @@
     "rule": "ConsistentOverrideEqualsHashCode"
   },
   {
-    "rule": "ConstantPropagation"
+    "rule": "DefaultComesLast"
   },
   {
-    "rule": "DefaultComesLast"
+    "rule": "ExplicitValue"
   },
   {
     "rule": "InitializeVariables"
   },
   {
+    "rule": "MethodInvNumber",
+    "called": "foo",
+    "limited": "bar",
+    "maxInv": 2
+  },
+  {
+    "rule": "MultipleStringLiterals"
+  },
+  {
     "rule": "NoNullPointerExceptionsForControl"
+  },
+  {
+    "rule": "NoCasts",
+    "whitelist": [
+      "foo"
+    ]
   },
   {
     "rule": "ParameterNumber",
@@ -66,11 +78,5 @@
   },
   {
     "rule": "UseJavaArrayTypeStyle"
-  },
-  {
-    "rule": "UsePostIncrementDecrement"
-  },
-  {
-    "rule": "MultipleStringLiterals"
   }
 ]

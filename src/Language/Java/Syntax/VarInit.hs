@@ -5,4 +5,4 @@ import qualified Language.Java.Syntax.Exp as Exp
 
 hasNoSideEffect :: VarInit p -> Bool
 hasNoSideEffect (InitExp exp) = Exp.hasNoSideEffect exp
-hasNoSideEffect (InitArray (ArrayInit varInits)) = all hasNoSideEffect varInits
+hasNoSideEffect (InitArray (ArrayInit _ varInits)) = all hasNoSideEffect varInits

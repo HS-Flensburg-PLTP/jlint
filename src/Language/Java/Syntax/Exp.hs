@@ -1,11 +1,15 @@
-module Language.Java.Syntax.Exp (hasNoSideEffect) where
+module Language.Java.Syntax.Exp (hasNoSideEffect, isCast) where
 
 import Language.Java.Syntax (Exp (..))
 
+isCast :: Exp p -> Bool
+isCast (Cast {}) = True
+isCast _ = False
+
 hasNoSideEffect :: Exp p -> Bool
-hasNoSideEffect (Lit _ _) = True
-hasNoSideEffect (ClassLit _) = False
-hasNoSideEffect This = False
+hasNoSideEffect (Lit _) = True
+hasNoSideEffect (ClassLit _ _) = False
+hasNoSideEffect (This _) = False
 hasNoSideEffect (ThisClass {}) = False
 hasNoSideEffect (InstanceCreation {}) = False
 hasNoSideEffect (QualInstanceCreation {}) = False
@@ -25,7 +29,7 @@ hasNoSideEffect (PreBitCompl {}) = False
 hasNoSideEffect (PreNot {}) = False
 hasNoSideEffect (SwitchExp {}) = False
 hasNoSideEffect (Cast {}) = False
-hasNoSideEffect (BinOp leftExp _ rightExp) = hasNoSideEffect leftExp && hasNoSideEffect rightExp
+hasNoSideEffect (BinOp _ leftExp _ rightExp) = hasNoSideEffect leftExp && hasNoSideEffect rightExp
 hasNoSideEffect (InstanceOf {}) = False
 hasNoSideEffect (Cond {}) = False
 hasNoSideEffect (Assign {}) = False

@@ -31,12 +31,12 @@ checkConditionalElse stmt path = checkConditionalBody stmt path
 
 checkConditionalBody :: Stmt Parsed -> FilePath -> [RDF.Diagnostic]
 checkConditionalBody (StmtBlock _) _ = mzero
-checkConditionalBody Empty _ = mzero
+checkConditionalBody (Empty _) _ = mzero
 checkConditionalBody stmt path = return (diagnostic bracesMessage (sourceSpan stmt) path)
 
 checkLoopBody :: Stmt Parsed -> SourceSpan -> FilePath -> [RDF.Diagnostic]
 checkLoopBody (StmtBlock _) _ _ = mzero
-checkLoopBody Empty loopSpan path = return (diagnostic emptyLoopMessage loopSpan path)
+checkLoopBody (Empty _) loopSpan path = return (diagnostic emptyLoopMessage loopSpan path)
 checkLoopBody stmt _ path = return (diagnostic bracesMessage (sourceSpan stmt) path)
 
 diagnostic :: String -> SourceSpan -> FilePath -> RDF.Diagnostic
