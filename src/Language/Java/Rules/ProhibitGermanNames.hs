@@ -4,9 +4,11 @@
 module Language.Java.Rules.ProhibitGermanNames where
 
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.List (groupBy)
 import Data.Text (pack, replace, unpack)
 import Language.Java.SourceSpan
 import Language.Java.Syntax
+import qualified Markdown
 import qualified RDF
 import System.Process
 import Text.RE.TDFA
@@ -44,16 +46,17 @@ checkIdents idents path = do
               word `elem` nonEnglishWords
           )
           germanWords
+  let groupedDefinitelyGermanWords = groupBy (\(_, sp1) (_, sp2) -> sp1 == sp2) definitelyGermanWords
   return
     ( map
-        ( \(string, sourceSpan) ->
+        ( \gWords ->
             RDF.rangeDiagnostic
               "Language.Java.Rules.ProhibitGermanNames"
-              ("Deutsches Wort gefunden: " ++ string)
-              sourceSpan
+              ("Dieser Bezeichner enthält ein oder mehrere folgende deutsche Wörter: " ++ unwords (map (Markdown.code . fst) gWords))
+              (snd (head gWords))
               path
         )
-        definitelyGermanWords
+        groupedDefinitelyGermanWords
     )
 
 splitIdent :: Ident -> [(String, SourceSpan)]
