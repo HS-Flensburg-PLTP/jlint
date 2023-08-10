@@ -3,8 +3,8 @@ module Language.Java.Rules.UseElse (check) where
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.List (intercalate)
+import Language.Java.HelperMethods.BlockStmt as BlockStmt (name)
 import Language.Java.Syntax
-import Language.Java.Syntax.BlockStmt as BlockStmt (name)
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]

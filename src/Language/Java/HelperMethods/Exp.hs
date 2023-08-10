@@ -1,4 +1,4 @@
-module Language.Java.Syntax.Exp (hasNoSideEffect, isCast) where
+module Language.Java.HelperMethods.Exp (hasNoSideEffect, isCast) where
 
 import Language.Java.Syntax (Exp (..))
 

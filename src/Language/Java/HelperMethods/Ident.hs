@@ -1,4 +1,4 @@
-module Language.Java.Syntax.Ident
+module Language.Java.HelperMethods.Ident
   ( name,
   )
 where

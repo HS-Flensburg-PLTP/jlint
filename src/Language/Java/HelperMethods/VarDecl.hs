@@ -1,4 +1,4 @@
-module Language.Java.Syntax.VarDecl
+module Language.Java.HelperMethods.VarDecl
   ( isInitialized,
     hasNoSideEffect,
     ident,
@@ -7,7 +7,8 @@ module Language.Java.Syntax.VarDecl
 where
 
 import Language.Java.Syntax (Ident, VarDecl (VarDecl), VarDeclId (VarDeclArray, VarId))
-import qualified Language.Java.Syntax.VarInit as VarInit
+import qualified Language.Java.HelperMethods.VarInit as VarInit
+
 
 isInitialized :: VarDecl p -> Bool
 isInitialized (VarDecl _ _ (Just _)) = True

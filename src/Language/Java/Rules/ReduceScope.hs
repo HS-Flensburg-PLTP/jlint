@@ -8,13 +8,13 @@ import Data.Generics.Uniplate.Data (universeBi)
 import Data.List.Extra (none)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.List.NonEmpty as NonEmpty
+import qualified Language.Java.HelperMethods.BlockStmt as BlockStmt
+import qualified Language.Java.HelperMethods.Exp as Exp
+import qualified Language.Java.HelperMethods.Ident as Ident
+import qualified Language.Java.HelperMethods.Stmt as Stmt
+import qualified Language.Java.HelperMethods.VarDecl as VarDecl
 import Language.Java.SourceSpan (sourceSpan)
 import Language.Java.Syntax
-import qualified Language.Java.Syntax.BlockStmt as BlockStmt
-import qualified Language.Java.Syntax.Exp as Exp
-import qualified Language.Java.Syntax.Ident as Ident
-import qualified Language.Java.Syntax.Stmt as Stmt
-import qualified Language.Java.Syntax.VarDecl as VarDecl
 import qualified Markdown
 import qualified RDF (Diagnostic, rangeDiagnostic)
 

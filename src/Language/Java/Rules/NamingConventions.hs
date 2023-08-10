@@ -12,9 +12,9 @@ import Data.List.Extra (none)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.List.NonEmpty as NonEmpty
 import Language.Java.AST (extractMethods)
+import qualified Language.Java.HelperMethods.Modifier as Modifier
 import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
-import qualified Language.Java.Syntax.Modifier as Modifier
 import qualified RDF
 import Text.RE.TDFA.String
 

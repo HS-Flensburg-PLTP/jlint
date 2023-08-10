@@ -2,9 +2,9 @@ module Language.Java.Rules.DeclarationOrder (check) where
 
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.Maybe (maybeToList)
+import qualified Language.Java.HelperMethods.Modifier as Modifier
 import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
-import qualified Language.Java.Syntax.Modifier as Modifier
 import qualified RDF
 
 data Rank

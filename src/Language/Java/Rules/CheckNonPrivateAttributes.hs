@@ -3,11 +3,11 @@ module Language.Java.Rules.CheckNonPrivateAttributes (check) where
 import Control.Monad (MonadPlus (mzero))
 import Data.Generics.Uniplate.Data (universeBi)
 import qualified Data.List.NonEmpty as NonEmpty
+import qualified Language.Java.HelperMethods.Ident as Ident
+import qualified Language.Java.HelperMethods.Modifier as Modifier
+import qualified Language.Java.HelperMethods.VarDecl as VarDecl
 import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
-import Language.Java.Syntax.Ident as Ident
-import qualified Language.Java.Syntax.Modifier as Modifier
-import Language.Java.Syntax.VarDecl as VarDecl
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]

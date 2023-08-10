@@ -1,4 +1,4 @@
-module Language.Java.Syntax.Stmt (hasNoSideEffect) where
+module Language.Java.HelperMethods.Stmt (hasNoSideEffect) where
 
 import Language.Java.Syntax (Stmt (..))
 

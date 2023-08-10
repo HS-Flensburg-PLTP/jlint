@@ -2,8 +2,8 @@ module Language.Java.Rules.NoCasts where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
+import qualified Language.Java.HelperMethods.Exp as Exp
 import Language.Java.Syntax
-import qualified Language.Java.Syntax.Exp as Exp
 import qualified RDF
 
 check :: [String] -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]

@@ -1,4 +1,4 @@
-module Language.Java.Syntax.Modifier
+module Language.Java.HelperMethods.Modifier
   ( isFinal,
     isPrivate,
     isProtected,

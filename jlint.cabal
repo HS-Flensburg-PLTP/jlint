@@ -30,6 +30,13 @@ library
       Control.Monad.Extra
       Data.List.Extra
       Language.Java.AST
+      Language.Java.HelperMethods.BlockStmt
+      Language.Java.HelperMethods.Exp
+      Language.Java.HelperMethods.Ident
+      Language.Java.HelperMethods.Modifier
+      Language.Java.HelperMethods.Stmt
+      Language.Java.HelperMethods.VarDecl
+      Language.Java.HelperMethods.VarInit
       Language.Java.Rules
       Language.Java.Rules.AvoidMultipleTopLevelDecl
       Language.Java.Rules.AvoidMultipleVarDecl
@@ -64,13 +71,6 @@ library
       Language.Java.Rules.UseIncrementDecrementOperator
       Language.Java.Rules.UseJavaArrayTypeStyle
       Language.Java.Rules.UsePostIncrementDecrement
-      Language.Java.Syntax.BlockStmt
-      Language.Java.Syntax.Exp
-      Language.Java.Syntax.Ident
-      Language.Java.Syntax.Modifier
-      Language.Java.Syntax.Stmt
-      Language.Java.Syntax.VarDecl
-      Language.Java.Syntax.VarInit
       Markdown
       RDF
   other-modules:
