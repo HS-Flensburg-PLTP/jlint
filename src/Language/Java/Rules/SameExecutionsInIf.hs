@@ -15,11 +15,11 @@ compareStmts :: Stmt Parsed -> Stmt Parsed -> SourceSpan -> FilePath -> [RDF.Dia
 compareStmts stmt1 stmt2 span path
   | eq IgnoreSourceSpan stmt1 stmt2 =
       return (duplicateCodeMessage span path)
-compareStmts (StmtBlock (Block blockstmts@(blockstmt : _))) (StmtBlock (Block blockstmts2@(blockstmt2 : _))) span path
+compareStmts (StmtBlock (Block _ blockstmts@(blockstmt : _))) (StmtBlock (Block _ blockstmts2@(blockstmt2 : _))) span path
   | eq IgnoreSourceSpan blockstmt blockstmt2 || eq IgnoreSourceSpan (last blockstmts) (last blockstmts2) =
       return (partDuplicatedCodeMessage span path)
   | otherwise = mzero
-compareStmts stmt (StmtBlock (Block blockstmts)) span path =
+compareStmts stmt (StmtBlock (Block _ blockstmts)) span path =
   case blockstmts of
     [] -> mzero
     [blockstmt] ->
@@ -30,7 +30,7 @@ compareStmts stmt (StmtBlock (Block blockstmts)) span path =
       if checkStmt (head blockstmts) stmt || checkStmt (last blockstmts) stmt
         then return (partDuplicatedCodeMessage span path)
         else mzero
-compareStmts (StmtBlock (Block blockstmts)) stmt span path =
+compareStmts (StmtBlock (Block _ blockstmts)) stmt span path =
   case blockstmts of
     [] -> mzero
     [blockstmt] ->
@@ -44,7 +44,7 @@ compareStmts (StmtBlock (Block blockstmts)) stmt span path =
 compareStmts _ _ _ _ = mzero
 
 checkStmt :: BlockStmt Parsed -> Stmt Parsed -> Bool
-checkStmt (BlockStmt _ stmt2) stmt =
+checkStmt (BlockStmt stmt2) stmt =
   eq IgnoreSourceSpan stmt stmt2
 checkStmt _ _ = False
 

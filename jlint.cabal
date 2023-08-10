@@ -36,7 +36,7 @@ library
       Language.Java.Rules.AvoidNegations
       Language.Java.Rules.AvoidOuterNegations
       Language.Java.Rules.AvoidStarImport
-      Language.Java.Rules.CheckNonFinalMethodAttributes
+      Language.Java.Rules.CheckNonFinalMethodParameters
       Language.Java.Rules.CheckNonPrivateAttributes
       Language.Java.Rules.ConsistentOverrideEqualsHashCode
       Language.Java.Rules.DeclarationOrder
@@ -47,6 +47,7 @@ library
       Language.Java.Rules.ModifiedControlVariable
       Language.Java.Rules.NamingConventions
       Language.Java.Rules.NeedBraces
+      Language.Java.Rules.NoCasts
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNullPointerExceptionsForControl
       Language.Java.Rules.ParameterNumber
@@ -66,6 +67,7 @@ library
       Language.Java.Syntax.BlockStmt
       Language.Java.Syntax.Exp
       Language.Java.Syntax.Ident
+      Language.Java.Syntax.Modifier
       Language.Java.Syntax.Stmt
       Language.Java.Syntax.VarDecl
       Language.Java.Syntax.VarInit
@@ -125,7 +127,7 @@ test-suite jlint-test
       AvoidNegationsTests
       AvoidOuterNegationsTests
       AvoidStarImportTests
-      CheckNonFinalMethodAttributesTests
+      CheckNonFinalMethodParametersTests
       CheckNonPrivateAttributesTests
       ConsistentOverrideEqualsHashCodeTests
       DeclarationOrderTests
@@ -136,6 +138,7 @@ test-suite jlint-test
       ModifiedControlVariableTests
       NamingConventionsTests
       NeedBracesTests
+      NoCastsTests
       NoLoopBreakTests
       NoNullPointerExceptionsForControlTests
       ParameterNumberTests

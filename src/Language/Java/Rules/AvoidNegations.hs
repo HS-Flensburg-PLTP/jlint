@@ -46,5 +46,5 @@ checkExpression cUnit path = do
 
 isNegation :: Exp Parsed -> Bool
 isNegation (PreNot _ _) = True
-isNegation (BinOp _ NotEq _) = True
+isNegation (BinOp _ _ NotEq _) = True
 isNegation _ = False

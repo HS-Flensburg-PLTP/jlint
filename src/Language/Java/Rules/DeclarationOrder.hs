@@ -4,6 +4,7 @@ import Data.Generics.Uniplate.Data (universeBi)
 import Data.Maybe (maybeToList)
 import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
+import qualified Language.Java.Syntax.Modifier as Modifier
 import qualified RDF
 
 data Rank
@@ -42,39 +43,30 @@ extractMemberDecls cUnit = do
 checkTopLvlStmts :: MemberDecl Parsed -> Maybe (Rank, SourceSpan)
 checkTopLvlStmts toplvlDecl = case toplvlDecl of
   FieldDecl sourceSpan mods _ _ ->
-    if any (eq IgnoreSourceSpan Static) mods
+    if any Modifier.isStatic mods
       then
-        if checkForPublic mods
+        if any Modifier.isPublic mods
           then Just (StaticPublicField, sourceSpan)
           else
-            if any (eq IgnoreSourceSpan Protected) mods
+            if any Modifier.isProtected mods
               then Just (StaticProtectedField, sourceSpan)
               else
-                if any (eq IgnoreSourceSpan Private) mods
+                if any Modifier.isPrivate mods
                   then Just (StaticPrivateField, sourceSpan)
                   else Just (StaticPackageField, sourceSpan)
       else
-        if checkForPublic mods
+        if any Modifier.isPublic mods
           then Just (InstancePublicField, sourceSpan)
           else
-            if any (eq IgnoreSourceSpan Protected) mods
+            if any Modifier.isProtected mods
               then Just (InstanceProtectedField, sourceSpan)
               else
-                if any (eq IgnoreSourceSpan Private) mods
+                if any Modifier.isPrivate mods
                   then Just (InstancePrivateField, sourceSpan)
                   else Just (InstancePackageField, sourceSpan)
   ConstructorDecl sourceSpan _ _ _ _ _ _ -> Just (Constructor, sourceSpan)
   MethodDecl sourceSpan _ _ _ _ _ _ _ _ -> Just (Method, sourceSpan)
   _ -> Nothing
-
-checkForPublic :: [Modifier Parsed] -> Bool
-checkForPublic =
-  any
-    ( \mod ->
-        case mod of
-          Public _ -> True
-          _ -> False
-    )
 
 checkRank :: FilePath -> [(Rank, SourceSpan)] -> [RDF.Diagnostic]
 checkRank path declOrder =

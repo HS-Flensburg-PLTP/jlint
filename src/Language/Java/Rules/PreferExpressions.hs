@@ -6,6 +6,8 @@ import Control.Monad (MonadPlus (..))
 import Data.Data (Data)
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.List.Extra (none)
+import Data.List.NonEmpty (NonEmpty ((:|)))
+import qualified Data.List.NonEmpty as NonEmpty
 import Language.Java.Syntax
 import qualified Language.Java.Syntax.Ident as Ident
 import qualified Language.Java.Syntax.VarDecl as VarDecl
@@ -19,13 +21,13 @@ check cUnit path = do
   where
     checkBlocks
       ( LocalVars (startLoc, _) _ _ vars
-          : BlockStmt _ (ExpStmt (_, endLoc) exp)
+          : BlockStmt (ExpStmt (_, endLoc) exp)
           : _
         ) =
         case filterVarUpdate exp of
           Nothing -> mzero
           Just var ->
-            let declVars = map VarDecl.ident (filter VarDecl.isInitialized vars)
+            let declVars = map VarDecl.ident (NonEmpty.filter VarDecl.isInitialized vars)
              in if any (eq IgnoreSourceSpan var) declVars
                   then
                     return
@@ -37,8 +39,8 @@ check cUnit path = do
                       )
                   else mzero
     checkBlocks
-      ( BlockStmt _ (ExpStmt (startLoc, _) exp1)
-          : BlockStmt _ (ExpStmt (_, endLoc) exp2)
+      ( BlockStmt (ExpStmt (startLoc, _) exp1)
+          : BlockStmt (ExpStmt (_, endLoc) exp2)
           : _
         ) =
         case (filterVarUpdate exp1, filterVarUpdate exp2) of
@@ -56,7 +58,7 @@ check cUnit path = do
                   )
               else mzero
     checkBlocks
-      ( BlockStmt _ (ExpStmt span exp)
+      ( BlockStmt (ExpStmt span exp)
           : stmt
           : stmts
         ) =
@@ -78,18 +80,18 @@ check cUnit path = do
     checkBlocks _ = mzero
 
 filterVarUpdate :: Exp Parsed -> Maybe Ident
-filterVarUpdate (PostIncrement _ (ExpName (Name _ [ident]))) = Just ident
-filterVarUpdate (PostDecrement _ (ExpName (Name _ [ident]))) = Just ident
-filterVarUpdate (PreIncrement _ (ExpName (Name _ [ident]))) = Just ident
-filterVarUpdate (PreDecrement _ (ExpName (Name _ [ident]))) = Just ident
-filterVarUpdate (Assign _ (NameLhs (Name _ [ident])) _ _) = Just ident
+filterVarUpdate (PostIncrement _ (ExpName (Name _ (ident :| [])))) = Just ident
+filterVarUpdate (PostDecrement _ (ExpName (Name _ (ident :| [])))) = Just ident
+filterVarUpdate (PreIncrement _ (ExpName (Name _ (ident :| [])))) = Just ident
+filterVarUpdate (PreDecrement _ (ExpName (Name _ (ident :| [])))) = Just ident
+filterVarUpdate (Assign _ (NameLhs (Name _ (ident :| []))) _ _) = Just ident
 filterVarUpdate _ = Nothing
 
 variablesRead :: (Data a) => a -> [Ident]
-variablesRead parent = [ident | ExpName (Name _ idents) :: Exp Parsed <- universeBi parent, ident <- idents]
+variablesRead parent = [ident | ExpName (Name _ idents) :: Exp Parsed <- universeBi parent, ident <- NonEmpty.toList idents]
 
 variablesWritten :: (Data a) => a -> [Ident]
-variablesWritten parent = [ident | Assign _ (NameLhs (Name _ [ident])) _ _ :: Exp Parsed <- universeBi parent]
+variablesWritten parent = [ident | Assign _ (NameLhs (Name _ (ident :| []))) _ _ :: Exp Parsed <- universeBi parent]
 
 assignedTwiceMessage :: Ident -> String
 assignedTwiceMessage ident =
