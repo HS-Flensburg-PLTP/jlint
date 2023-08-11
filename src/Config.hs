@@ -66,6 +66,7 @@ instance FromJSON Rule where
       "NoCasts" -> parseNoCasts obj
       "NoLoopBreak" -> pure NoLoopBreak
       "NoNullPointerExceptionsForControl" -> pure NoNullPointerExceptionsForControl
+      "NoPostIncDecInExpression" -> pure NoPostIncDecInExpression
       "ParameterNumber" -> parseParameterNumber obj
       "PreferExpressions" -> pure PreferExpressions
       "ProhibitAnnotations" -> parseProhibitAnnotations obj
