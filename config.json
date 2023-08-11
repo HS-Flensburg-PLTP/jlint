@@ -1,82 +1,98 @@
 [
-    {
-        "rule": "AvoidMultipleTopLevelDecl"
-    },
-    {
-        "rule": "AvoidMultipleVarDecl"
-    },
-    {
-        "rule": "AvoidNegations"
-    },
-    {
-        "rule": "AvoidStarImport"
-    },
-    {
-        "rule": "CheckNonFinalMethodAttributes"
-    },
-    {
-        "rule": "CheckNonPrivateAttributes"
-    },
-    {
-        "rule": "ConsistentOverrideEqualsHashCode"
-    },
-    {
-        "rule": "DefaultComesLast"
-    },
-    {
-        "rule": "ExplicitValue"
-    },
-    {
-        "rule": "InitializeVariables"
-    },
-    {
-        "rule": "MethodInvNumber",
-        "called": "foo",
-        "limited": "bar",
-        "maxInv": 2
-    },
-    {
-        "rule": "NoNullPointerExceptionsForControl"
-    },
-    {
-        "rule": "NoCasts",
-        "whitelist": [
-            "foo"
-        ]
-    },
-    {
-        "rule": "NoPostIncDecInExpression"
-    },
-    {
-        "rule": "ParameterNumber",
-        "max": 6
-    },
-    {
-        "rule": "PreferExpressions"
-    },
-    {
-        "rule": "ProhibitAnnotations",
-        "whitelist": []
-    },
-    {
-        "rule": "ProhibitMyIdentPrefix"
-    },
-    {
-        "rule": "ReduceScope"
-    },
-    {
-        "rule": "RedundantModifiers"
-    },
-    {
-        "rule": "UseAssignOp"
-    },
-    {
-        "rule": "UseElse"
-    },
-    {
-        "rule": "UseIncrementDecrementOperator"
-    },
-    {
-        "rule": "UseJavaArrayTypeStyle"
-    }
+  {
+    "rule": "AvoidMultipleTopLevelDecl"
+  },
+  {
+    "rule": "AvoidMultipleVarDecl"
+  },
+  {
+    "rule": "AvoidNegations"
+  },
+  {
+    "rule": "AvoidOuterNegations"
+  },
+  {
+    "rule": "AvoidStarImport"
+  },
+  {
+    "rule": "CheckNonFinalMethodParameters"
+  },
+  {
+    "rule": "CheckNonPrivateAttributes"
+  },
+  {
+    "rule": "ConsistentOverrideEqualsHashCode"
+  },
+  {
+    "rule": "DeclarationOrder"
+  },
+  {
+    "rule": "DefaultComesLast"
+  },
+  {
+    "rule": "ExplicitValue"
+  },
+  {
+    "rule": "InitializeVariables"
+  },
+  {
+    "rule": "MethodInvNumber",
+    "called": "foo",
+    "limited": "bar",
+    "maxInv": 2
+  },
+  {
+    "rule": "ModifiedControlVariable"
+  },
+  {
+    "rule": "NeedBraces"
+  },
+  {
+    "rule": "NoCasts",
+    "whitelist": ["foo"]
+  },
+  {
+    "rule": "NoNullPointerExceptionsForControl"
+  },
+  {
+    "rule": "NoPostIncDecInExpression"
+  },
+  {
+    "rule": "ParameterNumber",
+    "max": 6
+  },
+  {
+    "rule": "PreferExpressions"
+  },
+  {
+    "rule": "ProhibitAnnotations",
+    "whitelist": []
+  },
+  {
+    "rule": "ProhibitMyIdentPrefix"
+  },
+  {
+    "rule": "ReduceScope"
+  },
+  {
+    "rule": "RedundantModifiers"
+  },
+  {
+    "rule": "SameExecutionsInIf"
+  },
+  {
+    "rule": "UseAssignOp"
+  },
+  {
+    "rule": "UseElse"
+  },
+  {
+    "rule": "UseIncrementDecrementOperator"
+  },
+  {
+    "rule": "UseJavaArrayTypeStyle"
+  },
+  {
+    "rule": "UsePostIncrementDecrement"
+  }
 ]
