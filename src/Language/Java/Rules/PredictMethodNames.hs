@@ -22,13 +22,8 @@ data WhitelistEntry = WhitelistEntry
   }
   deriving (Eq)
 
-whitelist :: [WhitelistEntry]
-whitelist =
-  [ WhitelistEntry
-      { methodName = "newElementArrayList",
-        formalParamTypes = ["ArrayList<T>", "T"]
-      }
-  ]
+whitelist :: [String]
+whitelist = []
 
 minimumSuggestions :: Int
 minimumSuggestions = 3
@@ -129,14 +124,8 @@ toCamelCase (x : xs) =
 toCamelCase [] = []
 
 checkMethodDecl :: MemberDecl Parsed -> [MemberDecl Parsed]
-checkMethodDecl methodDecl@(MethodDecl _ _ _ _ (Ident _ ident) formalParams _ _ _) =
-  [ methodDecl
-    | WhitelistEntry
-        { methodName = ident,
-          formalParamTypes = map (\(FormalParam _ _ t _ _) -> prettyPrint t) formalParams
-        }
-        `notElem` whitelist
-  ]
+checkMethodDecl methodDecl@(MethodDecl _ _ _ _ (Ident _ ident) _ _ _ _) =
+  [methodDecl | ident `notElem` whitelist]
 checkMethodDecl _ = []
 
 checkPredictionSets :: [(PredictionSet, SourceSpan)] -> [(PredictionSet, SourceSpan)]
@@ -163,18 +152,3 @@ calculatePredictions preds = calculatePredictions' preds [] 0 0.0
             then calculatePredictions' xs (akk ++ [x]) (count + 1) (accumulatedWeight + weight)
             else akk
         else calculatePredictions' xs (akk ++ [x]) (count + 1) (accumulatedWeight + weight)
-
-{-
-.venv/bin/python3.6 code2seq.py --load models/java-large-model/model_iter52.release --predict --code 'public String getName() { return name; } public String getAnotherName() { return name; }'
--}
-
--- putStrLn
---   ( concatMap
---       ( \((MethodDecl _ _ _ _ (Ident _ ident) formalParams _ _ _)) ->
---           ident
---             ++ concatMap
---               (\(FormalParam _ _ typpe _ _) -> prettyPrint typpe)
---               formalParams
---       )
---       methodDecls
---   )
