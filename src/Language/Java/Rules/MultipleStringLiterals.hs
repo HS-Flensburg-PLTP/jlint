@@ -3,6 +3,7 @@ module Language.Java.Rules.MultipleStringLiterals where
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.List (groupBy, intercalate, sortBy)
+import Language.Java.Pretty (prettyPrint)
 import Language.Java.SourceSpan
 import Language.Java.Syntax
 import qualified Markdown
@@ -10,43 +11,52 @@ import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  let exps = universeBi cUnit
-  let pairs = do
-        exp <- exps
-        checkStringLiteral exp
-  checkForDuplicates pairs path
+  let annotationStringLiterals = do
+        annotation <- universeBi cUnit
+        checkAnnotation annotation
+  let stringLiterals = do
+        literal <- universeBi cUnit
+        checkStringLiteral literal
+  let validLiterals = filter (\lit -> not (any (eq IncludeSourceSpan lit) annotationStringLiterals)) stringLiterals
+  checkForDuplicates validLiterals path
 
-checkStringLiteral :: Exp Parsed -> [(SourceSpan, String)]
-checkStringLiteral (Lit (String sourceSpan string)) = [(sourceSpan, string)]
-checkStringLiteral _ = []
+checkAnnotation :: Annotation Parsed -> [Literal]
+checkAnnotation annotation = do
+  literal <- universeBi annotation
+  checkStringLiteral literal
 
-checkForDuplicates :: [(SourceSpan, String)] -> FilePath -> [RDF.Diagnostic]
-checkForDuplicates pairs path =
+checkStringLiteral :: Literal -> [Literal]
+checkStringLiteral lit@(String _ _) = return lit
+checkStringLiteral _ = mzero
+
+checkForDuplicates :: [Literal] -> FilePath -> [RDF.Diagnostic]
+checkForDuplicates literals path =
   concatMap
-    ( \(x : xs) ->
-        if length (x : xs) > 1
-          then do
-            let lines = map (\((Location _ line _, _), _) -> show line) xs
-            return
-              ( RDF.rangeDiagnostic
-                  "Language.Java.Rules.MultipleStringLiterals"
-                  ( "Das String-Literal "
-                      ++ Markdown.code (snd x)
-                      ++ " wird an "
-                      ++ show (length xs + 1)
-                      ++ " Stellen verwendet. Auch noch in den Zeilen "
-                      ++ intercalate ", " lines
-                      ++ ". Bitte eine Konstante dafür einführen."
-                  )
-                  (fst x)
-                  path
-              )
-          else mzero
+    ( ( \(x : xs) ->
+          if not (null xs)
+            then
+              return
+                ( RDF.rangeDiagnostic
+                    "Language.Java.Rules.MultipleStringLiterals"
+                    ( "Das String-Literal "
+                        ++ Markdown.code (prettyPrint x)
+                        ++ " wird an dieser und an "
+                        ++ show (length xs)
+                        ++ " weiteren Stellen verwendet. Auch noch in den Zeilen "
+                        ++ intercalate ", " (map ((\(Location _ line _, _) -> show line) . sourceSpan) xs)
+                        ++ ". Bitte eine Konstante dafür einführen."
+                    )
+                    (sourceSpan x)
+                    path
+                )
+            else mzero
+      )
+        . sortBy (\l r -> compare (sourceSpan l) (sourceSpan r))
     )
     ( groupBy
-        (\l r -> snd l == snd r)
+        (\(String _ strL) (String _ strR) -> strL == strR)
         ( sortBy
-            (\l r -> compare (snd l) (snd r))
-            pairs
+            (\(String _ strL) (String _ strR) -> compare strL strR)
+            literals
         )
     )

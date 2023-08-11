@@ -61,6 +61,7 @@ instance FromJSON Rule where
       "InitializeVariables" -> pure InitializeVariables
       "MethodInvNumber" -> parseMethodInvNumber obj
       "ModifiedControlVariable" -> pure ModifiedControlVariable
+      "MultipleStringLiterals" -> pure MultipleStringLiterals
       "NamingConventions" -> pure NamingConventions
       "NeedBraces" -> pure NeedBraces
       "NoCasts" -> parseNoCasts obj

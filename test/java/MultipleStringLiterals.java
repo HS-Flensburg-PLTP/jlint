@@ -16,4 +16,10 @@ public class MultipleStringLiterals {
 
         c = string + "Bar";
     }
+
+    String a1 = "unchecked";
+    @SuppressWarnings("unchecked") 
+    public void myTest() {
+        String a2 = "SingleString";
+    }
 }
