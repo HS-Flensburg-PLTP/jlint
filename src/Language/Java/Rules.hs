@@ -15,10 +15,8 @@ import qualified Language.Java.Rules.ExplicitValue as ExplicitValue
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
 import qualified Language.Java.Rules.MethodInvNumber as MethodInvNumber
 import qualified Language.Java.Rules.ModifiedControlVariable as ModifiedControlVariable
-import qualified Language.Java.Rules.NamingConventions as NamingConventions
 import qualified Language.Java.Rules.NeedBraces as NeedBraces
 import qualified Language.Java.Rules.NoCasts as NoCasts
-import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
@@ -27,8 +25,6 @@ import qualified Language.Java.Rules.ProhibitMyIdentPrefix as ProhibitMyIdentPre
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.SameExecutionsInIf as SameExecutionsInIf
-import qualified Language.Java.Rules.SimplifyBooleanReturn as SimplifyBooleanReturn
-import qualified Language.Java.Rules.UnusedLocalVariable as UnusedLocalVariable
 import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import Language.Java.Rules.UseElse as UseElse (check)
 import qualified Language.Java.Rules.UseIncrementDecrementOperator as UseIncrementDecrementOperator
@@ -91,10 +87,8 @@ checkFromConfig ExplicitValue = ExplicitValue.check
 checkFromConfig InitializeVariables = InitializeVariables.check
 checkFromConfig (MethodInvNumber called limited maxInv) = MethodInvNumber.check called limited maxInv
 checkFromConfig ModifiedControlVariable = ModifiedControlVariable.check
-checkFromConfig NamingConventions = NamingConventions.check
 checkFromConfig NeedBraces = NeedBraces.check
 checkFromConfig (NoCasts whitelist) = NoCasts.check whitelist
-checkFromConfig NoLoopBreak = NoLoopBreak.check
 checkFromConfig NoNullPointerExceptionsForControl = NoNullPointerExceptionsForControl.check
 checkFromConfig (ParameterNumber max) = ParameterNumber.check max
 checkFromConfig PreferExpressions = PreferExpressions.check
@@ -103,8 +97,6 @@ checkFromConfig ProhibitMyIdentPrefix = ProhibitMyIdentPrefix.check
 checkFromConfig ReduceScope = ReduceScope.check
 checkFromConfig RedundantModifiers = RedundantModifiers.check
 checkFromConfig SameExecutionsInIf = SameExecutionsInIf.check
-checkFromConfig SimplifyBooleanReturn = SimplifyBooleanReturn.check
-checkFromConfig UnusedLocalVariable = UnusedLocalVariable.checkMethodVars
 checkFromConfig UseAssignOp = UseAssignOp.check
 checkFromConfig UseElse = UseElse.check
 checkFromConfig UseIncrementDecrementOperator = UseIncrementDecrementOperator.check

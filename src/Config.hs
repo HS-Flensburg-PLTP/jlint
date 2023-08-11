@@ -22,10 +22,8 @@ data Rule
   | InitializeVariables
   | MethodInvNumber {called :: String, limited :: String, maxInv :: Int}
   | ModifiedControlVariable
-  | NamingConventions
   | NeedBraces
   | NoCasts {whitelist :: [String]}
-  | NoLoopBreak
   | NoNullPointerExceptionsForControl
   | ParameterNumber {max :: Maybe Int}
   | PreferExpressions
@@ -34,8 +32,6 @@ data Rule
   | ReduceScope
   | RedundantModifiers
   | SameExecutionsInIf
-  | SimplifyBooleanReturn
-  | UnusedLocalVariable
   | UseAssignOp
   | UseElse
   | UseIncrementDecrementOperator
@@ -60,10 +56,8 @@ instance FromJSON Rule where
       "InitializeVariables" -> pure InitializeVariables
       "MethodInvNumber" -> parseMethodInvNumber obj
       "ModifiedControlVariable" -> pure ModifiedControlVariable
-      "NamingConventions" -> pure NamingConventions
       "NeedBraces" -> pure NeedBraces
       "NoCasts" -> parseNoCasts obj
-      "NoLoopBreak" -> pure NoLoopBreak
       "NoNullPointerExceptionsForControl" -> pure NoNullPointerExceptionsForControl
       "ParameterNumber" -> parseParameterNumber obj
       "PreferExpressions" -> pure PreferExpressions
@@ -72,8 +66,6 @@ instance FromJSON Rule where
       "ReduceScope" -> pure ReduceScope
       "RedundantModifiers" -> pure RedundantModifiers
       "SameExecutionsInIf" -> pure SameExecutionsInIf
-      "SimplifyBooleanReturn" -> pure SimplifyBooleanReturn
-      "UnusedLocalVariable" -> pure UnusedLocalVariable
       "UseAssignOp" -> pure UseAssignOp
       "UseElse" -> pure UseElse
       "UseIncrementDecrementOperator" -> pure UseIncrementDecrementOperator
