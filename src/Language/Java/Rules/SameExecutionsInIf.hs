@@ -2,39 +2,54 @@ module Language.Java.Rules.SameExecutionsInIf (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
-import Language.Java.AST (extractMethods)
-import Language.Java.SourceSpan (dummySourceSpan)
+import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  methods <- extractMethods cUnit
-  checkMethodBlocks methods path
+  IfThenElse span _ stmt1 stmt2 <- universeBi cUnit
+  compareStmts stmt1 stmt2 span path
 
-checkMethodBlocks :: (String, MethodBody Parsed) -> FilePath -> [RDF.Diagnostic]
-checkMethodBlocks (_, methodBody) path = do
-  blockStmts <- universeBi methodBody
-  checkStmts (extractIfThenElseBlocks blockStmts)
-  where
-    extractIfThenElseBlocks (BlockStmt stmt) = extractStmt stmt
-    extractIfThenElseBlocks _ = mzero
-    checkStmts [] = []
-    checkStmts list = createDiagnostic (checkAllStatements list 0 + checkAllStatements (reverseList list) 0) (length (head list))
-    createDiagnostic counter listLength
-      | counter > 0 && counter < listLength = [RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" ("In an if-then-else statement, " ++ show counter ++ " line(s) of code is/are the same and can be swapped out.") dummySourceSpan path]
-      | counter >= listLength = [RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" "In an if-then-else statement, all lines of code are the same and can be swapped out." dummySourceSpan path]
-      | otherwise = []
+compareStmts :: Stmt Parsed -> Stmt Parsed -> SourceSpan -> FilePath -> [RDF.Diagnostic]
+compareStmts stmt1 stmt2 span path
+  | eq IgnoreSourceSpan stmt1 stmt2 =
+      return (duplicateCodeMessage span path)
+compareStmts (StmtBlock (Block _ blockstmts@(blockstmt : _))) (StmtBlock (Block _ blockstmts2@(blockstmt2 : _))) span path
+  | eq IgnoreSourceSpan blockstmt blockstmt2 || eq IgnoreSourceSpan (last blockstmts) (last blockstmts2) =
+      return (partDuplicatedCodeMessage span path)
+  | otherwise = mzero
+compareStmts stmt (StmtBlock (Block _ blockstmts)) span path =
+  case blockstmts of
+    [] -> mzero
+    [blockstmt] ->
+      if checkStmt blockstmt stmt
+        then return (duplicateCodeMessage span path)
+        else mzero
+    _ ->
+      if checkStmt (head blockstmts) stmt || checkStmt (last blockstmts) stmt
+        then return (partDuplicatedCodeMessage span path)
+        else mzero
+compareStmts (StmtBlock (Block _ blockstmts)) stmt span path =
+  case blockstmts of
+    [] -> mzero
+    [blockstmt] ->
+      if checkStmt blockstmt stmt
+        then return (duplicateCodeMessage span path)
+        else mzero
+    _ ->
+      if checkStmt (head blockstmts) stmt || checkStmt (last blockstmts) stmt
+        then return (partDuplicatedCodeMessage span path)
+        else mzero
+compareStmts _ _ _ _ = mzero
 
-checkAllStatements :: [[BlockStmt Parsed]] -> Int -> Int
-checkAllStatements list counter
-  | all (eq IgnoreSourceSpan (head (map (\(firstStmtList : _) -> firstStmtList) list))) (concatMap (take 1) list) = if all (\statements -> length statements >= 2) list then checkAllStatements (map tail list) (counter + 1) else counter + 1
-  | otherwise = counter
+checkStmt :: BlockStmt Parsed -> Stmt Parsed -> Bool
+checkStmt (BlockStmt stmt2) stmt =
+  eq IgnoreSourceSpan stmt stmt2
+checkStmt _ _ = False
 
-extractStmt :: Stmt Parsed -> [[BlockStmt Parsed]]
-extractStmt (IfThenElse _ _ (StmtBlock (Block _ blockA)) (StmtBlock (Block _ blockB))) = [blockA, blockB]
-extractStmt (IfThenElse _ _ (StmtBlock (Block _ blockA)) ifThenElse) = blockA : extractStmt ifThenElse
-extractStmt _ = []
+duplicateCodeMessage :: SourceSpan -> FilePath -> RDF.Diagnostic
+duplicateCodeMessage = RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" "In dem If Else befindet sich identischer Code, welcher ausgelagert werden kann."
 
-reverseList :: [[BlockStmt Parsed]] -> [[BlockStmt Parsed]]
-reverseList = map reverse
+partDuplicatedCodeMessage :: SourceSpan -> FilePath -> RDF.Diagnostic
+partDuplicatedCodeMessage = RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" "In dem If Else befindet sich zum Teil identischer Code, welcher ausgelagert werden kann."
