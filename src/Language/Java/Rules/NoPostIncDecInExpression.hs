@@ -4,31 +4,27 @@ import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.SourceSpan (Located (sourceSpan))
 import Language.Java.Syntax
+import Language.Java.Syntax.Exp (isPostIncDec)
 import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  let allowedExpressions = do
+  let allowedPostIncDec = do
         statement <- universeBi cUnit
         checkStatement statement
-  let allPostIncDec = do
-        expression <- universeBi cUnit
-        checkExpression expression
-  postIncDec <- allPostIncDec
-  if any (\exp -> eq IncludeSourceSpan exp postIncDec) allowedExpressions
+  postIncDec <- filter isPostIncDec (universeBi cUnit)
+  if any (\exp -> eq IncludeSourceSpan exp postIncDec) allowedPostIncDec
     then mzero
     else createDiagnostic postIncDec path
 
 checkStatement :: Stmt Parsed -> [Exp Parsed]
-checkStatement (ExpStmt _ expression) = checkExpression expression
-checkStatement (BasicFor _ _ _ expressions _) = concatMap checkExpression expressions
+checkStatement (ExpStmt _ expression) =
+  if isPostIncDec expression
+    then return expression
+    else []
+checkStatement (BasicFor _ _ _ expressions _) = filter isPostIncDec expressions
 checkStatement _ = mzero
-
-checkExpression :: Exp Parsed -> [Exp Parsed]
-checkExpression exp@(PostIncrement _ _) = return exp
-checkExpression exp@(PostDecrement _ _) = return exp
-checkExpression _ = mzero
 
 createDiagnostic :: Exp Parsed -> FilePath -> [RDF.Diagnostic]
 createDiagnostic expr path =
