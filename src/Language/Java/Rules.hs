@@ -24,6 +24,7 @@ import qualified Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations
 import qualified Language.Java.Rules.ProhibitMyIdentPrefix as ProhibitMyIdentPrefix
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
+import qualified Language.Java.Rules.SameExecutionsInIf as SameExecutionsInIf
 import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import Language.Java.Rules.UseElse as UseElse (check)
 import qualified Language.Java.Rules.UseIncrementDecrementOperator as UseIncrementDecrementOperator
@@ -95,6 +96,7 @@ checkFromConfig (ProhibitAnnotations whitelist) = ProhibitAnnotations.check whit
 checkFromConfig ProhibitMyIdentPrefix = ProhibitMyIdentPrefix.check
 checkFromConfig ReduceScope = ReduceScope.check
 checkFromConfig RedundantModifiers = RedundantModifiers.check
+checkFromConfig SameExecutionsInIf = SameExecutionsInIf.check
 checkFromConfig UseAssignOp = UseAssignOp.check
 checkFromConfig UseElse = UseElse.check
 checkFromConfig UseIncrementDecrementOperator = UseIncrementDecrementOperator.check

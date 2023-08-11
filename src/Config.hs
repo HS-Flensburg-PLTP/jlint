@@ -31,6 +31,7 @@ data Rule
   | ProhibitMyIdentPrefix
   | ReduceScope
   | RedundantModifiers
+  | SameExecutionsInIf
   | UseAssignOp
   | UseElse
   | UseIncrementDecrementOperator
@@ -64,6 +65,7 @@ instance FromJSON Rule where
       "ProhibitMyIdentPrefix" -> pure ProhibitMyIdentPrefix
       "ReduceScope" -> pure ReduceScope
       "RedundantModifiers" -> pure RedundantModifiers
+      "SameExecutionsInIf" -> pure SameExecutionsInIf
       "UseAssignOp" -> pure UseAssignOp
       "UseElse" -> pure UseElse
       "UseIncrementDecrementOperator" -> pure UseIncrementDecrementOperator
