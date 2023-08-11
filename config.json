@@ -1,82 +1,82 @@
 [
-  {
-    "rule": "AvoidMultipleTopLevelDecl"
-  },
-  {
-    "rule": "AvoidMultipleVarDecl"
-  },
-  {
-    "rule": "AvoidNegations"
-  },
-  {
-    "rule": "AvoidStarImport"
-  },
-  {
-    "rule": "CheckNonFinalMethodAttributes"
-  },
-  {
-    "rule": "CheckNonPrivateAttributes"
-  },
-  {
-    "rule": "ConsistentOverrideEqualsHashCode"
-  },
-  {
-    "rule": "DefaultComesLast"
-  },
-  {
-    "rule": "ExplicitValue"
-  },
-  {
-    "rule": "InitializeVariables"
-  },
-  {
-    "rule": "MethodInvNumber",
-    "called": "foo",
-    "limited": "bar",
-    "maxInv": 2
-  },
-  {
-    "rule": "MultipleStringLiterals"
-  },
-  {
-    "rule": "NoNullPointerExceptionsForControl"
-  },
-  {
-    "rule": "NoCasts",
-    "whitelist": [
-      "foo"
-    ]
-  },
-  {
-    "rule": "ParameterNumber",
-    "max": 6
-  },
-  {
-    "rule": "PreferExpressions"
-  },
-  {
-    "rule": "ProhibitAnnotations",
-    "whitelist": []
-  },
-  {
-    "rule": "ProhibitMyIdentPrefix"
-  },
-  {
-    "rule": "ReduceScope"
-  },
-  {
-    "rule": "RedundantModifiers"
-  },
-  {
-    "rule": "UseAssignOp"
-  },
-  {
-    "rule": "UseElse"
-  },
-  {
-    "rule": "UseIncrementDecrementOperator"
-  },
-  {
-    "rule": "UseJavaArrayTypeStyle"
-  }
+    {
+        "rule": "AvoidMultipleTopLevelDecl"
+    },
+    {
+        "rule": "AvoidMultipleVarDecl"
+    },
+    {
+        "rule": "AvoidNegations"
+    },
+    {
+        "rule": "AvoidStarImport"
+    },
+    {
+        "rule": "CheckNonFinalMethodAttributes"
+    },
+    {
+        "rule": "CheckNonPrivateAttributes"
+    },
+    {
+        "rule": "ConsistentOverrideEqualsHashCode"
+    },
+    {
+        "rule": "DefaultComesLast"
+    },
+    {
+        "rule": "ExplicitValue"
+    },
+    {
+        "rule": "InitializeVariables"
+    },
+    {
+        "rule": "MethodInvNumber",
+        "called": "foo",
+        "limited": "bar",
+        "maxInv": 2
+    },
+    {
+        "rule": "MultipleStringLiterals"
+    },
+    {
+        "rule": "NoNullPointerExceptionsForControl"
+    },
+    {
+        "rule": "NoCasts",
+        "whitelist": [
+            "foo"
+        ]
+    },
+    {
+        "rule": "ParameterNumber",
+        "max": 6
+    },
+    {
+        "rule": "PreferExpressions"
+    },
+    {
+        "rule": "ProhibitAnnotations",
+        "whitelist": []
+    },
+    {
+        "rule": "ProhibitMyIdentPrefix"
+    },
+    {
+        "rule": "ReduceScope"
+    },
+    {
+        "rule": "RedundantModifiers"
+    },
+    {
+        "rule": "UseAssignOp"
+    },
+    {
+        "rule": "UseElse"
+    },
+    {
+        "rule": "UseIncrementDecrementOperator"
+    },
+    {
+        "rule": "UseJavaArrayTypeStyle"
+    }
 ]
