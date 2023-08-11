@@ -6,17 +6,17 @@ import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDec
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
 import qualified Language.Java.Rules.AvoidOuterNegations as AvoidOuterNegations
 import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
-import qualified Language.Java.Rules.CheckNonFinalMethodAttributes as CheckNonFinalMethodAttributes
+import qualified Language.Java.Rules.CheckNonFinalMethodParameters as CheckNonFinalMethodParameters
 import qualified Language.Java.Rules.CheckNonPrivateAttributes as CheckNonPrivateAttributes
 import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
 import qualified Language.Java.Rules.DeclarationOrder as DeclarationOrder
 import qualified Language.Java.Rules.DefaultComesLast as DefaultComesLast
 import qualified Language.Java.Rules.ExplicitValue as ExplicitValue
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
+import qualified Language.Java.Rules.MethodInvNumber as MethodInvNumber
 import qualified Language.Java.Rules.ModifiedControlVariable as ModifiedControlVariable
-import qualified Language.Java.Rules.NamingConventions as NamingConventions
 import qualified Language.Java.Rules.NeedBraces as NeedBraces
-import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
+import qualified Language.Java.Rules.NoCasts as NoCasts
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PredictMethodNames as PredictMethodNames
@@ -27,8 +27,6 @@ import qualified Language.Java.Rules.ProhibitMyIdentPrefix as ProhibitMyIdentPre
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.SameExecutionsInIf as SameExecutionsInIf
-import qualified Language.Java.Rules.SimplifyBooleanReturn as SimplifyBooleanReturn
-import qualified Language.Java.Rules.UnusedLocalVariable as UnusedLocalVariable
 import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import Language.Java.Rules.UseElse as UseElse (check)
 import qualified Language.Java.Rules.UseIncrementDecrementOperator as UseIncrementDecrementOperator
@@ -44,11 +42,15 @@ checks =
     AvoidNegations.check,
     AvoidOuterNegations.check,
     AvoidStarImport.check,
+    CheckNonFinalMethodParameters.check,
+    CheckNonPrivateAttributes.check,
     ConsistentOverrideEqualsHashCode.check,
     DeclarationOrder.check,
+    DefaultComesLast.check,
     ExplicitValue.check,
     InitializeVariables.check,
     ModifiedControlVariable.check,
+    NeedBraces.check,
     NoNullPointerExceptionsForControl.check,
     ParameterNumber.check Nothing,
     PreferExpressions.check,
@@ -59,7 +61,8 @@ checks =
     UseAssignOp.check,
     UseElse.check,
     UseIncrementDecrementOperator.check,
-    UseJavaArrayTypeStyle.check
+    UseJavaArrayTypeStyle.check,
+    UsePostIncrementDecrement.check
   ]
 
 checksIO :: [CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]]
@@ -91,17 +94,19 @@ checkFromConfig :: Rule -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnosti
 checkFromConfig AvoidMultipleTopLevelDecl = AvoidMultipleTopLevelDecl.check
 checkFromConfig AvoidMultipleVarDecl = AvoidMultipleVarDecl.check
 checkFromConfig AvoidNegations = AvoidNegations.check
+checkFromConfig AvoidOuterNegations = AvoidOuterNegations.check
 checkFromConfig AvoidStarImport = AvoidStarImport.check
-checkFromConfig CheckNonFinalMethodAttributes = CheckNonFinalMethodAttributes.check
+checkFromConfig CheckNonFinalMethodParameters = CheckNonFinalMethodParameters.check
 checkFromConfig CheckNonPrivateAttributes = CheckNonPrivateAttributes.check
 checkFromConfig ConsistentOverrideEqualsHashCode = ConsistentOverrideEqualsHashCode.check
 checkFromConfig DeclarationOrder = DeclarationOrder.check
 checkFromConfig DefaultComesLast = DefaultComesLast.check
+checkFromConfig ExplicitValue = ExplicitValue.check
 checkFromConfig InitializeVariables = InitializeVariables.check
+checkFromConfig (MethodInvNumber called limited maxInv) = MethodInvNumber.check called limited maxInv
 checkFromConfig ModifiedControlVariable = ModifiedControlVariable.check
-checkFromConfig NamingConventions = NamingConventions.check
 checkFromConfig NeedBraces = NeedBraces.check
-checkFromConfig NoLoopBreak = NoLoopBreak.check
+checkFromConfig (NoCasts whitelist) = NoCasts.check whitelist
 checkFromConfig NoNullPointerExceptionsForControl = NoNullPointerExceptionsForControl.check
 checkFromConfig (ParameterNumber max) = ParameterNumber.check max
 checkFromConfig PreferExpressions = PreferExpressions.check
@@ -110,8 +115,6 @@ checkFromConfig ProhibitMyIdentPrefix = ProhibitMyIdentPrefix.check
 checkFromConfig ReduceScope = ReduceScope.check
 checkFromConfig RedundantModifiers = RedundantModifiers.check
 checkFromConfig SameExecutionsInIf = SameExecutionsInIf.check
-checkFromConfig SimplifyBooleanReturn = SimplifyBooleanReturn.check
-checkFromConfig UnusedLocalVariable = UnusedLocalVariable.checkMethodVars
 checkFromConfig UseAssignOp = UseAssignOp.check
 checkFromConfig UseElse = UseElse.check
 checkFromConfig UseIncrementDecrementOperator = UseIncrementDecrementOperator.check

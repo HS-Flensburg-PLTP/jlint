@@ -6,6 +6,9 @@ import Control.Monad (MonadPlus (..))
 import Data.Data (Data)
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.List.Extra (none)
+import Data.List.NonEmpty (NonEmpty ((:|)))
+import qualified Data.List.NonEmpty as NonEmpty
+import Language.Java.SourceSpan (sourceSpan)
 import Language.Java.Syntax
 import qualified Language.Java.Syntax.BlockStmt as BlockStmt
 import qualified Language.Java.Syntax.Exp as Exp
@@ -21,11 +24,11 @@ check cUnit filePath = do
   checkBlockStmts blockStmts
   where
     checkBlockStmts (LocalVars _ _ _ vars : stmts) =
-      reduceScopeInBlockStmts (map VarDecl.ident vars) stmts filePath
+      reduceScopeInBlockStmts (map VarDecl.ident (NonEmpty.toList vars)) stmts filePath
     checkBlockStmts _ = mzero
 
 reduceScopeInBlockStmts :: [Ident] -> [BlockStmt Parsed] -> FilePath -> [RDF.Diagnostic]
-reduceScopeInBlockStmts declVars (BlockStmt span stmt : blockStmts) filePath =
+reduceScopeInBlockStmts declVars (BlockStmt stmt : blockStmts) filePath =
   let varsNotInStmt = filter (\declVar -> none (eq IgnoreSourceSpan declVar) (variables stmt)) declVars
       varsNotInStmts = filter (\declVar -> none (eq IgnoreSourceSpan declVar) (variables blockStmts)) declVars
    in if Stmt.hasNoSideEffect stmt
@@ -38,7 +41,7 @@ reduceScopeInBlockStmts declVars (BlockStmt span stmt : blockStmts) filePath =
                     RDF.rangeDiagnostic
                       "Language.Java.Rules.ReduceScope"
                       (message var)
-                      span
+                      (sourceSpan stmt)
                       filePath
                 )
                 varsNotInStmt
@@ -84,4 +87,4 @@ message var =
 
 variables :: (Data a) => a -> [Ident]
 variables parent =
-  [ident | Name _ (ident : _) <- universeBi parent]
+  [ident | Name _ (ident :| _) <- universeBi parent]
