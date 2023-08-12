@@ -1,4 +1,4 @@
-module Language.Java.Syntax.Exp (hasNoSideEffect, isCast, isPostIncDec) where
+module Language.Java.Syntax.Exp (hasNoSideEffect, isCast, isDataCreation, isPostIncDec) where
 
 import Language.Java.Syntax (Exp (..))
 
@@ -10,6 +10,12 @@ isPostIncDec :: Exp p -> Bool
 isPostIncDec (PostIncrement _ _) = True
 isPostIncDec (PostDecrement _ _) = True
 isPostIncDec _ = False
+
+isDataCreation :: Exp p -> Bool
+isDataCreation (ArrayCreate {}) = True
+isDataCreation (InstanceCreation {}) = True
+isDataCreation (QualInstanceCreation {}) = True
+isDataCreation _ = False
 
 hasNoSideEffect :: Exp p -> Bool
 hasNoSideEffect (Lit _) = True
