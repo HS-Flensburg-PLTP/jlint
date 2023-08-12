@@ -11,19 +11,22 @@ import qualified RDF
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   stmt <- universeBi cUnit
-  case extractLoopBody stmt of
-    Just loopBody -> checkReturn loopBody path ++ checkBreak loopBody path
-    Nothing -> mzero
+  checkLoopBody (extractLoopBody stmt) path
 
-checkReturn :: Stmt Parsed -> FilePath -> [RDF.Diagnostic]
-checkReturn stmt path = do
-  (Return span _) <- universeBi stmt // checkLoops stmt
-  returnMsg path span
-
-checkBreak :: Stmt Parsed -> FilePath -> [RDF.Diagnostic]
-checkBreak stmt path = do
-  (Break span _) <- universeBi stmt // (checkLoops stmt ++ checkSwitchBlock stmt)
-  breakMsg path span
+checkLoopBody :: Maybe (Stmt Parsed) -> FilePath -> [RDF.Diagnostic]
+checkLoopBody (Just loopBody) path = do
+  let stmts = universeBi loopBody
+  let checkedLoops = checkLoops loopBody
+  (++)
+    ( do
+        Return span _ <- stmts // checkedLoops
+        returnMsg path span
+    )
+    ( do
+        Break span _ <- stmts // (checkedLoops ++ checkSwitchBlock loopBody)
+        breakMsg path span
+    )
+checkLoopBody Nothing _ = mzero
 
 checkLoops :: Stmt Parsed -> [Stmt Parsed]
 checkLoops stmt = do
@@ -33,8 +36,7 @@ checkLoops stmt = do
 checkSwitchBlock :: Stmt Parsed -> [Stmt Parsed]
 checkSwitchBlock stmt = do
   Switch _ _ _ blocks :: Stmt Parsed <- universeBi stmt
-  let switchBreaks :: [Stmt Parsed] = universeBi blocks
-  switchBreaks
+  universeBi blocks
 
 extractLoopBody :: Stmt Parsed -> Maybe (Stmt Parsed)
 extractLoopBody (While _ _ stmt) = Just stmt
