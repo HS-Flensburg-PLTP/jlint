@@ -1,7 +1,6 @@
 module Language.Java.Syntax.BlockStmt
   ( name,
     hasNoSideEffect,
-    extractVarDecls,
   )
 where
 
@@ -39,7 +38,3 @@ hasNoSideEffect :: BlockStmt p -> Bool
 hasNoSideEffect (BlockStmt stmt) = Stmt.hasNoSideEffect stmt
 hasNoSideEffect (LocalClass _) = False
 hasNoSideEffect (LocalVars _ _ _ varDecls) = all VarDecl.hasNoSideEffect varDecls
-
-extractVarDecls :: BlockStmt Parsed -> [VarDecl Parsed]
-extractVarDecls (LocalVars _ _ _ vardecls) = vardecls
-extractVarDecls _ = []

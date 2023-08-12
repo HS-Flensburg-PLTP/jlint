@@ -1,10 +1,16 @@
-module Language.Java.Syntax.Exp (hasNoSideEffect, isCast) where
+module Language.Java.Syntax.Exp (hasNoSideEffect, isDataCreation, isCast) where
 
 import Language.Java.Syntax (Exp (..))
 
 isCast :: Exp p -> Bool
 isCast (Cast {}) = True
 isCast _ = False
+
+isDataCreation :: Exp p -> Bool
+isDataCreation (ArrayCreate {}) = True
+isDataCreation (InstanceCreation {}) = True
+isDataCreation (QualInstanceCreation {}) = True
+isDataCreation _ = False
 
 hasNoSideEffect :: Exp p -> Bool
 hasNoSideEffect (Lit _) = True
