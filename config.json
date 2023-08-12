@@ -36,6 +36,12 @@
         "rule": "InitializeVariables"
     },
     {
+        "rule": "NoFurtherDataStructures",
+        "methodNames": [
+            "set"
+        ]
+    },
+    {
         "rule": "MethodInvNumber",
         "called": "foo",
         "limited": "bar",

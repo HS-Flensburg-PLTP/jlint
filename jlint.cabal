@@ -48,6 +48,7 @@ library
       Language.Java.Rules.NamingConventions
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoCasts
+      Language.Java.Rules.NoFurtherDataStructures
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNullPointerExceptionsForControl
       Language.Java.Rules.ParameterNumber
@@ -139,6 +140,7 @@ test-suite jlint-test
       NamingConventionsTests
       NeedBracesTests
       NoCastsTests
+      NoFurtherDataStructuresTests
       NoLoopBreakTests
       NoNullPointerExceptionsForControlTests
       ParameterNumberTests
