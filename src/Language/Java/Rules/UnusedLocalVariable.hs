@@ -5,6 +5,7 @@ module Language.Java.Rules.UnusedLocalVariable where
 import Control.Monad (MonadPlus (..))
 import Data.Function ((&))
 import Data.Generics.Uniplate.Data (universeBi)
+import qualified Data.List.NonEmpty as NonEmpty
 import Language.Java.AST (extractMethods, extractVarName)
 import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
@@ -20,7 +21,7 @@ extractMethodVariables methodBody = do
   names :: BlockStmt Parsed <- universeBi methodBody
   extractNames names
   where
-    extractNames (LocalVars _ _ _ varDecls) = map (\(VarDecl _ varId _) -> extractVarName varId) varDecls
+    extractNames (LocalVars _ _ _ varDecls) = map (\(VarDecl _ varId _) -> extractVarName varId) (NonEmpty.toList varDecls)
     extractNames _ = mzero
 
 extractMethodVariableUsages :: MethodBody Parsed -> [String]
@@ -28,7 +29,7 @@ extractMethodVariableUsages methodBody = do
   usedVariables <- universeBi methodBody
   extractUsedVariables usedVariables
   where
-    extractUsedVariables (Name _ varList) = map (\(Ident _ n) -> n) varList
+    extractUsedVariables (Name _ varList) = map (\(Ident _ n) -> n) (NonEmpty.toList varList)
 
 checkIfMethodVarsAreUsed :: [String] -> [String] -> String -> FilePath -> [RDF.Diagnostic]
 checkIfMethodVarsAreUsed declaredVars usedVars _ path =
@@ -59,7 +60,7 @@ extractClassVars cUnit = do
   variables :: MemberDecl Parsed <- universeBi cUnit
   extractVars variables
   where
-    extractVars (FieldDecl _ _ _ varDecls) = map (\(VarDecl _ varId _) -> extractVarName varId) varDecls
+    extractVars (FieldDecl _ _ _ varDecls) = map (\(VarDecl _ varId _) -> extractVarName varId) (NonEmpty.toList varDecls)
     extractVars _ = mzero
 
 checkClassVarUsageInMethod :: String -> [String] -> [String] -> Bool

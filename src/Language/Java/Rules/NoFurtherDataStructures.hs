@@ -11,7 +11,6 @@ import qualified RDF
 check :: [String] -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check methodNames cUnit path = do
   MethodDecl span _ _ _ ident _ _ _ body <- universeBi cUnit
-  InstanceCreation {} <- universeBi cUnit
   methodName <- methodNames
   checkMethod methodName ident body span path
 

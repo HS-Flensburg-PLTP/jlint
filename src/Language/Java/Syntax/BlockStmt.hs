@@ -11,13 +11,13 @@ import qualified Language.Java.Syntax.Stmt as Stmt
 import qualified Language.Java.Syntax.VarDecl as VarDecl
 
 name :: PrettyExtension p => BlockStmt p -> String
-name (BlockStmt _ stmt) = stmtName stmt
+name (BlockStmt stmt) = stmtName stmt
 name (LocalClass _) = "lokale Klasse"
 name (LocalVars {}) = "Variablendeklaration"
 
 stmtName :: PrettyExtension p => Stmt p -> String
 stmtName (Return _ _) = "return"
-stmtName (Throw _) = "throw"
+stmtName (Throw _ _) = "throw"
 stmtName (StmtBlock _) = "block"
 stmtName (IfThen {}) = "if-then"
 stmtName (IfThenElse {}) = "if-then-else"
@@ -29,14 +29,14 @@ stmtName (Do {}) = "do-while"
 stmtName (Synchronized {}) = "sychronized"
 stmtName (Try {}) = "try"
 stmtName (Labeled {}) = "label"
-stmtName Empty = "leere Anweisung"
+stmtName (Empty _) = "leere Anweisung"
 stmtName (ExpStmt _ exp) = prettyPrint exp
 stmtName (Assert {}) = "assert"
 stmtName (Break {}) = "break"
 stmtName (Continue {}) = "continue"
 
 hasNoSideEffect :: BlockStmt p -> Bool
-hasNoSideEffect (BlockStmt _ stmt) = Stmt.hasNoSideEffect stmt
+hasNoSideEffect (BlockStmt stmt) = Stmt.hasNoSideEffect stmt
 hasNoSideEffect (LocalClass _) = False
 hasNoSideEffect (LocalVars _ _ _ varDecls) = all VarDecl.hasNoSideEffect varDecls
 

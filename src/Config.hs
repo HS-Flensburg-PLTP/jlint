@@ -13,7 +13,7 @@ data Rule
   | AvoidNegations
   | AvoidOuterNegations
   | AvoidStarImport
-  | CheckNonFinalMethodAttributes
+  | CheckNonFinalMethodParameters
   | CheckNonPrivateAttributes
   | ConsistentOverrideEqualsHashCode
   | DeclarationOrder
@@ -24,6 +24,7 @@ data Rule
   | ModifiedControlVariable
   | NamingConventions
   | NeedBraces
+  | NoCasts {whitelist :: [String]}
   | NoFurtherDataStructures {methodNames :: [String]}
   | NoLoopBreak
   | NoNullPointerExceptionsForControl
@@ -51,7 +52,7 @@ instance FromJSON Rule where
       "AvoidNegations" -> pure AvoidNegations
       "AvoidOuterNegations" -> pure AvoidOuterNegations
       "AvoidStarImport" -> pure AvoidStarImport
-      "CheckNonFinalMethodAttributes" -> pure CheckNonFinalMethodAttributes
+      "CheckNonFinalMethodParameters" -> pure CheckNonFinalMethodParameters
       "CheckNonPrivateAttributes" -> pure CheckNonPrivateAttributes
       "ConsistentOverrideEqualsHashCode" -> pure ConsistentOverrideEqualsHashCode
       "DeclarationOrder" -> pure DeclarationOrder
@@ -62,6 +63,7 @@ instance FromJSON Rule where
       "ModifiedControlVariable" -> pure ModifiedControlVariable
       "NamingConventions" -> pure NamingConventions
       "NeedBraces" -> pure NeedBraces
+      "NoCasts" -> parseNoCasts obj
       "NoFurtherDataStructures" -> parseMethodNames obj
       "NoLoopBreak" -> pure NoLoopBreak
       "NoNullPointerExceptionsForControl" -> pure NoNullPointerExceptionsForControl
@@ -88,10 +90,16 @@ parseParameterNumber obj = do
   pure (ParameterNumber max)
 
 parseProhibitAnnotations :: Object -> Parser Rule
-parseProhibitAnnotations obj = do
+parseProhibitAnnotations obj = ProhibitAnnotations <$> parseWhitelist obj
+
+parseNoCasts :: Object -> Parser Rule
+parseNoCasts obj = NoCasts <$> parseWhitelist obj
+
+parseWhitelist :: Object -> Parser [String]
+parseWhitelist obj = do
   whitelistVal <- obj .: fromString "whitelist"
   checkNoExtraKeys obj [fromString "whitelist"]
-  pure (ProhibitAnnotations whitelistVal)
+  pure whitelistVal
 
 parseMethodNames :: Object -> Parser Rule
 parseMethodNames obj = do

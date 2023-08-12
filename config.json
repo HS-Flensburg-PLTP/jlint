@@ -9,9 +9,6 @@
         "rule": "AvoidNegations"
     },
     {
-        "rule": "AvoidOuterNegations"
-    },
-    {
         "rule": "AvoidStarImport"
     },
     {
@@ -46,6 +43,12 @@
     },
     {
         "rule": "NoNullPointerExceptionsForControl"
+    },
+    {
+        "rule": "NoCasts",
+        "whitelist": [
+            "foo"
+        ]
     },
     {
         "rule": "ParameterNumber",

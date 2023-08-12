@@ -3,7 +3,7 @@ import qualified AvoidMultipleVarDeclTests
 import qualified AvoidNegationsTests
 import qualified AvoidOuterNegationsTests
 import qualified AvoidStarImportTests
-import qualified CheckNonFinalMethodAttributesTests
+import qualified CheckNonFinalMethodParametersTests
 import qualified CheckNonPrivateAttributesTests
 import qualified ConsistentOverrideEqualsHashCodeTests
 import qualified DeclarationOrderTests
@@ -14,6 +14,7 @@ import qualified MethodInvNumberTests
 import qualified ModifiedControlVariableTests
 import qualified NamingConventionsTests
 import qualified NeedBracesTests
+import qualified NoCastsTests
 import qualified NoFurtherDataStructuresTests as NoFurtherDataStructures
 import qualified NoLoopBreakTests
 import qualified NoNullPointerExceptionsForControlTests
@@ -44,7 +45,7 @@ tests =
       "AvoidNegations" ~: AvoidNegationsTests.tests,
       "AvoidOuterNegations" ~: AvoidOuterNegationsTests.tests,
       "AvoidStarImport" ~: AvoidStarImportTests.tests,
-      "CheckNonFinalMethodAttributes" ~: CheckNonFinalMethodAttributesTests.tests,
+      "CheckNonFinalMethodParameters" ~: CheckNonFinalMethodParametersTests.tests,
       "CheckNonPrivateAttributes" ~: CheckNonPrivateAttributesTests.tests,
       "ConsistentOverrideEqualsHashCode" ~: ConsistentOverrideEqualsHashCodeTests.tests,
       "DefaultComesLast" ~: DefaultComesLastTests.tests,
@@ -54,6 +55,7 @@ tests =
       "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
       "NamingConventions" ~: NamingConventionsTests.tests,
       "NeedBraces" ~: NeedBracesTests.tests,
+      "NoCasts" ~: NoCastsTests.tests,
       "NoFurtherDataStructures" ~: NoFurtherDataStructures.tests,
       "NoLoopBreak" ~: NoLoopBreakTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
