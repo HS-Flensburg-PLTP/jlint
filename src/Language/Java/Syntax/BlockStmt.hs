@@ -5,7 +5,7 @@ module Language.Java.Syntax.BlockStmt
 where
 
 import Language.Java.Pretty (PrettyExtension, prettyPrint)
-import Language.Java.Syntax (BlockStmt (..), Parsed, Stmt (..), VarDecl)
+import Language.Java.Syntax (BlockStmt (..), Stmt (..))
 import qualified Language.Java.Syntax.Stmt as Stmt
 import qualified Language.Java.Syntax.VarDecl as VarDecl
 
