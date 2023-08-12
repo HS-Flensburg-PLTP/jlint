@@ -14,7 +14,7 @@ check cUnit path = do
         statement <- universeBi cUnit
         checkStatement statement
   postIncDec <- filter Exp.isPostIncDec (universeBi cUnit)
-  if any (\exp -> eq IncludeSourceSpan exp postIncDec) allowedPostIncDec
+  if any (eq IncludeSourceSpan postIncDec) allowedPostIncDec
     then mzero
     else createDiagnostic postIncDec path
 
