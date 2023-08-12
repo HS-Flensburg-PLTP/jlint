@@ -1,5 +1,6 @@
 module MethodInvNumberTests where
 
+import Config (MethodLimit (MethodLimit))
 import qualified Language.Java.Rules.MethodInvNumber as MethodInvNumber
 import qualified RDF
 import Test.HUnit
@@ -10,7 +11,7 @@ tests =
   rangesTest
     expectedRanges
     "MethodInvNumber.java"
-    (MethodInvNumber.check "foo" "bar" 2)
+    (MethodInvNumber.check [MethodLimit "foo" "bar" 2])
 
 expectedRanges :: [RDF.Range]
 expectedRanges =

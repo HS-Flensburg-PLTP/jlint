@@ -1,3 +1,5 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Config where
 
 import Control.Monad (unless)
@@ -6,6 +8,20 @@ import Data.Aeson.Key (fromString)
 import Data.Aeson.KeyMap (keys)
 import Data.Aeson.Types
 import Data.List ((\\))
+
+data MethodLimit = MethodLimit
+  { checkMethod :: String,
+    limitMethod :: String,
+    maxInv :: Int
+  }
+
+instance FromJSON MethodLimit where
+  parseJSON = withObject "MethodLimit" $ \obj -> do
+    checkMethod <- obj .: fromString "checkMethod"
+    limitMethod <- obj .: fromString "limitMethod"
+    maxInv <- obj .: fromString "maxInv"
+    checkNoExtraKeys obj [fromString "checkMethod", fromString "limitMethod", fromString "maxInv"]
+    pure (MethodLimit checkMethod limitMethod maxInv)
 
 data Rule
   = AvoidMultipleTopLevelDecl
@@ -20,7 +36,7 @@ data Rule
   | DefaultComesLast
   | ExplicitValue
   | InitializeVariables
-  | MethodInvNumber {called :: String, limited :: String, maxInv :: Int}
+  | MethodInvNumber [MethodLimit]
   | ModifiedControlVariable
   | NeedBraces
   | NoCasts {whitelist :: [String]}
@@ -102,11 +118,9 @@ parseStringList obj key = do
 
 parseMethodInvNumber :: Object -> Parser Rule
 parseMethodInvNumber obj = do
-  called <- obj .: fromString "called"
-  limited <- obj .: fromString "limited"
-  maxInv <- obj .: fromString "maxInv"
-  checkNoExtraKeys obj [fromString "called", fromString "limited", fromString "maxInv"]
-  pure (MethodInvNumber called limited maxInv)
+  limits :: [MethodLimit] <- obj .: fromString "limits"
+  checkNoExtraKeys obj [fromString "limits"]
+  pure (MethodInvNumber limits)
 
 checkNoExtraKeys :: Object -> [Key] -> Parser ()
 checkNoExtraKeys obj allowedKeys = do
