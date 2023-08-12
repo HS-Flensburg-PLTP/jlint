@@ -20,6 +20,7 @@ import qualified Language.Java.Rules.NoCasts as NoCasts
 import qualified Language.Java.Rules.NoFurtherDataStructures as NoFurtherDataStructures
 import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
+import qualified Language.Java.Rules.NoPostIncDecInExpression as NoPostIncDecInExpression
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations
@@ -52,6 +53,7 @@ checks =
     ModifiedControlVariable.check,
     NeedBraces.check,
     NoNullPointerExceptionsForControl.check,
+    NoPostIncDecInExpression.check,
     ParameterNumber.check Nothing,
     PreferExpressions.check,
     ProhibitAnnotations.checkWithDefaultValue,
@@ -94,6 +96,7 @@ checkFromConfig (NoCasts whitelist) = NoCasts.check whitelist
 checkFromConfig (NoFurtherDataStructures methodNames) = NoFurtherDataStructures.check methodNames
 checkFromConfig NoLoopBreak = NoLoopBreak.check
 checkFromConfig NoNullPointerExceptionsForControl = NoNullPointerExceptionsForControl.check
+checkFromConfig NoPostIncDecInExpression = NoPostIncDecInExpression.check
 checkFromConfig (ParameterNumber max) = ParameterNumber.check max
 checkFromConfig PreferExpressions = PreferExpressions.check
 checkFromConfig (ProhibitAnnotations whitelist) = ProhibitAnnotations.check whitelist

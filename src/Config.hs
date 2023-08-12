@@ -27,6 +27,7 @@ data Rule
   | NoFurtherDataStructures {methodNames :: [String]}
   | NoLoopBreak
   | NoNullPointerExceptionsForControl
+  | NoPostIncDecInExpression
   | ParameterNumber {max :: Maybe Int}
   | PreferExpressions
   | ProhibitAnnotations {whitelist :: [String]}
@@ -63,6 +64,7 @@ instance FromJSON Rule where
       "NoFurtherDataStructures" -> parseNoFurtherDataStructures obj
       "NoLoopBreak" -> pure NoLoopBreak
       "NoNullPointerExceptionsForControl" -> pure NoNullPointerExceptionsForControl
+      "NoPostIncDecInExpression" -> pure NoPostIncDecInExpression
       "ParameterNumber" -> parseParameterNumber obj
       "PreferExpressions" -> pure PreferExpressions
       "ProhibitAnnotations" -> parseProhibitAnnotations obj
