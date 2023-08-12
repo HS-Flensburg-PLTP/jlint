@@ -16,15 +16,6 @@ import qualified Markdown
 import qualified RDF
 import System.Process
 
-data WhitelistEntry = WhitelistEntry
-  { methodName :: String,
-    formalParamTypes :: [String]
-  }
-  deriving (Eq)
-
-whitelist :: [String]
-whitelist = []
-
 minimumSuggestions :: Int
 minimumSuggestions = 3
 
@@ -71,9 +62,9 @@ predictMethodNames methodDecls = do
             pss
         )
 
-check :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
-check cUnit path = do
-  let methodDecls = concatMap checkMethodDecl (universeBi cUnit)
+check :: [String] -> CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
+check whitelist cUnit path = do
+  let methodDecls = concatMap (checkMethodDecl whitelist) (universeBi cUnit)
   if null methodDecls
     then return []
     else do
@@ -123,10 +114,10 @@ toCamelCase (x : xs) =
       xs
 toCamelCase [] = []
 
-checkMethodDecl :: MemberDecl Parsed -> [MemberDecl Parsed]
-checkMethodDecl methodDecl@(MethodDecl _ _ _ _ (Ident _ ident) _ _ _ _) =
+checkMethodDecl :: [String] -> MemberDecl Parsed -> [MemberDecl Parsed]
+checkMethodDecl whitelist methodDecl@(MethodDecl _ _ _ _ (Ident _ ident) _ _ _ _) =
   [methodDecl | ident `notElem` whitelist]
-checkMethodDecl _ = []
+checkMethodDecl _ _ = []
 
 checkPredictionSets :: [(PredictionSet, SourceSpan)] -> [(PredictionSet, SourceSpan)]
 checkPredictionSets =

@@ -68,7 +68,7 @@ checks =
 checksIO :: [CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]]
 checksIO =
   [ ProhibitGermanNames.check,
-    PredictMethodNames.check
+    PredictMethodNames.check []
   ]
 
 checkAll :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]

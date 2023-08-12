@@ -18,6 +18,7 @@ import qualified NoCastsTests
 import qualified NoLoopBreakTests
 import qualified NoNullPointerExceptionsForControlTests
 import qualified ParameterNumberTests
+import qualified PredictMethodNamesTests as PredictMethodNames
 import qualified PreferExpressionsTests
 import qualified ProhibitAnnotationsTests
 import qualified ProhibitGermanNamesTests
@@ -60,6 +61,7 @@ tests =
       "NoLoopBreak" ~: NoLoopBreakTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "ParameterNumber" ~: ParameterNumberTests.tests,
+      "PredictMethodNames" ~: PredictMethodNames.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ProhibitAnnotations" ~: ProhibitAnnotationsTests.tests,
       "ProhibitGermanNames" ~: ProhibitGermanNamesTests.tests,
