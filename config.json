@@ -9,16 +9,22 @@
         "rule": "AvoidNegations"
     },
     {
+        "rule": "AvoidOuterNegations"
+    },
+    {
         "rule": "AvoidStarImport"
     },
     {
-        "rule": "CheckNonFinalMethodAttributes"
+        "rule": "CheckNonFinalMethodParameters"
     },
     {
         "rule": "CheckNonPrivateAttributes"
     },
     {
         "rule": "ConsistentOverrideEqualsHashCode"
+    },
+    {
+        "rule": "DeclarationOrder"
     },
     {
         "rule": "DefaultComesLast"
@@ -42,13 +48,19 @@
         "maxInv": 2
     },
     {
-        "rule": "NoNullPointerExceptionsForControl"
+        "rule": "ModifiedControlVariable"
+    },
+    {
+        "rule": "NeedBraces"
     },
     {
         "rule": "NoCasts",
         "whitelist": [
             "foo"
         ]
+    },
+    {
+        "rule": "NoNullPointerExceptionsForControl"
     },
     {
         "rule": "ParameterNumber",
@@ -71,6 +83,9 @@
         "rule": "RedundantModifiers"
     },
     {
+        "rule": "SameExecutionsInIf"
+    },
+    {
         "rule": "UseAssignOp"
     },
     {
@@ -81,5 +96,8 @@
     },
     {
         "rule": "UseJavaArrayTypeStyle"
+    },
+    {
+        "rule": "UsePostIncrementDecrement"
     }
 ]
