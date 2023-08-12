@@ -64,7 +64,7 @@ instance FromJSON Rule where
       "NamingConventions" -> pure NamingConventions
       "NeedBraces" -> pure NeedBraces
       "NoCasts" -> parseNoCasts obj
-      "NoFurtherDataStructures" -> parseMethodNames obj
+      "NoFurtherDataStructures" -> parseNoFurtherDataStructures obj
       "NoLoopBreak" -> pure NoLoopBreak
       "NoNullPointerExceptionsForControl" -> pure NoNullPointerExceptionsForControl
       "ParameterNumber" -> parseParameterNumber obj
@@ -90,22 +90,19 @@ parseParameterNumber obj = do
   pure (ParameterNumber max)
 
 parseProhibitAnnotations :: Object -> Parser Rule
-parseProhibitAnnotations obj = ProhibitAnnotations <$> parseWhitelist obj
+parseProhibitAnnotations obj = ProhibitAnnotations <$> parseStringList obj "whitelist"
 
 parseNoCasts :: Object -> Parser Rule
-parseNoCasts obj = NoCasts <$> parseWhitelist obj
+parseNoCasts obj = NoCasts <$> parseStringList obj "whitelist"
 
-parseWhitelist :: Object -> Parser [String]
-parseWhitelist obj = do
-  whitelistVal <- obj .: fromString "whitelist"
-  checkNoExtraKeys obj [fromString "whitelist"]
-  pure whitelistVal
+parseNoFurtherDataStructures :: Object -> Parser Rule
+parseNoFurtherDataStructures obj = NoFurtherDataStructures <$> parseStringList obj "methodNames"
 
-parseMethodNames :: Object -> Parser Rule
-parseMethodNames obj = do
-  methodNames <- obj .: fromString "methodNames"
-  checkNoExtraKeys obj [fromString "methodNames"]
-  pure (NoFurtherDataStructures methodNames)
+parseStringList :: Object -> String -> Parser [String]
+parseStringList obj key = do
+  strings <- obj .: fromString key
+  checkNoExtraKeys obj [fromString key]
+  pure strings
 
 parseMethodInvNumber :: Object -> Parser Rule
 parseMethodInvNumber obj = do
