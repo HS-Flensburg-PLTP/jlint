@@ -5,19 +5,20 @@ import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.SourceSpan
 import Language.Java.Syntax
 import Language.Java.Syntax.BlockStmt (extractVarDecls)
-import Language.Java.Syntax.Ident
+import qualified Language.Java.Syntax.Ident as Ident
 import qualified RDF
 
 check :: [String] -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check methodNames cUnit path = do
   MethodDecl span _ _ _ ident _ _ _ body <- universeBi cUnit
+  InstanceCreation {} <- universeBi cUnit
   methodName <- methodNames
   checkMethod methodName ident body span path
 
 checkMethod :: String -> Ident -> MethodBody Parsed -> SourceSpan -> FilePath -> [RDF.Diagnostic]
 checkMethod methodName ident body span path =
-  if name ident == methodName
-    then checkMethodBody body (name ident) span path
+  if Ident.name ident == methodName
+    then checkMethodBody body (Ident.name ident) span path
     else mzero
 
 checkMethodBody :: MethodBody Parsed -> String -> SourceSpan -> FilePath -> [RDF.Diagnostic]
