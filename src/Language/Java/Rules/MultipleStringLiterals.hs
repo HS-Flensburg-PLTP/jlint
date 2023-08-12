@@ -15,19 +15,15 @@ check cUnit path = do
         annotation <- universeBi cUnit
         checkAnnotation annotation
   let stringLiterals = do
-        literal <- universeBi cUnit
-        checkStringLiteral literal
+        strLit@(String _ _) <- universeBi cUnit
+        return strLit
   let validLiterals = filter (\lit -> not (any (eq IncludeSourceSpan lit) annotationStringLiterals)) stringLiterals
   checkForDuplicates validLiterals path
 
 checkAnnotation :: Annotation Parsed -> [Literal]
 checkAnnotation annotation = do
-  literal <- universeBi annotation
-  checkStringLiteral literal
-
-checkStringLiteral :: Literal -> [Literal]
-checkStringLiteral lit@(String _ _) = return lit
-checkStringLiteral _ = mzero
+  strLit@(String _ _) <- universeBi annotation
+  return strLit
 
 checkForDuplicates :: [Literal] -> FilePath -> [RDF.Diagnostic]
 checkForDuplicates literals path =
