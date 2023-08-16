@@ -135,7 +135,9 @@ parseJava rootDir pretty showAST checkstyleDiags =
                 Right (Config rules rulesIO) -> do
                   diagnosticsIO <- concatMapM (uncurry (checkWithConfigIO rulesIO)) cUnitResults
                   return ((concatMap (uncurry (checkWithConfig rules)) cUnitResults) ++ diagnosticsIO)
-            else return (concatMap (uncurry checkAll) cUnitResults)
+            else do
+              diagnosticsIO <- concatMapM (uncurry checkAllIO) cUnitResults
+              return ((concatMap (uncurry checkAll) cUnitResults) ++ diagnosticsIO)
 
         let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
         let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
