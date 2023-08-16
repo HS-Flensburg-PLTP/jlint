@@ -4,6 +4,7 @@ import CheckstyleXML (toRDF)
 import Config (Rule)
 import Control.Exception
 import Control.Monad (MonadPlus (..), unless, when)
+import Control.Monad.Extra (concatMapM)
 import Data.Aeson (decodeFileStrict, eitherDecodeFileStrict)
 import qualified Data.ByteString.Lazy.Char8 as C
 import Data.Semigroup ((<>))
@@ -136,7 +137,7 @@ parseJava rootDir pretty showAST checkstyleDiags =
             else return (concatMap (uncurry checkAll) cUnitResults)
 
         let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
-        diagnosticsIO <- concatIORules cUnitResults
+        diagnosticsIO <- concatMapM (uncurry checkAllIO) cUnitResults
         let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors ++ diagnosticsIO
         C.putStrLn
           ( RDF.encodetojson
@@ -158,13 +159,6 @@ parseJava rootDir pretty showAST checkstyleDiags =
           else do
             hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
             exitWith (ExitFailure numberOfHints)
-
-concatIORules :: [(CompilationUnit Parsed, FilePath)] -> IO [Diagnostic]
-concatIORules [] = return []
-concatIORules ((cUnit, path) : cUnitResults) = do
-  result <- checkAllIO cUnit path
-  results <- concatIORules cUnitResults
-  return (result ++ results)
 
 configFile :: String
 configFile = "config.json"
