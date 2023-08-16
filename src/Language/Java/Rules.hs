@@ -1,6 +1,7 @@
 module Language.Java.Rules where
 
 import Config (Rule (..))
+import Control.Monad.Extra (concatMapM)
 import qualified Language.Java.Rules.AvoidMultipleTopLevelDecl as AvoidMultipleTopLevelDecl
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
@@ -77,14 +78,7 @@ checkAll :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkAll cUnit path = concatMap (\f -> f cUnit path) checks
 
 checkAllIO :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
-checkAllIO = executeAll checksIO
-
-executeAll :: [CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]] -> CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
-executeAll [] _ _ = return []
-executeAll (check : checks) cUnit path = do
-  result <- check cUnit path
-  results <- executeAll checks cUnit path
-  return (result ++ results)
+checkAllIO cUnit path = concatMapM (\f -> f cUnit path) checksIO
 
 checkWithConfig :: [Rule] -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic])
 checkWithConfig config cUnit path = concatMap (\f -> f cUnit path) (checkRule config)
