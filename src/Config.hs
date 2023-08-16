@@ -36,11 +36,12 @@ data Rule
   | InitializeVariables
   | MethodInvNumber {called :: String, limited :: String, maxInv :: Int}
   | ModifiedControlVariable
-  | NamingConventions
   | NeedBraces
   | NoCasts {whitelist :: [String]}
+  | NoFurtherDataStructures {methodNames :: [String]}
   | NoLoopBreak
   | NoNullPointerExceptionsForControl
+  | NoPostIncDecInExpression
   | ParameterNumber {max :: Maybe Int}
   | PreferExpressions
   | ProhibitAnnotations {whitelist :: [String]}
@@ -48,8 +49,6 @@ data Rule
   | ReduceScope
   | RedundantModifiers
   | SameExecutionsInIf
-  | SimplifyBooleanReturn
-  | UnusedLocalVariable
   | UseAssignOp
   | UseElse
   | UseIncrementDecrementOperator
@@ -74,11 +73,12 @@ instance FromJSON Rule where
       "InitializeVariables" -> pure InitializeVariables
       "MethodInvNumber" -> parseMethodInvNumber obj
       "ModifiedControlVariable" -> pure ModifiedControlVariable
-      "NamingConventions" -> pure NamingConventions
       "NeedBraces" -> pure NeedBraces
       "NoCasts" -> parseNoCasts obj
+      "NoFurtherDataStructures" -> parseNoFurtherDataStructures obj
       "NoLoopBreak" -> pure NoLoopBreak
       "NoNullPointerExceptionsForControl" -> pure NoNullPointerExceptionsForControl
+      "NoPostIncDecInExpression" -> pure NoPostIncDecInExpression
       "ParameterNumber" -> parseParameterNumber obj
       "PreferExpressions" -> pure PreferExpressions
       "ProhibitAnnotations" -> parseProhibitAnnotations obj
@@ -86,8 +86,6 @@ instance FromJSON Rule where
       "ReduceScope" -> pure ReduceScope
       "RedundantModifiers" -> pure RedundantModifiers
       "SameExecutionsInIf" -> pure SameExecutionsInIf
-      "SimplifyBooleanReturn" -> pure SimplifyBooleanReturn
-      "UnusedLocalVariable" -> pure UnusedLocalVariable
       "UseAssignOp" -> pure UseAssignOp
       "UseElse" -> pure UseElse
       "UseIncrementDecrementOperator" -> pure UseIncrementDecrementOperator
@@ -109,16 +107,19 @@ parseParameterNumber obj = do
   pure (ParameterNumber max)
 
 parseProhibitAnnotations :: Object -> Parser Rule
-parseProhibitAnnotations obj = ProhibitAnnotations <$> parseWhitelist obj
+parseProhibitAnnotations obj = ProhibitAnnotations <$> parseStringList obj "whitelist"
 
 parseNoCasts :: Object -> Parser Rule
-parseNoCasts obj = NoCasts <$> parseWhitelist obj
+parseNoCasts obj = NoCasts <$> parseStringList obj "whitelist"
 
-parseWhitelist :: Object -> Parser [String]
-parseWhitelist obj = do
-  whitelistVal <- obj .: fromString "whitelist"
-  checkNoExtraKeys obj [fromString "whitelist"]
-  pure whitelistVal
+parseNoFurtherDataStructures :: Object -> Parser Rule
+parseNoFurtherDataStructures obj = NoFurtherDataStructures <$> parseStringList obj "methodNames"
+
+parseStringList :: Object -> String -> Parser [String]
+parseStringList obj key = do
+  strings <- obj .: fromString key
+  checkNoExtraKeys obj [fromString key]
+  pure strings
 
 parseMethodInvNumber :: Object -> Parser Rule
 parseMethodInvNumber obj = do

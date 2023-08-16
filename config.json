@@ -10,6 +10,9 @@
             "rule": "AvoidNegations"
         },
         {
+            "rule": "AvoidOuterNegations"
+        },
+        {
             "rule": "AvoidStarImport"
         },
         {
@@ -20,6 +23,9 @@
         },
         {
             "rule": "ConsistentOverrideEqualsHashCode"
+        },
+        {
+            "rule": "DeclarationOrder"
         },
         {
             "rule": "DefaultComesLast"
@@ -46,6 +52,18 @@
             ]
         },
         {
+            "rule": "NoFurtherDataStructures",
+            "methodNames": [
+                "set"
+            ]
+        },
+        {
+            "rule": "NoNullPointerExceptionsForControl"
+        },
+        {
+            "rule": "NoPostIncDecInExpression"
+        },
+        {
             "rule": "ParameterNumber",
             "max": 6
         },
@@ -67,6 +85,9 @@
         },
         {
             "rule": "RedundantModifiers"
+        },
+        {
+            "rule": "SameExecutionsInIf"
         },
         {
             "rule": "UseAssignOp"
