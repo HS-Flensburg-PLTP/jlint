@@ -1,7 +1,7 @@
 module Main where
 
 import CheckstyleXML (toRDF)
-import Config (Rule)
+import Config (Config (..), Rule, RuleIO)
 import Control.Exception
 import Control.Monad (MonadPlus (..), unless, when)
 import Control.Monad.Extra (concatMapM)
@@ -10,7 +10,7 @@ import qualified Data.ByteString.Lazy.Char8 as C
 import Data.Semigroup ((<>))
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
-import Language.Java.Rules (checkAll, checkAllIO, checkWithConfig)
+import Language.Java.Rules (checkAll, checkAllIO, checkWithConfig, checkWithConfigIO)
 import Language.Java.Syntax (CompilationUnit, Parsed)
 import Options.Applicative
 import RDF
@@ -127,18 +127,18 @@ parseJava rootDir pretty showAST checkstyleDiags =
         diagnostics <- do
           if configExists
             then do
-              config <- eitherDecodeFileStrict configFile :: IO (Either String [Rule])
+              config <- eitherDecodeFileStrict configFile :: IO (Either String Config)
               case config of
                 Left error -> do
                   hPutStrLn stderr ("Error beim parsen der Config-Datei: " ++ error)
                   exitWith (ExitFailure 65)
-                Right config -> do
-                  return (concatMap (uncurry (checkWithConfig config)) cUnitResults)
+                Right (Config rules rulesIO) -> do
+                  diagnosticsIO <- concatMapM (uncurry (checkWithConfigIO rulesIO)) cUnitResults
+                  return ((concatMap (uncurry (checkWithConfig rules)) cUnitResults) ++ diagnosticsIO)
             else return (concatMap (uncurry checkAll) cUnitResults)
 
         let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
-        diagnosticsIO <- concatMapM (uncurry checkAllIO) cUnitResults
-        let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors ++ diagnosticsIO
+        let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
         C.putStrLn
           ( RDF.encodetojson
               ( DiagnosticResult
@@ -151,7 +151,7 @@ parseJava rootDir pretty showAST checkstyleDiags =
         unless (null parsingErrors) $ print parsingErrors
         when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
 
-        let numberOfHints = length diagnostics + length diagnosticsIO
+        let numberOfHints = length diagnostics
         if numberOfHints == 0
           then do
             hPutStrLn stderr ("jlint did not generate any hints for the Java code in directory " ++ rootDir)
