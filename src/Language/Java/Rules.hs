@@ -1,6 +1,6 @@
 module Language.Java.Rules where
 
-import Config (Rule (..))
+import Config (Rule (..), RuleIO (..))
 import Control.Monad.Extra (concatMapM)
 import qualified Language.Java.Rules.AvoidMultipleTopLevelDecl as AvoidMultipleTopLevelDecl
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
@@ -83,8 +83,14 @@ checkAllIO cUnit path = concatMapM (\f -> f cUnit path) checksIO
 checkWithConfig :: [Rule] -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic])
 checkWithConfig config cUnit path = concatMap (\f -> f cUnit path) (checkRule config)
 
+checkWithConfigIO :: [RuleIO] -> (CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic])
+checkWithConfigIO rulesIO cUnit path = concatMapM (\f -> f cUnit path) (checkRuleIO rulesIO)
+
 checkRule :: [Rule] -> [CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]]
 checkRule = map checkFromConfig
+
+checkRuleIO :: [RuleIO] -> [CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]]
+checkRuleIO = map checkFromConfigIO
 
 checkFromConfig :: Rule -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic])
 checkFromConfig AvoidMultipleTopLevelDecl = AvoidMultipleTopLevelDecl.check
@@ -120,3 +126,6 @@ checkFromConfig UseElse = UseElse.check
 checkFromConfig UseIncrementDecrementOperator = UseIncrementDecrementOperator.check
 checkFromConfig UseJavaArrayTypeStyle = UseJavaArrayTypeStyle.check
 checkFromConfig UsePostIncrementDecrement = UsePostIncrementDecrement.check
+
+checkFromConfigIO :: RuleIO -> (CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic])
+checkFromConfigIO ProhibitGermanNames = ProhibitGermanNames.check

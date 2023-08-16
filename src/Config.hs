@@ -1,3 +1,5 @@
+{-# LANGUAGE DeriveGeneric #-}
+
 module Config where
 
 import Control.Monad (unless)
@@ -6,6 +8,18 @@ import Data.Aeson.Key (fromString)
 import Data.Aeson.KeyMap (keys)
 import Data.Aeson.Types
 import Data.List ((\\))
+import GHC.Generics
+
+data Config = Config
+  { rules :: [Rule],
+    rulesIO :: [RuleIO]
+  }
+  deriving (Generic)
+
+instance FromJSON Config
+
+data RuleIO
+  = ProhibitGermanNames
 
 data Rule
   = AvoidMultipleTopLevelDecl
@@ -80,6 +94,13 @@ instance FromJSON Rule where
       "UseJavaArrayTypeStyle" -> pure UseJavaArrayTypeStyle
       "UsePostIncrementDecrement" -> pure UsePostIncrementDecrement
       _ -> fail ("Unknown Rule: " ++ rule)
+
+instance FromJSON RuleIO where
+  parseJSON = withObject "Rule" $ \obj -> do
+    ruleIO <- obj .: fromString "rule"
+    case ruleIO of
+      "ProhibitGermanNames" -> pure ProhibitGermanNames
+      _ -> fail ("Unknown Rule: " ++ ruleIO)
 
 parseParameterNumber :: Object -> Parser Rule
 parseParameterNumber obj = do
