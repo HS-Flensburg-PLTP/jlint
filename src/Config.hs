@@ -69,6 +69,7 @@ instance FromJSON Rule where
       "ParameterNumber" -> parseParameterNumber obj
       "PreferExpressions" -> pure PreferExpressions
       "ProhibitAnnotations" -> parseProhibitAnnotations obj
+      "ProhibitGermanNames" -> pure ProhibitGermanNames
       "ProhibitMyIdentPrefix" -> pure ProhibitMyIdentPrefix
       "ReduceScope" -> pure ReduceScope
       "RedundantModifiers" -> pure RedundantModifiers
@@ -78,7 +79,6 @@ instance FromJSON Rule where
       "UseIncrementDecrementOperator" -> pure UseIncrementDecrementOperator
       "UseJavaArrayTypeStyle" -> pure UseJavaArrayTypeStyle
       "UsePostIncrementDecrement" -> pure UsePostIncrementDecrement
-      "ProhibitGermanNames" -> pure ProhibitGermanNames
       _ -> fail ("Unknown Rule: " ++ rule)
 
 parseParameterNumber :: Object -> Parser Rule
