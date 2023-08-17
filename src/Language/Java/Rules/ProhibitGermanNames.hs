@@ -5,7 +5,7 @@ module Language.Java.Rules.ProhibitGermanNames where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
-import Data.List (groupBy)
+import Data.List (groupBy, sortBy)
 import Data.List.NonEmpty (toList)
 import Data.Text (pack, replace, unpack)
 import Language.Java.SourceSpan
@@ -31,19 +31,20 @@ check :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
 check cUnit path = do
   let varDeclIdents = concatMap checkVarDeclId (universeBi cUnit)
   let typeDeclIdents = map checkTypeDecl (universeBi cUnit)
-  let forInitIdents = concatMap checkForInit (universeBi cUnit)
   let annotationIdents = concatMap checkAnnotation (universeBi cUnit)
   let lambdaParamIdents = concatMap checkLambdaParams (universeBi cUnit)
   let typeParamIdents = map (\(TypeParam ident _) -> ident) (universeBi cUnit)
   let enumConstIdents = concatMap checkEnumConstant (universeBi cUnit)
   checkIdents
-    ( varDeclIdents
-        ++ typeDeclIdents
-        ++ forInitIdents
-        ++ annotationIdents
-        ++ lambdaParamIdents
-        ++ typeParamIdents
-        ++ enumConstIdents
+    ( sortBy
+        (\(Ident (Location _ linel _, _) _) (Ident (Location _ liner _, _) _) -> compare linel liner)
+        ( varDeclIdents
+            ++ typeDeclIdents
+            ++ annotationIdents
+            ++ lambdaParamIdents
+            ++ typeParamIdents
+            ++ enumConstIdents
+        )
     )
     path
 
@@ -56,10 +57,6 @@ checkTypeDecl (ClassTypeDecl (ClassDecl _ _ ident _ _ _ _)) = ident
 checkTypeDecl (ClassTypeDecl (EnumDecl _ _ ident _ _)) = ident
 checkTypeDecl (ClassTypeDecl (RecordDecl _ _ ident _ _ _ _)) = ident
 checkTypeDecl (InterfaceTypeDecl (InterfaceDecl _ _ _ ident _ _ _ _)) = ident
-
-checkForInit :: ForInit Parsed -> [Ident]
-checkForInit (ForLocalVars _ _ varDecls) = concatMap checkVarDeclId (universeBi varDecls)
-checkForInit _ = mzero
 
 checkMemberDecl :: MemberDecl Parsed -> [Ident]
 checkMemberDecl (FieldDecl _ _ _ varDecls) = concatMap checkVarDeclId (universeBi varDecls)
