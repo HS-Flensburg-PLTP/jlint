@@ -8,7 +8,6 @@ import Data.Generics.Uniplate.Data (universeBi)
 import Data.List (groupBy)
 import Data.List.NonEmpty (toList)
 import Data.Text (pack, replace, unpack)
-import Language.Java.Parser (ident, varDecls)
 import Language.Java.SourceSpan
 import Language.Java.Syntax
 import qualified Markdown
@@ -24,27 +23,6 @@ resolveDict :: DictLanguage -> String
 resolveDict DE = "de_DE"
 resolveDict EN = "en_US"
 
-{-
-alle Decls:
-VarDecl
-ClassDecl
-  - EnumDecl
-InterfaceDecl
-ForVarDecl
-MemberDecl
-  - FieldDecl
-  - MethodDecl
-FormalParam
-Annotation
- - NormalAnnotation
- - SingleElementAnnotation
- - MarkerAnnotation
-LambdaParams
-ClassType
-TypeParam
-
--}
-
 dictionaryLookup :: DictLanguage -> [String] -> IO [String]
 dictionaryLookup language =
   fmap words . readProcess "aspell" ["list", "-d", resolveDict language, "--ignore-case"] . unwords
@@ -52,22 +30,32 @@ dictionaryLookup language =
 check :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
 check cUnit path = do
   let varDeclIdents = concatMap checkVarDeclId (universeBi cUnit)
-  let typeDeclIdents = concatMap checkTypeDecl (universeBi cUnit)
+  let typeDeclIdents = map checkTypeDecl (universeBi cUnit)
   let forInitIdents = concatMap checkForInit (universeBi cUnit)
   let annotationIdents = concatMap checkAnnotation (universeBi cUnit)
   let lambdaParamIdents = concatMap checkLambdaParams (universeBi cUnit)
-  let typeParamIdents = concatMap (\(TypeParam ident _) -> [ident]) (universeBi cUnit)
-  checkIdents (varDeclIdents ++ typeDeclIdents ++ forInitIdents ++ annotationIdents ++ lambdaParamIdents ++ typeParamIdents) path
+  let typeParamIdents = map (\(TypeParam ident _) -> ident) (universeBi cUnit)
+  let enumConstIdents = concatMap checkEnumConstant (universeBi cUnit)
+  checkIdents
+    ( varDeclIdents
+        ++ typeDeclIdents
+        ++ forInitIdents
+        ++ annotationIdents
+        ++ lambdaParamIdents
+        ++ typeParamIdents
+        ++ enumConstIdents
+    )
+    path
 
 checkVarDeclId :: VarDeclId -> [Ident]
 checkVarDeclId (VarId ident) = return ident
 checkVarDeclId _ = mzero
 
-checkTypeDecl :: TypeDecl Parsed -> [Ident]
-checkTypeDecl (ClassTypeDecl (ClassDecl _ _ ident _ _ _ _)) = [ident]
-checkTypeDecl (ClassTypeDecl (EnumDecl _ _ ident _ _)) = [ident]
-checkTypeDecl (ClassTypeDecl (RecordDecl _ _ ident _ _ _ _)) = [ident]
-checkTypeDecl (InterfaceTypeDecl (InterfaceDecl _ _ _ ident _ _ _ _)) = [ident]
+checkTypeDecl :: TypeDecl Parsed -> Ident
+checkTypeDecl (ClassTypeDecl (ClassDecl _ _ ident _ _ _ _)) = ident
+checkTypeDecl (ClassTypeDecl (EnumDecl _ _ ident _ _)) = ident
+checkTypeDecl (ClassTypeDecl (RecordDecl _ _ ident _ _ _ _)) = ident
+checkTypeDecl (InterfaceTypeDecl (InterfaceDecl _ _ _ ident _ _ _ _)) = ident
 
 checkForInit :: ForInit Parsed -> [Ident]
 checkForInit (ForLocalVars _ _ varDecls) = concatMap checkVarDeclId (universeBi varDecls)
@@ -75,7 +63,7 @@ checkForInit _ = mzero
 
 checkMemberDecl :: MemberDecl Parsed -> [Ident]
 checkMemberDecl (FieldDecl _ _ _ varDecls) = concatMap checkVarDeclId (universeBi varDecls)
-checkMemberDecl (MethodDecl _ _ _ _ ident _ _ _ _) = [ident]
+checkMemberDecl (MethodDecl _ _ _ _ ident _ _ _ _) = return ident
 checkMemberDecl _ = mzero
 
 checkAnnotation :: Annotation Parsed -> [Ident]
@@ -84,9 +72,12 @@ checkAnnotation (SingleElementAnnotation _ (Name _ name) _) = toList name
 checkAnnotation (MarkerAnnotation _ (Name _ name)) = toList name
 
 checkLambdaParams :: LambdaParams Parsed -> [Ident]
-checkLambdaParams (LambdaSingleParam ident) = [ident]
+checkLambdaParams (LambdaSingleParam ident) = return ident
 checkLambdaParams (LambdaInferredParams idents) = idents
 checkLambdaParams _ = []
+
+checkEnumConstant :: EnumConstant Parsed -> [Ident]
+checkEnumConstant (EnumConstant ident _ _) = return ident
 
 checkIdents :: [Ident] -> FilePath -> IO [RDF.Diagnostic]
 checkIdents idents path = do
