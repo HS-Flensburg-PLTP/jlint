@@ -1,7 +1,7 @@
 module Main where
 
 import CheckstyleXML (toRDF)
-import Config (Config (..), Rule, RuleIO)
+import Config (Rule)
 import Control.Exception
 import Control.Monad (MonadPlus (..), unless, when)
 import Control.Monad.Extra (concatMapM)
@@ -127,17 +127,17 @@ parseJava rootDir pretty showAST checkstyleDiags =
         diagnostics <- do
           if configExists
             then do
-              config <- eitherDecodeFileStrict configFile :: IO (Either String Config)
+              config <- eitherDecodeFileStrict configFile :: IO (Either String [Rule])
               case config of
                 Left error -> do
                   hPutStrLn stderr ("Error beim parsen der Config-Datei: " ++ error)
                   exitWith (ExitFailure 65)
-                Right (Config rules rulesIO) -> do
-                  diagnosticsIO <- concatMapM (uncurry (checkWithConfigIO rulesIO)) cUnitResults
-                  return ((concatMap (uncurry (checkWithConfig rules)) cUnitResults) ++ diagnosticsIO)
+                Right rules -> do
+                  diagnosticsIO <- concatMapM (uncurry (checkWithConfigIO rules)) cUnitResults
+                  return (concatMap (uncurry (checkWithConfig rules)) cUnitResults ++ diagnosticsIO)
             else do
               diagnosticsIO <- concatMapM (uncurry checkAllIO) cUnitResults
-              return ((concatMap (uncurry checkAll) cUnitResults) ++ diagnosticsIO)
+              return (concatMap (uncurry checkAll) cUnitResults ++ diagnosticsIO)
 
         let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
         let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
