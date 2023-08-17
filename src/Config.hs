@@ -81,12 +81,6 @@ instance FromJSON Rule where
       "ProhibitGermanNames" -> pure ProhibitGermanNames
       _ -> fail ("Unknown Rule: " ++ rule)
 
--- instance FromJSON RuleIO where
---   parseJSON = withObject "Rule" $ \obj -> do
---     ruleIO <- obj .: fromString "rule"
---     case ruleIO of
---       _ -> fail ("Unknown Rule: " ++ ruleIO)
-
 parseParameterNumber :: Object -> Parser Rule
 parseParameterNumber obj = do
   max <- obj .:! fromString "max"
