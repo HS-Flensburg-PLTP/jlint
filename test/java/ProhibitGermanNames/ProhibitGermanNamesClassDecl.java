@@ -1,4 +1,6 @@
-class EineSuperDeutscheKlasse {
+package das.ist.ein.package;
+
+class EineSuperDeutscheKlasse<Tomate> {
     private final int WIRD_DAS_HIER_AUCH_GEFUNDEN = 1337;
     private final String ANANAS = "PIZZA";
 
@@ -17,4 +19,18 @@ class EineSuperDeutscheKlasse {
             String meineZeichenfolge = "Hier";
         }
     }
+}
+
+public class Pair<TypParameter, VollParameter> {
+
+    private K key;
+    private V value;
+
+    public Pair(K key, V value) {
+    this.key = key;
+    this.value = value;
+    }
+
+    public K getKey()    { return key; }
+    public V getValue() { return value; }
 }
