@@ -17,6 +17,7 @@ class EineSuperDeutscheKlasse<Tomate> {
 
         for (int maus = 0; maus < 10; maus++) {
             String meineZeichenfolge = "Hier";
+            meineZeichenfolge.map((zeichen) -> { return zeichen;});
         }
     }
 }
