@@ -23,7 +23,6 @@ data Rule
   | MethodInvNumber {called :: String, limited :: String, maxInv :: Int}
   | ModifiedControlVariable
   | NeedBraces
-  | ProhibitGermanNames
   | NoCasts {whitelist :: [String]}
   | NoFurtherDataStructures {methodNames :: [String]}
   | NoLoopBreak
@@ -32,6 +31,7 @@ data Rule
   | ParameterNumber {max :: Maybe Int}
   | PreferExpressions
   | ProhibitAnnotations {whitelist :: [String]}
+  | ProhibitGermanNames
   | ProhibitMyIdentPrefix
   | ReduceScope
   | RedundantModifiers
