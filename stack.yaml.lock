@@ -5,15 +5,15 @@
 
 packages:
 - completed:
-    commit: 2cb7941e4c79daf30cbe6fc25af5005b85c10cb3
+    commit: 0193185d014d3446d0632b54f9be0c8fe154df59
     git: https://github.com/hsfl-pltp/language-java.git
     name: language-java
     pantry-tree:
-      sha256: 44e45198c0e729b50ba9f4e53bfa70e02a8d50b0950219b0488ad06999e07901
-      size: 5788
+      sha256: b724f0c0f9ef892a7cf20c5bbdd5954b7d74dc9f5535fc02ecb89afeaa5787eb
+      size: 6143
     version: 0.2.9
   original:
-    commit: 2cb7941e4c79daf30cbe6fc25af5005b85c10cb3
+    commit: 0193185d014d3446d0632b54f9be0c8fe154df59
     git: https://github.com/hsfl-pltp/language-java.git
 snapshots:
 - completed:
