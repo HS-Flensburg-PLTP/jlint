@@ -4,8 +4,8 @@ module Language.Java.Rules.NoFurtherDataStructures where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
+import Language.Java.HelperMethods.Exp (isDataCreation)
 import Language.Java.Syntax
-import Language.Java.Syntax.Exp (isDataCreation)
 import qualified Language.Java.Syntax.Ident as Ident
 import qualified RDF
 

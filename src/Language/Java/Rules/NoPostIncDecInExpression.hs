@@ -2,9 +2,9 @@ module Language.Java.Rules.NoPostIncDecInExpression where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
+import qualified Language.Java.HelperMethods.Exp as Exp
 import Language.Java.SourceSpan (Located (sourceSpan))
 import Language.Java.Syntax
-import qualified Language.Java.Syntax.Exp as Exp
 import qualified Markdown
 import qualified RDF
 

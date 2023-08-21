@@ -1,13 +1,10 @@
-module Language.Java.Syntax.BlockStmt
+module Language.Java.HelperMethods.BlockStmt
   ( name,
-    hasNoSideEffect,
   )
 where
 
 import Language.Java.Pretty (PrettyExtension, prettyPrint)
 import Language.Java.Syntax (BlockStmt (..), Stmt (..))
-import qualified Language.Java.Syntax.Stmt as Stmt
-import qualified Language.Java.Syntax.VarDecl as VarDecl
 
 name :: PrettyExtension p => BlockStmt p -> String
 name (BlockStmt stmt) = stmtName stmt
@@ -33,8 +30,3 @@ stmtName (ExpStmt _ exp) = prettyPrint exp
 stmtName (Assert {}) = "assert"
 stmtName (Break {}) = "break"
 stmtName (Continue {}) = "continue"
-
-hasNoSideEffect :: BlockStmt p -> Bool
-hasNoSideEffect (BlockStmt stmt) = Stmt.hasNoSideEffect stmt
-hasNoSideEffect (LocalClass _) = False
-hasNoSideEffect (LocalVars _ _ _ varDecls) = all VarDecl.hasNoSideEffect varDecls
