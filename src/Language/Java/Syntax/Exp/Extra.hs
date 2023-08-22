@@ -1,4 +1,4 @@
-module Language.Java.HelperMethods.Exp (isDataCreation, isPostIncDec) where
+module Language.Java.Syntax.Exp.Extra (isDataCreation, isPostIncDec) where
 
 import Language.Java.Syntax (Exp (..))
 import qualified Language.Java.Syntax.Exp as Exp

@@ -30,9 +30,6 @@ library
       Control.Monad.Extra
       Data.List.Extra
       Language.Java.AST
-      Language.Java.HelperMethods.BlockStmt
-      Language.Java.HelperMethods.Exp
-      Language.Java.HelperMethods.Stmt
       Language.Java.Rules
       Language.Java.Rules.AvoidMultipleTopLevelDecl
       Language.Java.Rules.AvoidMultipleVarDecl
@@ -69,6 +66,9 @@ library
       Language.Java.Rules.UseIncrementDecrementOperator
       Language.Java.Rules.UseJavaArrayTypeStyle
       Language.Java.Rules.UsePostIncrementDecrement
+      Language.Java.Syntax.BlockStmt.Extra
+      Language.Java.Syntax.Exp.Extra
+      Language.Java.Syntax.Stmt.Extra
       Markdown
       RDF
   other-modules:
