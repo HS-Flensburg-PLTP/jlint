@@ -1,25 +1,15 @@
 public class MultipleStringLiterals {
     private String a;
-    private String b;
-    private String c;
+    private String a1 = "unchecked";
 
     public MultipleStringLiterals() {
         a = "Foo";
-        b = "Bar";
-        c = "foobar";
 
-        this.aMethod("Foo");
+        this.a.split("Foo");
     }
 
-    public void aMethod(String string) {
-        String d = "Foo";
-
-        c = string + "Bar";
-    }
-
-    String a1 = "unchecked";
     @SuppressWarnings("unchecked") 
-    public void myTest() {
+    public void testMethod() {
         String a2 = "SingleString";
     }
 }
