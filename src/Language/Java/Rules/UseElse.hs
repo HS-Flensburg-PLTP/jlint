@@ -4,7 +4,7 @@ import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.List (intercalate)
 import Language.Java.Syntax
-import Language.Java.Syntax.BlockStmt as BlockStmt (name)
+import qualified Language.Java.Syntax.BlockStmt.Extra as BlockStmt.Extra
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -51,7 +51,7 @@ checkCodeAfterIfThenElse cUnit path = do
 
 message :: [BlockStmt Parsed] -> String
 message blockStmts =
-  "Der `then`- oder der `else`-Zweig der `if`-Anweisung verlässt immer die Methode. Daher sollte nach der gesamten `if`-Anweisung keine weitere Anweisung folgen. Auf die `if`-Anweisung folgen: " ++ intercalate ", " (map BlockStmt.name blockStmts)
+  "Der `then`- oder der `else`-Zweig der `if`-Anweisung verlässt immer die Methode. Daher sollte nach der gesamten `if`-Anweisung keine weitere Anweisung folgen. Auf die `if`-Anweisung folgen: " ++ intercalate ", " (map BlockStmt.Extra.name blockStmts)
 
 doesAlwaysExit :: Stmt Parsed -> Bool
 doesAlwaysExit (Return _ _) = True

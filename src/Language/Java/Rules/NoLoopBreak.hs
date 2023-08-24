@@ -7,11 +7,12 @@ import Data.List.Extra ((//))
 import Language.Java.SourceSpan (sourceSpan)
 import Language.Java.Syntax
 import qualified Language.Java.Syntax.Stmt as Stmt
+import qualified Language.Java.Syntax.Stmt.Extra as Stmt.Extra
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  loop <- filter Stmt.isLoop (universeBi cUnit)
+  loop <- filter Stmt.Extra.isLoop (universeBi cUnit)
   checkLoop loop path
 
 checkLoop :: Stmt Parsed -> FilePath -> [RDF.Diagnostic]
@@ -19,7 +20,7 @@ checkLoop loop path =
   -- discarding first element of `universeBi loop` (will always be `loop` itself)
   -- there is no function getting ALL children, but excluding itself
   let loopBodyStmts = tail (universeBi loop :: [Stmt Parsed])
-      shallowStmts = loopBodyStmts // universeBi (filter Stmt.isLoop loopBodyStmts)
+      shallowStmts = loopBodyStmts // universeBi (filter Stmt.Extra.isLoop loopBodyStmts)
    in map
         ( \stmt ->
             RDF.rangeDiagnostic
