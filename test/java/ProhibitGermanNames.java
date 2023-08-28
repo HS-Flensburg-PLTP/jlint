@@ -1,8 +1,8 @@
-class EineSuperDeutscheKlasse<Tomate> {
+class EineSuperDeutscheKlasse<Liste extends List> {
     private final int WIRD_DAS_HIER_AUCH_GEFUNDEN = 1337;
     private final String ANANAS = "PIZZA";
 
-    private Tomate apfel = "Gurke";
+    private Liste apfel = "Gurke";
 
     public EineSuperDeutscheKlasse() {
         String wuerfel = "Würfel";
@@ -28,7 +28,8 @@ enum DasIstOneEnum {
     Drei
 }
 
-interface IchBinEinTier {
+interface IchBinEinTier<Tier> {
     public void tierSound();
     public void run();
+    public void berechneErgebnis();
 }
