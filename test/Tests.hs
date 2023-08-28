@@ -1,4 +1,4 @@
-module Tests (rangesTest) where
+module Tests (rangesTest, rangesIOTest) where
 
 import Control.Monad (zipWithM_)
 import Language.Java.Parser (compilationUnit, parser)
@@ -12,11 +12,15 @@ javaTestDirectory :: FilePath
 javaTestDirectory = "test" </> "java"
 
 rangesTest :: [RDF.Range] -> FilePath -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]) -> Test
-rangesTest testRanges =
-  ruleTest (justifyRanges testRanges)
+rangesTest testRanges path check =
+  rangesIOTest testRanges path (\cUnit path -> return (check cUnit path))
 
-ruleTest :: ([RDF.Diagnostic] -> Assertion) -> FilePath -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]) -> Test
-ruleTest justify path check =
+rangesIOTest :: [RDF.Range] -> FilePath -> (CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]) -> Test
+rangesIOTest testRanges =
+  ruleIOTest (justifyRanges testRanges)
+
+ruleIOTest :: ([RDF.Diagnostic] -> Assertion) -> FilePath -> (CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]) -> Test
+ruleIOTest justify path check =
   path ~: do
     dir <- getCurrentDirectory
     let file = dir </> javaTestDirectory </> path
@@ -24,8 +28,8 @@ ruleTest justify path check =
     case parser compilationUnit file content of
       Left error ->
         assertFailure ("Parsing " ++ file ++ " failed with error:" ++ show error)
-      Right cUnit ->
-        justify (check cUnit path)
+      Right cUnit -> do
+        justify <$> check cUnit path
 
 justifyRanges :: [RDF.Range] -> [RDF.Diagnostic] -> Assertion
 justifyRanges expectedRanges diagnostic = do

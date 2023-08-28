@@ -36,27 +36,24 @@
         "rule": "InitializeVariables"
     },
     {
-        "rule": "NoFurtherDataStructures",
-        "methodNames": [
-            "set"
-        ]
-    },
-    {
         "rule": "MethodInvNumber",
         "called": "foo",
         "limited": "bar",
         "maxInv": 2
     },
     {
-        "rule": "ModifiedControlVariable"
-    },
-    {
-        "rule": "NeedBraces"
+        "rule": "NoNullPointerExceptionsForControl"
     },
     {
         "rule": "NoCasts",
         "whitelist": [
             "foo"
+        ]
+    },
+    {
+        "rule": "NoFurtherDataStructures",
+        "methodNames": [
+            "set"
         ]
     },
     {
@@ -75,6 +72,9 @@
     {
         "rule": "ProhibitAnnotations",
         "whitelist": []
+    },
+    {
+        "rule": "ProhibitGermanNames"
     },
     {
         "rule": "ProhibitMyIdentPrefix"
@@ -99,8 +99,5 @@
     },
     {
         "rule": "UseJavaArrayTypeStyle"
-    },
-    {
-        "rule": "UsePostIncrementDecrement"
     }
 ]

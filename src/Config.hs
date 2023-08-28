@@ -31,6 +31,7 @@ data Rule
   | ParameterNumber {max :: Maybe Int}
   | PreferExpressions
   | ProhibitAnnotations {whitelist :: [String]}
+  | ProhibitGermanNames
   | ProhibitMyIdentPrefix
   | ReduceScope
   | RedundantModifiers
@@ -68,6 +69,7 @@ instance FromJSON Rule where
       "ParameterNumber" -> parseParameterNumber obj
       "PreferExpressions" -> pure PreferExpressions
       "ProhibitAnnotations" -> parseProhibitAnnotations obj
+      "ProhibitGermanNames" -> pure ProhibitGermanNames
       "ProhibitMyIdentPrefix" -> pure ProhibitMyIdentPrefix
       "ReduceScope" -> pure ReduceScope
       "RedundantModifiers" -> pure RedundantModifiers

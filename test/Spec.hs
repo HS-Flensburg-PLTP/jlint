@@ -22,6 +22,7 @@ import qualified NoPostIncDecInExpressionTests
 import qualified ParameterNumberTests
 import qualified PreferExpressionsTests
 import qualified ProhibitAnnotationsTests
+import qualified ProhibitGermanNamesTests
 import qualified ProhibitMyIdentPrefixTests
 import qualified ReduceScopeTests
 import qualified RedundantModifiersTests
@@ -49,6 +50,7 @@ tests =
       "CheckNonFinalMethodParameters" ~: CheckNonFinalMethodParametersTests.tests,
       "CheckNonPrivateAttributes" ~: CheckNonPrivateAttributesTests.tests,
       "ConsistentOverrideEqualsHashCode" ~: ConsistentOverrideEqualsHashCodeTests.tests,
+      "DeclarationOrder" ~: DeclarationOrderTests.tests,
       "DefaultComesLast" ~: DefaultComesLastTests.tests,
       "ExplicitValue" ~: ExplicitValueTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
@@ -64,6 +66,7 @@ tests =
       "ParameterNumber" ~: ParameterNumberTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ProhibitAnnotations" ~: ProhibitAnnotationsTests.tests,
+      "ProhibitGermanNames" ~: ProhibitGermanNamesTests.tests,
       "ProhibitMyIdentPrefix" ~: ProhibitMyIdentPrefixTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
       "RedundantModifiers" ~: RedundantModifiersTests.tests,
@@ -73,6 +76,5 @@ tests =
       "UseElse" ~: UseElseTests.tests,
       "UseIncrementDecrementOperator" ~: UseIncrementDecrementOperatorTests.tests,
       "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests,
-      "UsePostIncrementDecrement" ~: UsePostIncrementDecrementTests.tests,
-      "DeclarationOrder" ~: DeclarationOrderTests.tests
+      "UsePostIncrementDecrement" ~: UsePostIncrementDecrementTests.tests
     ]
