@@ -1,4 +1,4 @@
-module Language.Java.Rules where
+module Language.Java.Rules (defaultConfig, checkWithConfig) where
 
 import Config (Rule (..))
 import Control.Monad.Extra (concatMapM)
@@ -40,98 +40,79 @@ import qualified Language.Java.Rules.UsePostIncrementDecrement as UsePostIncreme
 import Language.Java.Syntax
 import qualified RDF
 
-checks :: [CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]]
-checks =
-  [ AvoidMultipleTopLevelDecl.check,
-    AvoidMultipleVarDecl.check,
-    AvoidNegations.check,
-    AvoidOuterNegations.check,
-    AvoidStarImport.check,
-    CheckNonFinalMethodParameters.check,
-    CheckNonPrivateAttributes.check,
-    ConsistentOverrideEqualsHashCode.check,
-    DeclarationOrder.check,
-    DefaultComesLast.check,
-    ExplicitValue.check,
-    InitializeVariables.check,
-    ModifiedControlVariable.check,
-    MultipleStringLiterals.check,
-    NeedBraces.check,
-    NoNullPointerExceptionsForControl.check,
-    NoPostIncDecInExpression.check,
-    ParameterNumber.check Nothing,
-    PreferExpressions.check,
-    ProhibitAnnotations.checkWithDefaultValue,
-    ProhibitMyIdentPrefix.check,
-    ReduceScope.check,
-    RedundantModifiers.check,
-    UseAssignOp.check,
-    UseElse.check,
-    UseIncrementDecrementOperator.check,
-    UseJavaArrayTypeStyle.check,
-    UsePostIncrementDecrement.check
+defaultConfig :: [Rule]
+defaultConfig =
+  [ AvoidMultipleTopLevelDecl,
+    AvoidMultipleVarDecl,
+    AvoidNegations,
+    AvoidOuterNegations,
+    AvoidStarImport,
+    CheckNonFinalMethodParameters,
+    CheckNonPrivateAttributes,
+    ConsistentOverrideEqualsHashCode,
+    DeclarationOrder,
+    DefaultComesLast,
+    ExplicitValue,
+    InitializeVariables,
+    ModifiedControlVariable,
+    NeedBraces,
+    NoLoopBreak,
+    NoNullPointerExceptionsForControl,
+    NoPostIncDecInExpression,
+    ParameterNumber Nothing,
+    PreferExpressions,
+    ProhibitAnnotations [],
+    ProhibitGermanNames,
+    ProhibitMyIdentPrefix,
+    ReduceScope,
+    RedundantModifiers,
+    SameExecutionsInIf,
+    UseAssignOp,
+    UseElse,
+    UseIncrementDecrementOperator,
+    UseJavaArrayTypeStyle,
+    UsePostIncrementDecrement
   ]
 
-checksIO :: [CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]]
-checksIO =
-  [ ProhibitGermanNames.check
-  ]
+checkWithConfig :: [Rule] -> (CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic])
+checkWithConfig config cUnit path = concatMapM ((\f -> f cUnit path) . checkFromConfig) config
 
-checkAll :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-checkAll cUnit path = concatMap (\f -> f cUnit path) checks
+checkFromConfig :: Rule -> (CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic])
+checkFromConfig AvoidMultipleTopLevelDecl = liftIO AvoidMultipleTopLevelDecl.check
+checkFromConfig AvoidMultipleVarDecl = liftIO AvoidMultipleVarDecl.check
+checkFromConfig AvoidNegations = liftIO AvoidNegations.check
+checkFromConfig AvoidOuterNegations = liftIO AvoidOuterNegations.check
+checkFromConfig AvoidStarImport = liftIO AvoidStarImport.check
+checkFromConfig CheckNonFinalMethodParameters = liftIO CheckNonFinalMethodParameters.check
+checkFromConfig CheckNonPrivateAttributes = liftIO CheckNonPrivateAttributes.check
+checkFromConfig ConsistentOverrideEqualsHashCode = liftIO ConsistentOverrideEqualsHashCode.check
+checkFromConfig DeclarationOrder = liftIO DeclarationOrder.check
+checkFromConfig DefaultComesLast = liftIO DefaultComesLast.check
+checkFromConfig ExplicitValue = liftIO ExplicitValue.check
+checkFromConfig InitializeVariables = liftIO InitializeVariables.check
+checkFromConfig (MethodInvNumber called limited maxInv) = liftIO (MethodInvNumber.check called limited maxInv)
+checkFromConfig ModifiedControlVariable = liftIO ModifiedControlVariable.check
+checkFromConfig MultipleStringLiterals = liftIO MultipleStringLiterals.check
+checkFromConfig NamingConventions = liftIO NamingConventions.check
+checkFromConfig NeedBraces = liftIO NeedBraces.check
+checkFromConfig (NoCasts whitelist) = liftIO (NoCasts.check whitelist)
+checkFromConfig (NoFurtherDataStructures methodNames) = liftIO (NoFurtherDataStructures.check methodNames)
+checkFromConfig NoLoopBreak = liftIO NoLoopBreak.check
+checkFromConfig NoNullPointerExceptionsForControl = liftIO NoNullPointerExceptionsForControl.check
+checkFromConfig NoPostIncDecInExpression = liftIO NoPostIncDecInExpression.check
+checkFromConfig (ParameterNumber maybeMax) = liftIO (ParameterNumber.check maybeMax)
+checkFromConfig PreferExpressions = liftIO PreferExpressions.check
+checkFromConfig (ProhibitAnnotations whitelist) = liftIO (ProhibitAnnotations.check whitelist)
+checkFromConfig ProhibitGermanNames = ProhibitGermanNames.check
+checkFromConfig ProhibitMyIdentPrefix = liftIO ProhibitMyIdentPrefix.check
+checkFromConfig ReduceScope = liftIO ReduceScope.check
+checkFromConfig RedundantModifiers = liftIO RedundantModifiers.check
+checkFromConfig SameExecutionsInIf = liftIO SameExecutionsInIf.check
+checkFromConfig UseAssignOp = liftIO UseAssignOp.check
+checkFromConfig UseElse = liftIO UseElse.check
+checkFromConfig UseIncrementDecrementOperator = liftIO UseIncrementDecrementOperator.check
+checkFromConfig UseJavaArrayTypeStyle = liftIO UseJavaArrayTypeStyle.check
+checkFromConfig UsePostIncrementDecrement = liftIO UsePostIncrementDecrement.check
 
-checkAllIO :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
-checkAllIO cUnit path = concatMapM (\f -> f cUnit path) checksIO
-
-checkWithConfig :: [Rule] -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic])
-checkWithConfig config cUnit path = concatMap (\f -> f cUnit path) (checkRule config)
-
-checkWithConfigIO :: [Rule] -> (CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic])
-checkWithConfigIO rulesIO cUnit path = concatMapM (\f -> f cUnit path) (checkRuleIO rulesIO)
-
-checkRule :: [Rule] -> [CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]]
-checkRule = map checkFromConfig
-
-checkRuleIO :: [Rule] -> [CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]]
-checkRuleIO = map checkFromConfigIO
-
-checkFromConfig :: Rule -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic])
-checkFromConfig AvoidMultipleTopLevelDecl = AvoidMultipleTopLevelDecl.check
-checkFromConfig AvoidMultipleVarDecl = AvoidMultipleVarDecl.check
-checkFromConfig AvoidNegations = AvoidNegations.check
-checkFromConfig AvoidOuterNegations = AvoidOuterNegations.check
-checkFromConfig AvoidStarImport = AvoidStarImport.check
-checkFromConfig CheckNonFinalMethodParameters = CheckNonFinalMethodParameters.check
-checkFromConfig CheckNonPrivateAttributes = CheckNonPrivateAttributes.check
-checkFromConfig ConsistentOverrideEqualsHashCode = ConsistentOverrideEqualsHashCode.check
-checkFromConfig DeclarationOrder = DeclarationOrder.check
-checkFromConfig DefaultComesLast = DefaultComesLast.check
-checkFromConfig ExplicitValue = ExplicitValue.check
-checkFromConfig InitializeVariables = InitializeVariables.check
-checkFromConfig (MethodInvNumber called limited maxInv) = MethodInvNumber.check called limited maxInv
-checkFromConfig ModifiedControlVariable = ModifiedControlVariable.check
-checkFromConfig MultipleStringLiterals = MultipleStringLiterals.check
-checkFromConfig NamingConventions = NamingConventions.check
-checkFromConfig NeedBraces = NeedBraces.check
-checkFromConfig (NoCasts whitelist) = NoCasts.check whitelist
-checkFromConfig (NoFurtherDataStructures methodNames) = NoFurtherDataStructures.check methodNames
-checkFromConfig NoLoopBreak = NoLoopBreak.check
-checkFromConfig NoNullPointerExceptionsForControl = NoNullPointerExceptionsForControl.check
-checkFromConfig NoPostIncDecInExpression = NoPostIncDecInExpression.check
-checkFromConfig (ParameterNumber max) = ParameterNumber.check max
-checkFromConfig PreferExpressions = PreferExpressions.check
-checkFromConfig (ProhibitAnnotations whitelist) = ProhibitAnnotations.check whitelist
-checkFromConfig ProhibitMyIdentPrefix = ProhibitMyIdentPrefix.check
-checkFromConfig ReduceScope = ReduceScope.check
-checkFromConfig RedundantModifiers = RedundantModifiers.check
-checkFromConfig SameExecutionsInIf = SameExecutionsInIf.check
-checkFromConfig UseAssignOp = UseAssignOp.check
-checkFromConfig UseElse = UseElse.check
-checkFromConfig UseIncrementDecrementOperator = UseIncrementDecrementOperator.check
-checkFromConfig UseJavaArrayTypeStyle = UseJavaArrayTypeStyle.check
-checkFromConfig UsePostIncrementDecrement = UsePostIncrementDecrement.check
-checkFromConfig _ = mempty
-
-checkFromConfigIO :: Rule -> (CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic])
-checkFromConfigIO ProhibitGermanNames = ProhibitGermanNames.check
-checkFromConfigIO _ = mempty
+liftIO :: (a -> b -> c) -> a -> b -> IO c
+liftIO f a b = pure (f a b)

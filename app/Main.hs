@@ -10,7 +10,7 @@ import qualified Data.ByteString.Lazy.Char8 as C
 import Data.Semigroup ((<>))
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
-import Language.Java.Rules (checkAll, checkAllIO, checkWithConfig, checkWithConfigIO)
+import Language.Java.Rules (checkWithConfig, defaultConfig)
 import Language.Java.Syntax (CompilationUnit, Parsed)
 import Options.Applicative
 import RDF
@@ -33,9 +33,9 @@ main = execParser opts >>= importJava
         )
 
 importJava :: Params -> IO ()
-importJava (Params path showAST pretty Nothing) = do
-  parseJava path pretty showAST []
-importJava (Params path showAST pretty (Just checkstyleFile)) = do
+importJava (Params path showAST pretty maybeConfigFile Nothing) = do
+  parseJava path pretty showAST maybeConfigFile []
+importJava (Params path showAST pretty maybeConfigFile (Just checkstyleFile)) = do
   content <- readFile checkstyleFile
   diags <- case xmlParse' "" content of
     Left error -> do
@@ -46,13 +46,14 @@ importJava (Params path showAST pretty (Just checkstyleFile)) = do
         hPutStrLn stderr ("Import of checkstyle XML failed with error " ++ error)
         return []
       Right diags -> return diags
-  parseJava path pretty showAST diags
+  parseJava path pretty showAST maybeConfigFile diags
 
 data Params = Params
   { path :: String,
     showAST :: Bool,
     pretty :: Bool,
-    checkstyleFile :: Maybe String
+    maybeConfigFile :: Maybe String,
+    maybeCheckstyleFile :: Maybe String
   }
 
 params :: Parser Params
@@ -69,6 +70,13 @@ params =
     <*> switch
       ( long "pretty"
           <> help "By setting this Parameter the java source representation of the AST is shown"
+      )
+    <*> optional
+      ( strOption
+          ( long "config"
+              <> metavar "CONFIG-FILE"
+              <> help "JSON file to configure the jlint rules."
+          )
       )
     <*> optional
       ( strOption
@@ -113,54 +121,50 @@ parseAllFiles files =
    in parseAllfilesHelp files (mzero, mzero)
 
 -- missing pretty option and does not print errors
-parseJava :: FilePath -> Bool -> Bool -> [Diagnostic] -> IO ()
-parseJava rootDir pretty showAST checkstyleDiags =
-  do
-    pathList <- findAllJavaFiles rootDir
-    fileList <- readAllFiles pathList
-    let (parsingErrors, cUnitResults) = parseAllFiles fileList
-    if showAST
-      then do
-        print cUnitResults
-      else do
-        configExists <- doesFileExist configFile
-        diagnostics <- do
+parseJava :: FilePath -> Bool -> Bool -> Maybe FilePath -> [Diagnostic] -> IO ()
+parseJava rootDir pretty showAST maybeConfigFile checkstyleDiags = do
+  pathList <- findAllJavaFiles rootDir
+  fileList <- readAllFiles pathList
+  let (parsingErrors, cUnitResults) = parseAllFiles fileList
+  if showAST
+    then do
+      print cUnitResults
+    else do
+      config <- case maybeConfigFile of
+        Just configFile -> do
+          configExists <- doesFileExist configFile
           if configExists
             then do
-              config <- eitherDecodeFileStrict configFile :: IO (Either String [Rule])
-              case config of
+              eitherConfig <- eitherDecodeFileStrict configFile :: IO (Either String [Rule])
+              case eitherConfig of
                 Left error -> do
-                  hPutStrLn stderr ("Error beim parsen der Config-Datei: " ++ error)
-                  exitWith (ExitFailure 65)
-                Right rules -> do
-                  diagnosticsIO <- concatMapM (uncurry (checkWithConfigIO rules)) cUnitResults
-                  return (concatMap (uncurry (checkWithConfig rules)) cUnitResults ++ diagnosticsIO)
+                  hPutStrLn stderr ("Error beim parsen der Config-Datei: " ++ error ++ "Verwende Standard-Config.")
+                  return defaultConfig
+                Right config -> return config
             else do
-              diagnosticsIO <- concatMapM (uncurry checkAllIO) cUnitResults
-              return (concatMap (uncurry checkAll) cUnitResults ++ diagnosticsIO)
+              hPutStrLn stderr ("Angegebene Config-Datei " ++ configFile ++ " existiert nicht. Verwende Standard-Config.")
+              return defaultConfig
+        Nothing -> return defaultConfig
+      diagnostics <- concatMapM (uncurry (checkWithConfig config)) cUnitResults
+      let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
+      let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
+      C.putStrLn
+        ( RDF.encodetojson
+            ( DiagnosticResult
+                { diagnostics = diagnosticResults,
+                  resultSource = Just (Source {name = "jlint", url = Nothing}),
+                  resultSeverity = RDF.checkSeverityList (map RDF.severity diagnosticResults) -- emmits highest severity of all results in all files
+                }
+            )
+        )
+      unless (null parsingErrors) $ print parsingErrors
+      when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
 
-        let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
-        let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
-        C.putStrLn
-          ( RDF.encodetojson
-              ( DiagnosticResult
-                  { diagnostics = diagnosticResults,
-                    resultSource = Just (Source {name = "jlint", url = Nothing}),
-                    resultSeverity = RDF.checkSeverityList (map RDF.severity diagnosticResults) -- emmits highest severity of all results in all files
-                  }
-              )
-          )
-        unless (null parsingErrors) $ print parsingErrors
-        when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
-
-        let numberOfHints = length diagnostics
-        if numberOfHints == 0
-          then do
-            hPutStrLn stderr ("jlint did not generate any hints for the Java code in directory " ++ rootDir)
-            exitSuccess
-          else do
-            hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
-            exitWith (ExitFailure numberOfHints)
-
-configFile :: String
-configFile = "config.json"
+      let numberOfHints = length diagnostics
+      if numberOfHints == 0
+        then do
+          hPutStrLn stderr ("jlint did not generate any hints for the Java code in directory " ++ rootDir)
+          exitSuccess
+        else do
+          hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
+          exitWith (ExitFailure numberOfHints)
