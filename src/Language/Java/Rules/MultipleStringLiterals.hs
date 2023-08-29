@@ -7,6 +7,7 @@ import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.List (groupBy, intercalate, sortBy)
 import Data.List.Extra
+import qualified Data.Maybe as Maybe
 import Language.Java.Pretty (prettyPrint)
 import Language.Java.SourceSpan
 import Language.Java.Syntax
@@ -20,7 +21,13 @@ check cUnit path =
         (annotation :: Annotation Parsed) <- universeBi cUnit
         filter Literal.isString (universeBi annotation)
       stringLiterals = filter Literal.isString (universeBi cUnit)
-      validLiterals = filter (\lit -> none (eq IncludeSourceSpan lit) annotationStringLiterals) stringLiterals
+      validLiterals =
+        filter
+          (\lit -> Maybe.fromJust (Literal.string lit) /= "")
+          ( filter
+              (\lit -> none (eq IncludeSourceSpan lit) annotationStringLiterals)
+              stringLiterals
+          )
    in checkForDuplicates validLiterals path
 
 checkForDuplicates :: [Literal] -> FilePath -> [RDF.Diagnostic]
@@ -51,11 +58,11 @@ checkForDuplicates literals path =
     )
     ( groupBy
         ( \strL strR ->
-            Literal.getStringLiteral strL == Literal.getStringLiteral strR
+            Maybe.fromJust (Literal.string strL) == Maybe.fromJust (Literal.string strR)
         )
         ( sortBy
             ( \strL strR ->
-                compare (Literal.getStringLiteral strL) (Literal.getStringLiteral strR)
+                compare (Maybe.fromJust (Literal.string strL)) (Maybe.fromJust (Literal.string strR))
             )
             literals
         )

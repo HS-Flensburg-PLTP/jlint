@@ -11,5 +11,8 @@ public class MultipleStringLiterals {
     @SuppressWarnings("unchecked") 
     public void testMethod() {
         String a2 = "SingleString";
+
+        String one = "";
+        String two = "";
     }
 }
