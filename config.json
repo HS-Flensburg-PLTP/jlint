@@ -42,7 +42,7 @@
         "maxInv": 2
     },
     {
-        "rule": "NoNullPointerExceptionsForControl"
+        "rule": "MultipleStringLiterals"
     },
     {
         "rule": "NoCasts",

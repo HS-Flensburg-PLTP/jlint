@@ -16,6 +16,8 @@ import qualified Language.Java.Rules.ExplicitValue as ExplicitValue
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
 import qualified Language.Java.Rules.MethodInvNumber as MethodInvNumber
 import qualified Language.Java.Rules.ModifiedControlVariable as ModifiedControlVariable
+import qualified Language.Java.Rules.MultipleStringLiterals as MultipleStringLiterals
+import qualified Language.Java.Rules.NamingConventions as NamingConventions
 import qualified Language.Java.Rules.NeedBraces as NeedBraces
 import qualified Language.Java.Rules.NoCasts as NoCasts
 import qualified Language.Java.Rules.NoFurtherDataStructures as NoFurtherDataStructures
@@ -53,6 +55,7 @@ checks =
     ExplicitValue.check,
     InitializeVariables.check,
     ModifiedControlVariable.check,
+    MultipleStringLiterals.check,
     NeedBraces.check,
     NoNullPointerExceptionsForControl.check,
     NoPostIncDecInExpression.check,
@@ -107,6 +110,8 @@ checkFromConfig ExplicitValue = ExplicitValue.check
 checkFromConfig InitializeVariables = InitializeVariables.check
 checkFromConfig (MethodInvNumber called limited maxInv) = MethodInvNumber.check called limited maxInv
 checkFromConfig ModifiedControlVariable = ModifiedControlVariable.check
+checkFromConfig MultipleStringLiterals = MultipleStringLiterals.check
+checkFromConfig NamingConventions = NamingConventions.check
 checkFromConfig NeedBraces = NeedBraces.check
 checkFromConfig (NoCasts whitelist) = NoCasts.check whitelist
 checkFromConfig (NoFurtherDataStructures methodNames) = NoFurtherDataStructures.check methodNames

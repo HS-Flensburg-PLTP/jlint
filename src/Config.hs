@@ -22,6 +22,8 @@ data Rule
   | InitializeVariables
   | MethodInvNumber {called :: String, limited :: String, maxInv :: Int}
   | ModifiedControlVariable
+  | MultipleStringLiterals
+  | NamingConventions
   | NeedBraces
   | NoCasts {whitelist :: [String]}
   | NoFurtherDataStructures {methodNames :: [String]}
@@ -60,6 +62,8 @@ instance FromJSON Rule where
       "InitializeVariables" -> pure InitializeVariables
       "MethodInvNumber" -> parseMethodInvNumber obj
       "ModifiedControlVariable" -> pure ModifiedControlVariable
+      "MultipleStringLiterals" -> pure MultipleStringLiterals
+      "NamingConventions" -> pure NamingConventions
       "NeedBraces" -> pure NeedBraces
       "NoCasts" -> parseNoCasts obj
       "NoFurtherDataStructures" -> parseNoFurtherDataStructures obj

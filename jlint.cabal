@@ -45,6 +45,7 @@ library
       Language.Java.Rules.InitializeVariables
       Language.Java.Rules.MethodInvNumber
       Language.Java.Rules.ModifiedControlVariable
+      Language.Java.Rules.MultipleStringLiterals
       Language.Java.Rules.NamingConventions
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoCasts
@@ -139,6 +140,7 @@ test-suite jlint-test
       InitializeVariablesTests
       MethodInvNumberTests
       ModifiedControlVariableTests
+      MultipleStringLiteralsTests
       NamingConventionsTests
       NeedBracesTests
       NoCastsTests

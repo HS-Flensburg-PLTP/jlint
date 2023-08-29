@@ -12,6 +12,7 @@ import qualified ExplicitValueTests
 import qualified InitializeVariablesTests
 import qualified MethodInvNumberTests
 import qualified ModifiedControlVariableTests
+import qualified MultipleStringLiteralsTests
 import qualified NamingConventionsTests
 import qualified NeedBracesTests
 import qualified NoCastsTests
@@ -56,6 +57,7 @@ tests =
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
       "MethodInvNumber" ~: MethodInvNumberTests.tests,
       "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
+      "MultipleStringLiteralsTests" ~: MultipleStringLiteralsTests.tests,
       "NamingConventions" ~: NamingConventionsTests.tests,
       "NeedBraces" ~: NeedBracesTests.tests,
       "NoCasts" ~: NoCastsTests.tests,
