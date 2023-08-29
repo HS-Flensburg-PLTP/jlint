@@ -1,49 +1,41 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Language.Java.Rules.NoLoopBreak (check) where
 
-import Control.Monad.Reader
 import Data.Generics.Uniplate.Data (universeBi)
-import Language.Java.AST (extractMethods)
-import Language.Java.SourceSpan (dummySourceSpan)
+import Data.List.Extra ((//))
+import Language.Java.SourceSpan (sourceSpan)
 import Language.Java.Syntax
+import qualified Language.Java.Syntax.Stmt as Stmt
+import qualified Language.Java.Syntax.Stmt.Extra as Stmt.Extra
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  methods <- extractMethods cUnit
-  checkStatements methods path
+  loop <- filter Stmt.Extra.isLoop (universeBi cUnit)
+  checkLoop loop path
 
-checkStatements :: (String, MethodBody Parsed) -> FilePath -> [RDF.Diagnostic]
-checkStatements (methodName, methodBody) path = do
-  stmt <- universeBi methodBody
-  runReader (checkStatement stmt) (methodName, path)
-
-checkStatement :: Stmt Parsed -> Reader (String, FilePath) [RDF.Diagnostic]
-checkStatement (While _ _ stmt) = checkLoop stmt
-checkStatement (Do _ stmt _) = checkLoop stmt
-checkStatement (BasicFor _ _ _ _ stmt) = checkLoop stmt
-checkStatement (EnhancedFor _ _ _ _ _ stmt) = checkLoop stmt
-checkStatement _ = return []
-
-checkLoop :: Stmt Parsed -> Reader (String, FilePath) [RDF.Diagnostic]
-checkLoop (StmtBlock (Block _ block)) = extractLoopBody block
-checkLoop (IfThen _ _ stmt) = checkLoop stmt
-checkLoop (IfThenElse _ _ stmt1 stmt2) = do
-  stm1 <- checkLoop stmt1
-  stm2 <- checkLoop stmt2
-  return (stm1 ++ stm2)
-checkLoop (Return _ _) = do
-  (_, path) <- ask
-  return [RDF.rangeDiagnostic "Language.Java.Rules.NoLoopBreak" "Exit Loop with return" dummySourceSpan path]
-checkLoop (Break _ _) = do
-  (_, path) <- ask
-  return [RDF.rangeDiagnostic "Language.Java.Rules.NoLoopBreak" "Exit Loop with break" dummySourceSpan path]
-checkLoop stmt = checkStatement stmt
-
-extractLoopBody :: [BlockStmt Parsed] -> Reader (String, FilePath) [RDF.Diagnostic]
-extractLoopBody ((BlockStmt block) : xs) = do
-  stmtblock <- checkLoop block
-  elb <- extractLoopBody xs
-  return (stmtblock ++ elb)
-extractLoopBody ((LocalClass _) : xs) = extractLoopBody xs
-extractLoopBody ((LocalVars {}) : xs) = extractLoopBody xs
-extractLoopBody [] = return []
+checkLoop :: Stmt Parsed -> FilePath -> [RDF.Diagnostic]
+checkLoop loop path =
+  -- discarding first element of `universeBi loop` (will always be `loop` itself)
+  -- there is no function getting ALL children, but excluding itself
+  let loopBodyStmts = tail (universeBi loop :: [Stmt Parsed])
+      shallowStmts = loopBodyStmts // universeBi (filter Stmt.Extra.isLoop loopBodyStmts)
+   in map
+        ( \stmt ->
+            RDF.rangeDiagnostic
+              "Language.Java.Rules.NoLoopBreak"
+              "Eine Schleife sollte nicht mit einem Return beendet werden."
+              (sourceSpan stmt)
+              path
+        )
+        (filter Stmt.isReturn shallowStmts)
+        ++ map
+          ( \stmt ->
+              RDF.rangeDiagnostic
+                "Language.Java.Rules.NoLoopBreak"
+                "Eine Schleife sollte nicht mit einem Break beendet werden."
+                (sourceSpan stmt)
+                path
+          )
+          (filter Stmt.isBreak (shallowStmts // universeBi (filter Stmt.isSwitch loopBodyStmts)))

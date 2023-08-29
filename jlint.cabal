@@ -49,11 +49,14 @@ library
       Language.Java.Rules.NamingConventions
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoCasts
+      Language.Java.Rules.NoFurtherDataStructures
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNullPointerExceptionsForControl
+      Language.Java.Rules.NoPostIncDecInExpression
       Language.Java.Rules.ParameterNumber
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ProhibitAnnotations
+      Language.Java.Rules.ProhibitGermanNames
       Language.Java.Rules.ProhibitMyIdentPrefix
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.RedundantModifiers
@@ -65,13 +68,9 @@ library
       Language.Java.Rules.UseIncrementDecrementOperator
       Language.Java.Rules.UseJavaArrayTypeStyle
       Language.Java.Rules.UsePostIncrementDecrement
-      Language.Java.Syntax.BlockStmt
-      Language.Java.Syntax.Exp
-      Language.Java.Syntax.Ident
-      Language.Java.Syntax.Modifier
-      Language.Java.Syntax.Stmt
-      Language.Java.Syntax.VarDecl
-      Language.Java.Syntax.VarInit
+      Language.Java.Syntax.BlockStmt.Extra
+      Language.Java.Syntax.Exp.Extra
+      Language.Java.Syntax.Stmt.Extra
       Markdown
       RDF
   other-modules:
@@ -91,7 +90,9 @@ library
     , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
     , parsec >=3.1.14.0 && <3.2
+    , process >=1
     , regex >=1.1.0 && <1.2
+    , text >=1.2.4.1
     , uniplate >=1.6.11 && <1.7
   default-language: Haskell2010
 
@@ -115,7 +116,9 @@ executable jlint
     , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
     , parsec >=3.1.14.0 && <3.2
+    , process >=1
     , regex >=1.1.0 && <1.2
+    , text >=1.2.4.1
     , uniplate >=1.6.11 && <1.7
   default-language: Haskell2010
 
@@ -141,11 +144,14 @@ test-suite jlint-test
       NamingConventionsTests
       NeedBracesTests
       NoCastsTests
+      NoFurtherDataStructuresTests
       NoLoopBreakTests
       NoNullPointerExceptionsForControlTests
+      NoPostIncDecInExpressionTests
       ParameterNumberTests
       PreferExpressionsTests
       ProhibitAnnotationsTests
+      ProhibitGermanNamesTests
       ProhibitMyIdentPrefixTests
       ReduceScopeTests
       RedundantModifiersTests
@@ -177,8 +183,10 @@ test-suite jlint-test
     , mtl >=2.2.2 && <2.3
     , optparse-applicative >=0.16.1.0 && <1
     , parsec >=3.1.14.0 && <3.2
+    , process >=1
     , regex >=1.1.0 && <1.2
     , split >=0.2.3.4 && <0.3
+    , text >=1.2.4.1
     , uniplate >=1.6.11 && <1.7
     , unliftio >=0.2.21.0 && <1
   default-language: Haskell2010

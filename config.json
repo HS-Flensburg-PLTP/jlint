@@ -45,20 +45,22 @@
         "rule": "MultipleStringLiterals"
     },
     {
-        "rule": "NoNullPointerExceptionsForControl"
-    },
-    {
-        "rule": "ModifiedControlVariable"
-    },
-    {
-        "rule": "NeedBraces"
-    },
-    {
         "rule": "NoCasts",
-        "whitelist": ["foo"]
+        "whitelist": [
+            "foo"
+        ]
+    },
+    {
+        "rule": "NoFurtherDataStructures",
+        "methodNames": [
+            "set"
+        ]
     },
     {
         "rule": "NoNullPointerExceptionsForControl"
+    },
+    {
+        "rule": "NoPostIncDecInExpression"
     },
     {
         "rule": "ParameterNumber",
@@ -70,6 +72,9 @@
     {
         "rule": "ProhibitAnnotations",
         "whitelist": []
+    },
+    {
+        "rule": "ProhibitGermanNames"
     },
     {
         "rule": "ProhibitMyIdentPrefix"
@@ -94,8 +99,5 @@
     },
     {
         "rule": "UseJavaArrayTypeStyle"
-    },
-    {
-        "rule": "UsePostIncrementDecrement"
     }
 ]

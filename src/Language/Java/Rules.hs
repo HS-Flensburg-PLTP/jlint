@@ -1,6 +1,7 @@
 module Language.Java.Rules where
 
 import Config (Rule (..))
+import Control.Monad.Extra (concatMapM)
 import qualified Language.Java.Rules.AvoidMultipleTopLevelDecl as AvoidMultipleTopLevelDecl
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
@@ -19,10 +20,14 @@ import qualified Language.Java.Rules.MultipleStringLiterals as MultipleStringLit
 import qualified Language.Java.Rules.NamingConventions as NamingConventions
 import qualified Language.Java.Rules.NeedBraces as NeedBraces
 import qualified Language.Java.Rules.NoCasts as NoCasts
+import qualified Language.Java.Rules.NoFurtherDataStructures as NoFurtherDataStructures
+import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
+import qualified Language.Java.Rules.NoPostIncDecInExpression as NoPostIncDecInExpression
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations
+import qualified Language.Java.Rules.ProhibitGermanNames as ProhibitGermanNames
 import qualified Language.Java.Rules.ProhibitMyIdentPrefix as ProhibitMyIdentPrefix
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
@@ -53,6 +58,7 @@ checks =
     MultipleStringLiterals.check,
     NeedBraces.check,
     NoNullPointerExceptionsForControl.check,
+    NoPostIncDecInExpression.check,
     ParameterNumber.check Nothing,
     PreferExpressions.check,
     ProhibitAnnotations.checkWithDefaultValue,
@@ -66,14 +72,28 @@ checks =
     UsePostIncrementDecrement.check
   ]
 
+checksIO :: [CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]]
+checksIO =
+  [ ProhibitGermanNames.check
+  ]
+
 checkAll :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkAll cUnit path = concatMap (\f -> f cUnit path) checks
+
+checkAllIO :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
+checkAllIO cUnit path = concatMapM (\f -> f cUnit path) checksIO
 
 checkWithConfig :: [Rule] -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic])
 checkWithConfig config cUnit path = concatMap (\f -> f cUnit path) (checkRule config)
 
+checkWithConfigIO :: [Rule] -> (CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic])
+checkWithConfigIO rulesIO cUnit path = concatMapM (\f -> f cUnit path) (checkRuleIO rulesIO)
+
 checkRule :: [Rule] -> [CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]]
 checkRule = map checkFromConfig
+
+checkRuleIO :: [Rule] -> [CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]]
+checkRuleIO = map checkFromConfigIO
 
 checkFromConfig :: Rule -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic])
 checkFromConfig AvoidMultipleTopLevelDecl = AvoidMultipleTopLevelDecl.check
@@ -94,7 +114,10 @@ checkFromConfig MultipleStringLiterals = MultipleStringLiterals.check
 checkFromConfig NamingConventions = NamingConventions.check
 checkFromConfig NeedBraces = NeedBraces.check
 checkFromConfig (NoCasts whitelist) = NoCasts.check whitelist
+checkFromConfig (NoFurtherDataStructures methodNames) = NoFurtherDataStructures.check methodNames
+checkFromConfig NoLoopBreak = NoLoopBreak.check
 checkFromConfig NoNullPointerExceptionsForControl = NoNullPointerExceptionsForControl.check
+checkFromConfig NoPostIncDecInExpression = NoPostIncDecInExpression.check
 checkFromConfig (ParameterNumber max) = ParameterNumber.check max
 checkFromConfig PreferExpressions = PreferExpressions.check
 checkFromConfig (ProhibitAnnotations whitelist) = ProhibitAnnotations.check whitelist
@@ -107,3 +130,8 @@ checkFromConfig UseElse = UseElse.check
 checkFromConfig UseIncrementDecrementOperator = UseIncrementDecrementOperator.check
 checkFromConfig UseJavaArrayTypeStyle = UseJavaArrayTypeStyle.check
 checkFromConfig UsePostIncrementDecrement = UsePostIncrementDecrement.check
+checkFromConfig _ = mempty
+
+checkFromConfigIO :: Rule -> (CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic])
+checkFromConfigIO ProhibitGermanNames = ProhibitGermanNames.check
+checkFromConfigIO _ = mempty
