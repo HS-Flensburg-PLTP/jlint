@@ -37,9 +37,13 @@
     },
     {
         "rule": "MethodInvNumber",
-        "called": "foo",
-        "limited": "bar",
-        "maxInv": 2
+        "limits": [
+            {
+                "checkMethod": "foo",
+                "limitMethod": "bar",
+                "maxInv": 2
+            }
+        ]
     },
     {
         "rule": "MultipleStringLiterals"
