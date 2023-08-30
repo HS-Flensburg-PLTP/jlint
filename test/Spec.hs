@@ -12,11 +12,14 @@ import qualified ExplicitValueTests
 import qualified InitializeVariablesTests
 import qualified MethodInvNumberTests
 import qualified ModifiedControlVariableTests
+import qualified MultipleStringLiteralsTests
 import qualified NamingConventionsTests
 import qualified NeedBracesTests
 import qualified NoCastsTests
+import qualified NoFurtherDataStructuresTests as NoFurtherDataStructures
 import qualified NoLoopBreakTests
 import qualified NoNullPointerExceptionsForControlTests
+import qualified NoPostIncDecInExpressionTests
 import qualified ParameterNumberTests
 import qualified PredictMethodNamesTests as PredictMethodNames
 import qualified PreferExpressionsTests
@@ -55,10 +58,13 @@ tests =
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
       "MethodInvNumber" ~: MethodInvNumberTests.tests,
       "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
+      "MultipleStringLiteralsTests" ~: MultipleStringLiteralsTests.tests,
       "NamingConventions" ~: NamingConventionsTests.tests,
       "NeedBraces" ~: NeedBracesTests.tests,
       "NoCasts" ~: NoCastsTests.tests,
+      "NoFurtherDataStructures" ~: NoFurtherDataStructures.tests,
       "NoLoopBreak" ~: NoLoopBreakTests.tests,
+      "NoPostIncDecInExpression" ~: NoPostIncDecInExpressionTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "ParameterNumber" ~: ParameterNumberTests.tests,
       "PredictMethodNames" ~: PredictMethodNames.tests,

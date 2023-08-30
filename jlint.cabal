@@ -45,11 +45,14 @@ library
       Language.Java.Rules.InitializeVariables
       Language.Java.Rules.MethodInvNumber
       Language.Java.Rules.ModifiedControlVariable
+      Language.Java.Rules.MultipleStringLiterals
       Language.Java.Rules.NamingConventions
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoCasts
+      Language.Java.Rules.NoFurtherDataStructures
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNullPointerExceptionsForControl
+      Language.Java.Rules.NoPostIncDecInExpression
       Language.Java.Rules.ParameterNumber
       Language.Java.Rules.PredictMethodNames
       Language.Java.Rules.PreferExpressions
@@ -66,13 +69,9 @@ library
       Language.Java.Rules.UseIncrementDecrementOperator
       Language.Java.Rules.UseJavaArrayTypeStyle
       Language.Java.Rules.UsePostIncrementDecrement
-      Language.Java.Syntax.BlockStmt
-      Language.Java.Syntax.Exp
-      Language.Java.Syntax.Ident
-      Language.Java.Syntax.Modifier
-      Language.Java.Syntax.Stmt
-      Language.Java.Syntax.VarDecl
-      Language.Java.Syntax.VarInit
+      Language.Java.Syntax.BlockStmt.Extra
+      Language.Java.Syntax.Exp.Extra
+      Language.Java.Syntax.Stmt.Extra
       Markdown
       RDF
   other-modules:
@@ -144,11 +143,14 @@ test-suite jlint-test
       InitializeVariablesTests
       MethodInvNumberTests
       ModifiedControlVariableTests
+      MultipleStringLiteralsTests
       NamingConventionsTests
       NeedBracesTests
       NoCastsTests
+      NoFurtherDataStructuresTests
       NoLoopBreakTests
       NoNullPointerExceptionsForControlTests
+      NoPostIncDecInExpressionTests
       ParameterNumberTests
       PreferExpressionsTests
       ProhibitAnnotationsTests

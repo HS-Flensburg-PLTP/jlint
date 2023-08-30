@@ -42,10 +42,7 @@
         "maxInv": 2
     },
     {
-        "rule": "ModifiedControlVariable"
-    },
-    {
-        "rule": "NeedBraces"
+        "rule": "MultipleStringLiterals"
     },
     {
         "rule": "NoCasts",
@@ -54,7 +51,16 @@
         ]
     },
     {
+        "rule": "NoFurtherDataStructures",
+        "methodNames": [
+            "set"
+        ]
+    },
+    {
         "rule": "NoNullPointerExceptionsForControl"
+    },
+    {
+        "rule": "NoPostIncDecInExpression"
     },
     {
         "rule": "ParameterNumber",
@@ -66,6 +72,9 @@
     {
         "rule": "ProhibitAnnotations",
         "whitelist": []
+    },
+    {
+        "rule": "ProhibitGermanNames"
     },
     {
         "rule": "ProhibitMyIdentPrefix"
@@ -90,8 +99,5 @@
     },
     {
         "rule": "UseJavaArrayTypeStyle"
-    },
-    {
-        "rule": "UsePostIncrementDecrement"
     }
 ]

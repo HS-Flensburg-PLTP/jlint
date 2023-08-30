@@ -1,5 +1,27 @@
 class NoLoopBreak {
     
+
+
+    public static void testFunc() {
+        int i = 0;
+        while (i < 10) {
+            i++;
+            label: break;
+        }
+    }
+
+    // Liefert 2 Hinweise obwohl nur einer bei der inneren geliefert werden soll !! TICKET FEHLER !!
+    public static void testFunc2() {
+        int i = 0;
+        while (i < 10) {
+            i++;
+            int j = 0;
+            while (j < 10) {
+                break;
+            }
+        }
+    }
+
     void foo() {
 
         String[] arr = { "a", "b", "c" };
@@ -76,6 +98,16 @@ class NoLoopBreak {
                 i++;
             }
         }
+        for(int o = 0; o < 5; o++) {
+            switch (i) {
+            case 5:
+                System.out.println(i);
+                break;
+            case 6: 
+                System.out.println(i);
+        }
+        }
+
     }
 
 }

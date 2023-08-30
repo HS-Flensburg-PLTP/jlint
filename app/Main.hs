@@ -4,12 +4,13 @@ import CheckstyleXML (toRDF)
 import Config (Rule)
 import Control.Exception
 import Control.Monad (MonadPlus (..), unless, when)
+import Control.Monad.Extra (concatMapM)
 import Data.Aeson (decodeFileStrict, eitherDecodeFileStrict)
 import qualified Data.ByteString.Lazy.Char8 as C
 import Data.Semigroup ((<>))
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
-import Language.Java.Rules (checkAll, checkAllIO, checkWithConfig)
+import Language.Java.Rules (checkAll, checkAllIO, checkWithConfig, checkWithConfigIO)
 import Language.Java.Syntax (CompilationUnit, Parsed)
 import Options.Applicative
 import RDF
@@ -131,9 +132,12 @@ parseJava rootDir pretty showAST checkstyleDiags =
                 Left error -> do
                   hPutStrLn stderr ("Error beim parsen der Config-Datei: " ++ error)
                   exitWith (ExitFailure 65)
-                Right config -> do
-                  return (concatMap (uncurry (checkWithConfig config)) cUnitResults)
-            else return (concatMap (uncurry checkAll) cUnitResults)
+                Right rules -> do
+                  diagnosticsIO <- concatMapM (uncurry (checkWithConfigIO rules)) cUnitResults
+                  return (concatMap (uncurry (checkWithConfig rules)) cUnitResults ++ diagnosticsIO)
+            else do
+              diagnosticsIO <- concatMapM (uncurry checkAllIO) cUnitResults
+              return (concatMap (uncurry checkAll) cUnitResults ++ diagnosticsIO)
 
         let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
         diagnosticsIO <- concatIORules cUnitResults
