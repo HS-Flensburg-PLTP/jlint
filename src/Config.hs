@@ -41,6 +41,7 @@ data Rule
   | NoNullPointerExceptionsForControl
   | NoPostIncDecInExpression
   | ParameterNumber {max :: Maybe Int}
+  | PredictMethodNames {whitelist :: [String]}
   | PreferExpressions
   | ProhibitAnnotations {whitelist :: [String]}
   | ProhibitGermanNames
@@ -81,6 +82,7 @@ instance FromJSON Rule where
       "NoNullPointerExceptionsForControl" -> pure NoNullPointerExceptionsForControl
       "NoPostIncDecInExpression" -> pure NoPostIncDecInExpression
       "ParameterNumber" -> parseParameterNumber obj
+      "PredictMethodNames" -> parsePredictMethodNames obj
       "PreferExpressions" -> pure PreferExpressions
       "ProhibitAnnotations" -> parseProhibitAnnotations obj
       "ProhibitGermanNames" -> pure ProhibitGermanNames
@@ -103,6 +105,9 @@ parseParameterNumber obj = do
 
 parseProhibitAnnotations :: Object -> Parser Rule
 parseProhibitAnnotations obj = ProhibitAnnotations <$> parseStringList obj "whitelist"
+
+parsePredictMethodNames :: Object -> Parser Rule
+parsePredictMethodNames obj = PredictMethodNames <$> parseStringList obj "whitelist"
 
 parseNoCasts :: Object -> Parser Rule
 parseNoCasts obj = NoCasts <$> parseStringList obj "whitelist"

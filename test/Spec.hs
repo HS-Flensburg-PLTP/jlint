@@ -21,6 +21,7 @@ import qualified NoLoopBreakTests
 import qualified NoNullPointerExceptionsForControlTests
 import qualified NoPostIncDecInExpressionTests
 import qualified ParameterNumberTests
+import qualified PredictMethodNamesTests as PredictMethodNames
 import qualified PreferExpressionsTests
 import qualified ProhibitAnnotationsTests
 import qualified ProhibitGermanNamesTests
@@ -66,6 +67,7 @@ tests =
       "NoPostIncDecInExpression" ~: NoPostIncDecInExpressionTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "ParameterNumber" ~: ParameterNumberTests.tests,
+      "PredictMethodNames" ~: PredictMethodNames.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ProhibitAnnotations" ~: ProhibitAnnotationsTests.tests,
       "ProhibitGermanNames" ~: ProhibitGermanNamesTests.tests,

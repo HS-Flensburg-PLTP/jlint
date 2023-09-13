@@ -25,6 +25,7 @@ import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
 import qualified Language.Java.Rules.NoPostIncDecInExpression as NoPostIncDecInExpression
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
+import qualified Language.Java.Rules.PredictMethodNames as PredictMethodNames
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations
 import qualified Language.Java.Rules.ProhibitGermanNames as ProhibitGermanNames
@@ -73,9 +74,6 @@ defaultConfig =
     UseJavaArrayTypeStyle,
     UsePostIncrementDecrement
   ]
-
-checkWithConfig :: [Rule] -> (CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic])
-checkWithConfig config cUnit path = concatMapM ((\f -> f cUnit path) . checkFromConfig) config
 
 checkFromConfig :: Rule -> (CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic])
 checkFromConfig AvoidMultipleTopLevelDecl = liftIO AvoidMultipleTopLevelDecl.check
