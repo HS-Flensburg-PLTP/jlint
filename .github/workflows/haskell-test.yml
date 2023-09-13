@@ -25,3 +25,5 @@ jobs:
 
     - name: Run stack test
       run: stack test --fast
+      env:
+        CODE2VEC: /opt/runner/code2vec
