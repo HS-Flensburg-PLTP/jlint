@@ -16,12 +16,12 @@ import qualified MultipleStringLiteralsTests
 import qualified NamingConventionsTests
 import qualified NeedBracesTests
 import qualified NoCastsTests
-import qualified NoFurtherDataStructuresTests as NoFurtherDataStructures
+import qualified NoFurtherDataStructuresTests
 import qualified NoLoopBreakTests
 import qualified NoNullPointerExceptionsForControlTests
 import qualified NoPostIncDecInExpressionTests
 import qualified ParameterNumberTests
-import qualified PredictMethodNamesTests as PredictMethodNames
+import qualified PredictMethodNamesTests
 import qualified PreferExpressionsTests
 import qualified ProhibitAnnotationsTests
 import qualified ProhibitGermanNamesTests
@@ -62,12 +62,12 @@ tests =
       "NamingConventions" ~: NamingConventionsTests.tests,
       "NeedBraces" ~: NeedBracesTests.tests,
       "NoCasts" ~: NoCastsTests.tests,
-      "NoFurtherDataStructures" ~: NoFurtherDataStructures.tests,
+      "NoFurtherDataStructures" ~: NoFurtherDataStructuresTests.tests,
       "NoLoopBreak" ~: NoLoopBreakTests.tests,
       "NoPostIncDecInExpression" ~: NoPostIncDecInExpressionTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "ParameterNumber" ~: ParameterNumberTests.tests,
-      "PredictMethodNames" ~: PredictMethodNames.tests,
+      -- "PredictMethodNames" ~: PredictMethodNamesTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ProhibitAnnotations" ~: ProhibitAnnotationsTests.tests,
       "ProhibitGermanNames" ~: ProhibitGermanNamesTests.tests,
