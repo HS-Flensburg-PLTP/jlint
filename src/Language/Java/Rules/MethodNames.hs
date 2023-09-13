@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Language.Java.Rules.PredictMethodNames where
+module Language.Java.Rules.MethodNames where
 
 import Data.Aeson (FromJSON, decode)
 import qualified Data.ByteString.Lazy.Char8 as C (pack)

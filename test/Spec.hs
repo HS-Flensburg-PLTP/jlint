@@ -11,6 +11,7 @@ import qualified DefaultComesLastTests
 import qualified ExplicitValueTests
 import qualified InitializeVariablesTests
 import qualified MethodInvNumberTests
+import qualified MethodNamesTests
 import qualified ModifiedControlVariableTests
 import qualified MultipleStringLiteralsTests
 import qualified NamingConventionsTests
@@ -21,7 +22,6 @@ import qualified NoLoopBreakTests
 import qualified NoNullPointerExceptionsForControlTests
 import qualified NoPostIncDecInExpressionTests
 import qualified ParameterNumberTests
-import qualified PredictMethodNamesTests
 import qualified PreferExpressionsTests
 import qualified ProhibitAnnotationsTests
 import qualified ProhibitGermanNamesTests
@@ -57,6 +57,7 @@ tests =
       "ExplicitValue" ~: ExplicitValueTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
       "MethodInvNumber" ~: MethodInvNumberTests.tests,
+      -- "MethodNames" ~: MethodNamesTests.tests,
       "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
       "MultipleStringLiteralsTests" ~: MultipleStringLiteralsTests.tests,
       "NamingConventions" ~: NamingConventionsTests.tests,
@@ -67,7 +68,6 @@ tests =
       "NoPostIncDecInExpression" ~: NoPostIncDecInExpressionTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "ParameterNumber" ~: ParameterNumberTests.tests,
-      -- "PredictMethodNames" ~: PredictMethodNamesTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "ProhibitAnnotations" ~: ProhibitAnnotationsTests.tests,
       "ProhibitGermanNames" ~: ProhibitGermanNamesTests.tests,

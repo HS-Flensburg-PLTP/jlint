@@ -31,6 +31,7 @@ data Rule
   | ExplicitValue
   | InitializeVariables
   | MethodInvNumber {called :: String, limited :: String, maxInv :: Int}
+  | MethodNames {whitelist :: [String]}
   | ModifiedControlVariable
   | MultipleStringLiterals
   | NamingConventions
@@ -41,7 +42,6 @@ data Rule
   | NoNullPointerExceptionsForControl
   | NoPostIncDecInExpression
   | ParameterNumber {max :: Maybe Int}
-  | PredictMethodNames {whitelist :: [String]}
   | PreferExpressions
   | ProhibitAnnotations {whitelist :: [String]}
   | ProhibitGermanNames
@@ -72,6 +72,7 @@ instance FromJSON Rule where
       "ExplicitValue" -> pure ExplicitValue
       "InitializeVariables" -> pure InitializeVariables
       "MethodInvNumber" -> parseMethodInvNumber obj
+      "MethodNames" -> parseMethodNames obj
       "ModifiedControlVariable" -> pure ModifiedControlVariable
       "MultipleStringLiterals" -> pure MultipleStringLiterals
       "NamingConventions" -> pure NamingConventions
@@ -82,7 +83,6 @@ instance FromJSON Rule where
       "NoNullPointerExceptionsForControl" -> pure NoNullPointerExceptionsForControl
       "NoPostIncDecInExpression" -> pure NoPostIncDecInExpression
       "ParameterNumber" -> parseParameterNumber obj
-      "PredictMethodNames" -> parsePredictMethodNames obj
       "PreferExpressions" -> pure PreferExpressions
       "ProhibitAnnotations" -> parseProhibitAnnotations obj
       "ProhibitGermanNames" -> pure ProhibitGermanNames
@@ -103,11 +103,11 @@ parseParameterNumber obj = do
   checkNoExtraKeys obj ["max"]
   pure (ParameterNumber max)
 
+parseMethodNames :: Object -> Parser Rule
+parseMethodNames obj = MethodNames <$> parseStringList obj "whitelist"
+
 parseProhibitAnnotations :: Object -> Parser Rule
 parseProhibitAnnotations obj = ProhibitAnnotations <$> parseStringList obj "whitelist"
-
-parsePredictMethodNames :: Object -> Parser Rule
-parsePredictMethodNames obj = PredictMethodNames <$> parseStringList obj "whitelist"
 
 parseNoCasts :: Object -> Parser Rule
 parseNoCasts obj = NoCasts <$> parseStringList obj "whitelist"

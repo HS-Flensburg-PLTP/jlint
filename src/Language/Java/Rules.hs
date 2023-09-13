@@ -2,6 +2,7 @@ module Language.Java.Rules (defaultConfig, checkWithConfig) where
 
 import Config (Rule (..))
 import Control.Monad.Extra (concatMapM)
+import Data.List.NonEmpty (NonEmpty (..))
 import qualified Language.Java.Rules.AvoidMultipleTopLevelDecl as AvoidMultipleTopLevelDecl
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
@@ -15,6 +16,7 @@ import qualified Language.Java.Rules.DefaultComesLast as DefaultComesLast
 import qualified Language.Java.Rules.ExplicitValue as ExplicitValue
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
 import qualified Language.Java.Rules.MethodInvNumber as MethodInvNumber
+import qualified Language.Java.Rules.MethodNames as MethodNames
 import qualified Language.Java.Rules.ModifiedControlVariable as ModifiedControlVariable
 import qualified Language.Java.Rules.MultipleStringLiterals as MultipleStringLiterals
 import qualified Language.Java.Rules.NamingConventions as NamingConventions
@@ -25,7 +27,6 @@ import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
 import qualified Language.Java.Rules.NoPostIncDecInExpression as NoPostIncDecInExpression
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
-import qualified Language.Java.Rules.PredictMethodNames as PredictMethodNames
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations
 import qualified Language.Java.Rules.ProhibitGermanNames as ProhibitGermanNames
@@ -56,6 +57,7 @@ defaultConfig =
     ExplicitValue,
     InitializeVariables,
     -- MethodInvNumber
+    -- MethodNames,
     ModifiedControlVariable,
     MultipleStringLiterals,
     NamingConventions,
@@ -68,7 +70,7 @@ defaultConfig =
     ParameterNumber Nothing,
     -- PredictMethodNames
     PreferExpressions,
-    ProhibitAnnotations [],
+    ProhibitAnnotations ["Override"],
     ProhibitGermanNames,
     ProhibitMyIdentPrefix,
     ReduceScope,
@@ -98,6 +100,7 @@ checkFromConfig DefaultComesLast = liftIO DefaultComesLast.check
 checkFromConfig ExplicitValue = liftIO ExplicitValue.check
 checkFromConfig InitializeVariables = liftIO InitializeVariables.check
 checkFromConfig (MethodInvNumber called limited maxInv) = liftIO (MethodInvNumber.check called limited maxInv)
+checkFromConfig (MethodNames methods) = MethodNames.check methods
 checkFromConfig ModifiedControlVariable = liftIO ModifiedControlVariable.check
 checkFromConfig MultipleStringLiterals = liftIO MultipleStringLiterals.check
 checkFromConfig NamingConventions = liftIO NamingConventions.check
@@ -108,7 +111,6 @@ checkFromConfig NoLoopBreak = liftIO NoLoopBreak.check
 checkFromConfig NoNullPointerExceptionsForControl = liftIO NoNullPointerExceptionsForControl.check
 checkFromConfig NoPostIncDecInExpression = liftIO NoPostIncDecInExpression.check
 checkFromConfig (ParameterNumber maybeMax) = liftIO (ParameterNumber.check maybeMax)
-checkFromConfig (PredictMethodNames methods) = PredictMethodNames.check methods
 checkFromConfig PreferExpressions = liftIO PreferExpressions.check
 checkFromConfig (ProhibitAnnotations whitelist) = liftIO (ProhibitAnnotations.check whitelist)
 checkFromConfig ProhibitGermanNames = ProhibitGermanNames.check

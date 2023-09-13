@@ -1,6 +1,6 @@
-module PredictMethodNamesTests where
+module MethodNamesTests where
 
-import Language.Java.Rules.PredictMethodNames as PredictMethodNames (check)
+import Language.Java.Rules.MethodNames as MethodNames (check)
 import Language.Java.Syntax (CompilationUnit)
 import qualified RDF
 import Test.HUnit
@@ -10,8 +10,8 @@ tests :: Test
 tests =
   rangesIOTest
     expectedRanges
-    "PredictMethodNames.java"
-    (PredictMethodNames.check ["powerOf", "faculty"])
+    "MethodNames.java"
+    (MethodNames.check ["powerOf", "faculty"])
 
 expectedRanges :: [RDF.Range]
 expectedRanges =
