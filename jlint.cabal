@@ -7,11 +7,11 @@ cabal-version: 1.12
 name:           jlint
 version:        0.1.0.0
 description:    Please see the README on GitHub at <https://github.com/githubuser/jlint#readme>
-homepage:       https://github.com/githubuser/jlint#readme
-bug-reports:    https://github.com/githubuser/jlint/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2022 Author name here
+homepage:       https://github.com/hsfl-pltp/jlint#readme
+bug-reports:    https://github.com/hsfl-pltp/jlint/issues
+author:         Jan Christiansen
+maintainer:     jan.christiansen@hs-flensburg.de
+copyright:      2022 Jan Christiansen
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
@@ -21,7 +21,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/jlint
+  location: https://github.com/hsfl-pltp/jlint
 
 library
   exposed-modules:
@@ -80,22 +80,23 @@ library
       src
   ghc-options: -Wall -Wno-name-shadowing
   build-depends:
-      HaXml >=1.25.9 && <1.26
-    , aeson >=2.0.3 && <2.1
-    , base >=4.7 && <5
-    , bytestring >=0.10.12.1 && <0.11
-    , containers >=0.6.4.1 && <0.7
+      HaXml
+    , aeson
+    , base
+    , bytestring
+    , containers
     , directory
-    , filemanip >=0.3.6.3 && <0.4
-    , language-java >=0.2.9 && <3
-    , mtl >=2.2.2 && <2.3
-    , optparse-applicative >=0.16.1.0 && <1
-    , parsec >=3.1.14.0 && <3.2
-    , process >=1
-    , regex >=1.1.0 && <1.2
-    , split >=0.2.3.4
-    , text >=1.2.4.1
-    , uniplate >=1.6.11 && <1.7
+    , filemanip
+    , filepath
+    , language-java
+    , mtl
+    , optparse-applicative
+    , parsec
+    , process
+    , regex
+    , split
+    , text
+    , uniplate
   default-language: Haskell2010
 
 executable jlint
@@ -106,23 +107,24 @@ executable jlint
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      HaXml >=1.25.9 && <1.26
-    , aeson >=2.0.3 && <2.1
-    , base >=4.7 && <5
-    , bytestring >=0.10.12.1 && <0.11
-    , containers >=0.6.4.1 && <0.7
+      HaXml
+    , aeson
+    , base
+    , bytestring
+    , containers
     , directory
-    , filemanip >=0.3.6.3 && <0.4
+    , filemanip
+    , filepath
     , jlint
-    , language-java >=0.2.9 && <3
-    , mtl >=2.2.2 && <2.3
-    , optparse-applicative >=0.16.1.0 && <1
-    , parsec >=3.1.14.0 && <3.2
-    , process >=1
-    , regex >=1.1.0 && <1.2
-    , split >=0.2.3.4
-    , text >=1.2.4.1
-    , uniplate >=1.6.11 && <1.7
+    , language-java
+    , mtl
+    , optparse-applicative
+    , parsec
+    , process
+    , regex
+    , split
+    , text
+    , uniplate
   default-language: Haskell2010
 
 test-suite jlint-test
@@ -152,6 +154,7 @@ test-suite jlint-test
       NoNullPointerExceptionsForControlTests
       NoPostIncDecInExpressionTests
       ParameterNumberTests
+      PredictMethodNamesTests
       PreferExpressionsTests
       ProhibitAnnotationsTests
       ProhibitGermanNamesTests
@@ -171,25 +174,23 @@ test-suite jlint-test
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      HUnit >=1.6.2.0 && <2
-    , HaXml >=1.25.9 && <1.26
-    , MissingH >=1.5.0.1 && <1.6
-    , aeson >=2.0.3 && <2.1
-    , base >=4.7 && <5
-    , bytestring >=0.10.12.1 && <0.11
-    , containers >=0.6.4.1 && <0.7
-    , directory >=1.3.6.2 && <2
-    , filemanip >=0.3.6.3 && <0.4
-    , filepath >=1.4.2.1 && <1.5
+      HUnit
+    , HaXml
+    , aeson
+    , base
+    , bytestring
+    , containers
+    , directory
+    , filemanip
+    , filepath
     , jlint
-    , language-java >=0.2.9 && <3
-    , mtl >=2.2.2 && <2.3
-    , optparse-applicative >=0.16.1.0 && <1
-    , parsec >=3.1.14.0 && <3.2
-    , process >=1
-    , regex >=1.1.0 && <1.2
-    , split >=0.2.3.4 && <0.3
-    , text >=1.2.4.1
-    , uniplate >=1.6.11 && <1.7
-    , unliftio >=0.2.21.0 && <1
+    , language-java
+    , mtl
+    , optparse-applicative
+    , parsec
+    , process
+    , regex
+    , split
+    , text
+    , uniplate
   default-language: Haskell2010
