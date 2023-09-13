@@ -6,15 +6,17 @@
 module Language.Java.Rules.NamingConventions (check) where
 
 import Control.Monad (MonadPlus (..))
-import Data.Function ((&))
+import Data.Foldable (toList)
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.List.Extra (none)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.List.NonEmpty as NonEmpty
-import Language.Java.AST (extractMethods)
-import Language.Java.SourceSpan (dummySourceSpan)
+import Language.Java.SourceSpan (sourceSpan)
 import Language.Java.Syntax
+import Language.Java.Syntax.Ident as Ident
 import qualified Language.Java.Syntax.Modifier as Modifier
+import Language.Java.Syntax.VarDecl as VarDecl
+import Language.Java.Syntax.VarDeclId as VarDeclId
 import qualified RDF
 import Text.RE.TDFA.String
 
@@ -22,192 +24,206 @@ check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path =
   concatMap
     (\c -> c cUnit path)
-    [ checkPackageName,
-      checkMethodName,
-      checkParameterName,
-      checkStaticVariableName,
-      checkLocalName,
-      checkMemberName,
-      checkTypeName
+    [ checkPackageNames,
+      checkMethodNames,
+      checkParameterNames,
+      checkStaticVariableNames,
+      checkLocalNames,
+      checkMemberNames,
+      checkTypeNames
     ]
 
 {- Package Name -}
 
-checkPackageName :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-checkPackageName (CompilationUnit (Just pDeckl) _ _) path = checkTLD (extractPackageNames pDeckl) path
-checkPackageName (CompilationUnit {}) _ = []
+checkPackageNames :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
+checkPackageNames (CompilationUnit (Just pDecl) _ _) path = checkTLD (extractPackageNames pDecl) path
+checkPackageNames (CompilationUnit {}) _ = []
 
-checkTLD :: NonEmpty String -> FilePath -> [RDF.Diagnostic]
-checkTLD (ident :| idents) path
-  | matched (ident ?=~ reTopLevelDomain) = checkRestPN idents path
-  | otherwise = RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" (packageNameMsg ident) dummySourceSpan path : checkRestPN idents path
+checkTLD :: NonEmpty Ident -> FilePath -> [RDF.Diagnostic]
+checkTLD (ident :| idents) path =
+  checkIdent path (Package First) ident ++ concatMap (checkIdent path (Package Rest)) idents
 
-checkRestPN :: [String] -> FilePath -> [RDF.Diagnostic]
-checkRestPN idents path =
-  idents
-    & filter
-      ( \ident ->
-          not
-            ( matched (ident ?=~ reRestDomain)
-            )
-      )
-    & map (\ident -> RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" (packageNameMsg ident) dummySourceSpan path)
-
-packageNameMsg :: String -> String
-packageNameMsg name = "PackageName element " ++ name ++ " does not match the specifications."
-
-extractPackageNames :: PackageDecl -> NonEmpty String
-extractPackageNames (PackageDecl (Name _ packageNames)) = NonEmpty.map (\(Ident _ name) -> name) packageNames
+extractPackageNames :: PackageDecl -> NonEmpty Ident
+extractPackageNames (PackageDecl (Name _ packageNames)) = packageNames
 
 {- MethodName -}
 
-checkMethodName :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-checkMethodName cUnit path = do
-  (methodName, _) <- extractMethods cUnit
-  checkMethodNames methodName path
-
-checkMethodNames :: String -> FilePath -> [RDF.Diagnostic]
-checkMethodNames name path
-  | matched (name ?=~ reCamelCase) = mzero
-  | otherwise = return (RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" (methodNameMsg name) dummySourceSpan path)
-  where
-    methodNameMsg name = "Methodname " ++ name ++ " does not match the specifications."
+checkMethodNames :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
+checkMethodNames cUnit path = do
+  MethodDecl _ _ _ _ ident _ _ _ _ :: MemberDecl Parsed <- universeBi cUnit
+  checkIdent path Method ident
 
 {- ParameterName -}
 
-checkParameterName :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-checkParameterName cUnit path = do
-  method <- extractFormalParams cUnit
-  checkParameterNames method path
-
-extractFormalParams :: CompilationUnit Parsed -> [(String, [String])]
-extractFormalParams cUnit = do
+checkParameterNames :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
+checkParameterNames cUnit path = do
   membDecl :: MemberDecl Parsed <- universeBi cUnit
-  extractBody membDecl
+  formalParam <- extractBody membDecl
+  checkIdent path Parameter formalParam
   where
-    extractBody (MethodDecl _ _ _ _ (Ident _ n) formalParams _ _ _) = return (n, map (\(FormalParam _ _ _ _ varDeclIds) -> extractFormalParamName varDeclIds) formalParams)
+    extractBody (MethodDecl _ _ _ _ _ formalParams _ _ _) = map (\(FormalParam _ _ _ _ varDeclIds) -> VarDeclId.ident varDeclIds) formalParams
     extractBody _ = mzero
-
-checkParameterNames :: (String, [String]) -> FilePath -> [RDF.Diagnostic]
-checkParameterNames (_, formalParams) path =
-  formalParams
-    & filter (\name -> not (matched (name ?=~ reCamelCase)))
-    & map (\name -> RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" ("parameter " ++ name ++ " doesn't match the specifications.") dummySourceSpan path)
 
 {- StaticVariableName -}
 
-checkStaticVariableName :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-checkStaticVariableName cUnit path = do
-  membDecl <- extractStaticFieldNames cUnit
-  checkStaticVariableNames membDecl path
+checkStaticVariableNames :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
+checkStaticVariableNames cUnit path = do
+  staticVariable <- extractStaticFieldNames cUnit
+  checkIdent path StaticVariable staticVariable
 
-extractStaticFieldNames :: CompilationUnit Parsed -> [String]
+extractStaticFieldNames :: CompilationUnit Parsed -> [Ident]
 extractStaticFieldNames cUnit = do
   fieldNames <- universeBi cUnit
   extractMemberDecl fieldNames
   where
+    extractMemberDecl :: MemberDecl Parsed -> [Ident]
     extractMemberDecl (FieldDecl _ modifier _ varDecls)
-      | any Modifier.isStatic modifier = map extractVarName (NonEmpty.toList varDecls)
+      | any Modifier.isStatic modifier = map VarDecl.ident (NonEmpty.toList varDecls)
       | otherwise = mzero
     extractMemberDecl _ = mzero
 
-checkStaticVariableNames :: String -> FilePath -> [RDF.Diagnostic]
-checkStaticVariableNames name path
-  | matched (name ?=~ reCamelCase) = mzero
-  | otherwise = return (RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" ("Static variable " ++ name ++ " doesn't match the specifications.") dummySourceSpan path)
-
 {- LocalFinalVariableName & LocalVariableName -}
 
-checkLocalName :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-checkLocalName cUnit path = do
-  method <- extractMethods cUnit
-  extractLocalFinalVariableNames2 method path
-
-extractLocalFinalVariableNames2 :: (String, MethodBody Parsed) -> FilePath -> [RDF.Diagnostic]
-extractLocalFinalVariableNames2 (_, methodBody) path = do
-  fieldNames <- universeBi methodBody
-  extractMemberDecl fieldNames
+checkLocalNames :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
+checkLocalNames cUnit path = do
+  MethodDecl _ _ _ _ _ _ _ _ body :: MemberDecl Parsed <- universeBi cUnit
+  fieldNames <- universeBi body
+  (ident, modifier) <- extractMemberDecl fieldNames
+  checkIdent path (LocalVariable modifier) ident
   where
-    extractMemberDecl (LocalVars _ modifier _ varDecls)
-      | any Modifier.isFinal modifier =
-          NonEmpty.map extractVarName varDecls
-            & NonEmpty.filter (\name -> not (matched (name ?=~ reCamelCase)))
-            & map (\name -> RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" ("Local final variable " ++ name ++ " doesn't match the specifications") dummySourceSpan path)
-      | otherwise =
-          NonEmpty.map extractVarName varDecls
-            & NonEmpty.filter (\name -> not (matched (name ?=~ reCamelCase)))
-            & map (\name -> RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" ("Local non-final variable " ++ name ++ " doesn't match the specifications") dummySourceSpan path)
+    extractMemberDecl :: BlockStmt Parsed -> [(Ident, VariableModifier)]
+    extractMemberDecl (LocalVars _ modifier _ varDecls) =
+      toList (fmap (\varDecl -> (VarDecl.ident varDecl, if any Modifier.isFinal modifier then FinalVariable else NonFinalVariable)) varDecls)
     extractMemberDecl _ = mzero
 
 {- MemberName -}
 
-checkMemberName :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-checkMemberName cUnit path = do
-  varNames <- extractNonStaticFieldNames cUnit
-  checkMemberNames varNames path
-
-extractNonStaticFieldNames :: CompilationUnit Parsed -> [String]
-extractNonStaticFieldNames cUnit = do
+checkMemberNames :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
+checkMemberNames cUnit path = do
   fieldNames <- universeBi cUnit
-  extractMemberDecl fieldNames
+  member <- extractMemberDecl fieldNames
+  checkIdent path InstanceVariable member
   where
+    extractMemberDecl :: MemberDecl Parsed -> [Ident]
     extractMemberDecl (FieldDecl _ modifier _ varDecls)
-      | none Modifier.isStatic modifier = map extractVarName (NonEmpty.toList varDecls)
+      | none Modifier.isStatic modifier = map VarDecl.ident (NonEmpty.toList varDecls)
       | otherwise = mzero
     extractMemberDecl _ = mzero
 
-checkMemberNames :: String -> FilePath -> [RDF.Diagnostic]
-checkMemberNames name path
-  | matched (name ?=~ reCamelCase) = mzero
-  | otherwise = return (RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" ("Instance variable " ++ name ++ " doesn't match the specifications.") dummySourceSpan path)
-
 {- TypeName -}
 
-checkTypeName :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-checkTypeName cUnit = checkTypeNames (extractCLassesAndInterfaces cUnit ++ extractEnums cUnit)
+checkTypeNames :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
+checkTypeNames cUnit path = do
+  typeName <- extractCLassesAndInterfaces cUnit ++ extractEnums cUnit
+  checkIdent path Type typeName
 
-extractCLassesAndInterfaces :: CompilationUnit Parsed -> [String]
+extractCLassesAndInterfaces :: CompilationUnit Parsed -> [Ident]
 extractCLassesAndInterfaces cUnit = do
   classesAndInterfaces :: TypeDecl Parsed <- universeBi cUnit
   extractCLassAndInterface classesAndInterfaces
   where
-    extractCLassAndInterface (ClassTypeDecl (ClassDecl _ _ (Ident _ n) _ _ _ _)) = return n
-    extractCLassAndInterface (InterfaceTypeDecl (InterfaceDecl _ _ _ (Ident _ n) _ _ _ _)) = return n
+    extractCLassAndInterface (ClassTypeDecl (ClassDecl _ _ ident _ _ _ _)) = return ident
+    extractCLassAndInterface (InterfaceTypeDecl (InterfaceDecl _ _ _ ident _ _ _ _)) = return ident
     extractCLassAndInterface _ = mzero
 
-extractEnums :: CompilationUnit Parsed -> [String]
+extractEnums :: CompilationUnit Parsed -> [Ident]
 extractEnums cUnit = do
   enums :: ClassDecl Parsed <- universeBi cUnit
   extractEnum enums
   where
-    extractEnum (EnumDecl _ _ (Ident _ n) _ _) = return n
+    extractEnum (EnumDecl _ _ ident _ _) = return ident
     extractEnum _ = mzero
 
-checkTypeNames :: [String] -> FilePath -> [RDF.Diagnostic]
-checkTypeNames names path =
-  names
-    & filter (\name -> not (matched (name ?=~ rePascalCase)))
-    & map (\name -> RDF.rangeDiagnostic "Language.Java.Rules.NamingConventions" ("Type name " ++ name ++ " doesn't match the specifications.") dummySourceSpan path)
+nameDiagnostic :: FilePath -> VariableKind -> Convention -> Ident -> RDF.Diagnostic
+nameDiagnostic path variableKind convention ident =
+  RDF.rangeDiagnostic
+    "Language.Java.Rules.NamingConventions"
+    ( "Der Name "
+        ++ Ident.name ident
+        ++ " entspricht nicht der Java-Namenskonvention. Der Name "
+        ++ variableKindToString variableKind
+        ++ " sollte "
+        ++ conventionToString convention
+        ++ " verwenden."
+    )
+    (sourceSpan ident)
+    path
+
+{- -}
+
+checkIdent :: FilePath -> VariableKind -> Ident -> [RDF.Diagnostic]
+checkIdent path variableKind ident
+  | matched (Ident.name ident ?=~ regex conv) = mzero
+  | otherwise = return (nameDiagnostic path variableKind conv ident)
+  where
+    conv = convention variableKind
+
+{- -}
+
+data VariableModifier
+  = FinalVariable
+  | NonFinalVariable
+
+data Part
+  = First
+  | Rest
+
+data VariableKind
+  = Package Part
+  | Type
+  | Method
+  | StaticVariable
+  | Parameter
+  | InstanceVariable
+  | LocalVariable VariableModifier
+
+variableKindToString :: VariableKind -> String
+variableKindToString (Package part) = "des " ++ partToString part ++ " Teils eines Pakets"
+  where
+    partToString First = "ersten"
+    partToString Rest = "restlichen"
+variableKindToString Type = "eines Typs"
+variableKindToString Method = "einer Methode"
+variableKindToString StaticVariable = "einer statischen Variable"
+variableKindToString Parameter = "eines Parameters"
+variableKindToString InstanceVariable = "einer Instanzvariable"
+variableKindToString (LocalVariable modifier) = "einer lokalen " ++ modifierToString modifier ++ " Variable"
+  where
+    modifierToString FinalVariable = "finalen"
+    modifierToString NonFinalVariable = "nicht finalen"
+
+convention :: VariableKind -> Convention
+convention (Package First) = PackageCase Lower
+convention (Package Rest) = PackageCase LowerAndUpper
+convention Type = PascalCase
+convention Method = CamelCase
+convention StaticVariable = CamelCase
+convention Parameter = CamelCase
+convention InstanceVariable = CamelCase
+convention (LocalVariable FinalVariable) = CamelCase
+convention (LocalVariable NonFinalVariable) = CamelCase
+
+data LetterCase
+  = Lower
+  | LowerAndUpper
+
+data Convention
+  = PascalCase
+  | CamelCase
+  | PackageCase LetterCase
+
+conventionToString :: Convention -> String
+conventionToString PascalCase = "\"Pascal Case\""
+conventionToString CamelCase = "\"Camel Case\""
+conventionToString (PackageCase letterCase) = "den Java-Paket-Stil mit " ++ letterCaseToString letterCase ++ " Buchstaben"
+  where
+    letterCaseToString Lower = "kleinen"
+    letterCaseToString LowerAndUpper = "kleinen und großen"
 
 {- Regular Expressions -}
 
-reTopLevelDomain :: RE
-reTopLevelDomain = [re|^[a-z]*$|]
-
-reRestDomain :: RE
-reRestDomain = [re|^[a-zA-Z_][a-zA-Z0-9_]*$|]
-
-reCamelCase :: RE
-reCamelCase = [re|^[a-z][a-zA-Z0-9]*$|]
-
-rePascalCase :: RE
-rePascalCase = [re|^[A-Z][a-zA-Z0-9]*$|]
-
-{- Helper -}
-
-extractVarName :: VarDecl Parsed -> String
-extractVarName (VarDecl _ id _) = extractFormalParamName id
-
-extractFormalParamName :: VarDeclId -> String
-extractFormalParamName (VarId (Ident _ name)) = name
-extractFormalParamName (VarDeclArray _ varDeclId) = extractFormalParamName varDeclId
+regex :: Convention -> RE
+regex PascalCase = [re|^[A-Z][a-zA-Z0-9]*$|]
+regex CamelCase = [re|^[a-z][a-zA-Z0-9]*$|]
+regex (PackageCase Lower) = [re|^[a-z]*$|]
+regex (PackageCase LowerAndUpper) = [re|^[a-zA-Z_][a-zA-Z0-9_]*$|]
