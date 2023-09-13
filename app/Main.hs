@@ -130,41 +130,43 @@ parseJava rootDir pretty showAST maybeConfigFile checkstyleDiags = do
     then do
       print cUnitResults
     else do
-      config <- case maybeConfigFile of
+      eitherConfig <- case maybeConfigFile of
         Just configFile -> do
           configExists <- doesFileExist configFile
           if configExists
             then do
               eitherConfig <- eitherDecodeFileStrict configFile :: IO (Either String [Rule])
               case eitherConfig of
-                Left error -> do
-                  hPutStrLn stderr ("Error beim parsen der Config-Datei: " ++ error ++ "Verwende Standard-Config.")
-                  return defaultConfig
-                Right config -> return config
+                Left error -> return (Left ("Error beim parsen der Config-Datei: " ++ error ++ " Verwende Standard-Config."))
+                Right config -> return (Right config)
             else do
-              hPutStrLn stderr ("Angegebene Config-Datei " ++ configFile ++ " existiert nicht. Verwende Standard-Config.")
-              return defaultConfig
-        Nothing -> return defaultConfig
-      diagnostics <- concatMapM (uncurry (checkWithConfig config)) cUnitResults
-      let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
-      let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
-      C.putStrLn
-        ( RDF.encodetojson
-            ( DiagnosticResult
-                { diagnostics = diagnosticResults,
-                  resultSource = Just (Source {name = "jlint", url = Nothing}),
-                  resultSeverity = RDF.checkSeverityList (map RDF.severity diagnosticResults) -- emmits highest severity of all results in all files
-                }
+              return (Left ("Angegebene Config-Datei " ++ configFile ++ " existiert nicht. Verwende Standard-Config."))
+        Nothing -> return (Right defaultConfig)
+      case eitherConfig of
+        Left error -> do
+          hPutStrLn stderr error
+          exitFailure
+        Right config -> do
+          diagnostics <- concatMapM (uncurry (checkWithConfig config)) cUnitResults
+          let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
+          let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
+          C.putStrLn
+            ( RDF.encodetojson
+                ( DiagnosticResult
+                    { diagnostics = diagnosticResults,
+                      resultSource = Just (Source {name = "jlint", url = Nothing}),
+                      resultSeverity = RDF.checkSeverityList (map RDF.severity diagnosticResults) -- emmits highest severity of all results in all files
+                    }
+                )
             )
-        )
-      unless (null parsingErrors) $ print parsingErrors
-      when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
+          unless (null parsingErrors) $ print parsingErrors
+          when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
 
-      let numberOfHints = length diagnostics
-      if numberOfHints == 0
-        then do
-          hPutStrLn stderr ("jlint did not generate any hints for the Java code in directory " ++ rootDir)
-          exitSuccess
-        else do
-          hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
-          exitWith (ExitFailure numberOfHints)
+          let numberOfHints = length diagnostics
+          if numberOfHints == 0
+            then do
+              hPutStrLn stderr ("jlint did not generate any hints for the Java code in directory " ++ rootDir)
+              exitSuccess
+            else do
+              hPutStrLn stderr ("jlint has generated " ++ show numberOfHints ++ " hint(s) for the Java code in directory " ++ rootDir)
+              exitWith (ExitFailure numberOfHints)
