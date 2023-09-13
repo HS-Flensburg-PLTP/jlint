@@ -38,7 +38,7 @@ import Language.Java.Rules.UseElse as UseElse (check)
 import qualified Language.Java.Rules.UseIncrementDecrementOperator as UseIncrementDecrementOperator
 import qualified Language.Java.Rules.UseJavaArrayTypeStyle as UseJavaArrayTypeStyle
 import qualified Language.Java.Rules.UsePostIncrementDecrement as UsePostIncrementDecrement
-import Language.Java.Syntax
+import Language.Java.Syntax (CompilationUnit, Parsed)
 import qualified RDF
 
 defaultConfig :: [Rule]
@@ -75,7 +75,10 @@ defaultConfig =
     UsePostIncrementDecrement
   ]
 
-checkFromConfig :: Rule -> (CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic])
+checkWithConfig :: [Rule] -> CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
+checkWithConfig rules cUnit filePath = concatMapM (\rule -> checkFromConfig rule cUnit filePath) rules
+
+checkFromConfig :: Rule -> CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
 checkFromConfig AvoidMultipleTopLevelDecl = liftIO AvoidMultipleTopLevelDecl.check
 checkFromConfig AvoidMultipleVarDecl = liftIO AvoidMultipleVarDecl.check
 checkFromConfig AvoidNegations = liftIO AvoidNegations.check
@@ -99,6 +102,7 @@ checkFromConfig NoLoopBreak = liftIO NoLoopBreak.check
 checkFromConfig NoNullPointerExceptionsForControl = liftIO NoNullPointerExceptionsForControl.check
 checkFromConfig NoPostIncDecInExpression = liftIO NoPostIncDecInExpression.check
 checkFromConfig (ParameterNumber maybeMax) = liftIO (ParameterNumber.check maybeMax)
+checkFromConfig (PredictMethodNames methods) = PredictMethodNames.check methods
 checkFromConfig PreferExpressions = liftIO PreferExpressions.check
 checkFromConfig (ProhibitAnnotations whitelist) = liftIO (ProhibitAnnotations.check whitelist)
 checkFromConfig ProhibitGermanNames = ProhibitGermanNames.check

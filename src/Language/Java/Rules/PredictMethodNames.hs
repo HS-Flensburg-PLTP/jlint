@@ -14,6 +14,8 @@ import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
 import qualified Markdown
 import qualified RDF
+import System.Environment (lookupEnv)
+import System.FilePath ((</>))
 import System.Process
 
 minimumSuggestions :: Int
@@ -40,27 +42,33 @@ instance FromJSON PredictionSet
 
 predictMethodNames :: [MemberDecl Parsed] -> IO [(PredictionSet, SourceSpan)]
 predictMethodNames methodDecls = do
-  writeFile "../code2vec/Input.java" (concatMap prettyPrint methodDecls)
-  response <-
-    readProcess
-      "../code2vec/.venv/bin/python3.6"
-      [ "../code2vec/code2vec.py",
-        "--load",
-        "../code2vec/models/java14_model/saved_model_iter8.release",
-        "--predict"
-      ]
-      ""
-  let jsonData = splitOn "==========" response !! 1
-  let predictionSets = decode (C.pack jsonData) :: Maybe [PredictionSet]
-  case predictionSets of
-    Nothing -> return []
-    Just pss ->
-      return
-        ( zipWith
-            (\((MethodDecl _ _ _ _ (Ident sourceSpan _) _ _ _ _)) predictionSet -> (predictionSet, sourceSpan))
-            methodDecls
-            pss
-        )
+  maybePath <- lookupEnv "CODE2VEC"
+  case maybePath of
+    Nothing ->
+      -- The application should not crash here
+      error "CODE2VEC environment variable not set"
+    Just code2VecPath -> do
+      writeFile (code2VecPath </> "Input.java") (concatMap prettyPrint methodDecls)
+      response <-
+        readProcess
+          (code2VecPath </> ".venv/bin/python3")
+          [ code2VecPath </> " code2vec.py",
+            "--load",
+            code2VecPath </> "models/java14_model/saved_model_iter8.release",
+            "--predict"
+          ]
+          ""
+      let jsonData = splitOn "==========" response !! 1
+      let predictionSets = decode (C.pack jsonData) :: Maybe [PredictionSet]
+      case predictionSets of
+        Nothing -> return []
+        Just pss ->
+          return
+            ( zipWith
+                (\((MethodDecl _ _ _ _ (Ident sourceSpan _) _ _ _ _)) predictionSet -> (predictionSet, sourceSpan))
+                methodDecls
+                pss
+            )
 
 check :: [String] -> CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
 check whitelist cUnit path = do
