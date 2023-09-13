@@ -55,12 +55,18 @@ defaultConfig =
     DefaultComesLast,
     ExplicitValue,
     InitializeVariables,
+    -- MethodInvNumber
     ModifiedControlVariable,
+    MultipleStringLiterals,
+    NamingConventions,
     NeedBraces,
+    -- NoCasts
+    -- NoFurtherDataStructures
     NoLoopBreak,
     NoNullPointerExceptionsForControl,
     NoPostIncDecInExpression,
     ParameterNumber Nothing,
+    -- PredictMethodNames
     PreferExpressions,
     ProhibitAnnotations [],
     ProhibitGermanNames,
