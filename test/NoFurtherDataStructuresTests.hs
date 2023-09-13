@@ -1,5 +1,6 @@
 module NoFurtherDataStructuresTests (tests) where
 
+import Data.List.NonEmpty (NonEmpty (..))
 import qualified Language.Java.Rules.NoFurtherDataStructures as NoFurtherDataStructures
 import qualified RDF
 import Test.HUnit (Test)
@@ -10,7 +11,7 @@ tests =
   rangesTest
     expectedRanges
     "NoFurtherDataStructures.java"
-    (NoFurtherDataStructures.check ["set", "get", "pop"])
+    (NoFurtherDataStructures.check ("set" :| ["get", "pop"]))
 
 expectedRanges :: [RDF.Range]
 expectedRanges =

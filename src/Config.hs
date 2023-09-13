@@ -1,11 +1,21 @@
-module Config where
+{-# LANGUAGE OverloadedStrings #-}
+
+module Config (Rule (..)) where
 
 import Control.Monad (unless)
 import Data.Aeson
+  ( FromJSON (parseJSON),
+    Key,
+    Object,
+    withObject,
+    (.:),
+    (.:!),
+  )
 import Data.Aeson.Key (fromString)
 import Data.Aeson.KeyMap (keys)
-import Data.Aeson.Types
+import Data.Aeson.Types (Parser)
 import Data.List ((\\))
+import Data.List.NonEmpty (NonEmpty)
 
 data Rule
   = AvoidMultipleTopLevelDecl
@@ -26,7 +36,7 @@ data Rule
   | NamingConventions
   | NeedBraces
   | NoCasts {whitelist :: [String]}
-  | NoFurtherDataStructures {methodNames :: [String]}
+  | NoFurtherDataStructures {methodNames :: NonEmpty String}
   | NoLoopBreak
   | NoNullPointerExceptionsForControl
   | NoPostIncDecInExpression
@@ -89,8 +99,8 @@ instance FromJSON Rule where
 
 parseParameterNumber :: Object -> Parser Rule
 parseParameterNumber obj = do
-  max <- obj .:! fromString "max"
-  checkNoExtraKeys obj [fromString "max"]
+  max <- obj .:! "max"
+  checkNoExtraKeys obj ["max"]
   pure (ParameterNumber max)
 
 parseProhibitAnnotations :: Object -> Parser Rule
@@ -102,27 +112,30 @@ parsePredictMethodNames obj = PredictMethodNames <$> parseStringList obj "whitel
 parseNoCasts :: Object -> Parser Rule
 parseNoCasts obj = NoCasts <$> parseStringList obj "whitelist"
 
-parseNoFurtherDataStructures :: Object -> Parser Rule
-parseNoFurtherDataStructures obj = NoFurtherDataStructures <$> parseStringList obj "methodNames"
-
 parseStringList :: Object -> String -> Parser [String]
 parseStringList obj key = do
   strings <- obj .: fromString key
   checkNoExtraKeys obj [fromString key]
   pure strings
 
+parseNoFurtherDataStructures :: Object -> Parser Rule
+parseNoFurtherDataStructures obj = NoFurtherDataStructures <$> parseNonEmptyStringList obj "methodNames"
+
+parseNonEmptyStringList :: Object -> Key -> Parser (NonEmpty String)
+parseNonEmptyStringList obj key = do
+  strings <- obj .: key
+  checkNoExtraKeys obj [key]
+  pure strings
+
 parseMethodInvNumber :: Object -> Parser Rule
 parseMethodInvNumber obj = do
-  called <- obj .: fromString "called"
-  limited <- obj .: fromString "limited"
-  maxInv <- obj .: fromString "maxInv"
-  checkNoExtraKeys obj [fromString "called", fromString "limited", fromString "maxInv"]
+  called <- obj .: "called"
+  limited <- obj .: "limited"
+  maxInv <- obj .: "maxInv"
+  checkNoExtraKeys obj ["called", "limited", "maxInv"]
   pure (MethodInvNumber called limited maxInv)
 
 checkNoExtraKeys :: Object -> [Key] -> Parser ()
 checkNoExtraKeys obj allowedKeys = do
-  let objKeys = keys obj
-  let extraKeys = objKeys \\ (fromString "rule" : allowedKeys)
-  unless (null extraKeys) $
-    fail $
-      "Unexpected keys: " ++ show extraKeys
+  let extraKeys = keys obj \\ ("rule" : allowedKeys)
+  unless (null extraKeys) (fail ("Unexpected keys: " ++ show extraKeys))
