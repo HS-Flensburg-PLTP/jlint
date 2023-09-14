@@ -7,41 +7,16 @@ import Language.Java.Syntax
 import qualified Language.Java.Syntax.Modifier as Modifier
 import qualified RDF
 
-data Rank
-  = StaticPublicField
-  | StaticProtectedField
-  | StaticPackageField
-  | StaticPrivateField
-  | InstancePublicField
-  | InstanceProtectedField
-  | InstancePackageField
-  | InstancePrivateField
-  | Constructor
-  | Method
-  deriving (Eq, Ord)
-
-rankToString :: Rank -> String
-rankToString StaticPublicField = "static public Variable"
-rankToString StaticProtectedField = "static protected Variable"
-rankToString StaticPackageField = "static package Variable"
-rankToString StaticPrivateField = "static private Variable"
-rankToString InstancePublicField = "public Variable"
-rankToString InstanceProtectedField = "protected Variable"
-rankToString InstancePackageField = "package Variable"
-rankToString InstancePrivateField = "private Variable"
-rankToString Constructor = "Konstruktor"
-rankToString Method = "Methode"
-
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = checkRank path (extractMemberDecls cUnit)
 
 extractMemberDecls :: CompilationUnit Parsed -> [(Rank, SourceSpan)]
 extractMemberDecls cUnit = do
   toplvlDecl <- universeBi cUnit
-  maybeToList (checkTopLvlStmts toplvlDecl)
+  maybeToList (checkTopLevelStmts toplvlDecl)
 
-checkTopLvlStmts :: MemberDecl Parsed -> Maybe (Rank, SourceSpan)
-checkTopLvlStmts toplvlDecl = case toplvlDecl of
+checkTopLevelStmts :: MemberDecl Parsed -> Maybe (Rank, SourceSpan)
+checkTopLevelStmts toplvlDecl = case toplvlDecl of
   FieldDecl sourceSpan mods _ _ ->
     if any Modifier.isStatic mods
       then
@@ -68,9 +43,41 @@ checkTopLvlStmts toplvlDecl = case toplvlDecl of
   MethodDecl sourceSpan _ _ _ _ _ _ _ _ -> Just (Method, sourceSpan)
   _ -> Nothing
 
+data Rank
+  = StaticPublicField
+  | StaticProtectedField
+  | StaticPackageField
+  | StaticPrivateField
+  | InstancePublicField
+  | InstanceProtectedField
+  | InstancePackageField
+  | InstancePrivateField
+  | Constructor
+  | Method
+  deriving (Eq, Ord)
+
+rankToString :: Rank -> String
+rankToString StaticPublicField = "Die öffentliche, statische Variable"
+rankToString StaticProtectedField = "Die geschützte, statische Variable"
+rankToString StaticPackageField = "Die statische Paket-Variable"
+rankToString StaticPrivateField = "Die private, statische Variable"
+rankToString InstancePublicField = "Das öffentliche Attribut"
+rankToString InstanceProtectedField = "Das geschützte Attribut"
+rankToString InstancePackageField = "Das Paket-Attribut"
+rankToString InstancePrivateField = "Das private Attribut"
+rankToString Constructor = "Der Konstruktor"
+rankToString Method = "Die Methode"
+
 checkRank :: FilePath -> [(Rank, SourceSpan)] -> [RDF.Diagnostic]
 checkRank path declOrder =
   map (createError . snd) (filter (\((rankA, _), (rankB, _)) -> rankA > rankB) (zip declOrder (tail declOrder)))
   where
     createError :: (Rank, SourceSpan) -> RDF.Diagnostic
-    createError (rank, sourcespan) = RDF.rangeDiagnostic "Language.Java.Rules.DeclarationOrder" (rankToString rank ++ " an der falschen Stelle deklariert.") sourcespan path
+    createError (rank, sourcespan) =
+      RDF.rangeDiagnostic
+        "Language.Java.Rules.DeclarationOrder"
+        [ rankToString rank,
+          "ist an der falschen Stelle deklariert. Die Java-Konventionen geben eine Reihenfolge vor, in der die verschiedenen Deklarationen auftreten sollten."
+        ]
+        sourcespan
+        path

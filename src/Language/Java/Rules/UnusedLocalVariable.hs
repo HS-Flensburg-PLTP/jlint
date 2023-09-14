@@ -1,5 +1,3 @@
-{-# LANGUAGE ScopedTypeVariables #-}
-
 module Language.Java.Rules.UnusedLocalVariable where
 
 import Control.Monad (MonadPlus (..))
@@ -18,7 +16,7 @@ checkMethodVars cUnit path = do
 
 extractMethodVariables :: MethodBody Parsed -> [String]
 extractMethodVariables methodBody = do
-  names :: BlockStmt Parsed <- universeBi methodBody
+  names <- universeBi methodBody :: [BlockStmt Parsed]
   extractNames names
   where
     extractNames (LocalVars _ _ _ varDecls) = map (\(VarDecl _ varId _) -> extractVarName varId) (NonEmpty.toList varDecls)
@@ -35,7 +33,14 @@ checkIfMethodVarsAreUsed :: [String] -> [String] -> String -> FilePath -> [RDF.D
 checkIfMethodVarsAreUsed declaredVars usedVars _ path =
   declaredVars
     & filter (`notElem` usedVars)
-    & map (\var -> RDF.rangeDiagnostic "Language.Java.Rules.UnusedLocalVariable" ("Variable " ++ var ++ " is declared but never used.") dummySourceSpan path)
+    & map
+      ( \var ->
+          RDF.rangeDiagnostic
+            "Language.Java.Rules.UnusedLocalVariable"
+            ["Die Variable", var, "wird deklariert, aber nie verwendet."]
+            dummySourceSpan
+            path
+      )
 
 checkClassVars :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkClassVars cUnit path =
@@ -43,7 +48,13 @@ checkClassVars cUnit path =
     ( \var ->
         if checkClassVarUsages (extractMethods cUnit) var
           then mzero
-          else [RDF.rangeDiagnostic "Language.Java.Rules.UnusedLocalVariable" ("LocalVariable " ++ var ++ " is declared but never used.") dummySourceSpan path]
+          else
+            [ RDF.rangeDiagnostic
+                "Language.Java.Rules.UnusedLocalVariable"
+                ["Die lokale Variable", var, "wird deklariert, aber nie verwendet."]
+                dummySourceSpan
+                path
+            ]
     )
     (extractClassVars cUnit)
 
@@ -57,9 +68,10 @@ checkClassVarUsages methods var =
 
 extractClassVars :: CompilationUnit Parsed -> [String]
 extractClassVars cUnit = do
-  variables :: MemberDecl Parsed <- universeBi cUnit
+  variables <- universeBi cUnit
   extractVars variables
   where
+    extractVars :: MemberDecl Parsed -> [String]
     extractVars (FieldDecl _ _ _ varDecls) = map (\(VarDecl _ varId _) -> extractVarName varId) (NonEmpty.toList varDecls)
     extractVars _ = mzero
 

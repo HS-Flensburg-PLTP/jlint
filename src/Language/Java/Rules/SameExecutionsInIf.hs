@@ -4,6 +4,7 @@ import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
+import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -49,7 +50,23 @@ checkStmt (BlockStmt stmt2) stmt =
 checkStmt _ _ = False
 
 duplicateCodeMessage :: SourceSpan -> FilePath -> RDF.Diagnostic
-duplicateCodeMessage = RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" "In dem If Else befindet sich identischer Code, welcher ausgelagert werden kann."
+duplicateCodeMessage =
+  RDF.rangeDiagnostic
+    "Language.Java.Rules.SameExecutionsInIf"
+    [ "In den beiden Zweigen der",
+      Markdown.code "if" ++ "-Anweisung",
+      "befindet sich identischer Code, welcher aus der",
+      Markdown.code "if" ++ "-Anweisung",
+      "herausgezogen werden sollte."
+    ]
 
 partDuplicatedCodeMessage :: SourceSpan -> FilePath -> RDF.Diagnostic
-partDuplicatedCodeMessage = RDF.rangeDiagnostic "Language.Java.Rules.SameExecutionsInIf" "In dem If Else befindet sich zum Teil identischer Code, welcher ausgelagert werden kann."
+partDuplicatedCodeMessage =
+  RDF.rangeDiagnostic
+    "Language.Java.Rules.SameExecutionsInIf"
+    [ "In den beiden Zweigen der",
+      Markdown.code "if" ++ "-Anweisung",
+      "befindet sich zum Teil identischer Code, welcher aus der",
+      Markdown.code "if" ++ "-Anweisung",
+      "herausgezogen werden sollte."
+    ]

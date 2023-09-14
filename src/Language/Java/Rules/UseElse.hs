@@ -5,6 +5,7 @@ import Data.Generics.Uniplate.Data (universeBi)
 import Data.List (intercalate)
 import Language.Java.Syntax
 import qualified Language.Java.Syntax.BlockStmt.Extra as BlockStmt.Extra
+import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -23,7 +24,10 @@ checkIfWithoutElse cUnit path = do
           return
             ( RDF.rangeDiagnostic
                 "Language.Java.Rules.UseElse"
-                "Hier bitte ein `else` verwenden, damit sofort klar ist, dass der restliche Code nur ausgeführt wird, wenn die Bedingung nicht erfüllt ist."
+                [ "Hier bitte ein",
+                  Markdown.code "else",
+                  "verwenden, damit sofort klar ist, dass der restliche Code nur ausgeführt wird, wenn die Bedingung nicht erfüllt ist."
+                ]
                 range
                 path
             )
@@ -49,9 +53,20 @@ checkCodeAfterIfThenElse cUnit path = do
         else mzero
     checkBlocks _ = mzero
 
-message :: [BlockStmt Parsed] -> String
+message :: [BlockStmt Parsed] -> [String]
 message blockStmts =
-  "Der `then`- oder der `else`-Zweig der `if`-Anweisung verlässt immer die Methode. Daher sollte nach der gesamten `if`-Anweisung keine weitere Anweisung folgen. Auf die `if`-Anweisung folgen: " ++ intercalate ", " (map BlockStmt.Extra.name blockStmts)
+  [ "Der",
+    Markdown.code "then" ++ "-",
+    "oder der",
+    Markdown.code "else" ++ "-Zweig der",
+    Markdown.code "if" ++ "-Anweisung",
+    "verlässt immer die Methode. Daher sollte nach der gesamten",
+    Markdown.code "if" ++ "-Anweisung",
+    "keine weitere Anweisung folgen. Auf die",
+    Markdown.code "if" ++ "-Anweisung",
+    "folgen: ",
+    intercalate ", " (map BlockStmt.Extra.name blockStmts)
+  ]
 
 doesAlwaysExit :: Stmt Parsed -> Bool
 doesAlwaysExit (Return _ _) = True

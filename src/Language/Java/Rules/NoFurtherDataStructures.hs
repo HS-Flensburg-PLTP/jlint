@@ -1,5 +1,3 @@
-{-# LANGUAGE ScopedTypeVariables #-}
-
 module Language.Java.Rules.NoFurtherDataStructures where
 
 import Control.Monad (MonadPlus (..))
@@ -20,7 +18,7 @@ check methodNames cUnit path = do
       return
         ( RDF.rangeDiagnostic
             "Language.Java.Rules.NoFurtherDataStructures"
-            "In dieser Funktion sollten keine zusätzlichen Datenstrukturen erzeugt werden."
+            ["In dieser Funktion sollten keine zusätzlichen Datenstrukturen erzeugt werden."]
             span
             path
         )

@@ -95,16 +95,15 @@ check whitelist cUnit path = do
             ( \(PredictionSet originalName predictions, sourceSpan) ->
                 RDF.rangeDiagnostic
                   "Language.Java.Rules.PredictMethodNames"
-                  ( "Der Name "
-                      ++ Markdown.code (toCamelCase originalName)
-                      ++ " ist schlecht gewählt. Folgende Vorschläge eignen sich vielleicht besser: "
-                      ++ unwords
-                        ( map
-                            ( \(Prediction name _) ->
-                                Markdown.code (toCamelCase name)
-                            )
-                            predictions
+                  ( [ "Der Name",
+                      Markdown.code (toCamelCase originalName),
+                      "ist schlecht gewählt. Folgende Vorschläge eignen sich vielleicht besser:"
+                    ]
+                      ++ map
+                        ( \(Prediction name _) ->
+                            Markdown.code (toCamelCase name)
                         )
+                        predictions
                   )
                   sourceSpan
                   path

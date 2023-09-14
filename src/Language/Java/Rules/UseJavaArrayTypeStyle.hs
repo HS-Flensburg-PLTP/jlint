@@ -5,6 +5,7 @@ module Language.Java.Rules.UseJavaArrayTypeStyle (check) where
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
+import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -26,9 +27,11 @@ checkVarDeclId (VarDeclArray span _) path =
   return
     ( RDF.rangeDiagnostic
         "Language.Java.Rules.UseJavaArrayTypeStyle"
-        ( "Array-Typen sollten im Java-Stil und nicht im C-Stil definiert werden."
-            ++ "Die Arrayklammern `[]` gehören also hinter den Typ und nicht hinter den Namen der Variable."
-        )
+        [ "Array-Typen sollten im Java-Stil und nicht im C-Stil definiert werden.",
+          "Die Arrayklammern",
+          Markdown.code "[]",
+          "gehören also hinter den Typ und nicht hinter den Namen der Variable."
+        ]
         span
         path
     )

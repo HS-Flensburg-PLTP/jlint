@@ -20,7 +20,12 @@ checkIdent (Ident sourceSpan ident) path =
       return
         ( RDF.rangeDiagnostic
             "Language.Java.Rules.ProhibitMyIdentPrefix"
-            ("Der Bezeichner " ++ Markdown.code ident ++ " verwendet das Präfix " ++ Markdown.code "My" ++ ". Dieses Präfix wird in Programmierbeispielen genutzt, wenn man keinen sinnvollen Namen vergeben kann, da das Beispiel minimal gehalten ist. In produktivem Code sollte man diese Art von Bezeichner nicht verwenden.")
+            [ "Der Bezeichner",
+              Markdown.code ident,
+              "verwendet das Präfix",
+              Markdown.code "My" ++ ".",
+              "Dieses Präfix wird in Programmierbeispielen genutzt, wenn man keinen sinnvollen Namen vergeben kann, da das Beispiel minimal gehalten ist. In produktivem Code sollte man diese Art von Bezeichner nicht verwenden."
+            ]
             sourceSpan
             path
         )

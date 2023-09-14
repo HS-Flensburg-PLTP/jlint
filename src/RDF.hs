@@ -184,10 +184,10 @@ rangeFromSourceSpan (start, end) =
       end = Just (Position {line = SourceSpan.loc_line end, column = Just (SourceSpan.loc_column end)})
     }
 
-rangeDiagnostic :: String -> String -> SourceSpan.SourceSpan -> FilePath -> Diagnostic
+rangeDiagnostic :: String -> [String] -> SourceSpan.SourceSpan -> FilePath -> Diagnostic
 rangeDiagnostic rule msg range fPath =
   Diagnostic
-    { message = msg,
+    { message = unwords msg,
       location =
         Location
           { path = fPath,

@@ -10,6 +10,7 @@ import qualified Data.List.NonEmpty as NonEmpty
 import Language.Java.AST (extractMethods, extractVarName)
 import Language.Java.SourceSpan (dummySourceSpan)
 import Language.Java.Syntax
+import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -23,10 +24,34 @@ checkStatements (methodName, methodBody) classVars path = do
   checkStatement stmt
   where
     checkStatement (IfThenElse _ _ a b)
-      | isReturnBool a && isReturnBool b = return (RDF.rangeDiagnostic methodName "A if-then-else part with literal return can be simplified." dummySourceSpan path)
+      | isReturnBool a && isReturnBool b =
+          return
+            ( RDF.rangeDiagnostic
+                methodName
+                [ "Eine",
+                  Markdown.code "if" ++ "-Anweisung",
+                  "mit einen expliziten",
+                  Markdown.code "return",
+                  "sollte vereinfacht werden."
+                ]
+                dummySourceSpan
+                path
+            )
       | otherwise = mzero
     checkStatement (IfThen _ _ a)
-      | isReturnBool a = return (RDF.rangeDiagnostic methodName "A if-then part with literal return can be simplified." dummySourceSpan path)
+      | isReturnBool a =
+          return
+            ( RDF.rangeDiagnostic
+                methodName
+                [ "Eine",
+                  Markdown.code "if" ++ "-Anweisung",
+                  "mit einen expliziten",
+                  Markdown.code "return",
+                  "sollte vereinfacht werden."
+                ]
+                dummySourceSpan
+                path
+            )
       | otherwise = mzero
     checkStatement _ = mzero
 

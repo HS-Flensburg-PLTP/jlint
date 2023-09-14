@@ -39,12 +39,13 @@ checkLoopBody (StmtBlock _) _ _ = mzero
 checkLoopBody (Empty _) loopSpan path = return (diagnostic emptyLoopMessage loopSpan path)
 checkLoopBody stmt _ path = return (diagnostic bracesMessage (sourceSpan stmt) path)
 
-diagnostic :: String -> SourceSpan -> FilePath -> RDF.Diagnostic
+diagnostic :: [String] -> SourceSpan -> FilePath -> RDF.Diagnostic
 diagnostic =
   RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces"
 
-bracesMessage :: String
-bracesMessage = "Code-Blöcke sollten auch dann geklammert werden, wenn sie weniger als zwei Anweisungen enthalten."
+bracesMessage :: [String]
+bracesMessage =
+  ["Code-Blöcke sollten auch dann geklammert werden, wenn sie weniger als zwei Anweisungen enthalten."]
 
-emptyLoopMessage :: String
-emptyLoopMessage = "Schleifen sollten Anweisungen enthalten."
+emptyLoopMessage :: [String]
+emptyLoopMessage = ["Schleifen sollten Anweisungen enthalten."]

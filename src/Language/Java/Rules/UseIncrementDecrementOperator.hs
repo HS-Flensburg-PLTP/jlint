@@ -29,7 +29,12 @@ message assign (Just postIncDec) span path =
   return
     ( RDF.rangeDiagnostic
         "Language.Java.Rules.UseIncrementDecrementOperator"
-        ("Anstelle einer Zuweisung " ++ prettyPrint assign ++ " sollte " ++ prettyPrint postIncDec ++ " verwendet werden.")
+        [ "Anstelle einer Zuweisung",
+          prettyPrint assign,
+          "sollte",
+          prettyPrint postIncDec,
+          "verwendet werden."
+        ]
         span
         path
     )

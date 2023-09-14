@@ -81,9 +81,9 @@ reduceScopeInIf declVars (IfThenElse span condition thenStmt elseStmt) path =
         else mzero
 reduceScopeInIf _ _ _ = mzero
 
-message :: Ident -> String
+message :: Ident -> [String]
 message var =
-  "Der Scope der Variable " ++ Markdown.code (Ident.name var) ++ " kann reduziert werden."
+  ["Der Scope der Variable", Markdown.code (Ident.name var), "kann reduziert werden."]
 
 variables :: (Data a) => a -> [Ident]
 variables parent =

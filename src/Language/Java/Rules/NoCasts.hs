@@ -14,7 +14,7 @@ check whitelist cUnit path = do
       return
         ( RDF.rangeDiagnostic
             "Language.Java.Rules.NoCasts"
-            ("Die Methode " ++ methodName ++ " sollte keine Casts beinhalten.")
+            ["Die Methode", methodName, "sollte keine Casts verwenden."]
             span
             path
         )

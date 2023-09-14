@@ -13,4 +13,4 @@ message :: SourceSpan -> FilePath -> RDF.Diagnostic
 message =
   RDF.rangeDiagnostic
     "Language.Java.Rules.AvoidMultipleTopLevelDecl"
-    "Jede Datei sollte immer nur eine Top-Level-Deklaration beinhalten."
+    ["Jede Datei sollte immer nur eine Top-Level-Deklaration beinhalten."]

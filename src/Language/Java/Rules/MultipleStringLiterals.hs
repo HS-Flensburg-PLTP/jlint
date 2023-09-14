@@ -1,5 +1,4 @@
 {-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE ScopedTypeVariables #-}
 
 module Language.Java.Rules.MultipleStringLiterals where
 
@@ -18,7 +17,7 @@ import qualified RDF
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path =
   let annotationStringLiterals = do
-        (annotation :: Annotation Parsed) <- universeBi cUnit
+        annotation <- universeBi cUnit :: [Annotation Parsed]
         filter Literal.isString (universeBi annotation)
       stringLiterals = filter Literal.isString (universeBi cUnit)
       validLiterals =
@@ -42,14 +41,14 @@ checkForDuplicates literals path =
                 return
                   ( RDF.rangeDiagnostic
                       "Language.Java.Rules.MultipleStringLiterals"
-                      ( "Das String-Literal "
-                          ++ Markdown.code (prettyPrint x)
-                          ++ " wird an dieser und an "
-                          ++ show (length xs)
-                          ++ " weiteren Stellen verwendet. Auch noch in den Zeilen "
-                          ++ intercalate ", " (map ((\(Location _ line _, _) -> show line) . sourceSpan) xs)
-                          ++ ". Bitte eine Konstante dafür einführen."
-                      )
+                      [ "Das String-Literal",
+                        Markdown.code (prettyPrint x),
+                        "wird an dieser und an",
+                        show (length xs),
+                        "weiteren Stellen verwendet. Auch noch in den Zeilen",
+                        intercalate ", " (map ((\(Location _ line _, _) -> show line) . sourceSpan) xs) ++ ".",
+                        "Bitte eine Konstante dafür einführen."
+                      ]
                       (sourceSpan x)
                       path
                   )

@@ -1,5 +1,3 @@
-{-# LANGUAGE ScopedTypeVariables #-}
-
 module Language.Java.Rules.InitializeVariables (check) where
 
 import Control.Monad (MonadPlus (..))
@@ -14,9 +12,10 @@ import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  blocks :: [BlockStmt Parsed] <- universeBi cUnit
+  blocks <- universeBi cUnit
   checkBlocks blocks
   where
+    checkBlocks :: [BlockStmt Parsed] -> [RDF.Diagnostic]
     checkBlocks
       ( LocalVars _ _ _ varDecls
           : BlockStmt (ExpStmt range (Assign _ (NameLhs (Name _ (ident :| []))) EqualA _))
@@ -34,6 +33,9 @@ check cUnit path = do
               else mzero
     checkBlocks _ = mzero
 
-message :: Ident -> String
+message :: Ident -> [String]
 message ident =
-  "Die Variable " ++ Markdown.code (Ident.name ident) ++ " wird nur deklariert, danach aber direkt initialisiert. Die Variable sollte bei der Deklaration daher schon initialisiert werden."
+  [ "Die Variable",
+    Markdown.code (Ident.name ident),
+    "wird nur deklariert, danach aber direkt initialisiert. Die Variable sollte bei der Deklaration daher schon initialisiert werden."
+  ]

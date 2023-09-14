@@ -1,36 +1,20 @@
-{-# LANGUAGE ScopedTypeVariables #-}
-
 module Language.Java.Rules.AvoidOuterNegations where
 
 import Control.Monad (MonadPlus (mzero))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Pretty (prettyPrint)
 import Language.Java.Syntax
+import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  exp :: Exp Parsed <- universeBi cUnit
-  checkExp exp path
+  exp <- universeBi cUnit
+  checkExp exp
   where
-    checkExp (PreNot span (BinOp _ _ op _)) path =
+    checkExp :: Exp Parsed -> [RDF.Diagnostic]
+    checkExp (PreNot span (BinOp _ _ op _)) =
       case invertOp op of
-        Just CAnd ->
-          return
-            ( RDF.rangeDiagnostic
-                "Language.Java.Rules.AvoidOuterNegations"
-                (deMorganMessage op CAnd)
-                span
-                path
-            )
-        Just COr ->
-          return
-            ( RDF.rangeDiagnostic
-                "Language.Java.Rules.AvoidOuterNegations"
-                (deMorganMessage op COr)
-                span
-                path
-            )
         Just invertedOp ->
           return
             ( RDF.rangeDiagnostic
@@ -40,23 +24,20 @@ check cUnit path = do
                 path
             )
         Nothing -> mzero
-    checkExp _ _ = mzero
+    checkExp _ = mzero
 
-message :: Op -> Op -> String
+message :: Op -> Op -> [String]
 message op invertedOp =
-  "Für einen Ausdruck `!(a "
-    ++ prettyPrint op
-    ++ " b)` kann die Negation nach innen gezogen und `a "
-    ++ prettyPrint invertedOp
-    ++ " b` angewendet werden. Generell sollten Negationen immer so weit wie möglich nach innen gezogen werden."
-
-deMorganMessage :: Op -> Op -> String
-deMorganMessage op invertedOp =
-  "Für einen Ausdrcuk `!(a "
-    ++ prettyPrint op
-    ++ " b)` kann die DeMorgan-Regel angewendet und `!a "
-    ++ prettyPrint invertedOp
-    ++ " !b` verwendet werden. Generell sollten Negationen immer so weit wie möglich nach innen gezogen werden."
+  [ "Für einen Ausdruck",
+    Markdown.code ("!(a " ++ prettyPrint op ++ " b)"),
+    case op of
+      CAnd -> "kann die DeMorgan-Regel angewendet"
+      COr -> "kann die DeMorgan-Regel angewendet"
+      _ -> "kann die Negation nach innen gezogen",
+    "und",
+    Markdown.code ("a " ++ prettyPrint invertedOp ++ " b"),
+    "verwendet werden. Generell sollten Negationen immer so weit wie möglich nach innen gezogen werden."
+  ]
 
 invertOp :: Op -> Maybe Op
 invertOp LThan = Just GThanE

@@ -1,5 +1,3 @@
-{-# LANGUAGE ScopedTypeVariables #-}
-
 module Language.Java.Rules.ModifiedControlVariable where
 
 import Control.Monad (MonadPlus (..))
@@ -10,6 +8,7 @@ import Language.Java.Pretty
 import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
 import qualified Language.Java.Syntax.VarDecl as VarDecl
+import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -19,11 +18,12 @@ check cUnit path = do
 
 checkBasicFor :: Stmt Parsed -> FilePath -> [RDF.Diagnostic]
 checkBasicFor (BasicFor _ (Just (ForLocalVars _ _ forVarDecls)) _ _ forStmt) path = do
-  expr :: Exp Parsed <- universeBi forStmt
+  expr <- universeBi forStmt
   checkBasicForExprForModifiedControlVariable expr
   where
     controlVariables = NonEmpty.map VarDecl.ident forVarDecls
 
+    checkBasicForExprForModifiedControlVariable :: Exp Parsed -> [RDF.Diagnostic]
     checkBasicForExprForModifiedControlVariable (Assign sourceSpan (NameLhs (Name _ (exprIdent :| []))) _ _) =
       checkIdent exprIdent controlVariables sourceSpan path
     checkBasicForExprForModifiedControlVariable (PostIncrement sourceSpan (ExpName (Name _ (exprIdent :| [])))) =
@@ -47,4 +47,7 @@ createRangeDiagnostic :: Ident -> SourceSpan -> FilePath -> RDF.Diagnostic
 createRangeDiagnostic ident =
   RDF.rangeDiagnostic
     "Language.Java.Rules.ModifiedControlVariable"
-    ("Laufvariable " ++ prettyPrint ident ++ " darf nicht innerhalb der Schleife modifiziert werden!")
+    [ "Die Laufvariable",
+      Markdown.code (prettyPrint ident),
+      "sollte nicht innerhalb der Schleife modifiziert werden."
+    ]

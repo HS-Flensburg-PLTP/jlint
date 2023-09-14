@@ -93,10 +93,16 @@ variablesRead parent = [ident | ExpName (Name _ idents) :: Exp Parsed <- univers
 variablesWritten :: (Data a) => a -> [Ident]
 variablesWritten parent = [ident | Assign _ (NameLhs (Name _ (ident :| []))) _ _ :: Exp Parsed <- universeBi parent]
 
-assignedTwiceMessage :: Ident -> String
+assignedTwiceMessage :: Ident -> [String]
 assignedTwiceMessage ident =
-  "Der Variable " ++ Markdown.code (Ident.name ident) ++ " wird zweimal direkt nacheinander ein neuer Wert zugewiesen. Diese beiden Zuweisungen können zusammengefasst werden."
+  [ "Der Variable",
+    Markdown.code (Ident.name ident),
+    "wird zweimal direkt nacheinander ein neuer Wert zugewiesen. Diese beiden Zuweisungen können zusammengefasst werden."
+  ]
 
-assignedAndUsedMessage :: Ident -> String
+assignedAndUsedMessage :: Ident -> [String]
 assignedAndUsedMessage ident =
-  "Der Variable " ++ Markdown.code (Ident.name ident) ++ " wird ein neuer Wert zugewiesen und sie wird direkt danach nur gelesen.\nDaher kann der Wert, der der Variable zugewiesen wird, dort eingesetzt werden, wo die Variable verwendet wird."
+  [ "Der Variable",
+    Markdown.code (Ident.name ident),
+    "wird ein neuer Wert zugewiesen und sie wird direkt danach nur gelesen.\nDaher kann der Wert, der der Variable zugewiesen wird, dort eingesetzt werden, wo die Variable verwendet wird."
+  ]

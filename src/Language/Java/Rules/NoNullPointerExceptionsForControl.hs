@@ -5,6 +5,7 @@ import Data.Generics.Uniplate.Data (universeBi)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.List.NonEmpty as NonEmpty
 import Language.Java.Syntax
+import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -18,7 +19,12 @@ check cUnit path = do
           return
             ( RDF.rangeDiagnostic
                 "Language.Java.Rules.NoExceptionsForControl"
-                "NullPointerExceptions sollten nicht verwendet werden, um den Kontrollfluss einer Methode zu implementieren. Stattdessen sollte an der richtigen Stelle explizit auf `null` geprüft werden."
+                [ "Eine",
+                  Markdown.code "NullPointerException",
+                  "sollte nicht verwendet werden, um den Kontrollfluss einer Methode zu implementieren. Stattdessen sollte an der richtigen Stelle explizit auf",
+                  Markdown.code "null",
+                  "geprüft werden."
+                ]
                 range
                 path
             )

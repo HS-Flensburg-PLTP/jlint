@@ -17,6 +17,7 @@ import Language.Java.Syntax.Ident as Ident
 import qualified Language.Java.Syntax.Modifier as Modifier
 import Language.Java.Syntax.VarDecl as VarDecl
 import Language.Java.Syntax.VarDeclId as VarDeclId
+import qualified Markdown
 import qualified RDF
 import Text.RE.TDFA.String
 
@@ -138,14 +139,14 @@ nameDiagnostic :: FilePath -> VariableKind -> Convention -> Ident -> RDF.Diagnos
 nameDiagnostic path variableKind convention ident =
   RDF.rangeDiagnostic
     "Language.Java.Rules.NamingConventions"
-    ( "Der Name "
-        ++ Ident.name ident
-        ++ " entspricht nicht der Java-Namenskonvention. Der Name "
-        ++ variableKindToString variableKind
-        ++ " sollte "
-        ++ conventionToString convention
-        ++ " verwenden."
-    )
+    [ "Der Name",
+      Markdown.code (Ident.name ident),
+      "entspricht nicht der Java-Namenskonvention. Der Name",
+      variableKindToString variableKind,
+      "sollte",
+      conventionToString convention,
+      "verwenden."
+    ]
     (sourceSpan ident)
     path
 

@@ -16,7 +16,16 @@ check called limited maxInv cUnit path = do
               return
                 ( RDF.rangeDiagnostic
                     "Language.Java.Rules.MethodInvNumber"
-                    ("Die Methode " ++ called ++ " sollte die Methode " ++ limited ++ " maximal " ++ show maxInv ++ "x aufrufen. Hier wird sie aber " ++ show limitedLength ++ "x aufgerufen.")
+                    [ "Die Methode",
+                      called,
+                      "sollte die Methode",
+                      limited,
+                      "maximal",
+                      show maxInv ++ "-mal",
+                      "aufrufen. Hier wird sie aber",
+                      show limitedLength ++ "-mal",
+                      "aufgerufen."
+                    ]
                     span
                     path
                 )

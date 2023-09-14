@@ -1,5 +1,3 @@
-{-# LANGUAGE ScopedTypeVariables #-}
-
 module Language.Java.Rules.NoLoopBreak (check) where
 
 import Data.Generics.Uniplate.Data (universeBi)
@@ -8,6 +6,7 @@ import Language.Java.SourceSpan (sourceSpan)
 import Language.Java.Syntax
 import qualified Language.Java.Syntax.Stmt as Stmt
 import qualified Language.Java.Syntax.Stmt.Extra as Stmt.Extra
+import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -25,7 +24,7 @@ checkLoop loop path =
         ( \stmt ->
             RDF.rangeDiagnostic
               "Language.Java.Rules.NoLoopBreak"
-              "Eine Schleife sollte nicht mit einem Return beendet werden."
+              ["Eine Schleife sollte nicht mit einem", Markdown.code "return", "beendet werden."]
               (sourceSpan stmt)
               path
         )
@@ -34,7 +33,7 @@ checkLoop loop path =
           ( \stmt ->
               RDF.rangeDiagnostic
                 "Language.Java.Rules.NoLoopBreak"
-                "Eine Schleife sollte nicht mit einem Break beendet werden."
+                ["Eine Schleife sollte nicht mit einem", Markdown.code "break", "beendet werden."]
                 (sourceSpan stmt)
                 path
           )

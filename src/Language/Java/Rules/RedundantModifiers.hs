@@ -1,5 +1,3 @@
-{-# LANGUAGE ScopedTypeVariables #-}
-
 module Language.Java.Rules.RedundantModifiers (check) where
 
 import Control.Monad (MonadPlus (..))
@@ -11,7 +9,7 @@ import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  InterfaceDecl _ InterfaceNormal _ _ _ _ _ body :: InterfaceDecl Parsed <- universeBi cUnit
+  InterfaceDecl _ InterfaceNormal _ _ _ _ _ body <- universeBi cUnit :: [InterfaceDecl Parsed]
   memberDecl <- universeBi body
   mod <- methodModifiers memberDecl
   checkModifier path mod
@@ -29,6 +27,9 @@ diagnostic :: FilePath -> SourceSpan -> String -> RDF.Diagnostic
 diagnostic path span name =
   RDF.rangeDiagnostic
     "Language.Java.Rules.RedundantModifier"
-    ("Auf den redundanten Modifier " ++ Markdown.code name ++ " sollte in Interfaces verzichtet werden.")
+    [ "Auf den redundanten Modifikator",
+      Markdown.code name,
+      "sollte in einem Interface verzichtet werden."
+    ]
     span
     path

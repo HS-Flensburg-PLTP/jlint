@@ -2,7 +2,6 @@ module Language.Java.Rules (defaultConfig, checkWithConfig) where
 
 import Config (Rule (..))
 import Control.Monad.Extra (concatMapM)
-import Data.List.NonEmpty (NonEmpty (..))
 import qualified Language.Java.Rules.AvoidMultipleTopLevelDecl as AvoidMultipleTopLevelDecl
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations

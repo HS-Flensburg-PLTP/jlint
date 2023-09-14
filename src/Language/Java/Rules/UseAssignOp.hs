@@ -1,18 +1,18 @@
-{-# LANGUAGE ScopedTypeVariables #-}
-
 module Language.Java.Rules.UseAssignOp (check) where
 
 import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Pretty (prettyPrint)
 import Language.Java.Syntax
+import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  stmt :: Stmt Parsed <- universeBi cUnit
+  stmt <- universeBi cUnit
   checkStmt stmt
   where
+    checkStmt :: Stmt Parsed -> [RDF.Diagnostic]
     checkStmt (ExpStmt range (Assign _ (NameLhs name1) EqualA (BinOp _ (ExpName name2) op _))) =
       if eq IgnoreSourceSpan name1 name2
         then case equalVariant op of
@@ -37,10 +37,11 @@ equalVariant Or = Just OrA
 equalVariant Xor = Just XorA
 equalVariant _ = Nothing
 
-message :: Op -> AssignOp -> String
+message :: Op -> AssignOp -> [String]
 message op assignOp =
-  "Anstelle einer Anweisung x = x "
-    ++ prettyPrint op
-    ++ " exp sollte x "
-    ++ prettyPrint assignOp
-    ++ " exp verwendet werden."
+  [ "Anstelle einer Anweisung",
+    Markdown.code ("x = x " ++ prettyPrint op ++ " exp"),
+    "sollte",
+    Markdown.code ("x " ++ prettyPrint assignOp ++ " exp"),
+    "verwendet werden."
+  ]

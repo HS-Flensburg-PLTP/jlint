@@ -26,7 +26,14 @@ checkAnnotation whitelist annotation path =
       sourcespan = sourceSpan annotation
    in if name `elem` whitelist
         then mzero
-        else return (RDF.rangeDiagnostic "Language.Java.Rules.ProhibitAnnotations" ("Nicht erlaubte Annotation gefunden: " ++ name) sourcespan path)
+        else
+          return
+            ( RDF.rangeDiagnostic
+                "Language.Java.Rules.ProhibitAnnotations"
+                ["Die Nutzung der Annotation", name, "ist nicht erlaubt."]
+                sourcespan
+                path
+            )
 
 annotationWhitelist :: [String]
 annotationWhitelist = ["Override"]

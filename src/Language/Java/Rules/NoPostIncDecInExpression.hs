@@ -31,14 +31,14 @@ createDiagnostic expr path =
   return
     ( RDF.rangeDiagnostic
         "Language.Java.Rules.NoPostIncDecInExpression"
-        ( "Die Verwendung von "
-            ++ Markdown.code (showPostIncDec expr)
-            ++ " ist so nicht erlaubt, da es zu unleserlichem sowie unverständlichem Code führt."
-            ++ " Erlaubt ist es als Fortsetzung in einer "
-            ++ Markdown.code "for"
-            ++ "-Schleife oder alleinstehend als Kurzform von "
-            ++ Markdown.code "i = i + 1;"
-        )
+        [ "Die Verwendung von",
+          Markdown.code (showPostIncDec expr),
+          "ist so nicht erlaubt, da es zu unleserlichem sowie unverständlichem Code führt.",
+          "Erlaubt ist es als Fortsetzung in einer",
+          Markdown.code "for" ++ "-Schleife",
+          "oder als Anweisung als Kurzform von",
+          Markdown.code "i = i + 1;" ++ "."
+        ]
         (sourceSpan expr)
         path
     )

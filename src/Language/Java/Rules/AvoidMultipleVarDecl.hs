@@ -1,5 +1,3 @@
-{-# LANGUAGE ScopedTypeVariables #-}
-
 module Language.Java.Rules.AvoidMultipleVarDecl (check) where
 
 import Control.Monad (MonadPlus (mzero))
@@ -9,15 +7,16 @@ import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  blockStmt :: BlockStmt Parsed <- universeBi cUnit
+  blockStmt <- universeBi cUnit
   checkBlockStmt blockStmt
   where
+    checkBlockStmt :: BlockStmt Parsed -> [RDF.Diagnostic]
     checkBlockStmt (LocalVars span _ _ varDecls) =
       if length varDecls > 1
         then
           [ RDF.rangeDiagnostic
               "Language.Java.Rules.AvoidMultipleVarDecl"
-              "Das Deklarieren mehrerer Variablen in der gleichen Zeile sollte vermieden werden."
+              ["Das Deklarieren mehrerer Variablen in der gleichen Zeile sollte vermieden werden."]
               span
               path
           ]
