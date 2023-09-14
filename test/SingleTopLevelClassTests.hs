@@ -1,6 +1,6 @@
-module AvoidMultipleTopLevelDeclTests (tests) where
+module SingleTopLevelClassTests (tests) where
 
-import qualified Language.Java.Rules.AvoidMultipleTopLevelDecl as AvoidMultipleTopLevelDecl
+import qualified Language.Java.Rules.SingleTopLevelClass as SingleTopLevelClass
 import qualified RDF
 import System.FilePath ((</>))
 import Test.HUnit (Test, test, (~:))
@@ -17,15 +17,15 @@ singleDeclTest :: Test
 singleDeclTest =
   rangesTest
     []
-    ("AvoidMultipleTopLevelDecl" </> "SingleTopLevelDecl.java")
-    AvoidMultipleTopLevelDecl.check
+    ("SingleTopLevelClass" </> "SingleTopLevelClass.java")
+    SingleTopLevelClass.check
 
 multipleDeclsTest :: Test
 multipleDeclsTest =
   rangesTest
     expectedRanges
-    ("AvoidMultipleTopLevelDecl" </> "MultipleTopLevelDecl.java")
-    AvoidMultipleTopLevelDecl.check
+    ("SingleTopLevelClass" </> "MultipleTopLevelClasses.java")
+    SingleTopLevelClass.check
 
 expectedRanges :: [RDF.Range]
 expectedRanges =

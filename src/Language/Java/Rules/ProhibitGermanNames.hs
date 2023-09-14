@@ -93,8 +93,8 @@ checkIdents idents path = do
         ( \gWords ->
             RDF.rangeDiagnostic
               "Language.Java.Rules.ProhibitGermanNames"
-              ( "Dieser Bezeichner enthält ein oder mehrere folgende deutsche Wörter:"
-                  : map (Markdown.code . fst) gWords
+              ( "Dieser Bezeichner enthält ein oder mehrere folgende deutsche Wörter:" :
+                map (Markdown.code . fst) gWords
               )
               (snd (head gWords))
               path

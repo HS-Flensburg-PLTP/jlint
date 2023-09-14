@@ -1,4 +1,3 @@
-import qualified AvoidMultipleTopLevelDeclTests
 import qualified AvoidMultipleVarDeclTests
 import qualified AvoidNegationsTests
 import qualified AvoidOuterNegationsTests
@@ -30,6 +29,7 @@ import qualified ReduceScopeTests
 import qualified RedundantModifiersTests
 import qualified SameExecutionsInIfTests
 import qualified SimplifyBooleanTests
+import qualified SingleTopLevelClassTests
 import Test.HUnit
 import qualified UseAssignOpTests
 import qualified UseElseTests
@@ -44,8 +44,7 @@ main = do
 tests :: Test
 tests =
   test
-    [ "AvoidMultipleTopLevelDecl" ~: AvoidMultipleTopLevelDeclTests.tests,
-      "AvoidMultipleVarDecl" ~: AvoidMultipleVarDeclTests.tests,
+    [ "AvoidMultipleVarDecl" ~: AvoidMultipleVarDeclTests.tests,
       "AvoidNegations" ~: AvoidNegationsTests.tests,
       "AvoidOuterNegations" ~: AvoidOuterNegationsTests.tests,
       "AvoidStarImport" ~: AvoidStarImportTests.tests,
@@ -76,6 +75,7 @@ tests =
       "RedundantModifiers" ~: RedundantModifiersTests.tests,
       "SameExecutionsInIf" ~: SameExecutionsInIfTests.tests,
       "SimplifyBoolean" ~: SimplifyBooleanTests.tests,
+      "SingleTopLevelClass" ~: SingleTopLevelClassTests.tests,
       "UseAssignOp" ~: UseAssignOpTests.tests,
       "UseElse" ~: UseElseTests.tests,
       "UseIncrementDecrementOperator" ~: UseIncrementDecrementOperatorTests.tests,

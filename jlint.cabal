@@ -31,7 +31,6 @@ library
       Data.List.Extra
       Language.Java.AST
       Language.Java.Rules
-      Language.Java.Rules.AvoidMultipleTopLevelDecl
       Language.Java.Rules.AvoidMultipleVarDecl
       Language.Java.Rules.AvoidNegations
       Language.Java.Rules.AvoidOuterNegations
@@ -63,6 +62,7 @@ library
       Language.Java.Rules.RedundantModifiers
       Language.Java.Rules.SameExecutionsInIf
       Language.Java.Rules.SimplifyBoolean
+      Language.Java.Rules.SingleTopLevelClass
       Language.Java.Rules.UnusedLocalVariable
       Language.Java.Rules.UseAssignOp
       Language.Java.Rules.UseElse
@@ -131,7 +131,6 @@ test-suite jlint-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      AvoidMultipleTopLevelDeclTests
       AvoidMultipleVarDeclTests
       AvoidNegationsTests
       AvoidOuterNegationsTests
@@ -163,6 +162,7 @@ test-suite jlint-test
       RedundantModifiersTests
       SameExecutionsInIfTests
       SimplifyBooleanTests
+      SingleTopLevelClassTests
       Tests
       UseAssignOpTests
       UseElseTests

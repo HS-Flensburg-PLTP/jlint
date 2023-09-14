@@ -18,8 +18,7 @@ import Data.List ((\\))
 import Data.List.NonEmpty (NonEmpty)
 
 data Rule
-  = AvoidMultipleTopLevelDecl
-  | AvoidMultipleVarDecl
+  = AvoidMultipleVarDecl
   | AvoidNegations
   | AvoidOuterNegations
   | AvoidStarImport
@@ -50,6 +49,7 @@ data Rule
   | RedundantModifiers
   | SameExecutionsInIf
   | SimplifyBoolean
+  | SingleTopLevelClass
   | UseAssignOp
   | UseElse
   | UseIncrementDecrementOperator
@@ -60,7 +60,6 @@ instance FromJSON Rule where
   parseJSON = withObject "Rule" $ \obj -> do
     rule <- obj .: fromString "rule"
     case rule of
-      "AvoidMultipleTopLevelDecl" -> pure AvoidMultipleTopLevelDecl
       "AvoidMultipleVarDecl" -> pure AvoidMultipleVarDecl
       "AvoidNegations" -> pure AvoidNegations
       "AvoidOuterNegations" -> pure AvoidOuterNegations
@@ -92,6 +91,7 @@ instance FromJSON Rule where
       "RedundantModifiers" -> pure RedundantModifiers
       "SameExecutionsInIf" -> pure SameExecutionsInIf
       "SimplifyBoolean" -> pure SimplifyBoolean
+      "SingleTopLevelClass" -> pure SingleTopLevelClass
       "UseAssignOp" -> pure UseAssignOp
       "UseElse" -> pure UseElse
       "UseIncrementDecrementOperator" -> pure UseIncrementDecrementOperator

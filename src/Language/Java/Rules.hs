@@ -2,7 +2,6 @@ module Language.Java.Rules (defaultConfig, checkWithConfig) where
 
 import Config (Rule (..))
 import Control.Monad.Extra (concatMapM)
-import qualified Language.Java.Rules.AvoidMultipleTopLevelDecl as AvoidMultipleTopLevelDecl
 import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
 import qualified Language.Java.Rules.AvoidOuterNegations as AvoidOuterNegations
@@ -34,6 +33,7 @@ import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.SameExecutionsInIf as SameExecutionsInIf
 import qualified Language.Java.Rules.SimplifyBoolean as SimplifyBoolean
+import qualified Language.Java.Rules.SingleTopLevelClass as SingleTopLevelClass
 import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import Language.Java.Rules.UseElse as UseElse (check)
 import qualified Language.Java.Rules.UseIncrementDecrementOperator as UseIncrementDecrementOperator
@@ -44,8 +44,7 @@ import qualified RDF
 
 defaultConfig :: [Rule]
 defaultConfig =
-  [ AvoidMultipleTopLevelDecl,
-    AvoidMultipleVarDecl,
+  [ AvoidMultipleVarDecl,
     AvoidNegations,
     AvoidOuterNegations,
     AvoidStarImport,
@@ -77,6 +76,7 @@ defaultConfig =
     RedundantModifiers,
     SameExecutionsInIf,
     SimplifyBoolean,
+    SingleTopLevelClass,
     UseAssignOp,
     UseElse,
     UseIncrementDecrementOperator,
@@ -88,7 +88,6 @@ checkWithConfig :: [Rule] -> CompilationUnit Parsed -> FilePath -> IO [RDF.Diagn
 checkWithConfig rules cUnit filePath = concatMapM (\rule -> checkFromConfig rule cUnit filePath) rules
 
 checkFromConfig :: Rule -> CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
-checkFromConfig AvoidMultipleTopLevelDecl = liftIO AvoidMultipleTopLevelDecl.check
 checkFromConfig AvoidMultipleVarDecl = liftIO AvoidMultipleVarDecl.check
 checkFromConfig AvoidNegations = liftIO AvoidNegations.check
 checkFromConfig AvoidOuterNegations = liftIO AvoidOuterNegations.check
@@ -120,6 +119,7 @@ checkFromConfig ReduceScope = liftIO ReduceScope.check
 checkFromConfig RedundantModifiers = liftIO RedundantModifiers.check
 checkFromConfig SameExecutionsInIf = liftIO SameExecutionsInIf.check
 checkFromConfig SimplifyBoolean = liftIO SimplifyBoolean.check
+checkFromConfig SingleTopLevelClass = liftIO SingleTopLevelClass.check
 checkFromConfig UseAssignOp = liftIO UseAssignOp.check
 checkFromConfig UseElse = liftIO UseElse.check
 checkFromConfig UseIncrementDecrementOperator = liftIO UseIncrementDecrementOperator.check
