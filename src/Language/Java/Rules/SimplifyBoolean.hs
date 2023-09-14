@@ -1,0 +1,88 @@
+module Language.Java.Rules.SimplifyBoolean (check) where
+
+import Control.Monad (MonadPlus (..))
+import Data.Generics.Uniplate.Data (universeBi)
+import Language.Java.Pretty (prettyPrint)
+import Language.Java.Syntax
+import qualified Markdown
+import qualified RDF
+
+check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
+check cUnit path = do
+  (universeBi cUnit >>= checkStmt) `mplus` (universeBi cUnit >>= checkExp)
+  where
+    checkStmt :: Stmt Parsed -> [RDF.Diagnostic]
+    checkStmt (IfThenElse span cond thenStmt elseStmt)
+      | isBoolLiteralReturn True thenStmt && isBoolLiteralReturn False elseStmt =
+          return
+            ( RDF.rangeDiagnostic
+                "Language.Java.Rules.SimplifyBoolean"
+                [ "Falls der Ausdruck",
+                  prettyPrint cond,
+                  "den Wert",
+                  Markdown.code "true",
+                  "hat, liefert die gesamte",
+                  Markdown.code "if" ++ "-Anweisung",
+                  "den Wert",
+                  Markdown.code "true",
+                  ". Falls der Ausdruck ",
+                  prettyPrint cond,
+                  "den Wert",
+                  Markdown.code "false",
+                  "hat, liefert die gesamte",
+                  Markdown.code "if" ++ "-Anweisung",
+                  "den Wert",
+                  Markdown.code "false",
+                  ". Daher kann dies",
+                  Markdown.code "if" ++ "-Anweisung",
+                  "zur Bedingung vereinfacht werden."
+                ]
+                span
+                path
+            )
+      | isBoolLiteralReturn False thenStmt && isBoolLiteralReturn True elseStmt =
+          return
+            ( RDF.rangeDiagnostic
+                "Language.Java.Rules.SimplifyBoolean"
+                ["Diese Anweisung kann durch eine Negation ersetzt werden."]
+                span
+                path
+            )
+      | otherwise = mzero
+    checkStmt _ = mzero
+
+    checkExp :: Exp Parsed -> [RDF.Diagnostic]
+    checkExp (BinOp span leftExp Equal rightExp)
+      | isBoolLiteral True leftExp || isBoolLiteral True rightExp =
+          return
+            ( RDF.rangeDiagnostic
+                "Language.Java.Rules.SimplifyBoolean"
+                [ "Der Vergleich mit",
+                  Markdown.code "true",
+                  "ist unnötig und sollte entfernt werden."
+                ]
+                span
+                path
+            )
+      | isBoolLiteral False leftExp || isBoolLiteral False rightExp =
+          return
+            ( RDF.rangeDiagnostic
+                "Language.Java.Rules.SimplifyBoolean"
+                [ "Statt mit",
+                  Markdown.code "false",
+                  "zu vergleichen sollte die Negation verwendet werden."
+                ]
+                span
+                path
+            )
+      | otherwise = mzero
+    checkExp _ = mzero
+
+isBoolLiteralReturn :: Bool -> Stmt Parsed -> Bool
+isBoolLiteralReturn value (Return _ (Just exp)) = isBoolLiteral value exp
+isBoolLiteralReturn value (StmtBlock (Block _ [BlockStmt stmt])) = isBoolLiteralReturn value stmt
+isBoolLiteralReturn _ _ = False
+
+isBoolLiteral :: Bool -> Exp Parsed -> Bool
+isBoolLiteral value (Lit (Boolean _ litValue)) = value == litValue
+isBoolLiteral _ _ = False

@@ -33,6 +33,7 @@ import qualified Language.Java.Rules.ProhibitMyIdentPrefix as ProhibitMyIdentPre
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.SameExecutionsInIf as SameExecutionsInIf
+import qualified Language.Java.Rules.SimplifyBoolean as SimplifyBoolean
 import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import Language.Java.Rules.UseElse as UseElse (check)
 import qualified Language.Java.Rules.UseIncrementDecrementOperator as UseIncrementDecrementOperator
@@ -75,6 +76,7 @@ defaultConfig =
     ReduceScope,
     RedundantModifiers,
     SameExecutionsInIf,
+    SimplifyBoolean,
     UseAssignOp,
     UseElse,
     UseIncrementDecrementOperator,
@@ -117,6 +119,7 @@ checkFromConfig ProhibitMyIdentPrefix = liftIO ProhibitMyIdentPrefix.check
 checkFromConfig ReduceScope = liftIO ReduceScope.check
 checkFromConfig RedundantModifiers = liftIO RedundantModifiers.check
 checkFromConfig SameExecutionsInIf = liftIO SameExecutionsInIf.check
+checkFromConfig SimplifyBoolean = liftIO SimplifyBoolean.check
 checkFromConfig UseAssignOp = liftIO UseAssignOp.check
 checkFromConfig UseElse = liftIO UseElse.check
 checkFromConfig UseIncrementDecrementOperator = liftIO UseIncrementDecrementOperator.check

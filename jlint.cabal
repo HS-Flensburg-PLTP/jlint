@@ -62,7 +62,7 @@ library
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.RedundantModifiers
       Language.Java.Rules.SameExecutionsInIf
-      Language.Java.Rules.SimplifyBooleanReturn
+      Language.Java.Rules.SimplifyBoolean
       Language.Java.Rules.UnusedLocalVariable
       Language.Java.Rules.UseAssignOp
       Language.Java.Rules.UseElse
@@ -162,7 +162,7 @@ test-suite jlint-test
       ReduceScopeTests
       RedundantModifiersTests
       SameExecutionsInIfTests
-      SimplifyBooleanReturnTests
+      SimplifyBooleanTests
       Tests
       UseAssignOpTests
       UseElseTests

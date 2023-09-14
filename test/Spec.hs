@@ -29,7 +29,7 @@ import qualified ProhibitMyIdentPrefixTests
 import qualified ReduceScopeTests
 import qualified RedundantModifiersTests
 import qualified SameExecutionsInIfTests
-import qualified SimplifyBooleanReturnTests
+import qualified SimplifyBooleanTests
 import Test.HUnit
 import qualified UseAssignOpTests
 import qualified UseElseTests
@@ -75,7 +75,7 @@ tests =
       "ReduceScope" ~: ReduceScopeTests.tests,
       "RedundantModifiers" ~: RedundantModifiersTests.tests,
       "SameExecutionsInIf" ~: SameExecutionsInIfTests.tests,
-      "SimplifyBooleanReturn" ~: SimplifyBooleanReturnTests.tests,
+      "SimplifyBoolean" ~: SimplifyBooleanTests.tests,
       "UseAssignOp" ~: UseAssignOpTests.tests,
       "UseElse" ~: UseElseTests.tests,
       "UseIncrementDecrementOperator" ~: UseIncrementDecrementOperatorTests.tests,

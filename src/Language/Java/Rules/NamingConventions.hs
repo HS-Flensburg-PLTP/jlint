@@ -188,7 +188,7 @@ variableKindToString Method = "einer Methode"
 variableKindToString StaticVariable = "einer statischen Variable"
 variableKindToString Parameter = "eines Parameters"
 variableKindToString InstanceVariable = "einer Instanzvariable"
-variableKindToString (LocalVariable modifier) = "einer lokalen " ++ modifierToString modifier ++ " Variable"
+variableKindToString (LocalVariable modifier) = "einer lokalen, " ++ modifierToString modifier ++ " Variable"
   where
     modifierToString FinalVariable = "finalen"
     modifierToString NonFinalVariable = "nicht finalen"
@@ -216,7 +216,7 @@ data Convention
 conventionToString :: Convention -> String
 conventionToString PascalCase = "\"Pascal Case\""
 conventionToString CamelCase = "\"Camel Case\""
-conventionToString (PackageCase letterCase) = "den Java-Paket-Stil mit " ++ letterCaseToString letterCase ++ " Buchstaben"
+conventionToString (PackageCase letterCase) = "Java-Paket-Stil mit " ++ letterCaseToString letterCase ++ " Buchstaben"
   where
     letterCaseToString Lower = "kleinen"
     letterCaseToString LowerAndUpper = "kleinen und großen"

@@ -49,6 +49,7 @@ data Rule
   | ReduceScope
   | RedundantModifiers
   | SameExecutionsInIf
+  | SimplifyBoolean
   | UseAssignOp
   | UseElse
   | UseIncrementDecrementOperator
@@ -90,6 +91,7 @@ instance FromJSON Rule where
       "ReduceScope" -> pure ReduceScope
       "RedundantModifiers" -> pure RedundantModifiers
       "SameExecutionsInIf" -> pure SameExecutionsInIf
+      "SimplifyBoolean" -> pure SimplifyBoolean
       "UseAssignOp" -> pure UseAssignOp
       "UseElse" -> pure UseElse
       "UseIncrementDecrementOperator" -> pure UseIncrementDecrementOperator
