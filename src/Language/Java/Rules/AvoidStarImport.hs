@@ -1,17 +1,16 @@
 module Language.Java.Rules.AvoidStarImport (check) where
 
-import Control.Monad (MonadPlus (..))
+import Control.Monad (mzero)
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.Maybe (mapMaybe)
 import Language.Java.Syntax
 import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-check cUnit path = do
-  importDecl <- universeBi cUnit
-  checkImport importDecl
+check cUnit path = mapMaybe checkImport (universeBi cUnit)
   where
-    checkImport :: ImportDecl -> [RDF.Diagnostic]
+    checkImport :: ImportDecl -> Maybe RDF.Diagnostic
     checkImport (ImportDecl sourceSpan _ _ allNamesImported) =
       if allNamesImported
         then

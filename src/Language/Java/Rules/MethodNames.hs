@@ -1,28 +1,99 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Language.Java.Rules.MethodNames where
+module Language.Java.Rules.MethodNames (check) where
 
+import Control.Monad (mzero)
 import Data.Aeson (FromJSON, decode)
-import qualified Data.ByteString.Lazy.Char8 as C (pack)
-import Data.Char (toLower, toUpper)
+import Data.ByteString.Lazy.Char8 (pack)
+import Data.Char (toUpper)
 import Data.Generics.Uniplate.Data (universeBi)
-import Data.List.Split
+import Data.List.Split (splitOn)
+import Data.Maybe (mapMaybe)
 import GHC.Generics (Generic)
 import Language.Java.Pretty (prettyPrint)
-import Language.Java.SourceSpan (SourceSpan)
+import Language.Java.SourceSpan (Located (..), SourceSpan)
 import Language.Java.Syntax
+import qualified Language.Java.Syntax.Ident as Ident
 import qualified Markdown
 import qualified RDF
 import System.Environment (lookupEnv)
 import System.FilePath ((</>))
-import System.Process
+import System.Process (readProcess)
 
 minimumSuggestions :: Int
 minimumSuggestions = 3
 
 thresholdSuggestions :: Float
 thresholdSuggestions = 0.75
+
+predictMethodNames :: [MethodInfo] -> IO [IdentPrediction]
+predictMethodNames methodInfos = do
+  maybePath <- lookupEnv "CODE2VEC"
+  case maybePath of
+    Nothing ->
+      -- The application should not crash here
+      error "CODE2VEC environment variable not set"
+    Just code2VecPath -> do
+      writeFile (code2VecPath </> "Input.java") (concatMap (prettyPrint . methodDecl) methodInfos)
+      response <-
+        readProcess
+          (code2VecPath </> ".venv/bin/python3")
+          [ code2VecPath </> " code2vec.py",
+            "--load",
+            code2VecPath </> "models/java14_model/saved_model_iter8.release",
+            "--predict"
+          ]
+          ""
+      let jsonData = splitOn "==========" response !! 1
+      let predictionSets = decode (pack jsonData) :: Maybe [PredictionSet]
+      return
+        ( case predictionSets of
+            Nothing -> []
+            Just pss -> zipWith IdentPrediction pss (map sourceSpan methodInfos)
+        )
+
+filterMethodDecl :: [String] -> MemberDecl Parsed -> Maybe MethodInfo
+filterMethodDecl whitelist methodDecl@(MethodDecl span _ _ _ ident _ _ _ _)
+  | Ident.name ident `notElem` whitelist = return (MethodInfo methodDecl ident span)
+  | otherwise = mzero
+filterMethodDecl _ _ = mzero
+
+check :: [String] -> CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
+check whitelist cUnit path = do
+  let methodInfos = mapMaybe (filterMethodDecl whitelist) (universeBi cUnit)
+  predictionSets <- predictMethodNames methodInfos
+  let filteredPredictionSets =
+        filter
+          ( \(IdentPrediction (PredictionSet originalName predictions) _) ->
+              all (\(Prediction predictedName _) -> originalName /= predictedName) predictions
+          )
+          predictionSets
+  let filteredPredictionSets' = map accumulatedProbability filteredPredictionSets
+  return (map (message path) filteredPredictionSets')
+
+message :: FilePath -> IdentPrediction -> RDF.Diagnostic
+message path (IdentPrediction (PredictionSet originalName predictions) span) =
+  RDF.rangeDiagnostic
+    "Language.Java.Rules.PredictMethodNames"
+    ( [ "Der Name",
+        Markdown.code (toCamelCase originalName),
+        "ist schlecht gewählt. Folgende Vorschläge eignen sich vielleicht besser:"
+      ]
+        ++ map (Markdown.code . pretty) predictions
+    )
+    span
+    path
+
+-- Helping data structures
+
+data MethodInfo = MethodInfo (MemberDecl Parsed) Ident SourceSpan
+
+instance Located MethodInfo where
+  sourceSpan (MethodInfo _ _ span) = span
+
+methodDecl :: MethodInfo -> MemberDecl Parsed
+methodDecl (MethodInfo memberDecl _ _) = memberDecl
 
 data PredictionSet = PredictionSet
   { originalName :: [String],
@@ -36,117 +107,36 @@ data Prediction = Prediction
   }
   deriving (Generic, Show)
 
+pretty :: Prediction -> String
+pretty (Prediction name _) = toCamelCase name
+
+toCamelCase :: [String] -> String
+toCamelCase [] = ""
+toCamelCase (part : parts) = part ++ concatMap firstToUpper parts
+
+firstToUpper :: String -> String
+firstToUpper "" = ""
+firstToUpper (c : cs) = toUpper c : cs
+
 instance FromJSON Prediction
 
 instance FromJSON PredictionSet
 
-predictMethodNames :: [MemberDecl Parsed] -> IO [(PredictionSet, SourceSpan)]
-predictMethodNames methodDecls = do
-  maybePath <- lookupEnv "CODE2VEC"
-  case maybePath of
-    Nothing ->
-      -- The application should not crash here
-      error "CODE2VEC environment variable not set"
-    Just code2VecPath -> do
-      writeFile (code2VecPath </> "Input.java") (concatMap prettyPrint methodDecls)
-      response <-
-        readProcess
-          (code2VecPath </> ".venv/bin/python3")
-          [ code2VecPath </> " code2vec.py",
-            "--load",
-            code2VecPath </> "models/java14_model/saved_model_iter8.release",
-            "--predict"
-          ]
-          ""
-      let jsonData = splitOn "==========" response !! 1
-      let predictionSets = decode (C.pack jsonData) :: Maybe [PredictionSet]
-      case predictionSets of
-        Nothing -> return []
-        Just pss ->
-          return
-            ( zipWith
-                (\((MethodDecl _ _ _ _ (Ident sourceSpan _) _ _ _ _)) predictionSet -> (predictionSet, sourceSpan))
-                methodDecls
-                pss
-            )
+data IdentPrediction = IdentPrediction PredictionSet SourceSpan
 
-check :: [String] -> CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
-check whitelist cUnit path = do
-  let methodDecls = concatMap (checkMethodDecl whitelist) (universeBi cUnit)
-  if null methodDecls
-    then return []
-    else do
-      predictionSets <- predictMethodNames methodDecls
-      let filteredPredictionSets =
-            filter
-              ( \(PredictionSet originalName predictions, _) ->
-                  not
-                    ( any
-                        ( \(Prediction predictedName _) ->
-                            originalName == predictedName
-                        )
-                        predictions
-                    )
-              )
-              predictionSets
-      let filteredPredictionSets' = checkPredictionSets filteredPredictionSets
-      return
-        ( map
-            ( \(PredictionSet originalName predictions, sourceSpan) ->
-                RDF.rangeDiagnostic
-                  "Language.Java.Rules.PredictMethodNames"
-                  ( [ "Der Name",
-                      Markdown.code (toCamelCase originalName),
-                      "ist schlecht gewählt. Folgende Vorschläge eignen sich vielleicht besser:"
-                    ]
-                      ++ map
-                        ( \(Prediction name _) ->
-                            Markdown.code (toCamelCase name)
-                        )
-                        predictions
-                  )
-                  sourceSpan
-                  path
-            )
-            filteredPredictionSets'
-        )
+instance Located IdentPrediction where
+  sourceSpan (IdentPrediction _ span) = span
 
-toCamelCase :: [String] -> String
-toCamelCase (x : xs) =
-  x
-    ++ concatMap
-      ( \(n : ns) ->
-          toUpper n : map toLower ns
-      )
-      xs
-toCamelCase [] = []
+accumulatedProbability :: IdentPrediction -> IdentPrediction
+accumulatedProbability (IdentPrediction (PredictionSet originalName predictions) span) =
+  IdentPrediction (PredictionSet {originalName = originalName, predictions = filterPredictions predictions}) span
 
-checkMethodDecl :: [String] -> MemberDecl Parsed -> [MemberDecl Parsed]
-checkMethodDecl whitelist methodDecl@(MethodDecl _ _ _ _ (Ident _ ident) _ _ _ _) =
-  [methodDecl | ident `notElem` whitelist]
-checkMethodDecl _ _ = []
-
-checkPredictionSets :: [(PredictionSet, SourceSpan)] -> [(PredictionSet, SourceSpan)]
-checkPredictionSets =
-  map
-    ( \(PredictionSet originalName predictions, sourceSpan) ->
-        ( PredictionSet
-            { originalName = originalName,
-              predictions = calculatePredictions predictions
-            },
-          sourceSpan
-        )
-    )
-
-calculatePredictions :: [Prediction] -> [Prediction]
-calculatePredictions preds = calculatePredictions' preds [] 0 0.0
+filterPredictions :: [Prediction] -> [Prediction]
+filterPredictions preds = filterPredictions' preds 0 0.0
   where
-    calculatePredictions' :: [Prediction] -> [Prediction] -> Int -> Float -> [Prediction]
-    calculatePredictions' [] akk _ _ = akk
-    calculatePredictions' (x@(Prediction _ weight) : xs) akk count accumulatedWeight =
-      if accumulatedWeight >= thresholdSuggestions
-        then
-          if count < minimumSuggestions
-            then calculatePredictions' xs (akk ++ [x]) (count + 1) (accumulatedWeight + weight)
-            else akk
-        else calculatePredictions' xs (akk ++ [x]) (count + 1) (accumulatedWeight + weight)
+    filterPredictions' :: [Prediction] -> Int -> Float -> [Prediction]
+    filterPredictions' [] _ _ = []
+    filterPredictions' (p : ps) count accumulatedWeight =
+      if accumulatedWeight >= thresholdSuggestions && count >= minimumSuggestions
+        then []
+        else p : filterPredictions' ps (count + 1) (accumulatedWeight + weight p)

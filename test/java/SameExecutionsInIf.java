@@ -115,5 +115,16 @@ class SameExecutionsInIf {
         else {
         }
     }
-}
 
+    public void method4() {
+        if (true) {
+            b = 1;
+            a = 1;
+            c = 1;
+        } else {
+            c = 1;
+            a = 1;
+            b = 1;
+        }
+    }
+}

@@ -1,8 +1,9 @@
 module Language.Java.Rules.UseElse (check) where
 
-import Control.Monad (MonadPlus (..))
+import Control.Monad (mzero)
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.List (intercalate)
+import Data.Maybe (mapMaybe)
 import Language.Java.Syntax
 import qualified Language.Java.Syntax.BlockStmt.Extra as BlockStmt.Extra
 import qualified Markdown
@@ -13,10 +14,9 @@ check cUnit path =
   checkIfWithoutElse cUnit path ++ checkCodeAfterIfThenElse cUnit path
 
 checkIfWithoutElse :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-checkIfWithoutElse cUnit path = do
-  blocks <- universeBi cUnit
-  checkBlocks blocks
+checkIfWithoutElse cUnit path = mapMaybe checkBlocks (universeBi cUnit)
   where
+    checkBlocks :: [BlockStmt Parsed] -> Maybe RDF.Diagnostic
     checkBlocks [BlockStmt (IfThen {})] = mzero
     checkBlocks (BlockStmt (IfThen range _ stmt) : _) = do
       if doesAlwaysExit stmt

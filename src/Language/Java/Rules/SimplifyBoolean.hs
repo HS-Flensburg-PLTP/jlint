@@ -1,17 +1,17 @@
 module Language.Java.Rules.SimplifyBoolean (check) where
 
-import Control.Monad (MonadPlus (..))
+import Control.Monad (mplus, mzero)
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.Maybe (mapMaybe)
 import Language.Java.Pretty (prettyPrint)
 import Language.Java.Syntax
 import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-check cUnit path = do
-  (universeBi cUnit >>= checkStmt) `mplus` (universeBi cUnit >>= checkExp)
+check cUnit path = mapMaybe checkStmt (universeBi cUnit) `mplus` mapMaybe checkExp (universeBi cUnit)
   where
-    checkStmt :: Stmt Parsed -> [RDF.Diagnostic]
+    checkStmt :: Stmt Parsed -> Maybe RDF.Diagnostic
     checkStmt (IfThenElse span cond thenStmt elseStmt)
       | isBoolLiteralReturn True thenStmt && isBoolLiteralReturn False elseStmt =
           return
@@ -51,7 +51,7 @@ check cUnit path = do
       | otherwise = mzero
     checkStmt _ = mzero
 
-    checkExp :: Exp Parsed -> [RDF.Diagnostic]
+    checkExp :: Exp Parsed -> Maybe RDF.Diagnostic
     checkExp (BinOp span leftExp Equal rightExp)
       | isBoolLiteral True leftExp || isBoolLiteral True rightExp =
           return

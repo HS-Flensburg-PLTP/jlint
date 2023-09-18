@@ -1,6 +1,6 @@
 module Language.Java.Rules.CheckNonFinalMethodParameters (check) where
 
-import Control.Monad (MonadPlus (mzero))
+import Control.Monad (mzero)
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
 import qualified Language.Java.Syntax.Ident as Ident

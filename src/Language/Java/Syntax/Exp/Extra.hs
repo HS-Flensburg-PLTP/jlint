@@ -1,10 +1,33 @@
-module Language.Java.Syntax.Exp.Extra (isDataCreation, isPostIncDec) where
+module Language.Java.Syntax.Exp.Extra (hasNoSideEffect) where
 
 import Language.Java.Syntax (Exp (..))
-import qualified Language.Java.Syntax.Exp as Exp
 
-isPostIncDec :: Exp p -> Bool
-isPostIncDec exp = Exp.isPostInc exp || Exp.isPostDec exp
-
-isDataCreation :: Exp p -> Bool
-isDataCreation exp = Exp.isArrayCreate exp || Exp.isIncstanceCreation exp || Exp.isQualInstanceCreation exp
+hasNoSideEffect :: Exp p -> Bool
+hasNoSideEffect (Lit _) = True
+hasNoSideEffect (ClassLit _ _) = False
+hasNoSideEffect (This _) = False
+hasNoSideEffect (ThisClass {}) = False
+hasNoSideEffect (InstanceCreation {}) = False
+hasNoSideEffect (QualInstanceCreation {}) = False
+hasNoSideEffect (ArrayCreate {}) = False
+hasNoSideEffect (ArrayCreateInit {}) = False
+hasNoSideEffect (FieldAccess {}) = True
+hasNoSideEffect (MethodInv {}) = False
+hasNoSideEffect (ArrayAccess {}) = False
+hasNoSideEffect (ExpName {}) = True
+hasNoSideEffect (PostIncrement _ _) = False
+hasNoSideEffect (PostDecrement _ _) = False
+hasNoSideEffect (PreIncrement _ _) = False
+hasNoSideEffect (PreDecrement _ _) = False
+hasNoSideEffect (PrePlus {}) = False
+hasNoSideEffect (PreMinus {}) = False
+hasNoSideEffect (PreBitCompl {}) = False
+hasNoSideEffect (PreNot {}) = False
+hasNoSideEffect (SwitchExp {}) = False
+hasNoSideEffect (Cast {}) = False
+hasNoSideEffect (BinOp _ leftExp _ rightExp) = hasNoSideEffect leftExp && hasNoSideEffect rightExp
+hasNoSideEffect (InstanceOf {}) = False
+hasNoSideEffect (Cond {}) = False
+hasNoSideEffect (Assign {}) = False
+hasNoSideEffect (Lambda {}) = False
+hasNoSideEffect (MethodRef {}) = False

@@ -1,11 +1,8 @@
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE QuasiQuotes #-}
-{-# LANGUAGE ScopedTypeVariables #-}
 
 module Language.Java.Rules.NamingConventions (check) where
 
-import Control.Monad (MonadPlus (..))
+import Control.Monad (mzero)
 import Data.Foldable (toList)
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.List.Extra (none)
@@ -51,19 +48,22 @@ extractPackageNames (PackageDecl (Name _ packageNames)) = packageNames
 
 checkMethodNames :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkMethodNames cUnit path = do
-  MethodDecl _ _ _ _ ident _ _ _ _ :: MemberDecl Parsed <- universeBi cUnit
+  MethodDecl _ _ _ _ ident _ _ _ _ <- universeBi cUnit :: [MemberDecl Parsed]
   checkIdent path Method ident
 
 {- ParameterName -}
 
 checkParameterNames :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkParameterNames cUnit path = do
-  membDecl :: MemberDecl Parsed <- universeBi cUnit
-  formalParam <- extractBody membDecl
+  memberDecl <- universeBi cUnit
+  formalParam <- extractBody memberDecl
   checkIdent path Parameter formalParam
   where
-    extractBody (MethodDecl _ _ _ _ _ formalParams _ _ _) = map (\(FormalParam _ _ _ _ varDeclIds) -> VarDeclId.ident varDeclIds) formalParams
-    extractBody _ = mzero
+    extractBody :: MemberDecl Parsed -> [Ident]
+    extractBody (MethodDecl _ _ _ _ _ formalParams _ _ _) =
+      map (\(FormalParam _ _ _ _ varDeclIds) -> VarDeclId.ident varDeclIds) formalParams
+    extractBody _ =
+      mzero
 
 {- StaticVariableName -}
 
@@ -87,7 +87,7 @@ extractStaticFieldNames cUnit = do
 
 checkLocalNames :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkLocalNames cUnit path = do
-  MethodDecl _ _ _ _ _ _ _ _ body :: MemberDecl Parsed <- universeBi cUnit
+  MethodDecl _ _ _ _ _ _ _ _ body <- universeBi cUnit :: [MemberDecl Parsed]
   fieldNames <- universeBi body
   (ident, modifier) <- extractMemberDecl fieldNames
   checkIdent path (LocalVariable modifier) ident
@@ -120,18 +120,20 @@ checkTypeNames cUnit path = do
 
 extractCLassesAndInterfaces :: CompilationUnit Parsed -> [Ident]
 extractCLassesAndInterfaces cUnit = do
-  classesAndInterfaces :: TypeDecl Parsed <- universeBi cUnit
-  extractCLassAndInterface classesAndInterfaces
+  classesAndInterfaces <- universeBi cUnit
+  extractClassAndInterface classesAndInterfaces
   where
-    extractCLassAndInterface (ClassTypeDecl (ClassDecl _ _ ident _ _ _ _)) = return ident
-    extractCLassAndInterface (InterfaceTypeDecl (InterfaceDecl _ _ _ ident _ _ _ _)) = return ident
-    extractCLassAndInterface _ = mzero
+    extractClassAndInterface :: TypeDecl Parsed -> [Ident]
+    extractClassAndInterface (ClassTypeDecl (ClassDecl _ _ ident _ _ _ _)) = return ident
+    extractClassAndInterface (InterfaceTypeDecl (InterfaceDecl _ _ _ ident _ _ _ _)) = return ident
+    extractClassAndInterface _ = mzero
 
 extractEnums :: CompilationUnit Parsed -> [Ident]
 extractEnums cUnit = do
-  enums :: ClassDecl Parsed <- universeBi cUnit
+  enums <- universeBi cUnit
   extractEnum enums
   where
+    extractEnum :: ClassDecl Parsed -> [Ident]
     extractEnum (EnumDecl _ _ ident _ _) = return ident
     extractEnum _ = mzero
 

@@ -1,5 +1,3 @@
-{-# LANGUAGE ScopedTypeVariables #-}
-
 module Language.Java.Rules.PreferExpressions (check) where
 
 import Control.Monad (MonadPlus (..))
@@ -8,6 +6,7 @@ import Data.Generics.Uniplate.Data (universeBi)
 import Data.List.Extra (none)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.List.NonEmpty as NonEmpty
+import Data.Maybe (mapMaybe)
 import Language.Java.Syntax
 import qualified Language.Java.Syntax.Ident as Ident
 import qualified Language.Java.Syntax.VarDecl as VarDecl
@@ -15,9 +14,7 @@ import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-check cUnit path = do
-  blocks <- universeBi cUnit
-  checkBlocks blocks
+check cUnit path = mapMaybe checkBlocks (universeBi cUnit)
   where
     checkBlocks
       ( LocalVars (startLoc, _) _ _ vars
@@ -88,10 +85,10 @@ filterVarUpdate (Assign _ (NameLhs (Name _ (ident :| []))) _ _) = Just ident
 filterVarUpdate _ = Nothing
 
 variablesRead :: (Data a) => a -> [Ident]
-variablesRead parent = [ident | ExpName (Name _ idents) :: Exp Parsed <- universeBi parent, ident <- NonEmpty.toList idents]
+variablesRead parent = [ident | ExpName (Name _ idents) <- universeBi parent :: [Exp Parsed], ident <- NonEmpty.toList idents]
 
 variablesWritten :: (Data a) => a -> [Ident]
-variablesWritten parent = [ident | Assign _ (NameLhs (Name _ (ident :| []))) _ _ :: Exp Parsed <- universeBi parent]
+variablesWritten parent = [ident | Assign _ (NameLhs (Name _ (ident :| []))) _ _ <- universeBi parent :: [Exp Parsed]]
 
 assignedTwiceMessage :: Ident -> [String]
 assignedTwiceMessage ident =

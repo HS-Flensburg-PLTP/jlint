@@ -1,18 +1,17 @@
-module Language.Java.Rules.AvoidOuterNegations where
+module Language.Java.Rules.AvoidOuterNegations (check) where
 
-import Control.Monad (MonadPlus (mzero))
+import Control.Monad (mzero)
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.Maybe (mapMaybe)
 import Language.Java.Pretty (prettyPrint)
 import Language.Java.Syntax
 import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-check cUnit path = do
-  exp <- universeBi cUnit
-  checkExp exp
+check cUnit path = mapMaybe checkExp (universeBi cUnit)
   where
-    checkExp :: Exp Parsed -> [RDF.Diagnostic]
+    checkExp :: Exp Parsed -> Maybe RDF.Diagnostic
     checkExp (PreNot span (BinOp _ _ op _)) =
       case invertOp op of
         Just invertedOp ->

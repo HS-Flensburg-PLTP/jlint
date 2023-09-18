@@ -1,29 +1,20 @@
-module Language.Java.Rules.ProhibitAnnotations where
+module Language.Java.Rules.ProhibitAnnotations (check) where
 
-import Control.Monad (MonadPlus (..))
+import Control.Monad (mzero)
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.Maybe (mapMaybe)
 import Language.Java.Pretty (prettyPrint)
 import Language.Java.SourceSpan (sourceSpan)
 import Language.Java.Syntax
+import qualified Language.Java.Syntax.Annotation.Extra as Annotation
 import qualified RDF
 
 check :: [String] -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-check whitelist cUnit path = do
-  annotation <- universeBi cUnit
-  checkAnnotation whitelist annotation path
+check whitelist cUnit path = mapMaybe (checkAnnotation path whitelist) (universeBi cUnit)
 
-checkWithDefaultValue :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-checkWithDefaultValue = check annotationWhitelist
-
-annotationName :: Annotation Parsed -> Name
-annotationName (NormalAnnotation _ name _) = name
-annotationName (SingleElementAnnotation _ name _) = name
-annotationName (MarkerAnnotation _ name) = name
-
-checkAnnotation :: [String] -> Annotation Parsed -> FilePath -> [RDF.Diagnostic]
-checkAnnotation whitelist annotation path =
-  let name = prettyPrint (annotationName annotation)
-      sourcespan = sourceSpan annotation
+checkAnnotation :: FilePath -> [String] -> Annotation Parsed -> Maybe RDF.Diagnostic
+checkAnnotation path whitelist annotation =
+  let name = prettyPrint (Annotation.name annotation)
    in if name `elem` whitelist
         then mzero
         else
@@ -31,9 +22,6 @@ checkAnnotation whitelist annotation path =
             ( RDF.rangeDiagnostic
                 "Language.Java.Rules.ProhibitAnnotations"
                 ["Die Nutzung der Annotation", name, "ist nicht erlaubt."]
-                sourcespan
+                (sourceSpan annotation)
                 path
             )
-
-annotationWhitelist :: [String]
-annotationWhitelist = ["Override"]

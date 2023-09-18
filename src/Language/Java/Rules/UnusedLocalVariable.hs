@@ -1,6 +1,6 @@
 module Language.Java.Rules.UnusedLocalVariable where
 
-import Control.Monad (MonadPlus (..))
+import Control.Monad (mzero)
 import Data.Function ((&))
 import Data.Generics.Uniplate.Data (universeBi)
 import qualified Data.List.NonEmpty as NonEmpty

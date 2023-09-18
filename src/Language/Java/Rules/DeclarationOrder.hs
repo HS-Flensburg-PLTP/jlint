@@ -1,7 +1,9 @@
 module Language.Java.Rules.DeclarationOrder (check) where
 
+import Control.Monad (mzero)
+import Data.Function ((&))
 import Data.Generics.Uniplate.Data (universeBi)
-import Data.Maybe (maybeToList)
+import Data.Maybe (mapMaybe)
 import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
 import qualified Language.Java.Syntax.Modifier as Modifier
@@ -11,37 +13,27 @@ check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = checkRank path (extractMemberDecls cUnit)
 
 extractMemberDecls :: CompilationUnit Parsed -> [(Rank, SourceSpan)]
-extractMemberDecls cUnit = do
-  toplvlDecl <- universeBi cUnit
-  maybeToList (checkTopLevelStmts toplvlDecl)
+extractMemberDecls cUnit = mapMaybe checkTopLevelDeclaration (universeBi cUnit)
 
-checkTopLevelStmts :: MemberDecl Parsed -> Maybe (Rank, SourceSpan)
-checkTopLevelStmts toplvlDecl = case toplvlDecl of
-  FieldDecl sourceSpan mods _ _ ->
-    if any Modifier.isStatic mods
-      then
-        if any Modifier.isPublic mods
-          then Just (StaticPublicField, sourceSpan)
-          else
-            if any Modifier.isProtected mods
-              then Just (StaticProtectedField, sourceSpan)
-              else
-                if any Modifier.isPrivate mods
-                  then Just (StaticPrivateField, sourceSpan)
-                  else Just (StaticPackageField, sourceSpan)
-      else
-        if any Modifier.isPublic mods
-          then Just (InstancePublicField, sourceSpan)
-          else
-            if any Modifier.isProtected mods
-              then Just (InstanceProtectedField, sourceSpan)
-              else
-                if any Modifier.isPrivate mods
-                  then Just (InstancePrivateField, sourceSpan)
-                  else Just (InstancePackageField, sourceSpan)
-  ConstructorDecl sourceSpan _ _ _ _ _ _ -> Just (Constructor, sourceSpan)
-  MethodDecl sourceSpan _ _ _ _ _ _ _ _ -> Just (Method, sourceSpan)
-  _ -> Nothing
+checkTopLevelDeclaration :: MemberDecl Parsed -> Maybe (Rank, SourceSpan)
+checkTopLevelDeclaration (FieldDecl sourceSpan mods _ _)
+  | any Modifier.isStatic mods =
+      if any Modifier.isPublic mods
+        then return (StaticPublicField, sourceSpan)
+        else
+          if any Modifier.isProtected mods
+            then return (StaticProtectedField, sourceSpan)
+            else
+              if any Modifier.isPrivate mods
+                then return (StaticPrivateField, sourceSpan)
+                else return (StaticPackageField, sourceSpan)
+  | any Modifier.isPublic mods = return (InstancePublicField, sourceSpan)
+  | any Modifier.isProtected mods = return (InstanceProtectedField, sourceSpan)
+  | any Modifier.isPrivate mods = return (InstancePrivateField, sourceSpan)
+  | otherwise = return (InstancePackageField, sourceSpan)
+checkTopLevelDeclaration (ConstructorDecl sourceSpan _ _ _ _ _ _) = return (Constructor, sourceSpan)
+checkTopLevelDeclaration (MethodDecl sourceSpan _ _ _ _ _ _ _ _) = return (Method, sourceSpan)
+checkTopLevelDeclaration _ = mzero
 
 data Rank
   = StaticPublicField
@@ -70,7 +62,9 @@ rankToString Method = "Die Methode"
 
 checkRank :: FilePath -> [(Rank, SourceSpan)] -> [RDF.Diagnostic]
 checkRank path declOrder =
-  map (createError . snd) (filter (\((rankA, _), (rankB, _)) -> rankA > rankB) (zip declOrder (tail declOrder)))
+  zip declOrder (tail declOrder)
+    & filter (\((rankA, _), (rankB, _)) -> rankA > rankB)
+    & map (createError . snd)
   where
     createError :: (Rank, SourceSpan) -> RDF.Diagnostic
     createError (rank, sourcespan) =

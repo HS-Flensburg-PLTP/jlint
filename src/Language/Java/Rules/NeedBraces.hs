@@ -1,25 +1,23 @@
 module Language.Java.Rules.NeedBraces (check) where
 
-import Control.Monad (MonadPlus (..))
+import Control.Monad (mplus, mzero)
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.SourceSpan (SourceSpan, sourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-check cUnit path = do
-  stmt <- universeBi cUnit
-  checkStmt stmt path
-
-checkStmt :: Stmt Parsed -> FilePath -> [RDF.Diagnostic]
-checkStmt (IfThen _ _ stmt) path = checkConditionalThen stmt path
-checkStmt (IfThenElse _ _ stmt1 stmt2) path =
-  checkConditionalThen stmt1 path ++ checkConditionalElse stmt2 path
-checkStmt (While span _ stmt) path = checkLoopBody stmt span path
-checkStmt (BasicFor span _ _ _ stmt) path = checkLoopBody stmt span path
-checkStmt (EnhancedFor span _ _ _ _ stmt) path = checkLoopBody stmt span path
-checkStmt (Do span stmt _) path = checkLoopBody stmt span path
-checkStmt _ _ = mzero
+check cUnit path = universeBi cUnit >>= checkStmt
+  where
+    checkStmt :: Stmt Parsed -> [RDF.Diagnostic]
+    checkStmt (IfThen _ _ thenStmt) = checkConditionalThen thenStmt path
+    checkStmt (IfThenElse _ _ thenStmt elseStmt) =
+      checkConditionalThen thenStmt path `mplus` checkConditionalElse elseStmt path
+    checkStmt (While span _ bodyStmt) = checkLoopBody bodyStmt span path
+    checkStmt (BasicFor span _ _ _ bodyStmt) = checkLoopBody bodyStmt span path
+    checkStmt (EnhancedFor span _ _ _ _ bodyStmt) = checkLoopBody bodyStmt span path
+    checkStmt (Do span bodyStmt _) = checkLoopBody bodyStmt span path
+    checkStmt _ = mzero
 
 checkConditionalThen :: Stmt Parsed -> FilePath -> [RDF.Diagnostic]
 checkConditionalThen = checkConditionalBody

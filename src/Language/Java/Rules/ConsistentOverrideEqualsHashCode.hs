@@ -2,10 +2,11 @@ module Language.Java.Rules.ConsistentOverrideEqualsHashCode (check) where
 
 import Control.Monad (MonadPlus (mzero))
 import Data.Generics.Uniplate.Data (universeBi)
-import Data.List.NonEmpty (NonEmpty ((:|)))
-import Data.Maybe (maybeToList)
+import Data.List.NonEmpty (NonEmpty (..))
+import Data.Maybe (mapMaybe, maybeToList)
 import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
+import qualified Language.Java.Syntax.Ident as Ident
 import qualified Markdown
 import qualified RDF
 
@@ -13,9 +14,9 @@ import qualified RDF
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   classDecl <- universeBi cUnit
-  checkConsistentUse (extractEqualsHashCode classDecl)
+  maybeToList (checkConsistentUse (extractEqualsHashCode classDecl))
   where
-    checkConsistentUse :: [(Method, Method, SourceSpan)] -> [RDF.Diagnostic]
+    checkConsistentUse :: [(Method, Method, SourceSpan)] -> Maybe RDF.Diagnostic
     checkConsistentUse [] = mzero
     checkConsistentUse [(found, missing, span)] =
       return
@@ -42,16 +43,24 @@ methodToString HashCode = "hashCode"
 
 -- extracts all methods from a class that override Object equals and hashCode
 extractEqualsHashCode :: ClassDecl Parsed -> [(Method, Method, SourceSpan)]
-extractEqualsHashCode classDecl = do
-  membDecl <- universeBi classDecl
-  maybeToList (filterEqualsAndHashCode membDecl)
+extractEqualsHashCode classDecl = mapMaybe filterEqualsAndHashCode (universeBi classDecl)
 
 -- checks if a MembderDecl overrides equals or hashcode
 filterEqualsAndHashCode :: MemberDecl Parsed -> Maybe (Method, Method, SourceSpan)
-filterEqualsAndHashCode (MethodDecl span [Public _] [] (Just (PrimType IntT)) (Ident _ "hashCode") [] [] _ _) = Just (HashCode, Equals, span)
-filterEqualsAndHashCode (MethodDecl span [Public _] [] (Just (PrimType BooleanT)) (Ident _ "equals") [FormalParam _ [] (RefType (ClassRefType classType)) False _] [] _ _) =
-  if isJavaLangObject classType then Just (Equals, HashCode, span) else Nothing
-filterEqualsAndHashCode _ = Nothing
+filterEqualsAndHashCode (MethodDecl span [Public _] [] (Just (PrimType IntT)) ident [] [] _ _) =
+  if Ident.name ident == "hashCode"
+    then return (HashCode, Equals, span)
+    else mzero
+filterEqualsAndHashCode (MethodDecl span [Public _] [] (Just (PrimType BooleanT)) ident params [] _ _) =
+  if Ident.name ident == "equals" && takesJavaLangObject params
+    then return (Equals, HashCode, span)
+    else mzero
+filterEqualsAndHashCode _ = mzero
+
+takesJavaLangObject :: [FormalParam Parsed] -> Bool
+takesJavaLangObject [FormalParam _ [] (RefType (ClassRefType classType)) False _] =
+  isJavaLangObject classType
+takesJavaLangObject _ = False
 
 -- checks if a classType is of Type Object or java.lang.Object
 isJavaLangObject :: ClassType -> Bool

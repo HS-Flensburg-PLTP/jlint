@@ -1,6 +1,6 @@
 module Language.Java.Rules.SingleTopLevelClass (check) where
 
-import Control.Monad (MonadPlus (..))
+import Control.Monad (mzero)
 import Language.Java.SourceSpan (sourceSpan)
 import Language.Java.Syntax
 import qualified RDF

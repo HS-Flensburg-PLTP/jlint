@@ -1,7 +1,8 @@
 module Language.Java.Rules.AvoidNegations (check) where
 
-import Control.Monad (MonadPlus (..))
+import Control.Monad (mzero)
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.Maybe (mapMaybe)
 import Language.Java.Syntax
 import qualified Markdown
 import qualified RDF
@@ -10,11 +11,9 @@ check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = checkStatement cUnit path ++ checkExpression cUnit path
 
 checkStatement :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-checkStatement cUnit path = do
-  stmt <- universeBi cUnit
-  checkIfThenElse stmt
+checkStatement cUnit path = mapMaybe checkIfThenElse (universeBi cUnit)
   where
-    checkIfThenElse :: Stmt Parsed -> [RDF.Diagnostic]
+    checkIfThenElse :: Stmt Parsed -> Maybe RDF.Diagnostic
     checkIfThenElse (IfThenElse span cond _ _) =
       if isNegation cond
         then
@@ -32,11 +31,9 @@ checkStatement cUnit path = do
     checkIfThenElse _ = mzero
 
 checkExpression :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-checkExpression cUnit path = do
-  stmt <- universeBi cUnit
-  checkCond stmt
+checkExpression cUnit path = mapMaybe checkCond (universeBi cUnit)
   where
-    checkCond :: Exp Parsed -> [RDF.Diagnostic]
+    checkCond :: Exp Parsed -> Maybe RDF.Diagnostic
     checkCond (Cond span cond _ _) =
       if isNegation cond
         then

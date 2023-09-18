@@ -69,9 +69,12 @@ library
       Language.Java.Rules.UseIncrementDecrementOperator
       Language.Java.Rules.UseJavaArrayTypeStyle
       Language.Java.Rules.UsePostIncrementDecrement
+      Language.Java.Syntax.Annotation.Extra
       Language.Java.Syntax.BlockStmt.Extra
       Language.Java.Syntax.Exp.Extra
       Language.Java.Syntax.Stmt.Extra
+      Language.Java.Syntax.VarDecl.Extra
+      Language.Java.Syntax.VarInit.Extra
       Markdown
       RDF
   other-modules:

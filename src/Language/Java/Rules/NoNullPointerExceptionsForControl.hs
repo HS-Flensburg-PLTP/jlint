@@ -1,17 +1,15 @@
 module Language.Java.Rules.NoNullPointerExceptionsForControl (check) where
 
-import Control.Monad (MonadPlus (..))
+import Control.Monad (mzero)
 import Data.Generics.Uniplate.Data (universeBi)
-import Data.List.NonEmpty (NonEmpty ((:|)))
-import qualified Data.List.NonEmpty as NonEmpty
+import Data.List.NonEmpty (NonEmpty (..))
+import Data.Maybe (mapMaybe)
 import Language.Java.Syntax
 import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-check cUnit path = do
-  blocks <- universeBi cUnit
-  checkStatement blocks
+check cUnit path = mapMaybe checkStatement (universeBi cUnit)
   where
     checkStatement (Try range _ _ catches _) =
       if any catchesNullPointerException catches
@@ -33,7 +31,7 @@ check cUnit path = do
 
 catchesNullPointerException :: Catch Parsed -> Bool
 catchesNullPointerException (Catch (FormalParam _ _ (RefType (ClassRefType (ClassType typeName))) _ _) _) =
-  isNullPointerExceptionName (NonEmpty.map fst typeName)
+  isNullPointerExceptionName (fmap fst typeName)
 catchesNullPointerException _ = False
 
 isNullPointerExceptionName :: NonEmpty Ident -> Bool

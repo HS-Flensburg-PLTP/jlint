@@ -1,15 +1,11 @@
 module Language.Java.Syntax.Stmt.Extra
-  ( isLoop,
-    name,
+  ( name,
+    hasNoSideEffect,
   )
 where
 
 import Language.Java.Pretty (PrettyExtension, prettyPrint)
 import Language.Java.Syntax (Stmt (..))
-import qualified Language.Java.Syntax.Stmt as Stmt
-
-isLoop :: Stmt p -> Bool
-isLoop stmt = Stmt.isWhile stmt || Stmt.isDo stmt || Stmt.isBasicFor stmt || Stmt.isEnhancedFor stmt
 
 name :: PrettyExtension p => Stmt p -> String
 name (Return _ _) = "return"
@@ -30,3 +26,23 @@ name (ExpStmt _ exp) = prettyPrint exp
 name (Assert {}) = "assert"
 name (Break {}) = "break"
 name (Continue {}) = "continue"
+
+hasNoSideEffect :: Stmt p -> Bool
+hasNoSideEffect (StmtBlock {}) = False
+hasNoSideEffect (IfThen {}) = False
+hasNoSideEffect (IfThenElse {}) = False
+hasNoSideEffect (While {}) = False
+hasNoSideEffect (BasicFor {}) = False
+hasNoSideEffect (EnhancedFor {}) = False
+hasNoSideEffect (Empty {}) = False
+hasNoSideEffect (ExpStmt {}) = False
+hasNoSideEffect (Assert {}) = False
+hasNoSideEffect (Switch {}) = False
+hasNoSideEffect (Do {}) = False
+hasNoSideEffect (Break {}) = True
+hasNoSideEffect (Continue {}) = True
+hasNoSideEffect (Return {}) = True
+hasNoSideEffect (Synchronized {}) = False
+hasNoSideEffect (Throw {}) = False
+hasNoSideEffect (Try {}) = False
+hasNoSideEffect (Labeled _ _ stmt) = hasNoSideEffect stmt

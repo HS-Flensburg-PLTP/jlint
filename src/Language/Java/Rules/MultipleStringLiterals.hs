@@ -1,68 +1,75 @@
-{-# LANGUAGE LambdaCase #-}
+module Language.Java.Rules.MultipleStringLiterals (check) where
 
-module Language.Java.Rules.MultipleStringLiterals where
-
-import Control.Monad (MonadPlus (..))
 import Data.Generics.Uniplate.Data (universeBi)
-import Data.List (groupBy, intercalate, sortBy)
-import Data.List.Extra
-import qualified Data.Maybe as Maybe
-import Language.Java.Pretty (prettyPrint)
-import Language.Java.SourceSpan
+import Data.List (intercalate, sort)
+import Data.List.NonEmpty (NonEmpty (..))
+import qualified Data.List.NonEmpty as NonEmpty
+import Data.Maybe (mapMaybe)
+import Language.Java.SourceSpan (Location (..), SourceSpan)
 import Language.Java.Syntax
-import qualified Language.Java.Syntax.Literal as Literal
 import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path =
-  let annotationStringLiterals = do
-        annotation <- universeBi cUnit :: [Annotation Parsed]
-        filter Literal.isString (universeBi annotation)
-      stringLiterals = filter Literal.isString (universeBi cUnit)
-      validLiterals =
-        filter
-          (\lit -> Maybe.fromJust (Literal.string lit) /= "")
-          ( filter
-              (\lit -> none (eq IncludeSourceSpan lit) annotationStringLiterals)
-              stringLiterals
-          )
-   in checkForDuplicates validLiterals path
+  let stringLiterals = mapMaybe filterStringLiteral (universeBi cUnit)
+      validLiterals = filter isValidStringLiteral stringLiterals
+   in map (message path) (duplicates validLiterals)
+  where
+    annotations = universeBi cUnit :: [Annotation Parsed]
+    annotationStringLiterals = mapMaybe filterStringLiteral (universeBi annotations)
+    isValidStringLiteral literal =
+      not (isEmptyString literal) && literal `notElem` annotationStringLiterals
 
-checkForDuplicates :: [Literal] -> FilePath -> [RDF.Diagnostic]
-checkForDuplicates literals path =
-  concatMap
-    ( ( \case
-          [] -> mzero
-          x : xs ->
-            if null xs
-              then mzero
-              else
-                return
-                  ( RDF.rangeDiagnostic
-                      "Language.Java.Rules.MultipleStringLiterals"
-                      [ "Das String-Literal",
-                        Markdown.code (prettyPrint x),
-                        "wird an dieser und an",
-                        show (length xs),
-                        "weiteren Stellen verwendet. Auch noch in den Zeilen",
-                        intercalate ", " (map ((\(Location _ line _, _) -> show line) . sourceSpan) xs) ++ ".",
-                        "Bitte eine Konstante dafür einführen."
-                      ]
-                      (sourceSpan x)
-                      path
-                  )
-      )
-        . sortBy (\l r -> compare (sourceSpan l) (sourceSpan r))
-    )
-    ( groupBy
-        ( \strL strR ->
-            Maybe.fromJust (Literal.string strL) == Maybe.fromJust (Literal.string strR)
-        )
-        ( sortBy
-            ( \strL strR ->
-                compare (Maybe.fromJust (Literal.string strL)) (Maybe.fromJust (Literal.string strR))
-            )
-            literals
-        )
-    )
+filterStringLiteral :: Literal -> Maybe StringLiteral
+filterStringLiteral (String span str) = Just (StringLiteral span str)
+filterStringLiteral _ = Nothing
+
+message :: FilePath -> NonEmpty StringLiteral -> RDF.Diagnostic
+message path (literal :| additionalOccurrences) =
+  RDF.rangeDiagnostic
+    "Language.Java.Rules.MultipleStringLiterals"
+    [ "Das String-Literal",
+      Markdown.code (show literal),
+      "wird an dieser und an",
+      show (length additionalOccurrences),
+      "weiteren Stellen verwendet. Auch noch in den Zeilen",
+      intercalate ", " (map (show . startLine . sourceSpan) additionalOccurrences) ++ ".",
+      "Bitte eine Konstante dafür einführen."
+    ]
+    (sourceSpan literal)
+    path
+
+-- List helpers
+
+duplicates :: Ord a => [a] -> [NonEmpty a]
+duplicates list =
+  filter (not . isSingleton) (NonEmpty.group (sort list))
+
+isSingleton :: NonEmpty a -> Bool
+isSingleton (_ :| []) = True
+isSingleton _ = False
+
+-- Helper -> Move to language-java
+
+startLine :: SourceSpan -> Int
+startLine (Location _ line _, _) = line
+
+-- Helping data structure
+
+data StringLiteral = StringLiteral SourceSpan String
+
+instance Show StringLiteral where
+  show (StringLiteral _ string) = string
+
+instance Eq StringLiteral where
+  StringLiteral _ str1 == StringLiteral _ str2 = str1 == str2
+
+instance Ord StringLiteral where
+  compare (StringLiteral _ str1) (StringLiteral _ str2) = compare str1 str2
+
+sourceSpan :: StringLiteral -> SourceSpan
+sourceSpan (StringLiteral span _) = span
+
+isEmptyString :: StringLiteral -> Bool
+isEmptyString (StringLiteral _ str) = str == ""

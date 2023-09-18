@@ -1,25 +1,21 @@
 module Language.Java.Rules.UseAssignOp (check) where
 
-import Control.Monad (MonadPlus (..))
+import Control.Monad (mzero)
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.Maybe (mapMaybe)
 import Language.Java.Pretty (prettyPrint)
+import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
 import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-check cUnit path = do
-  stmt <- universeBi cUnit
-  checkStmt stmt
+check cUnit path = mapMaybe checkStmt (universeBi cUnit)
   where
-    checkStmt :: Stmt Parsed -> [RDF.Diagnostic]
-    checkStmt (ExpStmt range (Assign _ (NameLhs name1) EqualA (BinOp _ (ExpName name2) op _))) =
+    checkStmt :: Stmt Parsed -> Maybe RDF.Diagnostic
+    checkStmt (ExpStmt span (Assign _ (NameLhs name1) EqualA (BinOp _ (ExpName name2) op _))) =
       if eq IgnoreSourceSpan name1 name2
-        then case equalVariant op of
-          Just assignOp ->
-            return
-              (RDF.rangeDiagnostic "Language.Java.Rules.UseAssignOp" (message op assignOp) range path)
-          Nothing -> mzero
+        then fmap (message path span op) (equalVariant op)
         else mzero
     checkStmt _ = mzero
 
@@ -37,11 +33,15 @@ equalVariant Or = Just OrA
 equalVariant Xor = Just XorA
 equalVariant _ = Nothing
 
-message :: Op -> AssignOp -> [String]
-message op assignOp =
-  [ "Anstelle einer Anweisung",
-    Markdown.code ("x = x " ++ prettyPrint op ++ " exp"),
-    "sollte",
-    Markdown.code ("x " ++ prettyPrint assignOp ++ " exp"),
-    "verwendet werden."
-  ]
+message :: FilePath -> SourceSpan -> Op -> AssignOp -> RDF.Diagnostic
+message path span op assignOp =
+  RDF.rangeDiagnostic
+    "Language.Java.Rules.UseAssignOp"
+    [ "Anstelle einer Anweisung",
+      Markdown.code ("x = x " ++ prettyPrint op ++ " exp"),
+      "sollte",
+      Markdown.code ("x " ++ prettyPrint assignOp ++ " exp"),
+      "verwendet werden."
+    ]
+    span
+    path

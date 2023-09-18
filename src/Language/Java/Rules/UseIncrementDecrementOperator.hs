@@ -1,44 +1,42 @@
-module Language.Java.Rules.UseIncrementDecrementOperator where
+module Language.Java.Rules.UseIncrementDecrementOperator (check) where
 
-import Control.Monad (MonadPlus (..))
+import Control.Monad (mzero)
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.Maybe (maybeToList)
 import Language.Java.Pretty (prettyPrint)
-import Language.Java.SourceSpan (SourceSpan, dummySourceSpan)
+import Language.Java.SourceSpan (dummySourceSpan, sourceSpan)
 import Language.Java.Syntax
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   exp <- universeBi cUnit
-  checkExp exp
+  maybeToList (fmap (message path exp) (alternativeExp exp))
   where
-    checkExp assign@(Assign span (NameLhs name1) EqualA (BinOp _ (ExpName name2) op (Lit (Int _ 1)))) =
+    alternativeExp (Assign _ (NameLhs name1) EqualA (BinOp _ (ExpName name2) op (Lit (Int _ 1)))) =
       if eq IgnoreSourceSpan name1 name2
-        then message assign (opToPostIncDec op name1) span path
+        then opToPostIncDec op name1
         else mzero
-    checkExp assign@(Assign span (NameLhs name1) EqualA (BinOp _ (Lit (Int _ 1)) op (ExpName name2))) =
+    alternativeExp (Assign _ (NameLhs name1) EqualA (BinOp _ (Lit (Int _ 1)) op (ExpName name2))) =
       if eq IgnoreSourceSpan name1 name2
-        then message assign (opToPostIncDec op name1) span path
+        then opToPostIncDec op name1
         else mzero
-    checkExp assign@(Assign span (NameLhs name) op (Lit (Int _ 1))) =
-      message assign (assignOpToPostIncDec op name) span path
-    checkExp _ = mzero
+    alternativeExp (Assign _ (NameLhs name) op (Lit (Int _ 1))) =
+      assignOpToPostIncDec op name
+    alternativeExp _ = mzero
 
-message :: Exp Parsed -> Maybe (Exp Parsed) -> SourceSpan -> FilePath -> [RDF.Diagnostic]
-message assign (Just postIncDec) span path =
-  return
-    ( RDF.rangeDiagnostic
-        "Language.Java.Rules.UseIncrementDecrementOperator"
-        [ "Anstelle einer Zuweisung",
-          prettyPrint assign,
-          "sollte",
-          prettyPrint postIncDec,
-          "verwendet werden."
-        ]
-        span
-        path
-    )
-message _ Nothing _ _ = mzero
+message :: FilePath -> Exp Parsed -> Exp Parsed -> RDF.Diagnostic
+message path assign postIncDec =
+  RDF.rangeDiagnostic
+    "Language.Java.Rules.UseIncrementDecrementOperator"
+    [ "Anstelle einer Zuweisung",
+      prettyPrint assign,
+      "sollte",
+      prettyPrint postIncDec,
+      "verwendet werden."
+    ]
+    (sourceSpan assign)
+    path
 
 opToPostIncDec :: Op -> Name -> Maybe (Exp Parsed)
 opToPostIncDec Add name = Just (PostIncrement dummySourceSpan (ExpName name))

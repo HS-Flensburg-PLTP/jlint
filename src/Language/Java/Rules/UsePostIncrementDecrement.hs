@@ -1,19 +1,16 @@
-{-# LANGUAGE ScopedTypeVariables #-}
-
 module Language.Java.Rules.UsePostIncrementDecrement (check) where
 
-import Control.Monad
+import Control.Monad (mzero)
 import Data.Generics.Uniplate.Data (universeBi)
+import Data.Maybe (mapMaybe)
 import Language.Java.Syntax
 import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-check cUnit path = do
-  expr <- universeBi cUnit
-  checkExpr expr
+check cUnit path = mapMaybe checkExpr (universeBi cUnit)
   where
-    checkExpr :: Exp Parsed -> [RDF.Diagnostic]
+    checkExpr :: Exp Parsed -> Maybe RDF.Diagnostic
     checkExpr (PreIncrement span _) =
       return
         ( RDF.rangeDiagnostic

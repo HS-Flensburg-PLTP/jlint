@@ -1,17 +1,17 @@
-module Language.Java.Rules.MethodInvNumber where
+module Language.Java.Rules.MethodInvNumber (check) where
 
-import Control.Monad (MonadPlus (..))
+import Control.Monad (mzero)
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
 import qualified RDF
 
 check :: String -> String -> Int -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check called limited maxInv cUnit path = do
-  MethodDecl span _ _ _ (Ident _ ident) _ _ _ methodBody <- universeBi cUnit :: [MemberDecl Parsed]
-  if ident == called
+  MethodDecl span _ _ _ (Ident _ name) _ _ _ methodBody <- universeBi cUnit :: [MemberDecl Parsed]
+  if name == called
     then
-      let limitedLength = length (filter (checkMethodInv limited) (universeBi methodBody))
-       in if limitedLength > maxInv
+      let noInv = length (filter (isInvocationOf limited) (universeBi methodBody))
+       in if noInv > maxInv
             then
               return
                 ( RDF.rangeDiagnostic
@@ -23,7 +23,7 @@ check called limited maxInv cUnit path = do
                       "maximal",
                       show maxInv ++ "-mal",
                       "aufrufen. Hier wird sie aber",
-                      show limitedLength ++ "-mal",
+                      show noInv ++ "-mal",
                       "aufgerufen."
                     ]
                     span
@@ -32,6 +32,6 @@ check called limited maxInv cUnit path = do
             else mzero
     else mzero
 
-checkMethodInv :: String -> MethodInvocation Parsed -> Bool
-checkMethodInv limited (MethodCall _ _ (Ident _ ident) _) = ident == limited
-checkMethodInv _ _ = False
+isInvocationOf :: String -> MethodInvocation Parsed -> Bool
+isInvocationOf limited (MethodCall _ _ (Ident _ name) _) = name == limited
+isInvocationOf _ _ = False
