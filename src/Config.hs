@@ -35,16 +35,16 @@ data Rule
   | MultipleVariableDeclarations
   | NamingConventions
   | NeedBraces
+  | NoAnnotations {whitelist :: [String]}
   | NoCasts {whitelist :: [String]}
+  | NoDummyNames
   | NoFurtherDataStructures {methodNames :: NonEmpty String}
+  | NoGermanNames
   | NoLoopBreak
   | NoNullPointerExceptionsForControl
   | NoPostIncDecInExpression
   | ParameterNumber {max :: Maybe Int}
   | PreferExpressions
-  | ProhibitAnnotations {whitelist :: [String]}
-  | ProhibitGermanNames
-  | ProhibitMyIdentPrefix
   | ReduceScope
   | RedundantModifiers
   | SameExecutionsInIf
@@ -77,16 +77,16 @@ instance FromJSON Rule where
       "MultipleVariableDeclarations" -> pure MultipleVariableDeclarations
       "NamingConventions" -> pure NamingConventions
       "NeedBraces" -> pure NeedBraces
+      "NoAnnotations" -> parseNoAnnotations obj
       "NoCasts" -> parseNoCasts obj
+      "NoDummyNames" -> pure NoDummyNames
       "NoFurtherDataStructures" -> parseNoFurtherDataStructures obj
+      "NoGermanNames" -> pure NoGermanNames
       "NoLoopBreak" -> pure NoLoopBreak
       "NoNullPointerExceptionsForControl" -> pure NoNullPointerExceptionsForControl
       "NoPostIncDecInExpression" -> pure NoPostIncDecInExpression
       "ParameterNumber" -> parseParameterNumber obj
       "PreferExpressions" -> pure PreferExpressions
-      "ProhibitAnnotations" -> parseProhibitAnnotations obj
-      "ProhibitGermanNames" -> pure ProhibitGermanNames
-      "ProhibitMyIdentPrefix" -> pure ProhibitMyIdentPrefix
       "ReduceScope" -> pure ReduceScope
       "RedundantModifiers" -> pure RedundantModifiers
       "SameExecutionsInIf" -> pure SameExecutionsInIf
@@ -108,8 +108,8 @@ parseParameterNumber obj = do
 parseMethodNames :: Object -> Parser Rule
 parseMethodNames obj = MethodNames <$> parseStringList obj "whitelist"
 
-parseProhibitAnnotations :: Object -> Parser Rule
-parseProhibitAnnotations obj = ProhibitAnnotations <$> parseStringList obj "whitelist"
+parseNoAnnotations :: Object -> Parser Rule
+parseNoAnnotations obj = NoAnnotations <$> parseStringList obj "whitelist"
 
 parseNoCasts :: Object -> Parser Rule
 parseNoCasts obj = NoCasts <$> parseStringList obj "whitelist"

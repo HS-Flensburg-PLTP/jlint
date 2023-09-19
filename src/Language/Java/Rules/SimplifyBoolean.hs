@@ -18,7 +18,7 @@ check cUnit path = mapMaybe checkStmt (universeBi cUnit) `mplus` mapMaybe checkE
             ( RDF.rangeDiagnostic
                 "Language.Java.Rules.SimplifyBoolean"
                 [ "Falls der Ausdruck",
-                  prettyPrint cond,
+                  Markdown.code (prettyPrint cond),
                   "den Wert",
                   Markdown.code "true",
                   "hat, liefert die gesamte",
@@ -26,14 +26,14 @@ check cUnit path = mapMaybe checkStmt (universeBi cUnit) `mplus` mapMaybe checkE
                   "den Wert",
                   Markdown.code "true",
                   ". Falls der Ausdruck ",
-                  prettyPrint cond,
+                  Markdown.code (prettyPrint cond),
                   "den Wert",
                   Markdown.code "false",
                   "hat, liefert die gesamte",
                   Markdown.code "if" ++ "-Anweisung",
                   "den Wert",
                   Markdown.code "false",
-                  ". Daher kann dies",
+                  ". Daher kann die",
                   Markdown.code "if" ++ "-Anweisung",
                   "zur Bedingung vereinfacht werden."
                 ]

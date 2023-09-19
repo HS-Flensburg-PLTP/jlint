@@ -15,16 +15,16 @@ import qualified MultipleStringLiteralsTests
 import qualified MultipleVariableDeclarationsTests
 import qualified NamingConventionsTests
 import qualified NeedBracesTests
+import qualified NoAnnotationsTests
 import qualified NoCastsTests
+import qualified NoDummyNamesTests
 import qualified NoFurtherDataStructuresTests
+import qualified NoGermanNamesTests
 import qualified NoLoopBreakTests
 import qualified NoNullPointerExceptionsForControlTests
 import qualified NoPostIncDecInExpressionTests
 import qualified ParameterNumberTests
 import qualified PreferExpressionsTests
-import qualified ProhibitAnnotationsTests
-import qualified ProhibitGermanNamesTests
-import qualified ProhibitMyIdentPrefixTests
 import qualified ReduceScopeTests
 import qualified RedundantModifiersTests
 import qualified SameExecutionsInIfTests
@@ -61,16 +61,16 @@ tests =
       "MultipleStringLiteralsTests" ~: MultipleStringLiteralsTests.tests,
       "NamingConventions" ~: NamingConventionsTests.tests,
       "NeedBraces" ~: NeedBracesTests.tests,
+      "NoAnnotations" ~: NoAnnotationsTests.tests,
       "NoCasts" ~: NoCastsTests.tests,
+      "NoDummyNames" ~: NoDummyNamesTests.tests,
       "NoFurtherDataStructures" ~: NoFurtherDataStructuresTests.tests,
+      "NoGermanNames" ~: NoGermanNamesTests.tests,
       "NoLoopBreak" ~: NoLoopBreakTests.tests,
       "NoPostIncDecInExpression" ~: NoPostIncDecInExpressionTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "ParameterNumber" ~: ParameterNumberTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
-      "ProhibitAnnotations" ~: ProhibitAnnotationsTests.tests,
-      "ProhibitGermanNames" ~: ProhibitGermanNamesTests.tests,
-      "ProhibitMyIdentPrefix" ~: ProhibitMyIdentPrefixTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
       "RedundantModifiers" ~: RedundantModifiersTests.tests,
       "SameExecutionsInIf" ~: SameExecutionsInIfTests.tests,

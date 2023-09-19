@@ -48,16 +48,16 @@ library
       Language.Java.Rules.MultipleVariableDeclarations
       Language.Java.Rules.NamingConventions
       Language.Java.Rules.NeedBraces
+      Language.Java.Rules.NoAnnotations
       Language.Java.Rules.NoCasts
+      Language.Java.Rules.NoDummyNames
       Language.Java.Rules.NoFurtherDataStructures
+      Language.Java.Rules.NoGermanNames
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNullPointerExceptionsForControl
       Language.Java.Rules.NoPostIncDecInExpression
       Language.Java.Rules.ParameterNumber
       Language.Java.Rules.PreferExpressions
-      Language.Java.Rules.ProhibitAnnotations
-      Language.Java.Rules.ProhibitGermanNames
-      Language.Java.Rules.ProhibitMyIdentPrefix
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.RedundantModifiers
       Language.Java.Rules.SameExecutionsInIf
@@ -152,16 +152,16 @@ test-suite jlint-test
       MultipleVariableDeclarationsTests
       NamingConventionsTests
       NeedBracesTests
+      NoAnnotationsTests
       NoCastsTests
+      NoDummyNamesTests
       NoFurtherDataStructuresTests
+      NoGermanNamesTests
       NoLoopBreakTests
       NoNullPointerExceptionsForControlTests
       NoPostIncDecInExpressionTests
       ParameterNumberTests
       PreferExpressionsTests
-      ProhibitAnnotationsTests
-      ProhibitGermanNamesTests
-      ProhibitMyIdentPrefixTests
       ReduceScopeTests
       RedundantModifiersTests
       SameExecutionsInIfTests

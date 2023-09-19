@@ -19,16 +19,16 @@ import qualified Language.Java.Rules.MultipleStringLiterals as MultipleStringLit
 import qualified Language.Java.Rules.MultipleVariableDeclarations as MultipleVariableDeclarations
 import qualified Language.Java.Rules.NamingConventions as NamingConventions
 import qualified Language.Java.Rules.NeedBraces as NeedBraces
+import qualified Language.Java.Rules.NoAnnotations as NoAnnotations
 import qualified Language.Java.Rules.NoCasts as NoCasts
+import qualified Language.Java.Rules.NoDummyNames as NoDummyNames
 import qualified Language.Java.Rules.NoFurtherDataStructures as NoFurtherDataStructures
+import qualified Language.Java.Rules.NoGermanNames as NoGermanNames
 import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
 import qualified Language.Java.Rules.NoPostIncDecInExpression as NoPostIncDecInExpression
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
-import qualified Language.Java.Rules.ProhibitAnnotations as ProhibitAnnotations
-import qualified Language.Java.Rules.ProhibitGermanNames as ProhibitGermanNames
-import qualified Language.Java.Rules.ProhibitMyIdentPrefix as ProhibitMyIdentPrefix
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.SameExecutionsInIf as SameExecutionsInIf
@@ -61,17 +61,17 @@ defaultConfig =
     MultipleVariableDeclarations,
     NamingConventions,
     NeedBraces,
+    NoAnnotations ["Override"],
     -- NoCasts
+    NoDummyNames,
     -- NoFurtherDataStructures
+    NoGermanNames,
     NoLoopBreak,
     NoNullPointerExceptionsForControl,
     NoPostIncDecInExpression,
     ParameterNumber Nothing,
     -- PredictMethodNames
     PreferExpressions,
-    ProhibitAnnotations ["Override"],
-    ProhibitGermanNames,
-    ProhibitMyIdentPrefix,
     ReduceScope,
     RedundantModifiers,
     SameExecutionsInIf,
@@ -105,16 +105,16 @@ checkFromConfig MultipleStringLiterals = liftIO MultipleStringLiterals.check
 checkFromConfig MultipleVariableDeclarations = liftIO MultipleVariableDeclarations.check
 checkFromConfig NamingConventions = liftIO NamingConventions.check
 checkFromConfig NeedBraces = liftIO NeedBraces.check
+checkFromConfig (NoAnnotations whitelist) = liftIO (NoAnnotations.check whitelist)
 checkFromConfig (NoCasts whitelist) = liftIO (NoCasts.check whitelist)
+checkFromConfig NoDummyNames = liftIO NoDummyNames.check
 checkFromConfig (NoFurtherDataStructures methodNames) = liftIO (NoFurtherDataStructures.check methodNames)
+checkFromConfig NoGermanNames = NoGermanNames.check
 checkFromConfig NoLoopBreak = liftIO NoLoopBreak.check
 checkFromConfig NoNullPointerExceptionsForControl = liftIO NoNullPointerExceptionsForControl.check
 checkFromConfig NoPostIncDecInExpression = liftIO NoPostIncDecInExpression.check
 checkFromConfig (ParameterNumber maybeMax) = liftIO (ParameterNumber.check maybeMax)
 checkFromConfig PreferExpressions = liftIO PreferExpressions.check
-checkFromConfig (ProhibitAnnotations whitelist) = liftIO (ProhibitAnnotations.check whitelist)
-checkFromConfig ProhibitGermanNames = ProhibitGermanNames.check
-checkFromConfig ProhibitMyIdentPrefix = liftIO ProhibitMyIdentPrefix.check
 checkFromConfig ReduceScope = liftIO ReduceScope.check
 checkFromConfig RedundantModifiers = liftIO RedundantModifiers.check
 checkFromConfig SameExecutionsInIf = liftIO SameExecutionsInIf.check
