@@ -2,7 +2,6 @@ module Language.Java.Rules (defaultConfig, checkWithConfig) where
 
 import Config (Rule (..))
 import Control.Monad.Extra (concatMapM)
-import qualified Language.Java.Rules.AvoidMultipleVarDecl as AvoidMultipleVarDecl
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
 import qualified Language.Java.Rules.AvoidOuterNegations as AvoidOuterNegations
 import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
@@ -17,6 +16,7 @@ import qualified Language.Java.Rules.MethodInvNumber as MethodInvNumber
 import qualified Language.Java.Rules.MethodNames as MethodNames
 import qualified Language.Java.Rules.ModifiedControlVariable as ModifiedControlVariable
 import qualified Language.Java.Rules.MultipleStringLiterals as MultipleStringLiterals
+import qualified Language.Java.Rules.MultipleVariableDeclarations as MultipleVariableDeclarations
 import qualified Language.Java.Rules.NamingConventions as NamingConventions
 import qualified Language.Java.Rules.NeedBraces as NeedBraces
 import qualified Language.Java.Rules.NoCasts as NoCasts
@@ -44,8 +44,7 @@ import qualified RDF
 
 defaultConfig :: [Rule]
 defaultConfig =
-  [ AvoidMultipleVarDecl,
-    AvoidNegations,
+  [ AvoidNegations,
     AvoidOuterNegations,
     AvoidStarImport,
     CheckNonFinalMethodParameters,
@@ -59,6 +58,7 @@ defaultConfig =
     -- MethodNames,
     ModifiedControlVariable,
     MultipleStringLiterals,
+    MultipleVariableDeclarations,
     NamingConventions,
     NeedBraces,
     -- NoCasts
@@ -88,7 +88,6 @@ checkWithConfig :: [Rule] -> CompilationUnit Parsed -> FilePath -> IO [RDF.Diagn
 checkWithConfig rules cUnit filePath = concatMapM (\rule -> checkFromConfig rule cUnit filePath) rules
 
 checkFromConfig :: Rule -> CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
-checkFromConfig AvoidMultipleVarDecl = liftIO AvoidMultipleVarDecl.check
 checkFromConfig AvoidNegations = liftIO AvoidNegations.check
 checkFromConfig AvoidOuterNegations = liftIO AvoidOuterNegations.check
 checkFromConfig AvoidStarImport = liftIO AvoidStarImport.check
@@ -103,6 +102,7 @@ checkFromConfig (MethodInvNumber called limited maxInv) = liftIO (MethodInvNumbe
 checkFromConfig (MethodNames methods) = MethodNames.check methods
 checkFromConfig ModifiedControlVariable = liftIO ModifiedControlVariable.check
 checkFromConfig MultipleStringLiterals = liftIO MultipleStringLiterals.check
+checkFromConfig MultipleVariableDeclarations = liftIO MultipleVariableDeclarations.check
 checkFromConfig NamingConventions = liftIO NamingConventions.check
 checkFromConfig NeedBraces = liftIO NeedBraces.check
 checkFromConfig (NoCasts whitelist) = liftIO (NoCasts.check whitelist)

@@ -19,7 +19,7 @@ check cUnit path = do
         ( RDF.rangeDiagnostic
             "Language.Java.Rules.CheckNonFinalMethodParameters"
             [ "Der Parameter",
-              Ident.name (VarDeclId.ident ident),
+              Markdown.code (Ident.name (VarDeclId.ident ident)),
               "sollte als",
               Markdown.code "final",
               "deklariert sein. Auf diese Weise kann der Parameter in der Methode/im Konstruktor nicht verändert werden."

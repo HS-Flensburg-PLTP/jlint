@@ -1,4 +1,3 @@
-import qualified AvoidMultipleVarDeclTests
 import qualified AvoidNegationsTests
 import qualified AvoidOuterNegationsTests
 import qualified AvoidStarImportTests
@@ -13,6 +12,7 @@ import qualified MethodInvNumberTests
 import qualified MethodNamesTests
 import qualified ModifiedControlVariableTests
 import qualified MultipleStringLiteralsTests
+import qualified MultipleVariableDeclarationsTests
 import qualified NamingConventionsTests
 import qualified NeedBracesTests
 import qualified NoCastsTests
@@ -44,8 +44,7 @@ main = do
 tests :: Test
 tests =
   test
-    [ "AvoidMultipleVarDecl" ~: AvoidMultipleVarDeclTests.tests,
-      "AvoidNegations" ~: AvoidNegationsTests.tests,
+    [ "AvoidNegations" ~: AvoidNegationsTests.tests,
       "AvoidOuterNegations" ~: AvoidOuterNegationsTests.tests,
       "AvoidStarImport" ~: AvoidStarImportTests.tests,
       "CheckNonFinalMethodParameters" ~: CheckNonFinalMethodParametersTests.tests,
@@ -58,6 +57,7 @@ tests =
       "MethodInvNumber" ~: MethodInvNumberTests.tests,
       -- "MethodNames" ~: MethodNamesTests.tests,
       "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
+      "MultipleVariableDeclarations" ~: MultipleVariableDeclarationsTests.tests,
       "MultipleStringLiteralsTests" ~: MultipleStringLiteralsTests.tests,
       "NamingConventions" ~: NamingConventionsTests.tests,
       "NeedBraces" ~: NeedBracesTests.tests,

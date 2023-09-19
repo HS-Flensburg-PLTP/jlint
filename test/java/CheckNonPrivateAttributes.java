@@ -4,6 +4,8 @@ class CheckNonPrivateAttributes {
     String address = "Zu Hause";
     public String myname = "Philipp";
     protected int count;
+    int one, two;
+    int three, four, five;
 
     public void foo() {}
     private void bar() {}

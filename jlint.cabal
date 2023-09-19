@@ -31,7 +31,6 @@ library
       Data.List.Extra
       Language.Java.AST
       Language.Java.Rules
-      Language.Java.Rules.AvoidMultipleVarDecl
       Language.Java.Rules.AvoidNegations
       Language.Java.Rules.AvoidOuterNegations
       Language.Java.Rules.AvoidStarImport
@@ -46,6 +45,7 @@ library
       Language.Java.Rules.MethodNames
       Language.Java.Rules.ModifiedControlVariable
       Language.Java.Rules.MultipleStringLiterals
+      Language.Java.Rules.MultipleVariableDeclarations
       Language.Java.Rules.NamingConventions
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoCasts
@@ -77,6 +77,7 @@ library
       Language.Java.Syntax.VarInit.Extra
       Markdown
       RDF
+      String
   other-modules:
       Paths_jlint
   hs-source-dirs:
@@ -134,7 +135,6 @@ test-suite jlint-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      AvoidMultipleVarDeclTests
       AvoidNegationsTests
       AvoidOuterNegationsTests
       AvoidStarImportTests
@@ -149,6 +149,7 @@ test-suite jlint-test
       MethodNamesTests
       ModifiedControlVariableTests
       MultipleStringLiteralsTests
+      MultipleVariableDeclarationsTests
       NamingConventionsTests
       NeedBracesTests
       NoCastsTests

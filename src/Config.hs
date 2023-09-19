@@ -18,8 +18,7 @@ import Data.List ((\\))
 import Data.List.NonEmpty (NonEmpty)
 
 data Rule
-  = AvoidMultipleVarDecl
-  | AvoidNegations
+  = AvoidNegations
   | AvoidOuterNegations
   | AvoidStarImport
   | CheckNonFinalMethodParameters
@@ -33,6 +32,7 @@ data Rule
   | MethodNames {whitelist :: [String]}
   | ModifiedControlVariable
   | MultipleStringLiterals
+  | MultipleVariableDeclarations
   | NamingConventions
   | NeedBraces
   | NoCasts {whitelist :: [String]}
@@ -60,7 +60,6 @@ instance FromJSON Rule where
   parseJSON = withObject "Rule" $ \obj -> do
     rule <- obj .: fromString "rule"
     case rule of
-      "AvoidMultipleVarDecl" -> pure AvoidMultipleVarDecl
       "AvoidNegations" -> pure AvoidNegations
       "AvoidOuterNegations" -> pure AvoidOuterNegations
       "AvoidStarImport" -> pure AvoidStarImport
@@ -75,6 +74,7 @@ instance FromJSON Rule where
       "MethodNames" -> parseMethodNames obj
       "ModifiedControlVariable" -> pure ModifiedControlVariable
       "MultipleStringLiterals" -> pure MultipleStringLiterals
+      "MultipleVariableDeclarations" -> pure MultipleVariableDeclarations
       "NamingConventions" -> pure NamingConventions
       "NeedBraces" -> pure NeedBraces
       "NoCasts" -> parseNoCasts obj
