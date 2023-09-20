@@ -48,7 +48,15 @@ class SimplifyBoolean {
         }
     }
 
-    public Foo method7() {
+    public boolean method7() {
+        return cond ? true : false;
+    }
+
+    public boolean method8() {
+        return cond ? false : true;
+    }
+
+    public Foo method9() {
         return cond ? a: b;
     }
 }

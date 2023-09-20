@@ -24,16 +24,16 @@ check cUnit path = mapMaybe checkStmt (universeBi cUnit) `mplus` mapMaybe checkE
                   "hat, liefert die gesamte",
                   Markdown.code "if" ++ "-Anweisung",
                   "den Wert",
-                  Markdown.code "true",
-                  ". Falls der Ausdruck ",
+                  Markdown.code "true" ++ ".",
+                  "Falls der Ausdruck",
                   Markdown.code (prettyPrint cond),
                   "den Wert",
                   Markdown.code "false",
                   "hat, liefert die gesamte",
                   Markdown.code "if" ++ "-Anweisung",
                   "den Wert",
-                  Markdown.code "false",
-                  ". Daher kann die",
+                  Markdown.code "false" ++ ".",
+                  "Daher kann die",
                   Markdown.code "if" ++ "-Anweisung",
                   "zur Bedingung vereinfacht werden."
                 ]
@@ -52,6 +52,37 @@ check cUnit path = mapMaybe checkStmt (universeBi cUnit) `mplus` mapMaybe checkE
     checkStmt _ = mzero
 
     checkExp :: Exp Parsed -> Maybe RDF.Diagnostic
+    checkExp (Cond span cond thenExp elseExp)
+      | isBoolLiteral True thenExp && isBoolLiteral False elseExp =
+          return
+            ( RDF.rangeDiagnostic
+                "Language.Java.Rules.SimplifyBoolean"
+                [ "Falls der Ausdruck",
+                  Markdown.code (prettyPrint cond),
+                  "den Wert",
+                  Markdown.code "true",
+                  "hat, liefert der gesamte bedingte Ausdruck den Wert",
+                  Markdown.code "true" + +".",
+                  "Falls der Ausdruck",
+                  Markdown.code (prettyPrint cond),
+                  "den Wert",
+                  Markdown.code "false",
+                  "hat, liefert der gesamte bedingte Ausdruck den Wert",
+                  Markdown.code "false" ++ ".",
+                  "Daher kann der gesamte bedingte Ausdruck durch die Bedingung ersetzt werden."
+                ]
+                span
+                path
+            )
+      | isBoolLiteral False thenExp && isBoolLiteral True elseExp =
+          return
+            ( RDF.rangeDiagnostic
+                "Language.Java.Rules.SimplifyBoolean"
+                ["Dieser Ausdruck kann durch eine Negation ersetzt werden."]
+                span
+                path
+            )
+      | otherwise = mzero
     checkExp (BinOp span leftExp Equal rightExp)
       | isBoolLiteral True leftExp || isBoolLiteral True rightExp =
           return
