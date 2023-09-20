@@ -18,8 +18,12 @@ import qualified Language.Java.Syntax.VarDecl as VarDecl
 import qualified Markdown
 import qualified RDF
 import qualified String
+import System.Log.Logger (infoM)
 import System.Process (readProcess)
 import Text.RE.TDFA (allMatches, matchedText, re, (*=~))
+
+logger :: String
+logger = "jlint.NoGermanNames"
 
 check :: CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]
 check cUnit path = do
@@ -57,8 +61,11 @@ checkIdents :: [Ident] -> FilePath -> IO [RDF.Diagnostic]
 checkIdents idents path = do
   let words = concatMap splitIdent idents
   germanWords <- dictionaryLookup DE words
+  infoM logger ("Filtered german words: " ++ unwords (map part germanWords))
   englishWords <- dictionaryLookup EN words
+  infoM logger ("Filtered english words: " ++ unwords (map part englishWords))
   let definitelyGermanWords = filter (`notElem` englishWords) germanWords
+  infoM logger ("Filtered definitely german words: " ++ unwords (map part definitelyGermanWords))
   let groupedDefinitelyGermanWords = NonEmpty.groupBy ((==) `on` sourceSpan) definitelyGermanWords
   return (message path groupedDefinitelyGermanWords)
 
@@ -93,10 +100,19 @@ part :: IdentPart -> String
 part (IdentPart _ part) = part
 
 splitIdent :: Ident -> [IdentPart]
-splitIdent (Ident sourceSpan ident) =
+splitIdent ident = splitUnderscoreCaseIdent ident ++ splitCamelCaseIdent ident
+
+splitUnderscoreCaseIdent :: Ident -> [IdentPart]
+splitUnderscoreCaseIdent (Ident sourceSpan ident) =
   mapMaybe
     (fmap (IdentPart sourceSpan) . matchedText)
-    (allMatches (ident *=~ [re|([a-z]|[A-Z])[a-z]+|([A-Z]{2,})+|]))
+    (allMatches (ident *=~ [re|([A-Z]{2,})+|]))
+
+splitCamelCaseIdent :: Ident -> [IdentPart]
+splitCamelCaseIdent (Ident sourceSpan ident) =
+  mapMaybe
+    (fmap (IdentPart sourceSpan) . matchedText)
+    (allMatches (ident *=~ [re|([a-z]|[A-Z])[a-z]+|]))
 
 data DictLanguage
   = DE
@@ -113,7 +129,7 @@ dictionaryLookup language parts = do
   case language of
     DE -> do
       nonGermanWords <- aspell DE (map (replaceUmlauts . map toLower) nonLanguageWords)
-      return (filter (\(IdentPart _ part) -> part `notElem` nonGermanWords) parts)
+      return (filter (\(IdentPart _ part) -> map toLower part `notElem` nonGermanWords) parts)
     EN -> return (filter (\(IdentPart _ part) -> part `notElem` nonLanguageWords) parts)
 
 aspell :: DictLanguage -> [String] -> IO [String]

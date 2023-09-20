@@ -92,6 +92,7 @@ library
     , directory
     , filemanip
     , filepath
+    , hslogger
     , language-java
     , mtl
     , optparse-applicative
@@ -119,6 +120,7 @@ executable jlint
     , directory
     , filemanip
     , filepath
+    , hslogger
     , jlint
     , language-java
     , mtl
@@ -187,6 +189,7 @@ test-suite jlint-test
     , directory
     , filemanip
     , filepath
+    , hslogger
     , jlint
     , language-java
     , mtl

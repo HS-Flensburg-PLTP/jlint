@@ -2,7 +2,7 @@ class EineSuperDeutscheKlasse<Liste extends List> {
     private final int WIRD_DAS_HIER_AUCH_GEFUNDEN = 1337;
     private final String WUERFEL = "PIZZA";
 
-    private Liste apfel[] = "Gurke";
+    private Liste apfel0[] = "Gurke";
 
     public EineSuperDeutscheKlasse() {
         String wuerfel = "Würfel";
@@ -33,3 +33,5 @@ interface IchBinEinTier<Tier> {
     public void run();
     public void berechneErgebnis();
 }
+
+class SLList {} // Ok

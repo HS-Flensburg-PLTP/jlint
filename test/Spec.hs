@@ -30,6 +30,7 @@ import qualified RedundantModifiersTests
 import qualified SameExecutionsInIfTests
 import qualified SimplifyBooleanTests
 import qualified SingleTopLevelClassTests
+import System.Log.Logger (Priority (..), setLevel, updateGlobalLogger)
 import Test.HUnit
 import qualified UseAssignOpTests
 import qualified UseElseTests
@@ -39,6 +40,7 @@ import qualified UsePostIncrementDecrementTests
 
 main :: IO ()
 main = do
+  updateGlobalLogger "jlint" (setLevel DEBUG)
   runTestTTAndExit tests
 
 tests :: Test

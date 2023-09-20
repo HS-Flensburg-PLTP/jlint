@@ -28,6 +28,7 @@ dependencies:
 - filepath
 - filemanip
 - HaXml
+- hslogger
 - language-java
 - mtl
 - optparse-applicative

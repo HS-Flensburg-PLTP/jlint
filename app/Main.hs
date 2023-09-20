@@ -18,11 +18,15 @@ import System.Directory
 import System.Exit (ExitCode (ExitFailure), exitFailure, exitSuccess, exitWith)
 import System.FilePath.Find (always, extension, find, (==?))
 import System.IO (IOMode (ReadMode), char8, hGetContents, hPutStrLn, hSetEncoding, openFile, stderr)
+import System.Log.Logger (Priority (..), setLevel, updateGlobalLogger)
 import Text.Parsec.Error (ParseError)
 import Text.XML.HaXml.Parse (xmlParse')
 
 main :: IO ()
-main = execParser opts >>= importJava
+main = do
+  updateGlobalLogger "jlint" (setLevel NOTICE)
+  params <- execParser opts
+  importJava params
   where
     opts =
       info
