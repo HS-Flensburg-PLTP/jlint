@@ -24,9 +24,9 @@ import qualified Language.Java.Rules.NoCasts as NoCasts
 import qualified Language.Java.Rules.NoDummyNames as NoDummyNames
 import qualified Language.Java.Rules.NoFurtherDataStructures as NoFurtherDataStructures
 import qualified Language.Java.Rules.NoGermanNames as NoGermanNames
+import qualified Language.Java.Rules.NoIncDecInExpression as NoIncDecInExpression
 import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
-import qualified Language.Java.Rules.NoPostIncDecInExpression as NoPostIncDecInExpression
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
@@ -66,9 +66,9 @@ defaultConfig =
     NoDummyNames,
     -- NoFurtherDataStructures
     NoGermanNames,
+    NoIncDecInExpression,
     NoLoopBreak,
     NoNullPointerExceptionsForControl,
-    NoPostIncDecInExpression,
     ParameterNumber Nothing,
     -- PredictMethodNames
     PreferExpressions,
@@ -110,9 +110,9 @@ checkFromConfig (NoCasts whitelist) = liftIO (NoCasts.check whitelist)
 checkFromConfig NoDummyNames = liftIO NoDummyNames.check
 checkFromConfig (NoFurtherDataStructures methodNames) = liftIO (NoFurtherDataStructures.check methodNames)
 checkFromConfig NoGermanNames = NoGermanNames.check
+checkFromConfig NoIncDecInExpression = liftIO NoIncDecInExpression.check
 checkFromConfig NoLoopBreak = liftIO NoLoopBreak.check
 checkFromConfig NoNullPointerExceptionsForControl = liftIO NoNullPointerExceptionsForControl.check
-checkFromConfig NoPostIncDecInExpression = liftIO NoPostIncDecInExpression.check
 checkFromConfig (ParameterNumber maybeMax) = liftIO (ParameterNumber.check maybeMax)
 checkFromConfig PreferExpressions = liftIO PreferExpressions.check
 checkFromConfig ReduceScope = liftIO ReduceScope.check

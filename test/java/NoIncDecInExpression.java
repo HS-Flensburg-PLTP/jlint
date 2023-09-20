@@ -15,12 +15,12 @@ class FooBar {
         }
 
         if (i++ == a--) {
-           Funct(a--);
-            a++; 
+           Funct(--a);
+            a++;
         }
     }
 
     private void Funct (int b) {
-        b = a++;
+        b = ++a;
     }
 }

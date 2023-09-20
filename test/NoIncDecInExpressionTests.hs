@@ -1,6 +1,6 @@
-module NoPostIncDecInExpressionTests where
+module NoIncDecInExpressionTests where
 
-import qualified Language.Java.Rules.NoPostIncDecInExpression as NoPostIncDecInExpression
+import qualified Language.Java.Rules.NoIncDecInExpression as NoIncDecInExpression
 import qualified RDF
 import Test.HUnit
 import Tests
@@ -9,8 +9,8 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "NoPostIncDecInExpression.java"
-    NoPostIncDecInExpression.check
+    "NoIncDecInExpression.java"
+    NoIncDecInExpression.check
 
 expectedRanges :: [RDF.Range]
 expectedRanges =

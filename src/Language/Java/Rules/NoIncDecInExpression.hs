@@ -1,4 +1,4 @@
-module Language.Java.Rules.NoPostIncDecInExpression (check) where
+module Language.Java.Rules.NoIncDecInExpression (check) where
 
 import Control.Monad (mzero)
 import Data.Generics.Uniplate.Data (universeBi)
@@ -10,11 +10,11 @@ import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  let allowedPostIncDec = filter isPostIncDec (universeBi cUnit >>= loopUpdateExpressions)
-  postIncDec <- filter isPostIncDec (universeBi cUnit)
-  if any (eq IncludeSourceSpan postIncDec) allowedPostIncDec
+  let allowedIncDec = filter isIncDec (universeBi cUnit >>= loopUpdateExpressions)
+  incDec <- filter isIncDec (universeBi cUnit)
+  if any (eq IncludeSourceSpan incDec) allowedIncDec
     then mzero
-    else return (createDiagnostic postIncDec path)
+    else return (createDiagnostic incDec path)
   where
     loopUpdateExpressions :: Stmt Parsed -> [Exp Parsed]
     loopUpdateExpressions (ExpStmt _ expression) = return expression
@@ -24,10 +24,10 @@ check cUnit path = do
 createDiagnostic :: Exp Parsed -> FilePath -> RDF.Diagnostic
 createDiagnostic expr =
   RDF.rangeDiagnostic
-    "Language.Java.Rules.NoPostIncDecInExpression"
+    "Language.Java.Rules.NoIncDecInExpression"
     [ "Die Verwendung von",
       Markdown.code (prettyPrint expr),
-      "ist so nicht erlaubt, da es zu unleserlichem sowie unverständlichem Code führt.",
+      "in Ausdrücken ist nicht erlaubt, da sie zu unleserlichem sowie unverständlichem Code führt.",
       "Erlaubt ist es als Fortsetzung in einer",
       Markdown.code "for" ++ "-Schleife",
       "oder als Anweisung als Kurzform von",
@@ -35,7 +35,9 @@ createDiagnostic expr =
     ]
     (sourceSpan expr)
 
-isPostIncDec :: Exp p -> Bool
-isPostIncDec (PostIncrement _ _) = True
-isPostIncDec (PostDecrement _ _) = True
-isPostIncDec _ = False
+isIncDec :: Exp p -> Bool
+isIncDec (PostIncrement _ _) = True
+isIncDec (PostDecrement _ _) = True
+isIncDec (PreIncrement _ _) = True
+isIncDec (PreDecrement _ _) = True
+isIncDec _ = False

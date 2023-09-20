@@ -40,9 +40,9 @@ data Rule
   | NoDummyNames
   | NoFurtherDataStructures {methodNames :: NonEmpty String}
   | NoGermanNames
+  | NoIncDecInExpression
   | NoLoopBreak
   | NoNullPointerExceptionsForControl
-  | NoPostIncDecInExpression
   | ParameterNumber {max :: Maybe Int}
   | PreferExpressions
   | ReduceScope
@@ -82,9 +82,9 @@ instance FromJSON Rule where
       "NoDummyNames" -> pure NoDummyNames
       "NoFurtherDataStructures" -> parseNoFurtherDataStructures obj
       "NoGermanNames" -> pure NoGermanNames
+      "NoIncDecInExpression" -> pure NoIncDecInExpression
       "NoLoopBreak" -> pure NoLoopBreak
       "NoNullPointerExceptionsForControl" -> pure NoNullPointerExceptionsForControl
-      "NoPostIncDecInExpression" -> pure NoPostIncDecInExpression
       "ParameterNumber" -> parseParameterNumber obj
       "PreferExpressions" -> pure PreferExpressions
       "ReduceScope" -> pure ReduceScope

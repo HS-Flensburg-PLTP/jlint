@@ -53,9 +53,9 @@ library
       Language.Java.Rules.NoDummyNames
       Language.Java.Rules.NoFurtherDataStructures
       Language.Java.Rules.NoGermanNames
+      Language.Java.Rules.NoIncDecInExpression
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNullPointerExceptionsForControl
-      Language.Java.Rules.NoPostIncDecInExpression
       Language.Java.Rules.ParameterNumber
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.ReduceScope
@@ -157,9 +157,9 @@ test-suite jlint-test
       NoDummyNamesTests
       NoFurtherDataStructuresTests
       NoGermanNamesTests
+      NoIncDecInExpressionTests
       NoLoopBreakTests
       NoNullPointerExceptionsForControlTests
-      NoPostIncDecInExpressionTests
       ParameterNumberTests
       PreferExpressionsTests
       ReduceScopeTests

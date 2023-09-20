@@ -20,9 +20,9 @@ import qualified NoCastsTests
 import qualified NoDummyNamesTests
 import qualified NoFurtherDataStructuresTests
 import qualified NoGermanNamesTests
+import qualified NoIncDecInExpressionTests
 import qualified NoLoopBreakTests
 import qualified NoNullPointerExceptionsForControlTests
-import qualified NoPostIncDecInExpressionTests
 import qualified ParameterNumberTests
 import qualified PreferExpressionsTests
 import qualified ReduceScopeTests
@@ -67,7 +67,7 @@ tests =
       "NoFurtherDataStructures" ~: NoFurtherDataStructuresTests.tests,
       "NoGermanNames" ~: NoGermanNamesTests.tests,
       "NoLoopBreak" ~: NoLoopBreakTests.tests,
-      "NoPostIncDecInExpression" ~: NoPostIncDecInExpressionTests.tests,
+      "NoIncDecInExpression" ~: NoIncDecInExpressionTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "ParameterNumber" ~: ParameterNumberTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
