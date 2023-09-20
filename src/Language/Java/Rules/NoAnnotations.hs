@@ -7,6 +7,7 @@ import Language.Java.Pretty (prettyPrint)
 import Language.Java.SourceSpan (sourceSpan)
 import Language.Java.Syntax
 import qualified Language.Java.Syntax.Annotation.Extra as Annotation
+import qualified Markdown
 import qualified RDF
 
 check :: [String] -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -21,7 +22,7 @@ checkAnnotation path whitelist annotation =
           return
             ( RDF.rangeDiagnostic
                 "Language.Java.Rules.NoAnnotations"
-                ["Die Nutzung der Annotation", name, "ist nicht erlaubt."]
+                ["Die Nutzung der Annotation", Markdown.code name, "ist nicht erlaubt."]
                 (sourceSpan annotation)
                 path
             )

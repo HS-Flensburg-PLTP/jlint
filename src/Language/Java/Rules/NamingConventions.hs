@@ -69,17 +69,14 @@ checkParameterNames cUnit path = do
 
 checkStaticVariableNames :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkStaticVariableNames cUnit path = do
-  staticVariable <- extractStaticFieldNames cUnit
-  checkIdent path StaticVariable staticVariable
-
-extractStaticFieldNames :: CompilationUnit Parsed -> [Ident]
-extractStaticFieldNames cUnit = do
-  fieldNames <- universeBi cUnit
-  extractMemberDecl fieldNames
+  fieldName <- universeBi cUnit
+  (ident, modifier) <- extractMemberDecl fieldName
+  checkIdent path (StaticVariable modifier) ident
   where
-    extractMemberDecl :: MemberDecl Parsed -> [Ident]
+    extractMemberDecl :: MemberDecl Parsed -> [(Ident, VariableModifier)]
     extractMemberDecl (FieldDecl _ modifier _ varDecls)
-      | any Modifier.isStatic modifier = map VarDecl.ident (NonEmpty.toList varDecls)
+      | any Modifier.isStatic modifier =
+          map (\varDecl -> (VarDecl.ident varDecl, if any Modifier.isFinal modifier then FinalVariable else NonFinalVariable)) (NonEmpty.toList varDecls)
       | otherwise = mzero
     extractMemberDecl _ = mzero
 
@@ -176,7 +173,7 @@ data VariableKind
   = Package Part
   | Type
   | Method
-  | StaticVariable
+  | StaticVariable VariableModifier
   | Parameter
   | InstanceVariable
   | LocalVariable VariableModifier
@@ -188,20 +185,22 @@ variableKindToString (Package part) = "des " ++ partToString part ++ " Teils ein
     partToString Rest = "restlichen"
 variableKindToString Type = "eines Typs"
 variableKindToString Method = "einer Methode"
-variableKindToString StaticVariable = "einer statischen Variable"
+variableKindToString (StaticVariable modifier) = "einer statischen, " ++ modifierToString modifier ++ " Variable"
 variableKindToString Parameter = "eines Parameters"
 variableKindToString InstanceVariable = "einer Instanzvariable"
 variableKindToString (LocalVariable modifier) = "einer lokalen, " ++ modifierToString modifier ++ " Variable"
-  where
-    modifierToString FinalVariable = "finalen"
-    modifierToString NonFinalVariable = "nicht finalen"
+
+modifierToString :: VariableModifier -> String
+modifierToString FinalVariable = "finalen"
+modifierToString NonFinalVariable = "nicht finalen"
 
 convention :: VariableKind -> Convention
 convention (Package First) = PackageCase Lower
 convention (Package Rest) = PackageCase LowerAndUpper
 convention Type = PascalCase
 convention Method = CamelCase
-convention StaticVariable = CamelCase
+convention (StaticVariable FinalVariable) = UnderscoreCase
+convention (StaticVariable NonFinalVariable) = CamelCase
 convention Parameter = CamelCase
 convention InstanceVariable = CamelCase
 convention (LocalVariable FinalVariable) = CamelCase
@@ -215,6 +214,7 @@ data Convention
   = PascalCase
   | CamelCase
   | PackageCase LetterCase
+  | UnderscoreCase
 
 conventionToString :: Convention -> String
 conventionToString PascalCase = "\"Pascal Case\""
@@ -223,6 +223,7 @@ conventionToString (PackageCase letterCase) = "Java-Paket-Stil mit " ++ letterCa
   where
     letterCaseToString Lower = "kleinen"
     letterCaseToString LowerAndUpper = "kleinen und großen"
+conventionToString UnderscoreCase = "\"Underscore Case\""
 
 {- Regular Expressions -}
 
@@ -231,3 +232,4 @@ regex PascalCase = [re|^[A-Z][a-zA-Z0-9]*$|]
 regex CamelCase = [re|^[a-z][a-zA-Z0-9]*$|]
 regex (PackageCase Lower) = [re|^[a-z]*$|]
 regex (PackageCase LowerAndUpper) = [re|^[a-zA-Z_][a-zA-Z0-9_]*$|]
+regex UnderscoreCase = [re|^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$|]
