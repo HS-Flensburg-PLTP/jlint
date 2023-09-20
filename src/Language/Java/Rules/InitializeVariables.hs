@@ -37,5 +37,6 @@ message :: Ident -> [String]
 message ident =
   [ "Die Variable",
     Markdown.code (Ident.name ident),
-    "wird nur deklariert, danach aber direkt initialisiert. Die Variable sollte bei der Deklaration daher schon initialisiert werden."
+    "wird nur deklariert, danach aber direkt initialisiert.",
+    "Die Variable sollte bei der Deklaration daher schon initialisiert werden."
   ]

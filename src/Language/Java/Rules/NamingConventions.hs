@@ -143,7 +143,8 @@ nameDiagnostic path variableKind convention ident =
     "Language.Java.Rules.NamingConventions"
     [ "Der Name",
       Markdown.code (Ident.name ident),
-      "entspricht nicht der Java-Namenskonvention. Der Name",
+      "entspricht nicht den Java-Namenskonventionen.",
+      "Der Name",
       variableKindToString variableKind,
       "sollte",
       conventionToString convention,

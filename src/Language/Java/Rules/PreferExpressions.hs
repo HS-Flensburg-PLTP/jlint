@@ -94,12 +94,14 @@ assignedTwiceMessage :: Ident -> [String]
 assignedTwiceMessage ident =
   [ "Der Variable",
     Markdown.code (Ident.name ident),
-    "wird zweimal direkt nacheinander ein neuer Wert zugewiesen. Diese beiden Zuweisungen können zusammengefasst werden."
+    "wird zweimal direkt nacheinander ein neuer Wert zugewiesen.",
+    "Diese beiden Zuweisungen können zusammengefasst werden."
   ]
 
 assignedAndUsedMessage :: Ident -> [String]
 assignedAndUsedMessage ident =
   [ "Der Variable",
     Markdown.code (Ident.name ident),
-    "wird ein neuer Wert zugewiesen und sie wird direkt danach nur gelesen.\nDaher kann der Wert, der der Variable zugewiesen wird, dort eingesetzt werden, wo die Variable verwendet wird."
+    "wird ein neuer Wert zugewiesen und sie wird direkt danach nur gelesen.",
+    "Daher kann der Wert, der der Variable zugewiesen wird, dort eingesetzt werden, wo die Variable verwendet wird."
   ]

@@ -17,6 +17,7 @@ import Language.Java.Syntax
 import qualified Language.Java.Syntax.VarDecl as VarDecl
 import qualified Markdown
 import qualified RDF
+import qualified String
 import System.Process (readProcess)
 import Text.RE.TDFA (allMatches, matchedText, re, (*=~))
 
@@ -64,13 +65,17 @@ checkIdents idents path = do
 message :: FilePath -> [NonEmpty IdentPart] -> [RDF.Diagnostic]
 message path =
   map
-    ( \gWords ->
+    ( \parts ->
         RDF.rangeDiagnostic
           "Language.Java.Rules.NoGermanNames"
-          ( "Dieser Bezeichner enthält ein oder mehrere folgende deutsche Wörter:" :
-            toList (fmap (Markdown.code . part) gWords)
-          )
-          (sourceSpan (NonEmpty.head gWords))
+          [ "Der Bezeichner",
+            Markdown.code (concatMap part parts),
+            "enthält",
+            String.plural (length parts) "das deutsche Wort" "die deutschen Wörter",
+            String.enumerate (toList (fmap part parts)) ++ ".",
+            "Es sollten nur englische Bezeichner verwendet werden."
+          ]
+          (sourceSpan (NonEmpty.head parts))
           path
     )
 

@@ -62,7 +62,7 @@ check cUnit path = mapMaybe checkStmt (universeBi cUnit) `mplus` mapMaybe checkE
                   "den Wert",
                   Markdown.code "true",
                   "hat, liefert der gesamte bedingte Ausdruck den Wert",
-                  Markdown.code "true" + +".",
+                  Markdown.code "true" ++ ".",
                   "Falls der Ausdruck",
                   Markdown.code (prettyPrint cond),
                   "den Wert",

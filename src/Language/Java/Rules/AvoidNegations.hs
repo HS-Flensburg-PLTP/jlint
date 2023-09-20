@@ -20,7 +20,8 @@ checkStatement cUnit path = mapMaybe checkIfThenElse (universeBi cUnit)
           return
             ( RDF.rangeDiagnostic
                 "Language.Java.Rules.AvoidNegations"
-                [ "Wenn möglich sollte man Negationen vermeiden, da sie schwer zu verstehen sind. Bei einer",
+                [ "Wenn möglich sollte man Negationen vermeiden, da sie schwer zu verstehen sind.",
+                  "Bei einer",
                   Markdown.code "if-then-else" ++ "-Anweisung",
                   "kann man die Negation vermeiden, indem man die Zweige des Konditionals tauscht."
                 ]
@@ -40,7 +41,9 @@ checkExpression cUnit path = mapMaybe checkCond (universeBi cUnit)
           return
             ( RDF.rangeDiagnostic
                 "Language.Java.Rules.AvoidNegations"
-                ["Wenn möglich sollte man Negationen vermeiden, da sie schwer zu verstehen sind. Bei einem ternären Operator kann man die Negation vermeiden, indem man die Zweige des Operators tauscht."]
+                [ "Wenn möglich sollte man Negationen vermeiden, da sie schwer zu verstehen sind.",
+                  "Bei einem bedingten Ausdruck kann man die Negation vermeiden, indem man die Zweige des Ausdrucks tauscht."
+                ]
                 span
                 path
             )

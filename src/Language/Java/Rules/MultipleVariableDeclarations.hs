@@ -33,5 +33,5 @@ varTypeToString Field = "Attribute"
 message :: VarType -> SourceSpan -> FilePath -> RDF.Diagnostic
 message varType =
   RDF.rangeDiagnostic
-    "Language.Java.Rules.AvoidMultipleVariableDeclarations"
+    "Language.Java.Rules.MultipleVariableDeclarations"
     ["Das Deklarieren mehrerer", varTypeToString varType, "in der gleichen Zeile sollte vermieden werden."]

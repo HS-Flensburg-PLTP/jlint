@@ -19,7 +19,8 @@ check cUnit path = mapMaybe checkStatement (universeBi cUnit)
                 "Language.Java.Rules.NoExceptionsForControl"
                 [ "Eine",
                   Markdown.code "NullPointerException",
-                  "sollte nicht verwendet werden, um den Kontrollfluss einer Methode zu implementieren. Stattdessen sollte an der richtigen Stelle explizit auf",
+                  "sollte nicht verwendet werden, um den Kontrollfluss einer Methode zu implementieren.",
+                  "Stattdessen sollte an der richtigen Stelle explizit auf",
                   Markdown.code "null",
                   "geprüft werden."
                 ]

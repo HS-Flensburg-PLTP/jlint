@@ -22,7 +22,8 @@ check cUnit path = do
               Markdown.code (Ident.name (VarDeclId.ident ident)),
               "sollte als",
               Markdown.code "final",
-              "deklariert sein. Auf diese Weise kann der Parameter in der Methode/im Konstruktor nicht verändert werden."
+              "deklariert sein.",
+              "Auf diese Weise kann der Parameter in der Methode/im Konstruktor nicht verändert werden."
             ]
             span
             path

@@ -78,7 +78,8 @@ message path (IdentPrediction (PredictionSet originalName predictions) span) =
     "Language.Java.Rules.PredictMethodNames"
     ( [ "Der Name",
         Markdown.code (toCamelCase originalName),
-        "ist schlecht gewählt. Folgende Vorschläge eignen sich vielleicht besser:"
+        "ist schlecht gewählt.",
+        "Folgende Vorschläge eignen sich vielleicht besser:"
       ]
         ++ map (Markdown.code . pretty) predictions
     )

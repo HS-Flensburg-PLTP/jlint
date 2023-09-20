@@ -24,7 +24,8 @@ checkIdent path (Ident sourceSpan ident) =
               Markdown.code ident,
               "verwendet das Präfix",
               Markdown.code "My" ++ ".",
-              "Dieses Präfix wird in Programmierbeispielen genutzt, wenn man keinen sinnvollen Namen vergeben kann, da das Beispiel minimal gehalten ist. In produktivem Code sollte man diese Art von Bezeichner nicht verwenden."
+              "Dieses Präfix wird in Programmierbeispielen genutzt, wenn man keinen sinnvollen Namen vergeben kann, da das Beispiel minimal gehalten ist.",
+              "In produktivem Code sollte man diese Art von Bezeichner nicht verwenden."
             ]
             sourceSpan
             path

@@ -93,7 +93,8 @@ checkRank path declOrder =
         [ rankToString (length idents) rank,
           String.enumerate (toList (fmap (Markdown.code . Ident.name) idents)),
           String.plural (length idents) "ist" "sind",
-          "an der falschen Stelle deklariert. Die Java-Konventionen geben eine Reihenfolge vor, in der die verschiedenen Deklarationen auftreten sollten."
+          "an der falschen Stelle deklariert.",
+          "Die Java-Konventionen geben eine Reihenfolge vor, in der die verschiedenen Deklarationen auftreten sollten."
         ]
         span
         path
