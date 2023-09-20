@@ -1,6 +1,6 @@
-module CheckNonPrivateAttributesTests (tests) where
+module PrivateAttributesTests (tests) where
 
-import qualified Language.Java.Rules.CheckNonPrivateAttributes as CheckNonPrivateAttributes
+import qualified Language.Java.Rules.PrivateAttributes as PrivateAttributes
 import qualified RDF
 import Test.HUnit (Test)
 import Tests
@@ -9,8 +9,8 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "CheckNonPrivateAttributes.java"
-    CheckNonPrivateAttributes.check
+    "PrivateAttributes.java"
+    PrivateAttributes.check
 
 expectedRanges :: [RDF.Range]
 expectedRanges =

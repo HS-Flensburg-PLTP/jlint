@@ -1,12 +1,11 @@
 import qualified AvoidNegationsTests
 import qualified AvoidOuterNegationsTests
 import qualified AvoidStarImportTests
-import qualified CheckNonFinalMethodParametersTests
-import qualified CheckNonPrivateAttributesTests
 import qualified ConsistentOverrideEqualsHashCodeTests
 import qualified DeclarationOrderTests
 import qualified DefaultComesLastTests
 import qualified ExplicitValueTests
+import qualified FinalParametersTests
 import qualified InitializeVariablesTests
 import qualified MethodInvNumberTests
 import qualified MethodNamesTests
@@ -25,6 +24,7 @@ import qualified NoLoopBreakTests
 import qualified NoNullPointerExceptionsForControlTests
 import qualified ParameterNumberTests
 import qualified PreferExpressionsTests
+import qualified PrivateAttributesTests
 import qualified ReduceScopeTests
 import qualified RedundantModifiersTests
 import qualified SameExecutionsInIfTests
@@ -49,12 +49,11 @@ tests =
     [ "AvoidNegations" ~: AvoidNegationsTests.tests,
       "AvoidOuterNegations" ~: AvoidOuterNegationsTests.tests,
       "AvoidStarImport" ~: AvoidStarImportTests.tests,
-      "CheckNonFinalMethodParameters" ~: CheckNonFinalMethodParametersTests.tests,
-      "CheckNonPrivateAttributes" ~: CheckNonPrivateAttributesTests.tests,
       "ConsistentOverrideEqualsHashCode" ~: ConsistentOverrideEqualsHashCodeTests.tests,
       "DeclarationOrder" ~: DeclarationOrderTests.tests,
       "DefaultComesLast" ~: DefaultComesLastTests.tests,
       "ExplicitValue" ~: ExplicitValueTests.tests,
+      "FinalParameters" ~: FinalParametersTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
       "MethodInvNumber" ~: MethodInvNumberTests.tests,
       -- "MethodNames" ~: MethodNamesTests.tests,
@@ -73,6 +72,7 @@ tests =
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "ParameterNumber" ~: ParameterNumberTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
+      "PrivateAttributes" ~: PrivateAttributesTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
       "RedundantModifiers" ~: RedundantModifiersTests.tests,
       "SameExecutionsInIf" ~: SameExecutionsInIfTests.tests,

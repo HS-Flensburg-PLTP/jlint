@@ -1,4 +1,4 @@
-module Language.Java.Rules.CheckNonFinalMethodParameters (check) where
+module Language.Java.Rules.FinalParameters (check) where
 
 import Control.Monad (mzero)
 import Data.Generics.Uniplate.Data (universeBi)
@@ -17,7 +17,7 @@ check cUnit path = do
     else
       return
         ( RDF.rangeDiagnostic
-            "Language.Java.Rules.CheckNonFinalMethodParameters"
+            "Language.Java.Rules.FinalParameters"
             [ "Der Parameter",
               Markdown.code (Ident.name (VarDeclId.ident ident)),
               "sollte als",

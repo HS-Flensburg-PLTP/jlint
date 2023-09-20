@@ -5,12 +5,11 @@ import Control.Monad.Extra (concatMapM)
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
 import qualified Language.Java.Rules.AvoidOuterNegations as AvoidOuterNegations
 import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
-import qualified Language.Java.Rules.CheckNonFinalMethodParameters as CheckNonFinalMethodParameters
-import qualified Language.Java.Rules.CheckNonPrivateAttributes as CheckNonPrivateAttributes
 import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
 import qualified Language.Java.Rules.DeclarationOrder as DeclarationOrder
 import qualified Language.Java.Rules.DefaultComesLast as DefaultComesLast
 import qualified Language.Java.Rules.ExplicitValue as ExplicitValue
+import qualified Language.Java.Rules.FinalParameters as FinalParameters
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
 import qualified Language.Java.Rules.MethodInvNumber as MethodInvNumber
 import qualified Language.Java.Rules.MethodNames as MethodNames
@@ -29,6 +28,7 @@ import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
+import qualified Language.Java.Rules.PrivateAttributes as PrivateAttributes
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.SameExecutionsInIf as SameExecutionsInIf
@@ -47,12 +47,11 @@ defaultConfig =
   [ AvoidNegations,
     AvoidOuterNegations,
     AvoidStarImport,
-    CheckNonFinalMethodParameters,
-    CheckNonPrivateAttributes,
     ConsistentOverrideEqualsHashCode,
     DeclarationOrder,
     DefaultComesLast,
     ExplicitValue,
+    FinalParameters,
     InitializeVariables,
     -- MethodInvNumber
     -- MethodNames,
@@ -72,6 +71,7 @@ defaultConfig =
     ParameterNumber Nothing,
     -- PredictMethodNames
     PreferExpressions,
+    PrivateAttributes,
     ReduceScope,
     RedundantModifiers,
     SameExecutionsInIf,
@@ -91,12 +91,11 @@ checkFromConfig :: Rule -> CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnos
 checkFromConfig AvoidNegations = liftIO AvoidNegations.check
 checkFromConfig AvoidOuterNegations = liftIO AvoidOuterNegations.check
 checkFromConfig AvoidStarImport = liftIO AvoidStarImport.check
-checkFromConfig CheckNonFinalMethodParameters = liftIO CheckNonFinalMethodParameters.check
-checkFromConfig CheckNonPrivateAttributes = liftIO CheckNonPrivateAttributes.check
 checkFromConfig ConsistentOverrideEqualsHashCode = liftIO ConsistentOverrideEqualsHashCode.check
 checkFromConfig DeclarationOrder = liftIO DeclarationOrder.check
 checkFromConfig DefaultComesLast = liftIO DefaultComesLast.check
 checkFromConfig ExplicitValue = liftIO ExplicitValue.check
+checkFromConfig FinalParameters = liftIO FinalParameters.check
 checkFromConfig InitializeVariables = liftIO InitializeVariables.check
 checkFromConfig (MethodInvNumber called limited maxInv) = liftIO (MethodInvNumber.check called limited maxInv)
 checkFromConfig (MethodNames methods) = MethodNames.check methods
@@ -115,6 +114,7 @@ checkFromConfig NoLoopBreak = liftIO NoLoopBreak.check
 checkFromConfig NoNullPointerExceptionsForControl = liftIO NoNullPointerExceptionsForControl.check
 checkFromConfig (ParameterNumber maybeMax) = liftIO (ParameterNumber.check maybeMax)
 checkFromConfig PreferExpressions = liftIO PreferExpressions.check
+checkFromConfig PrivateAttributes = liftIO PrivateAttributes.check
 checkFromConfig ReduceScope = liftIO ReduceScope.check
 checkFromConfig RedundantModifiers = liftIO RedundantModifiers.check
 checkFromConfig SameExecutionsInIf = liftIO SameExecutionsInIf.check

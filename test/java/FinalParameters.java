@@ -1,12 +1,12 @@
 import java.util.LinkedList;
 import java.util.List;
 
-class CheckNonFinalMethodParameters {
+class FinalParameters {
 
-    public CheckNonFinalMethodParameters(final String name) {
+    public FinalParameters(final String name) {
     }
 
-    public CheckNonFinalMethodParameters(String name, final int number) {
+    public FinalParameters(String name, final int number) {
     }
 
     public void foo(final String name, int age) {

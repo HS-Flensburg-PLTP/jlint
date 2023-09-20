@@ -21,12 +21,11 @@ data Rule
   = AvoidNegations
   | AvoidOuterNegations
   | AvoidStarImport
-  | CheckNonFinalMethodParameters
-  | CheckNonPrivateAttributes
   | ConsistentOverrideEqualsHashCode
   | DeclarationOrder
   | DefaultComesLast
   | ExplicitValue
+  | FinalParameters
   | InitializeVariables
   | MethodInvNumber {called :: String, limited :: String, maxInv :: Int}
   | MethodNames {whitelist :: [String]}
@@ -45,6 +44,7 @@ data Rule
   | NoNullPointerExceptionsForControl
   | ParameterNumber {max :: Maybe Int}
   | PreferExpressions
+  | PrivateAttributes
   | ReduceScope
   | RedundantModifiers
   | SameExecutionsInIf
@@ -63,12 +63,11 @@ instance FromJSON Rule where
       "AvoidNegations" -> pure AvoidNegations
       "AvoidOuterNegations" -> pure AvoidOuterNegations
       "AvoidStarImport" -> pure AvoidStarImport
-      "CheckNonFinalMethodParameters" -> pure CheckNonFinalMethodParameters
-      "CheckNonPrivateAttributes" -> pure CheckNonPrivateAttributes
       "ConsistentOverrideEqualsHashCode" -> pure ConsistentOverrideEqualsHashCode
       "DeclarationOrder" -> pure DeclarationOrder
       "DefaultComesLast" -> pure DefaultComesLast
       "ExplicitValue" -> pure ExplicitValue
+      "FinalParameters" -> pure FinalParameters
       "InitializeVariables" -> pure InitializeVariables
       "MethodInvNumber" -> parseMethodInvNumber obj
       "MethodNames" -> parseMethodNames obj
@@ -87,6 +86,7 @@ instance FromJSON Rule where
       "NoNullPointerExceptionsForControl" -> pure NoNullPointerExceptionsForControl
       "ParameterNumber" -> parseParameterNumber obj
       "PreferExpressions" -> pure PreferExpressions
+      "PrivateAttributes" -> pure PrivateAttributes
       "ReduceScope" -> pure ReduceScope
       "RedundantModifiers" -> pure RedundantModifiers
       "SameExecutionsInIf" -> pure SameExecutionsInIf

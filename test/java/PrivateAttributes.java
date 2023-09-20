@@ -1,4 +1,4 @@
-class CheckNonPrivateAttributes {
+class PrivateAttributes {
 
     private int age = 20;
     String address = "Zu Hause";

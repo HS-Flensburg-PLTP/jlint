@@ -34,12 +34,11 @@ library
       Language.Java.Rules.AvoidNegations
       Language.Java.Rules.AvoidOuterNegations
       Language.Java.Rules.AvoidStarImport
-      Language.Java.Rules.CheckNonFinalMethodParameters
-      Language.Java.Rules.CheckNonPrivateAttributes
       Language.Java.Rules.ConsistentOverrideEqualsHashCode
       Language.Java.Rules.DeclarationOrder
       Language.Java.Rules.DefaultComesLast
       Language.Java.Rules.ExplicitValue
+      Language.Java.Rules.FinalParameters
       Language.Java.Rules.InitializeVariables
       Language.Java.Rules.MethodInvNumber
       Language.Java.Rules.MethodNames
@@ -58,6 +57,7 @@ library
       Language.Java.Rules.NoNullPointerExceptionsForControl
       Language.Java.Rules.ParameterNumber
       Language.Java.Rules.PreferExpressions
+      Language.Java.Rules.PrivateAttributes
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.RedundantModifiers
       Language.Java.Rules.SameExecutionsInIf
@@ -140,12 +140,11 @@ test-suite jlint-test
       AvoidNegationsTests
       AvoidOuterNegationsTests
       AvoidStarImportTests
-      CheckNonFinalMethodParametersTests
-      CheckNonPrivateAttributesTests
       ConsistentOverrideEqualsHashCodeTests
       DeclarationOrderTests
       DefaultComesLastTests
       ExplicitValueTests
+      FinalParametersTests
       InitializeVariablesTests
       MethodInvNumberTests
       MethodNamesTests
@@ -164,6 +163,7 @@ test-suite jlint-test
       NoNullPointerExceptionsForControlTests
       ParameterNumberTests
       PreferExpressionsTests
+      PrivateAttributesTests
       ReduceScopeTests
       RedundantModifiersTests
       SameExecutionsInIfTests

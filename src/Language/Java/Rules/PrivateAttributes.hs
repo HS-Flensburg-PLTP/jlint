@@ -1,4 +1,4 @@
-module Language.Java.Rules.CheckNonPrivateAttributes (check) where
+module Language.Java.Rules.PrivateAttributes (check) where
 
 import Control.Monad (MonadPlus (mzero))
 import Data.Foldable (toList)
@@ -19,7 +19,7 @@ check cUnit path = do
     else
       return
         ( RDF.rangeDiagnostic
-            "Language.Java.Rules.CheckNonPrivateAttributes"
+            "Language.Java.Rules.PrivateAttributes"
             [ String.plural (length varDecls) "Das Attribut" "Die Attribute",
               String.enumerate (map (Markdown.code . Ident.name . VarDecl.ident) (toList varDecls)),
               String.plural (length varDecls) "sollte" "sollten",
