@@ -9,6 +9,7 @@ import Language.Java.SourceSpan (Location (..), SourceSpan)
 import Language.Java.Syntax
 import qualified Markdown
 import qualified RDF
+import qualified String
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path =
@@ -30,10 +31,12 @@ message path (literal :| additionalOccurrences) =
   RDF.rangeDiagnostic
     "Language.Java.Rules.MultipleStringLiterals"
     [ "Das String-Literal",
-      Markdown.code (show literal),
+      Markdown.code (show (show literal)),
       "wird an dieser und an",
       show (length additionalOccurrences),
-      "weiteren Stellen verwendet. Auch noch in den Zeilen",
+      String.plural (length additionalOccurrences) "weiteren Stelle" "weiteren Stellen",
+      "verwendet, nämlich in",
+      String.plural (length additionalOccurrences) "der Zeile" "den Zeilen",
       intercalate ", " (map (show . startLine . sourceSpan) additionalOccurrences) ++ ".",
       "Bitte eine Konstante dafür einführen."
     ]

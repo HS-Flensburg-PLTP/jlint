@@ -55,7 +55,7 @@ checkInnerStmt path stmt (outerName, lit) = do
                 "Language.Java.Rules.ExplicitValue"
                 [ "Anstatt erneut",
                   Markdown.code (prettyPrint outerName),
-                  "zu verwenden, kann hier direkt das Literal",
+                  "zu verwenden, kann hier direkt der Wert",
                   Markdown.code (prettyPrint lit),
                   "verwendet werden."
                 ]

@@ -6,6 +6,7 @@ import Data.Maybe (maybeToList)
 import Language.Java.Pretty (prettyPrint)
 import Language.Java.SourceSpan (dummySourceSpan, sourceSpan)
 import Language.Java.Syntax
+import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -30,9 +31,9 @@ message path assign postIncDec =
   RDF.rangeDiagnostic
     "Language.Java.Rules.UseIncrementDecrementOperator"
     [ "Anstelle einer Zuweisung",
-      prettyPrint assign,
+      Markdown.code (prettyPrint assign),
       "sollte",
-      prettyPrint postIncDec,
+      Markdown.code (prettyPrint postIncDec),
       "verwendet werden."
     ]
     (sourceSpan assign)
