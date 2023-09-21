@@ -37,7 +37,7 @@ data Rule
   | NoAnnotations {whitelist :: [String]}
   | NoCasts {whitelist :: [String]}
   | NoDummyNames
-  | NoFurtherDataStructures {methodNames :: NonEmpty String}
+  | NoExtraDataStructures {methodNames :: NonEmpty String}
   | NoGermanNames
   | NoIncDecInExpression
   | NoLoopBreak
@@ -79,7 +79,7 @@ instance FromJSON Rule where
       "NoAnnotations" -> parseNoAnnotations obj
       "NoCasts" -> parseNoCasts obj
       "NoDummyNames" -> pure NoDummyNames
-      "NoFurtherDataStructures" -> parseNoFurtherDataStructures obj
+      "NoExtraDataStructures" -> parseNoExtraDataStructures obj
       "NoGermanNames" -> pure NoGermanNames
       "NoIncDecInExpression" -> pure NoIncDecInExpression
       "NoLoopBreak" -> pure NoLoopBreak
@@ -120,8 +120,9 @@ parseStringList obj key = do
   checkNoExtraKeys obj [fromString key]
   pure strings
 
-parseNoFurtherDataStructures :: Object -> Parser Rule
-parseNoFurtherDataStructures obj = NoFurtherDataStructures <$> parseNonEmptyStringList obj "methodNames"
+parseNoExtraDataStructures :: Object -> Parser Rule
+parseNoExtraDataStructures obj =
+  NoExtraDataStructures <$> parseNonEmptyStringList obj "methodNames"
 
 parseNonEmptyStringList :: Object -> Key -> Parser (NonEmpty String)
 parseNonEmptyStringList obj key = do

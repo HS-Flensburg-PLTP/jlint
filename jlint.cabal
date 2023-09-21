@@ -50,7 +50,7 @@ library
       Language.Java.Rules.NoAnnotations
       Language.Java.Rules.NoCasts
       Language.Java.Rules.NoDummyNames
-      Language.Java.Rules.NoFurtherDataStructures
+      Language.Java.Rules.NoExtraDataStructures
       Language.Java.Rules.NoGermanNames
       Language.Java.Rules.NoIncDecInExpression
       Language.Java.Rules.NoLoopBreak
@@ -156,7 +156,7 @@ test-suite jlint-test
       NoAnnotationsTests
       NoCastsTests
       NoDummyNamesTests
-      NoFurtherDataStructuresTests
+      NoExtraDataStructuresTests
       NoGermanNamesTests
       NoIncDecInExpressionTests
       NoLoopBreakTests

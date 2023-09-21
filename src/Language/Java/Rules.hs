@@ -21,7 +21,7 @@ import qualified Language.Java.Rules.NeedBraces as NeedBraces
 import qualified Language.Java.Rules.NoAnnotations as NoAnnotations
 import qualified Language.Java.Rules.NoCasts as NoCasts
 import qualified Language.Java.Rules.NoDummyNames as NoDummyNames
-import qualified Language.Java.Rules.NoFurtherDataStructures as NoFurtherDataStructures
+import qualified Language.Java.Rules.NoExtraDataStructures as NoExtraDataStructures
 import qualified Language.Java.Rules.NoGermanNames as NoGermanNames
 import qualified Language.Java.Rules.NoIncDecInExpression as NoIncDecInExpression
 import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
@@ -63,7 +63,7 @@ defaultConfig =
     NoAnnotations ["Override"],
     -- NoCasts
     NoDummyNames,
-    -- NoFurtherDataStructures
+    -- NoExtraDataStructures
     NoGermanNames,
     NoIncDecInExpression,
     NoLoopBreak,
@@ -107,7 +107,7 @@ checkFromConfig NeedBraces = liftIO NeedBraces.check
 checkFromConfig (NoAnnotations whitelist) = liftIO (NoAnnotations.check whitelist)
 checkFromConfig (NoCasts whitelist) = liftIO (NoCasts.check whitelist)
 checkFromConfig NoDummyNames = liftIO NoDummyNames.check
-checkFromConfig (NoFurtherDataStructures methodNames) = liftIO (NoFurtherDataStructures.check methodNames)
+checkFromConfig (NoExtraDataStructures methodNames) = liftIO (NoExtraDataStructures.check methodNames)
 checkFromConfig NoGermanNames = NoGermanNames.check
 checkFromConfig NoIncDecInExpression = liftIO NoIncDecInExpression.check
 checkFromConfig NoLoopBreak = liftIO NoLoopBreak.check

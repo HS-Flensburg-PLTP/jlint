@@ -17,7 +17,7 @@ import qualified NeedBracesTests
 import qualified NoAnnotationsTests
 import qualified NoCastsTests
 import qualified NoDummyNamesTests
-import qualified NoFurtherDataStructuresTests
+import qualified NoExtraDataStructuresTests
 import qualified NoGermanNamesTests
 import qualified NoIncDecInExpressionTests
 import qualified NoLoopBreakTests
@@ -40,7 +40,7 @@ import qualified UsePostIncrementDecrementTests
 
 main :: IO ()
 main = do
-  updateGlobalLogger "jlint" (setLevel DEBUG)
+  updateGlobalLogger "jlint" (setLevel NOTICE)
   runTestTTAndExit tests
 
 tests :: Test
@@ -65,7 +65,7 @@ tests =
       "NoAnnotations" ~: NoAnnotationsTests.tests,
       "NoCasts" ~: NoCastsTests.tests,
       "NoDummyNames" ~: NoDummyNamesTests.tests,
-      "NoFurtherDataStructures" ~: NoFurtherDataStructuresTests.tests,
+      "NoExtraDataStructures" ~: NoExtraDataStructuresTests.tests,
       "NoGermanNames" ~: NoGermanNamesTests.tests,
       "NoLoopBreak" ~: NoLoopBreakTests.tests,
       "NoIncDecInExpression" ~: NoIncDecInExpressionTests.tests,
