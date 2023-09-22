@@ -1,12 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Config (Rule (..)) where
+module Config (Rule (..), QualifiedIdent (..)) where
 
 import Control.Monad (unless)
 import Data.Aeson
   ( FromJSON (parseJSON),
     Key,
     Object,
+    Value (..),
     withObject,
     (.:),
     (.:!),
@@ -16,6 +17,7 @@ import Data.Aeson.KeyMap (keys)
 import Data.Aeson.Types (Parser)
 import Data.List ((\\))
 import Data.List.NonEmpty (NonEmpty)
+import Data.Text (splitOn, unpack)
 
 data Rule
   = AvoidNegations
@@ -35,7 +37,7 @@ data Rule
   | NamingConventions
   | NeedBraces
   | NoAnnotations {whitelist :: [String]}
-  | NoCasts {whitelist :: [String]}
+  | NoCasts {methodWhitelist :: [QualifiedIdent]}
   | NoDummyNames
   | NoExtraDataStructures {methodNames :: NonEmpty String}
   | NoGermanNames
@@ -58,7 +60,7 @@ data Rule
 
 instance FromJSON Rule where
   parseJSON = withObject "Rule" $ \obj -> do
-    rule <- obj .: fromString "rule"
+    rule <- obj .: "rule"
     case rule of
       "AvoidNegations" -> pure AvoidNegations
       "AvoidOuterNegations" -> pure AvoidOuterNegations
@@ -99,6 +101,15 @@ instance FromJSON Rule where
       "UsePostIncrementDecrement" -> pure UsePostIncrementDecrement
       _ -> fail ("Unknown Rule: " ++ rule)
 
+data QualifiedIdent = QualifiedIdent {className :: String, methodName :: String}
+
+instance FromJSON QualifiedIdent where
+  parseJSON (String text) =
+    case splitOn "." text of
+      [className, methodName] -> pure (QualifiedIdent (unpack className) (unpack methodName))
+      _ -> fail "MethodName should have the form class.name"
+  parseJSON _ = fail "MethodName should be a string"
+
 parseParameterNumber :: Object -> Parser Rule
 parseParameterNumber obj = do
   max <- obj .:! "max"
@@ -112,10 +123,16 @@ parseNoAnnotations :: Object -> Parser Rule
 parseNoAnnotations obj = NoAnnotations <$> parseStringList obj "whitelist"
 
 parseNoCasts :: Object -> Parser Rule
-parseNoCasts obj = NoCasts <$> parseStringList obj "whitelist"
+parseNoCasts obj = NoCasts <$> parseMethodNameList obj "methodWhitelist"
 
 parseStringList :: Object -> String -> Parser [String]
 parseStringList obj key = do
+  strings <- obj .: fromString key
+  checkNoExtraKeys obj [fromString key]
+  pure strings
+
+parseMethodNameList :: Object -> String -> Parser [QualifiedIdent]
+parseMethodNameList obj key = do
   strings <- obj .: fromString key
   checkNoExtraKeys obj [fromString key]
   pure strings

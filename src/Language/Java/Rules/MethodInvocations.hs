@@ -3,6 +3,7 @@ module Language.Java.Rules.MethodInvocations (check) where
 import Control.Monad (mzero)
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
+import qualified Markdown
 import qualified RDF
 
 check :: String -> String -> Int -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -17,9 +18,9 @@ check called limited maxInv cUnit path = do
                 ( RDF.rangeDiagnostic
                     "Language.Java.Rules.MethodInvocations"
                     [ "Die Methode",
-                      called,
+                      Markdown.code called,
                       "sollte die Methode",
-                      limited,
+                      Markdown.code limited,
                       "maximal",
                       show maxInv ++ "-mal",
                       "aufrufen. Hier wird sie aber",

@@ -1,5 +1,6 @@
 module NoCastsTests (tests) where
 
+import Config (QualifiedIdent (..))
 import qualified Language.Java.Rules.NoCasts as NoCasts
 import qualified RDF
 import Test.HUnit (Test, Testable (test))
@@ -10,7 +11,7 @@ tests =
   rangesTest
     expectedRanges
     "NoCasts.java"
-    (NoCasts.check ["foo"])
+    (NoCasts.check [QualifiedIdent "NoCasts" "foo"])
 
 expectedRanges :: [RDF.Range]
 expectedRanges =
