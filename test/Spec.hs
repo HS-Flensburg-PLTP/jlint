@@ -7,7 +7,7 @@ import qualified DefaultComesLastTests
 import qualified ExplicitValueTests
 import qualified FinalParametersTests
 import qualified InitializeVariablesTests
-import qualified MethodInvNumberTests
+import qualified MethodInvocationsTests
 import qualified MethodNamesTests
 import qualified ModifiedControlVariableTests
 import qualified MultipleStringLiteralsTests
@@ -55,7 +55,7 @@ tests =
       "ExplicitValue" ~: ExplicitValueTests.tests,
       "FinalParameters" ~: FinalParametersTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
-      "MethodInvNumber" ~: MethodInvNumberTests.tests,
+      "MethodInvocations" ~: MethodInvocationsTests.tests,
       -- "MethodNames" ~: MethodNamesTests.tests,
       "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
       "MultipleVariableDeclarations" ~: MultipleVariableDeclarationsTests.tests,

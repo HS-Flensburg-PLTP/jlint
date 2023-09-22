@@ -7,6 +7,7 @@ import Data.Maybe (mapMaybe)
 import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
 import qualified Language.Java.Syntax.Ident as Ident
+import qualified Markdown
 import qualified RDF
 
 check :: NonEmpty String -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -20,8 +21,10 @@ check methodNames cUnit path = do
       return
         ( RDF.rangeDiagnostic
             "Language.Java.Rules.NoExtraDataStructures"
-            [ "Bei der Implementierung der Methode " ++ Ident.name ident ++ " ist es nicht notwendig, eine zusätzliche Datenstruktur zu erzeugen.",
-              "Um Speicherplatz und Laufzeit zu sparen, sollte man keine zusätzlichen Datenstruktur erzeugen, wenn dies nicht notwendig ist."
+            [ "Bei der Implementierung der Methode "
+                ++ Markdown.code (Ident.name ident)
+                ++ " ist es nicht notwendig, eine zusätzliche Datenstruktur zu erzeugen.",
+              "Um Speicherplatz und Laufzeit zu sparen, sollte man keine zusätzliche Datenstruktur erzeugen, wenn dies nicht notwendig ist."
             ]
             span
             path

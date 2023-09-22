@@ -1,4 +1,4 @@
-module Language.Java.Rules.MethodInvNumber (check) where
+module Language.Java.Rules.MethodInvocations (check) where
 
 import Control.Monad (mzero)
 import Data.Generics.Uniplate.Data (universeBi)
@@ -15,7 +15,7 @@ check called limited maxInv cUnit path = do
             then
               return
                 ( RDF.rangeDiagnostic
-                    "Language.Java.Rules.MethodInvNumber"
+                    "Language.Java.Rules.MethodInvocations"
                     [ "Die Methode",
                       called,
                       "sollte die Methode",

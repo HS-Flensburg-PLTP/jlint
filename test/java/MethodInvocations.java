@@ -1,4 +1,4 @@
-class MethodInvNumber {
+class MethodInvocations {
 
 
     public int bar(int a, int b) {

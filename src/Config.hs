@@ -27,7 +27,7 @@ data Rule
   | ExplicitValue
   | FinalParameters
   | InitializeVariables
-  | MethodInvNumber {called :: String, limited :: String, maxInv :: Int}
+  | MethodInvocations {called :: String, limited :: String, maxInv :: Int}
   | MethodNames {whitelist :: [String]}
   | ModifiedControlVariable
   | MultipleStringLiterals
@@ -69,7 +69,7 @@ instance FromJSON Rule where
       "ExplicitValue" -> pure ExplicitValue
       "FinalParameters" -> pure FinalParameters
       "InitializeVariables" -> pure InitializeVariables
-      "MethodInvNumber" -> parseMethodInvNumber obj
+      "MethodInvocations" -> parseMethodInvocations obj
       "MethodNames" -> parseMethodNames obj
       "ModifiedControlVariable" -> pure ModifiedControlVariable
       "MultipleStringLiterals" -> pure MultipleStringLiterals
@@ -130,13 +130,13 @@ parseNonEmptyStringList obj key = do
   checkNoExtraKeys obj [key]
   pure strings
 
-parseMethodInvNumber :: Object -> Parser Rule
-parseMethodInvNumber obj = do
+parseMethodInvocations :: Object -> Parser Rule
+parseMethodInvocations obj = do
   called <- obj .: "called"
   limited <- obj .: "limited"
   maxInv <- obj .: "maxInv"
   checkNoExtraKeys obj ["called", "limited", "maxInv"]
-  pure (MethodInvNumber called limited maxInv)
+  pure (MethodInvocations called limited maxInv)
 
 checkNoExtraKeys :: Object -> [Key] -> Parser ()
 checkNoExtraKeys obj allowedKeys = do

@@ -1,6 +1,6 @@
-module MethodInvNumberTests where
+module MethodInvocationsTests where
 
-import qualified Language.Java.Rules.MethodInvNumber as MethodInvNumber
+import qualified Language.Java.Rules.MethodInvocations as MethodInvocations
 import qualified RDF
 import Test.HUnit
 import Tests
@@ -9,8 +9,8 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "MethodInvNumber.java"
-    (MethodInvNumber.check "foo" "bar" 2)
+    "MethodInvocations.java"
+    (MethodInvocations.check "foo" "bar" 2)
 
 expectedRanges :: [RDF.Range]
 expectedRanges =

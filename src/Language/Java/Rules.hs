@@ -11,7 +11,7 @@ import qualified Language.Java.Rules.DefaultComesLast as DefaultComesLast
 import qualified Language.Java.Rules.ExplicitValue as ExplicitValue
 import qualified Language.Java.Rules.FinalParameters as FinalParameters
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
-import qualified Language.Java.Rules.MethodInvNumber as MethodInvNumber
+import qualified Language.Java.Rules.MethodInvocations as MethodInvocations
 import qualified Language.Java.Rules.MethodNames as MethodNames
 import qualified Language.Java.Rules.ModifiedControlVariable as ModifiedControlVariable
 import qualified Language.Java.Rules.MultipleStringLiterals as MultipleStringLiterals
@@ -53,7 +53,7 @@ defaultConfig =
     ExplicitValue,
     FinalParameters,
     InitializeVariables,
-    -- MethodInvNumber
+    -- MethodInvocations
     -- MethodNames,
     ModifiedControlVariable,
     MultipleStringLiterals,
@@ -97,7 +97,7 @@ checkFromConfig DefaultComesLast = liftIO DefaultComesLast.check
 checkFromConfig ExplicitValue = liftIO ExplicitValue.check
 checkFromConfig FinalParameters = liftIO FinalParameters.check
 checkFromConfig InitializeVariables = liftIO InitializeVariables.check
-checkFromConfig (MethodInvNumber called limited maxInv) = liftIO (MethodInvNumber.check called limited maxInv)
+checkFromConfig (MethodInvocations called limited maxInv) = liftIO (MethodInvocations.check called limited maxInv)
 checkFromConfig (MethodNames methods) = MethodNames.check methods
 checkFromConfig ModifiedControlVariable = liftIO ModifiedControlVariable.check
 checkFromConfig MultipleStringLiterals = liftIO MultipleStringLiterals.check

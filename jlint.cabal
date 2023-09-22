@@ -40,7 +40,7 @@ library
       Language.Java.Rules.ExplicitValue
       Language.Java.Rules.FinalParameters
       Language.Java.Rules.InitializeVariables
-      Language.Java.Rules.MethodInvNumber
+      Language.Java.Rules.MethodInvocations
       Language.Java.Rules.MethodNames
       Language.Java.Rules.ModifiedControlVariable
       Language.Java.Rules.MultipleStringLiterals
@@ -146,7 +146,7 @@ test-suite jlint-test
       ExplicitValueTests
       FinalParametersTests
       InitializeVariablesTests
-      MethodInvNumberTests
+      MethodInvocationsTests
       MethodNamesTests
       ModifiedControlVariableTests
       MultipleStringLiteralsTests
