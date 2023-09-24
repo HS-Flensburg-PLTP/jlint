@@ -38,6 +38,7 @@ dependencies:
 - split
 - text
 - uniplate
+- yaml
 
 
 library:

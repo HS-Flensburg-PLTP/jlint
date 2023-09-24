@@ -5,9 +5,9 @@ import Config (Rule)
 import Control.Exception
 import Control.Monad (MonadPlus (..), unless, when)
 import Control.Monad.Extra (concatMapM)
-import Data.Aeson (decodeFileStrict, eitherDecodeFileStrict)
 import qualified Data.ByteString.Lazy.Char8 as C
 import Data.Semigroup ((<>))
+import Data.Yaml (ParseException, decodeFileEither)
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Rules (checkWithConfig, defaultConfig)
@@ -139,9 +139,9 @@ parseJava rootDir pretty showAST maybeConfigFile checkstyleDiags = do
           configExists <- doesFileExist configFile
           if configExists
             then do
-              eitherConfig <- eitherDecodeFileStrict configFile :: IO (Either String [Rule])
+              eitherConfig <- decodeFileEither configFile :: IO (Either ParseException [Rule])
               case eitherConfig of
-                Left error -> return (Left ("Error beim parsen der Config-Datei: " ++ error ++ " Verwende Standard-Config."))
+                Left error -> return (Left ("Error beim parsen der Config-Datei: " ++ show error ++ " Verwende Standard-Config."))
                 Right config -> return (Right config)
             else do
               return (Left ("Angegebene Config-Datei " ++ configFile ++ " existiert nicht. Verwende Standard-Config."))

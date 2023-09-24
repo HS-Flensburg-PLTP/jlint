@@ -3,21 +3,12 @@
 module Config (Rule (..), QualifiedIdent (..)) where
 
 import Control.Monad (unless)
-import Data.Aeson
-  ( FromJSON (parseJSON),
-    Key,
-    Object,
-    Value (..),
-    withObject,
-    (.:),
-    (.:!),
-  )
-import Data.Aeson.Key (fromString)
 import Data.Aeson.KeyMap (keys)
-import Data.Aeson.Types (Parser)
+import Data.Aeson.Types (Key, (.:!))
 import Data.List ((\\))
 import Data.List.NonEmpty (NonEmpty)
 import Data.Text (splitOn, unpack)
+import Data.Yaml (FromJSON (..), Object, Parser, Value (..), withObject, (.:))
 
 data Rule
   = AvoidNegations
@@ -125,16 +116,16 @@ parseNoAnnotations obj = NoAnnotations <$> parseStringList obj "whitelist"
 parseNoCasts :: Object -> Parser Rule
 parseNoCasts obj = NoCasts <$> parseMethodNameList obj "methodWhitelist"
 
-parseStringList :: Object -> String -> Parser [String]
+parseStringList :: Object -> Key -> Parser [String]
 parseStringList obj key = do
-  strings <- obj .: fromString key
-  checkNoExtraKeys obj [fromString key]
+  strings <- obj .: key
+  checkNoExtraKeys obj [key]
   pure strings
 
-parseMethodNameList :: Object -> String -> Parser [QualifiedIdent]
+parseMethodNameList :: Object -> Key -> Parser [QualifiedIdent]
 parseMethodNameList obj key = do
-  strings <- obj .: fromString key
-  checkNoExtraKeys obj [fromString key]
+  strings <- obj .: key
+  checkNoExtraKeys obj [key]
   pure strings
 
 parseNoExtraDataStructures :: Object -> Parser Rule
@@ -149,11 +140,12 @@ parseNonEmptyStringList obj key = do
 
 parseMethodInvocations :: Object -> Parser Rule
 parseMethodInvocations obj = do
-  called <- obj .: "called"
-  limited <- obj .: "limited"
+  called <- obj .: "targetMethod"
+  limited <- obj .: "limitedMethod"
   maxInv <- obj .: "maxInv"
-  checkNoExtraKeys obj ["called", "limited", "maxInv"]
-  pure (MethodInvocations called limited maxInv)
+  explanation <- obj .: "explanation"
+  checkNoExtraKeys obj ["targetMethod", "limitedMethod", "maxInv", "explanation"]
+  pure (MethodInvocations called limited maxInv explanation)
 
 checkNoExtraKeys :: Object -> [Key] -> Parser ()
 checkNoExtraKeys obj allowedKeys = do
