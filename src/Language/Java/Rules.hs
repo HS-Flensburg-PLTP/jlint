@@ -97,7 +97,8 @@ checkFromConfig DefaultComesLast = liftIO DefaultComesLast.check
 checkFromConfig ExplicitValue = liftIO ExplicitValue.check
 checkFromConfig FinalParameters = liftIO FinalParameters.check
 checkFromConfig InitializeVariables = liftIO InitializeVariables.check
-checkFromConfig (MethodInvocations called limited maxInv) = liftIO (MethodInvocations.check called limited maxInv)
+checkFromConfig (MethodInvocations called limited maxInv explanation) =
+  liftIO (MethodInvocations.check called limited maxInv explanation)
 checkFromConfig (MethodNames methods) = MethodNames.check methods
 checkFromConfig ModifiedControlVariable = liftIO ModifiedControlVariable.check
 checkFromConfig MultipleStringLiterals = liftIO MultipleStringLiterals.check

@@ -6,27 +6,34 @@ import Language.Java.Syntax
 import qualified Markdown
 import qualified RDF
 
-check :: String -> String -> Int -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-check called limited maxInv cUnit path = do
+check :: String -> String -> Int -> String -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
+check targetMethod limitedMethod maxInv explanation cUnit path = do
   MethodDecl span _ _ _ (Ident _ name) _ _ _ methodBody <- universeBi cUnit :: [MemberDecl Parsed]
-  if name == called
+  if name == targetMethod
     then
-      let noInv = length (filter (isInvocationOf limited) (universeBi methodBody))
+      let noInv = length (filter (isInvocationOf limitedMethod) (universeBi methodBody))
        in if noInv > maxInv
             then
               return
                 ( RDF.rangeDiagnostic
                     "Language.Java.Rules.MethodInvocations"
-                    [ "Die Methode",
-                      Markdown.code called,
-                      "sollte die Methode",
-                      Markdown.code limited,
-                      "maximal",
-                      show maxInv ++ "-mal",
-                      "aufrufen. Hier wird sie aber",
-                      show noInv ++ "-mal",
-                      "aufgerufen."
-                    ]
+                    ( [ "Die Methode",
+                        Markdown.code targetMethod,
+                        "sollte die Methode",
+                        Markdown.code limitedMethod
+                      ]
+                        ++ ( if maxInv == 0
+                               then ["nicht verwenden."]
+                               else
+                                 [ "maximal",
+                                   show maxInv ++ "-mal",
+                                   "aufrufen. Hier wird sie aber",
+                                   show noInv ++ "-mal",
+                                   "aufgerufen."
+                                 ]
+                           )
+                        ++ [explanation]
+                    )
                     span
                     path
                 )

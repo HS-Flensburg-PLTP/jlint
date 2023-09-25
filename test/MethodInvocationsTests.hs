@@ -10,7 +10,7 @@ tests =
   rangesTest
     expectedRanges
     "MethodInvocations.java"
-    (MethodInvocations.check "foo" "bar" 2)
+    (MethodInvocations.check "foo" "bar" 2 "Dies ist ein Test")
 
 expectedRanges :: [RDF.Range]
 expectedRanges =

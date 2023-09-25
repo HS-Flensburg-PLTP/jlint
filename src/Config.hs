@@ -20,7 +20,7 @@ data Rule
   | ExplicitValue
   | FinalParameters
   | InitializeVariables
-  | MethodInvocations {called :: String, limited :: String, maxInv :: Int}
+  | MethodInvocations {called :: String, limited :: String, maxInv :: Int, explanation :: String}
   | MethodNames {whitelist :: [String]}
   | ModifiedControlVariable
   | MultipleStringLiterals
