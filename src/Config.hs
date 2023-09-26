@@ -43,6 +43,7 @@ data Rule
   | SameExecutionsInIf
   | SimplifyBoolean
   | SingleTopLevelClass
+  | SuppressWarnings {methodWhitelist :: [QualifiedIdent]}
   | UseAssignOp
   | UseElse
   | UseIncrementDecrementOperator
@@ -85,6 +86,7 @@ instance FromJSON Rule where
       "SameExecutionsInIf" -> pure SameExecutionsInIf
       "SimplifyBoolean" -> pure SimplifyBoolean
       "SingleTopLevelClass" -> pure SingleTopLevelClass
+      "SuppressWarnings" -> parseSuppressWarnings obj
       "UseAssignOp" -> pure UseAssignOp
       "UseElse" -> pure UseElse
       "UseIncrementDecrementOperator" -> pure UseIncrementDecrementOperator
@@ -115,6 +117,10 @@ parseNoAnnotations obj = NoAnnotations <$> parseStringList obj "whitelist"
 
 parseNoCasts :: Object -> Parser Rule
 parseNoCasts obj = NoCasts <$> parseMethodNameList obj "methodWhitelist"
+
+parseSuppressWarnings :: Object -> Parser Rule
+parseSuppressWarnings obj =
+  SuppressWarnings <$> parseMethodNameList obj "methodWhitelist"
 
 parseStringList :: Object -> Key -> Parser [String]
 parseStringList obj key = do

@@ -141,10 +141,10 @@ parseJava rootDir pretty showAST maybeConfigFile checkstyleDiags = do
             then do
               eitherConfig <- decodeFileEither configFile :: IO (Either ParseException [Rule])
               case eitherConfig of
-                Left error -> return (Left ("Error beim parsen der Config-Datei: " ++ show error ++ " Verwende Standard-Config."))
+                Left error -> return (Left ("Error beim Parsen der Config-Datei: " ++ show error))
                 Right config -> return (Right config)
             else do
-              return (Left ("Angegebene Config-Datei " ++ configFile ++ " existiert nicht. Verwende Standard-Config."))
+              return (Left ("Angegebene Config-Datei " ++ configFile ++ " existiert nicht."))
         Nothing -> return (Right defaultConfig)
       case eitherConfig of
         Left error -> do

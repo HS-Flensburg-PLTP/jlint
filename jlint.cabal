@@ -63,6 +63,7 @@ library
       Language.Java.Rules.SameExecutionsInIf
       Language.Java.Rules.SimplifyBoolean
       Language.Java.Rules.SingleTopLevelClass
+      Language.Java.Rules.SuppressWarnings
       Language.Java.Rules.UnusedLocalVariable
       Language.Java.Rules.UseAssignOp
       Language.Java.Rules.UseElse
@@ -171,6 +172,7 @@ test-suite jlint-test
       SameExecutionsInIfTests
       SimplifyBooleanTests
       SingleTopLevelClassTests
+      SuppressWarningsTests
       Tests
       UseAssignOpTests
       UseElseTests

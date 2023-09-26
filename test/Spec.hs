@@ -30,6 +30,7 @@ import qualified RedundantModifiersTests
 import qualified SameExecutionsInIfTests
 import qualified SimplifyBooleanTests
 import qualified SingleTopLevelClassTests
+import qualified SuppressWarningsTests
 import System.Log.Logger (Priority (..), setLevel, updateGlobalLogger)
 import Test.HUnit
 import qualified UseAssignOpTests
@@ -77,6 +78,7 @@ tests =
       "RedundantModifiers" ~: RedundantModifiersTests.tests,
       "SameExecutionsInIf" ~: SameExecutionsInIfTests.tests,
       "SimplifyBoolean" ~: SimplifyBooleanTests.tests,
+      "SuppressWarnings" ~: SuppressWarningsTests.tests,
       "SingleTopLevelClass" ~: SingleTopLevelClassTests.tests,
       "UseAssignOp" ~: UseAssignOpTests.tests,
       "UseElse" ~: UseElseTests.tests,
