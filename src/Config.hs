@@ -17,6 +17,7 @@ data Rule
   | ConsistentOverrideEqualsHashCode
   | DeclarationOrder
   | DefaultComesLast
+  | Evaluation
   | ExplicitValue
   | FinalParameters
   | InitializeVariables
@@ -60,6 +61,7 @@ instance FromJSON Rule where
       "ConsistentOverrideEqualsHashCode" -> pure ConsistentOverrideEqualsHashCode
       "DeclarationOrder" -> pure DeclarationOrder
       "DefaultComesLast" -> pure DefaultComesLast
+      "Evaluation" -> pure Evaluation
       "ExplicitValue" -> pure ExplicitValue
       "FinalParameters" -> pure FinalParameters
       "InitializeVariables" -> pure InitializeVariables

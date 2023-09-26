@@ -3,7 +3,6 @@ module Language.Java.Rules.SuppressWarnings (check) where
 import Config (QualifiedIdent (..))
 import Control.Monad (guard, mplus, mzero)
 import Data.Generics.Uniplate.Data (universeBi)
-import Debug.Trace (trace)
 import Language.Java.Pretty (prettyPrint)
 import Language.Java.SourceSpan (Located, sourceSpan)
 import Language.Java.Syntax

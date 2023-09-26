@@ -8,6 +8,7 @@ import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
 import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
 import qualified Language.Java.Rules.DeclarationOrder as DeclarationOrder
 import qualified Language.Java.Rules.DefaultComesLast as DefaultComesLast
+import qualified Language.Java.Rules.Evaluation as Evaluation
 import qualified Language.Java.Rules.ExplicitValue as ExplicitValue
 import qualified Language.Java.Rules.FinalParameters as FinalParameters
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
@@ -51,6 +52,7 @@ defaultConfig =
     ConsistentOverrideEqualsHashCode,
     DeclarationOrder,
     DefaultComesLast,
+    Evaluation,
     ExplicitValue,
     FinalParameters,
     InitializeVariables,
@@ -97,6 +99,7 @@ checkFromConfig ConsistentOverrideEqualsHashCode = liftIO ConsistentOverrideEqua
 checkFromConfig DeclarationOrder = liftIO DeclarationOrder.check
 checkFromConfig DefaultComesLast = liftIO DefaultComesLast.check
 checkFromConfig ExplicitValue = liftIO ExplicitValue.check
+checkFromConfig Evaluation = liftIO Evaluation.check
 checkFromConfig FinalParameters = liftIO FinalParameters.check
 checkFromConfig InitializeVariables = liftIO InitializeVariables.check
 checkFromConfig (MethodInvocations called limited maxInv explanation) =
