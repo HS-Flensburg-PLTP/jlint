@@ -27,6 +27,7 @@ import qualified ParameterNumberTests
 import qualified PreferExpressionsTests
 import qualified PrivateAttributesTests
 import qualified ReduceScopeTests
+import qualified RedundantLocalVariableTests
 import qualified RedundantModifiersTests
 import qualified SameExecutionsInIfTests
 import qualified SimplifyBooleanTests
@@ -77,6 +78,7 @@ tests =
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "PrivateAttributes" ~: PrivateAttributesTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
+      "RedundantLocalVariable" ~: RedundantLocalVariableTests.tests,
       "RedundantModifiers" ~: RedundantModifiersTests.tests,
       "SameExecutionsInIf" ~: SameExecutionsInIfTests.tests,
       "SimplifyBoolean" ~: SimplifyBooleanTests.tests,

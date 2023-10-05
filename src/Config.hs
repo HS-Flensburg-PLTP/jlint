@@ -40,6 +40,7 @@ data Rule
   | PreferExpressions
   | PrivateAttributes
   | ReduceScope
+  | RedundantLocalVariable
   | RedundantModifiers
   | SameExecutionsInIf
   | SimplifyBoolean
@@ -84,6 +85,7 @@ instance FromJSON Rule where
       "PreferExpressions" -> pure PreferExpressions
       "PrivateAttributes" -> pure PrivateAttributes
       "ReduceScope" -> pure ReduceScope
+      "RedundantLocalVariable" -> pure RedundantLocalVariable
       "RedundantModifiers" -> pure RedundantModifiers
       "SameExecutionsInIf" -> pure SameExecutionsInIf
       "SimplifyBoolean" -> pure SimplifyBoolean

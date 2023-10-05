@@ -60,6 +60,7 @@ library
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.PrivateAttributes
       Language.Java.Rules.ReduceScope
+      Language.Java.Rules.RedundantLocalVariable
       Language.Java.Rules.RedundantModifiers
       Language.Java.Rules.SameExecutionsInIf
       Language.Java.Rules.SimplifyBoolean
@@ -170,6 +171,7 @@ test-suite jlint-test
       PreferExpressionsTests
       PrivateAttributesTests
       ReduceScopeTests
+      RedundantLocalVariableTests
       RedundantModifiersTests
       SameExecutionsInIfTests
       SimplifyBooleanTests

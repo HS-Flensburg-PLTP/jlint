@@ -31,6 +31,7 @@ import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.PrivateAttributes as PrivateAttributes
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
+import qualified Language.Java.Rules.RedundantLocalVariable as RedundantLocalVariable
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
 import qualified Language.Java.Rules.SameExecutionsInIf as SameExecutionsInIf
 import qualified Language.Java.Rules.SimplifyBoolean as SimplifyBoolean
@@ -76,6 +77,7 @@ defaultConfig =
     PreferExpressions,
     PrivateAttributes,
     ReduceScope,
+    RedundantLocalVariable,
     RedundantModifiers,
     SameExecutionsInIf,
     SimplifyBoolean,
@@ -122,6 +124,7 @@ checkFromConfig (ParameterNumber maybeMax) = liftIO (ParameterNumber.check maybe
 checkFromConfig PreferExpressions = liftIO PreferExpressions.check
 checkFromConfig PrivateAttributes = liftIO PrivateAttributes.check
 checkFromConfig ReduceScope = liftIO ReduceScope.check
+checkFromConfig RedundantLocalVariable = liftIO RedundantLocalVariable.check
 checkFromConfig RedundantModifiers = liftIO RedundantModifiers.check
 checkFromConfig SameExecutionsInIf = liftIO SameExecutionsInIf.check
 checkFromConfig SimplifyBoolean = liftIO SimplifyBoolean.check
