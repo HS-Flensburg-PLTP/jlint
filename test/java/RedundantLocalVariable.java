@@ -52,4 +52,11 @@ public class RedundantLocalVariable {
             return "Java ist super!";
         }
     }
+
+    // The rule should not fire because the code becomes less readable otherwise
+    int method8() {
+        int[] array = {1, 2, 3};
+        System.out.println(array[0]);
+        return array[0];
+    }
 }

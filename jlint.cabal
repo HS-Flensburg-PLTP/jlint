@@ -63,6 +63,7 @@ library
       Language.Java.Rules.RedundantLocalVariable
       Language.Java.Rules.RedundantModifiers
       Language.Java.Rules.SameExecutionsInIf
+      Language.Java.Rules.Simplify
       Language.Java.Rules.SimplifyBoolean
       Language.Java.Rules.SingleTopLevelClass
       Language.Java.Rules.SuppressWarnings
@@ -175,6 +176,7 @@ test-suite jlint-test
       RedundantModifiersTests
       SameExecutionsInIfTests
       SimplifyBooleanTests
+      SimplifyTests
       SingleTopLevelClassTests
       SuppressWarningsTests
       Tests

@@ -43,6 +43,7 @@ data Rule
   | RedundantLocalVariable
   | RedundantModifiers
   | SameExecutionsInIf
+  | Simplify
   | SimplifyBoolean
   | SingleTopLevelClass
   | SuppressWarnings {methodWhitelist :: [QualifiedIdent]}
@@ -88,6 +89,7 @@ instance FromJSON Rule where
       "RedundantLocalVariable" -> pure RedundantLocalVariable
       "RedundantModifiers" -> pure RedundantModifiers
       "SameExecutionsInIf" -> pure SameExecutionsInIf
+      "Simplify" -> pure Simplify
       "SimplifyBoolean" -> pure SimplifyBoolean
       "SingleTopLevelClass" -> pure SingleTopLevelClass
       "SuppressWarnings" -> parseSuppressWarnings obj
