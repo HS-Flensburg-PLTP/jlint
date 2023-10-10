@@ -24,6 +24,7 @@ import qualified NoIncDecInExpressionTests
 import qualified NoLoopBreakTests
 import qualified NoNullPointerExceptionsForControlTests
 import qualified ParameterNumberTests
+import qualified ParseErrorTests
 import qualified PreferExpressionsTests
 import qualified PrivateAttributesTests
 import qualified ReduceScopeTests
@@ -41,7 +42,6 @@ import qualified UseElseTests
 import qualified UseIncrementDecrementOperatorTests
 import qualified UseJavaArrayTypeStyleTests
 import qualified UsePostIncrementDecrementTests
-import qualified ParseErrorTests
 
 main :: IO ()
 main = do

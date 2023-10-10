@@ -29,6 +29,7 @@ import Data.Aeson
 import Data.ByteString.Lazy.Internal (ByteString)
 import GHC.Generics (Generic)
 import qualified Language.Java.SourceSpan as SourceSpan
+import String (enumerate)
 import Text.Parsec (ParseError, errorPos, sourceColumn, sourceLine)
 import Text.Parsec.Error (errorMessages, messageString)
 
@@ -192,7 +193,9 @@ mkRange (sLn, sCol) (eLn, eCol) =
 parseErrorDiagnostic :: ParseError -> FilePath -> Diagnostic
 parseErrorDiagnostic error path =
   Diagnostic
-    { message = unlines (map messageString (errorMessages error)),
+    { message =
+        "Das Parsen der Java-Datei hat die folgenden Fehler verursacht:"
+          ++ enumerate (map messageString (errorMessages error)),
       location =
         Location
           { path = path,
@@ -200,7 +203,7 @@ parseErrorDiagnostic error path =
           },
       severity = ERROR,
       source = Nothing,
-      code = Just (Code {value = "Parse Error", codeURL = Nothing}),
+      code = Just (Code {value = "Language.Java.ParseError", codeURL = Nothing}),
       suggestions = Nothing,
       originalOutput = Nothing
     }
