@@ -27,8 +27,8 @@ ruleIOTest justify path check =
     content <- readFile file
     case parser compilationUnit file content of
       Left error ->
-        assertFailure ("Parsing " ++ file ++ " failed with error:" ++ show error)
-      Right cUnit -> do
+        return (justify [RDF.parseErrorDiagnostic error path])
+      Right cUnit ->
         justify <$> check cUnit path
 
 justifyRanges :: [RDF.Range] -> [RDF.Diagnostic] -> Assertion

@@ -169,6 +169,7 @@ test-suite jlint-test
       NoLoopBreakTests
       NoNullPointerExceptionsForControlTests
       ParameterNumberTests
+      ParseErrorTests
       PreferExpressionsTests
       PrivateAttributesTests
       ReduceScopeTests

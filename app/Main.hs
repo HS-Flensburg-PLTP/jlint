@@ -8,6 +8,7 @@ import Control.Monad.Extra (concatMapM)
 import qualified Data.ByteString.Lazy.Char8 as C
 import Data.Semigroup ((<>))
 import Data.Yaml (ParseException, decodeFileEither)
+import GHC.IO.Encoding (setLocaleEncoding, utf8)
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
 import Language.Java.Rules (checkWithConfig, defaultConfig)
@@ -24,6 +25,7 @@ import Text.XML.HaXml.Parse (xmlParse')
 
 main :: IO ()
 main = do
+  setLocaleEncoding utf8
   updateGlobalLogger "jlint" (setLevel NOTICE)
   params <- execParser opts
   importJava params
@@ -37,9 +39,9 @@ main = do
         )
 
 importJava :: Params -> IO ()
-importJava (Params path showAST pretty maybeConfigFile Nothing) = do
-  parseJava path pretty showAST maybeConfigFile []
-importJava (Params path showAST pretty maybeConfigFile (Just checkstyleFile)) = do
+importJava (Params path showAST maybeConfigFile Nothing) = do
+  parseJava path showAST maybeConfigFile []
+importJava (Params path showAST maybeConfigFile (Just checkstyleFile)) = do
   content <- readFile checkstyleFile
   diags <- case xmlParse' "" content of
     Left error -> do
@@ -50,12 +52,11 @@ importJava (Params path showAST pretty maybeConfigFile (Just checkstyleFile)) = 
         hPutStrLn stderr ("Import of checkstyle XML failed with error " ++ error)
         return []
       Right diags -> return diags
-  parseJava path pretty showAST maybeConfigFile diags
+  parseJava path showAST maybeConfigFile diags
 
 data Params = Params
   { path :: String,
     showAST :: Bool,
-    pretty :: Bool,
     maybeConfigFile :: Maybe String,
     maybeCheckstyleFile :: Maybe String
   }
@@ -70,10 +71,6 @@ params =
       ( long "show-ast"
           <> short 't'
           <> help "Only show AST of given file(s) - no checks run. Should only be used with single file."
-      )
-    <*> switch
-      ( long "pretty"
-          <> help "By setting this Parameter the java source representation of the AST is shown"
       )
     <*> optional
       ( strOption
@@ -124,15 +121,13 @@ parseAllFiles files =
                 parseAllfilesHelp restFiles (errorList, (cUnit, path) : cUnitList)
    in parseAllfilesHelp files (mzero, mzero)
 
--- missing pretty option and does not print errors
-parseJava :: FilePath -> Bool -> Bool -> Maybe FilePath -> [Diagnostic] -> IO ()
-parseJava rootDir pretty showAST maybeConfigFile checkstyleDiags = do
+parseJava :: FilePath -> Bool -> Maybe FilePath -> [Diagnostic] -> IO ()
+parseJava rootDir showAST maybeConfigFile checkstyleDiags = do
   pathList <- findAllJavaFiles rootDir
   fileList <- readAllFiles pathList
   let (parsingErrors, cUnitResults) = parseAllFiles fileList
   if showAST
-    then do
-      print cUnitResults
+    then print cUnitResults
     else do
       eitherConfig <- case maybeConfigFile of
         Just configFile -> do
@@ -152,7 +147,7 @@ parseJava rootDir pretty showAST maybeConfigFile checkstyleDiags = do
           exitFailure
         Right config -> do
           diagnostics <- concatMapM (uncurry (checkWithConfig config)) cUnitResults
-          let parseErrors = map (\(parseError, path) -> RDF.simpleDiagnostic (show parseError) path) parsingErrors
+          let parseErrors = map (uncurry RDF.parseErrorDiagnostic) parsingErrors
           let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
           C.putStrLn
             ( RDF.encodetojson
@@ -163,8 +158,6 @@ parseJava rootDir pretty showAST maybeConfigFile checkstyleDiags = do
                     }
                 )
             )
-          unless (null parsingErrors) $ print parsingErrors
-          when pretty $ putStrLn (unlines (map (\(cUnit, _) -> prettyPrint cUnit) cUnitResults))
 
           let numberOfHints = length diagnostics
           if numberOfHints == 0

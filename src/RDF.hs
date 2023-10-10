@@ -11,11 +11,10 @@ module RDF
     Position (..),
     Range (..),
     encodetojson,
-    simpleDiagnostic,
     checkSeverityList,
     mkRange,
-    methodDiagnostic,
     rangeDiagnostic,
+    parseErrorDiagnostic,
   )
 where
 
@@ -30,6 +29,8 @@ import Data.Aeson
 import Data.ByteString.Lazy.Internal (ByteString)
 import GHC.Generics (Generic)
 import qualified Language.Java.SourceSpan as SourceSpan
+import Text.Parsec (ParseError, errorPos, sourceColumn, sourceLine)
+import Text.Parsec.Error (errorMessages, messageString)
 
 data Position = Position
   { line :: Int,
@@ -154,28 +155,9 @@ instance ToJSON Severity where
 encodetojson :: ToJSON a => a -> Data.ByteString.Lazy.Internal.ByteString
 encodetojson = encode
 
-simpleDiagnostic :: String -> String -> Diagnostic
-simpleDiagnostic dmessage fpath =
-  Diagnostic
-    { message = dmessage,
-      location =
-        Location
-          { path = fpath,
-            range = Nothing
-          },
-      severity = ERROR,
-      source = Nothing,
-      code = Nothing,
-      suggestions = Nothing,
-      originalOutput = Nothing
-    }
-
 checkSeverityList :: [Severity] -> Maybe Severity
 checkSeverityList [] = Nothing
 checkSeverityList list = Just (maximum list)
-
-methodDiagnostic :: String -> String -> FilePath -> Diagnostic
-methodDiagnostic methodName msg = simpleDiagnostic ("Method " ++ methodName ++ ": " ++ msg)
 
 rangeFromSourceSpan :: SourceSpan.SourceSpan -> Range
 rangeFromSourceSpan (start, end) =
@@ -206,3 +188,25 @@ mkRange (sLn, sCol) (eLn, eCol) =
     { start = Position {line = sLn, column = Just sCol},
       end = Just (Position {line = eLn, column = Just eCol})
     }
+
+parseErrorDiagnostic :: ParseError -> FilePath -> Diagnostic
+parseErrorDiagnostic error path =
+  Diagnostic
+    { message = unlines (map messageString (errorMessages error)),
+      location =
+        Location
+          { path = path,
+            range = Just (Range {start = position, end = Just position})
+          },
+      severity = ERROR,
+      source = Nothing,
+      code = Just (Code {value = "Parse Error", codeURL = Nothing}),
+      suggestions = Nothing,
+      originalOutput = Nothing
+    }
+  where
+    position =
+      Position
+        { line = sourceLine (errorPos error),
+          column = Just (sourceColumn (errorPos error))
+        }

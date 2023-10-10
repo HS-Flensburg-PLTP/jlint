@@ -41,6 +41,7 @@ import qualified UseElseTests
 import qualified UseIncrementDecrementOperatorTests
 import qualified UseJavaArrayTypeStyleTests
 import qualified UsePostIncrementDecrementTests
+import qualified ParseErrorTests
 
 main :: IO ()
 main = do
@@ -76,6 +77,7 @@ tests =
       "NoIncDecInExpression" ~: NoIncDecInExpressionTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "ParameterNumber" ~: ParameterNumberTests.tests,
+      "ParseError" ~: ParseErrorTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "PrivateAttributes" ~: PrivateAttributesTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
