@@ -8,7 +8,7 @@ import Data.Char (toLower)
 import Data.Foldable (toList)
 import Data.Function (on)
 import Data.Generics.Uniplate.Data (universeBi)
-import Data.List (sortBy)
+import Data.List (partition, sortBy)
 import Data.List.NonEmpty (NonEmpty)
 import qualified Data.List.NonEmpty as NonEmpty
 import Data.Maybe (mapMaybe)
@@ -91,7 +91,8 @@ message path =
 data IdentPart = IdentPart SourceSpan String
 
 instance Eq IdentPart where
-  IdentPart _ part1 == IdentPart _ part2 = part1 == part2
+  IdentPart _ part1 == IdentPart _ part2 =
+    map toLower part1 == map toLower part2
 
 instance Located IdentPart where
   sourceSpan (IdentPart span _) = span
@@ -117,6 +118,7 @@ splitCamelCaseIdent (Ident sourceSpan ident) =
 data DictLanguage
   = DE
   | EN
+  deriving (Eq)
 
 resolveDict :: DictLanguage -> String
 resolveDict DE = "de_DE"
@@ -128,7 +130,10 @@ dictionaryLookup language parts = do
   nonLanguageWords <- aspell language strings
   case language of
     DE -> do
-      nonGermanWords <- aspell DE (map (replaceUmlauts . map toLower) nonLanguageWords)
+      let (nonLanguageWordsWithUmlaut, nonLanguageWordsWithoutUmlauts) = partition (any isUmlaut) nonLanguageWords
+      nonGermanWordsWithoutUmlauts <-
+        fmap (map removeUmlauts) (aspell DE (map (introduceUmlauts . map toLower) nonLanguageWordsWithoutUmlauts))
+      let nonGermanWords = nonLanguageWordsWithUmlaut ++ nonGermanWordsWithoutUmlauts
       return (filter (\(IdentPart _ part) -> map toLower part `notElem` nonGermanWords) parts)
     EN -> return (filter (\(IdentPart _ part) -> part `notElem` nonLanguageWords) parts)
 
@@ -136,10 +141,25 @@ aspell :: DictLanguage -> [String] -> IO [String]
 aspell language =
   fmap words . readProcess "aspell" ["list", "-d", resolveDict language, "--ignore-case"] . unwords
 
-replaceUmlauts :: String -> String
-replaceUmlauts [] = []
-replaceUmlauts ('a' : 'e' : rest) = 'ä' : replaceUmlauts rest
-replaceUmlauts ('o' : 'e' : rest) = 'ö' : replaceUmlauts rest
-replaceUmlauts ('u' : 'e' : rest) = 'ü' : replaceUmlauts rest
-replaceUmlauts ('s' : 's' : rest) = 'ß' : replaceUmlauts rest
-replaceUmlauts (c : cs) = c : replaceUmlauts cs
+introduceUmlauts :: String -> String
+introduceUmlauts [] = []
+introduceUmlauts ('a' : 'e' : rest) = 'ä' : introduceUmlauts rest
+introduceUmlauts ('o' : 'e' : rest) = 'ö' : introduceUmlauts rest
+introduceUmlauts ('u' : 'e' : rest) = 'ü' : introduceUmlauts rest
+introduceUmlauts ('s' : 's' : rest) = 'ß' : introduceUmlauts rest
+introduceUmlauts (c : cs) = c : introduceUmlauts cs
+
+removeUmlauts :: String -> String
+removeUmlauts [] = []
+removeUmlauts ('ä' : rest) = 'a' : 'e' : removeUmlauts rest
+removeUmlauts ('ö' : rest) = 'o' : 'e' : removeUmlauts rest
+removeUmlauts ('ü' : rest) = 'u' : 'e' : removeUmlauts rest
+removeUmlauts ('ß' : rest) = 's' : 's' : removeUmlauts rest
+removeUmlauts (c : cs) = c : removeUmlauts cs
+
+isUmlaut :: Char -> Bool
+isUmlaut 'ä' = True
+isUmlaut 'ö' = True
+isUmlaut 'ü' = True
+isUmlaut 'ß' = True
+isUmlaut _ = False

@@ -32,6 +32,7 @@ interface IchBinEinTier<Tier> {
     public void tierSound();
     public void run();
     public void berechneErgebnis();
+    public void supressWarnings();
 }
 
 class SLList {} // Ok
