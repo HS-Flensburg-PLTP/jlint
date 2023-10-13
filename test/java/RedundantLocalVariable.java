@@ -86,4 +86,35 @@ public class RedundantLocalVariable {
         this.first = this.first.next();
         return value;
     }
+
+    public int naiveSize() {
+        var size = 0;
+        var current = this.first;
+        while (current != null) {
+            size++;
+            current = current.next();
+        }
+        return size;
+    }
+
+    public int naiveSize() {
+        var size = 0;
+        var current = this.first;
+        current = current.next();
+        return size;
+    }
+
+    public int naiveSize() {
+        var size = 0;
+        var current = this.first;
+        current = current.next();
+        current = current.next();
+        return size;
+    }
+
+    public T get(int index) {
+        @SuppressWarnings("unchecked")
+        var value = (T) this.array[index];
+        return value;
+    }
 }

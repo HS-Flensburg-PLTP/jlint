@@ -7,10 +7,8 @@ import Data.List.NonEmpty (NonEmpty (..))
 import Language.Java.Pretty (prettyPrint)
 import Language.Java.SourceSpan (sourceSpan)
 import Language.Java.Syntax
-import qualified Language.Java.Syntax.BlockStmt.Extra as BlockStmt.Extra
 import qualified Language.Java.Syntax.Exp.Extra as Exp.Extra
 import qualified Language.Java.Syntax.VarDecl as VarDecl
-import qualified Language.Java.Syntax.VarDecl.Extra as VarDecl.Extra
 import qualified Markdown
 import qualified RDF
 
@@ -22,35 +20,22 @@ check (Just True) cUnit path = do
   checkBlocks blocks
   where
     checkBlocks :: [BlockStmt Parsed] -> [RDF.Diagnostic]
-    checkBlocks (LocalVars _ _ _ vars : stmts) =
-      concatMap checkVarDecl vars
+    checkBlocks (LocalVars _ modifiers _ vars : stmt : stmts)
+      | any isAnnotation modifiers = mzero
+      | otherwise = concatMap checkVarDecl vars
       where
         checkVarDecl :: VarDecl Parsed -> [RDF.Diagnostic]
         checkVarDecl varDecl
           | shouldInline varDecl
-              && noSideEffectsUntil (VarDecl.ident varDecl) stmts
-              && length (filter (eq IgnoreSourceSpan (VarDecl.ident varDecl)) (variables stmts)) == 1
-              && not (any (eq IgnoreSourceSpan (VarDecl.ident varDecl)) (universeBi stmts >>= loopVariables)) =
+              && not (isLoop stmt)
+              && length (filter (eq IgnoreSourceSpan (VarDecl.ident varDecl)) (readVariables stmt)) == 1
+              && not (any (eq IgnoreSourceSpan (VarDecl.ident varDecl)) (readVariables stmts)) =
               return
                 ( RDF.rangeDiagnostic
                     "Language.Java.Rules.RedundantLocalVariable"
                     [ "Die Variable",
                       Markdown.code (prettyPrint (VarDecl.ident varDecl)),
-                      "wird deklariert und danach nur einmal verwendet.",
-                      "In diesem Fall sollte auf die Deklaration der Variable verzichtet werden."
-                    ]
-                    (sourceSpan varDecl)
-                    path
-                )
-          | shouldInline varDecl
-              && noSideEffectsUntil (VarDecl.ident varDecl) stmts
-              && VarDecl.Extra.isCheap varDecl =
-              return
-                ( RDF.rangeDiagnostic
-                    "Language.Java.Rules.RedundantLocalVariable"
-                    [ "Die Variable",
-                      Markdown.code (prettyPrint (VarDecl.ident varDecl)),
-                      "wird deklariert und die Berechnung der rechten Seite ist nicht aufwendig.",
+                      "wird deklariert und direkt danach nur einmal verwendet.",
                       "In diesem Fall sollte auf die Deklaration der Variable verzichtet werden."
                     ]
                     (sourceSpan varDecl)
@@ -59,22 +44,23 @@ check (Just True) cUnit path = do
           | otherwise = mzero
     checkBlocks _ = mzero
 
-noSideEffectsUntil :: Ident -> [BlockStmt Parsed] -> Bool
-noSideEffectsUntil _ [] = True
-noSideEffectsUntil ident (stmt : stmts) =
-  not (any (eq IgnoreSourceSpan ident) (variables stmts))
-    || BlockStmt.Extra.hasNoSideEffect stmt && noSideEffectsUntil ident stmts
+isLoop :: BlockStmt Parsed -> Bool
+isLoop (BlockStmt stmt) = isLoop' stmt
+  where
+    isLoop' :: Stmt Parsed -> Bool
+    isLoop' (While {}) = True
+    isLoop' (Do {}) = True
+    isLoop' (BasicFor {}) = True
+    isLoop' (EnhancedFor {}) = True
+    isLoop' _ = False
+isLoop _ = False
 
-variables :: (Data a) => a -> [Ident]
-variables parent =
-  [ident | Name _ (ident :| []) <- universeBi parent]
-
-loopVariables :: Stmt Parsed -> [Ident]
-loopVariables stmt@(While {}) = variables stmt
-loopVariables stmt@(Do {}) = variables stmt
-loopVariables stmt@(BasicFor {}) = variables stmt
-loopVariables stmt@(EnhancedFor {}) = variables stmt
-loopVariables _ = []
+readVariables :: Data a => a -> [Ident]
+readVariables parent = universeBi parent >>= ident
+  where
+    ident :: Exp Parsed -> [Ident]
+    ident (ExpName (Name _ (ident :| []))) = [ident]
+    ident _ = []
 
 shouldInline :: VarDecl Parsed -> Bool
 shouldInline (VarDecl _ _ Nothing) = True
@@ -114,3 +100,7 @@ shouldInlineExp (Cond _ condExp thenExp elseExp) = all Exp.Extra.hasNoSideEffect
 shouldInlineExp (Assign {}) = False
 shouldInlineExp (Lambda {}) = True
 shouldInlineExp (MethodRef {}) = False
+
+isAnnotation :: Modifier Parsed -> Bool
+isAnnotation (Annotation _) = True
+isAnnotation _ = False
