@@ -78,7 +78,7 @@ defaultConfig =
     PreferExpressions,
     PrivateAttributes,
     ReduceScope,
-    RedundantLocalVariable,
+    RedundantLocalVariable (Just True),
     RedundantModifiers,
     SameExecutionsInIf,
     Simplify,
@@ -126,7 +126,7 @@ checkFromConfig (ParameterNumber maybeMax) = liftIO (ParameterNumber.check maybe
 checkFromConfig PreferExpressions = liftIO PreferExpressions.check
 checkFromConfig PrivateAttributes = liftIO PrivateAttributes.check
 checkFromConfig ReduceScope = liftIO ReduceScope.check
-checkFromConfig RedundantLocalVariable = liftIO RedundantLocalVariable.check
+checkFromConfig (RedundantLocalVariable maybeActivated) = liftIO (RedundantLocalVariable.check maybeActivated)
 checkFromConfig RedundantModifiers = liftIO RedundantModifiers.check
 checkFromConfig SameExecutionsInIf = liftIO SameExecutionsInIf.check
 checkFromConfig Simplify = liftIO Simplify.check

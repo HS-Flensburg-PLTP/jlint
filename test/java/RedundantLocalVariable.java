@@ -18,7 +18,7 @@ public class RedundantLocalVariable {
     void method3(int number) {
         var localSum = x * number;
         System.out.println(localSum);
-        var str = "expensive operation";
+        var str = "non-expensive operation";
         for (var i = 0; i < localSum; i++) {
             System.out.println(str);
         }
@@ -37,7 +37,7 @@ public class RedundantLocalVariable {
         return start;
     }
 
-    String method6() {
+    String metho6() {
         var dice = new Random();
         var diceRoll = dice.nextInt();
         return (diceRoll % 2 == 0) ? "Git ist super!" : "Java ist super!";
@@ -58,5 +58,32 @@ public class RedundantLocalVariable {
         int[] array = {1, 2, 3};
         System.out.println(array[0]);
         return array[0];
+    }
+
+    static Object[] expandArray(Object[] array) {
+        var originalLength = array.length;
+        var expandedLength = 2 * originalLength;
+        var expandedArray = new Object[expandedLength];
+
+        for (int i = 0; i < originalLength; i++) {
+            expandedArray[i] = array[i];
+        }
+        return expandedArray;
+    }
+
+    static Object[] expandArray(Object[] array) {
+        var expandedLength = 2 * array.length;
+        var expandedArray = new Object[expandedLength];
+
+        for (int i = 0; i < array.length; i++) {
+            expandedArray[i] = array[i];
+        }
+        return expandedArray;
+    }
+
+    T pop() {
+        var value = this.first.value();
+        this.first = this.first.next();
+        return value;
     }
 }

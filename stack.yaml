@@ -29,18 +29,16 @@ resolver: lts-20.26
 #   - auto-update
 #   - wai
 packages:
-- .
+  - .
 # - ../language-java
 # Dependency packages to be pulled from upstream that are not in the resolver.
 # These entries can reference officially published versions as well as
 # forks / in-progress versions pinned to a git hash. For example:
 #
 extra-deps:
-- git: https://github.com/hsfl-pltp/language-java.git
-  commit: ab54f1f4727e186dc778f9ab7600c828ce1788a8
-
-# extra-deps: []
-
+  - git: https://github.com/hsfl-pltp/language-java.git
+    commit: ab54f1f4727e186dc778f9ab7600c828ce1788a8
+#
 # Override default flag values for local packages and extra-deps
 # flags: {}
 

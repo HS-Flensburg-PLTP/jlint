@@ -7,7 +7,7 @@ where
 import Language.Java.Pretty (PrettyExtension)
 import Language.Java.Syntax (BlockStmt (..))
 import qualified Language.Java.Syntax.Stmt.Extra as Stmt.Extra
-import qualified Language.Java.Syntax.VarDecl as VarDecl.Extra
+import qualified Language.Java.Syntax.VarDecl.Extra as VarDecl.Extra
 
 name :: PrettyExtension p => BlockStmt p -> String
 name (BlockStmt stmt) = Stmt.Extra.name stmt

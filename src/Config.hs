@@ -40,7 +40,7 @@ data Rule
   | PreferExpressions
   | PrivateAttributes
   | ReduceScope
-  | RedundantLocalVariable
+  | RedundantLocalVariable {activated :: Maybe Bool}
   | RedundantModifiers
   | SameExecutionsInIf
   | Simplify
@@ -86,7 +86,7 @@ instance FromJSON Rule where
       "PreferExpressions" -> pure PreferExpressions
       "PrivateAttributes" -> pure PrivateAttributes
       "ReduceScope" -> pure ReduceScope
-      "RedundantLocalVariable" -> pure RedundantLocalVariable
+      "RedundantLocalVariable" -> parseRedundantLocalVariable obj
       "RedundantModifiers" -> pure RedundantModifiers
       "SameExecutionsInIf" -> pure SameExecutionsInIf
       "Simplify" -> pure Simplify
@@ -163,3 +163,9 @@ checkNoExtraKeys :: Object -> [Key] -> Parser ()
 checkNoExtraKeys obj allowedKeys = do
   let extraKeys = keys obj \\ ("rule" : allowedKeys)
   unless (null extraKeys) (fail ("Unexpected keys: " ++ show extraKeys))
+
+parseRedundantLocalVariable :: Object -> Parser Rule
+parseRedundantLocalVariable obj = do
+  activated <- obj .:! "activated"
+  checkNoExtraKeys obj ["activated"]
+  pure (RedundantLocalVariable activated)

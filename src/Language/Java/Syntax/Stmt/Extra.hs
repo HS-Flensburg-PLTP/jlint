@@ -6,6 +6,7 @@ where
 
 import Language.Java.Pretty (PrettyExtension, prettyPrint)
 import Language.Java.Syntax (Stmt (..))
+import qualified Language.Java.Syntax.Exp.Extra as Exp.Extra
 
 name :: PrettyExtension p => Stmt p -> String
 name (Return _ _) = "return"
@@ -35,7 +36,7 @@ hasNoSideEffect (While {}) = False
 hasNoSideEffect (BasicFor {}) = False
 hasNoSideEffect (EnhancedFor {}) = False
 hasNoSideEffect (Empty {}) = False
-hasNoSideEffect (ExpStmt {}) = False
+hasNoSideEffect (ExpStmt _ exp) = Exp.Extra.hasNoSideEffect exp
 hasNoSideEffect (Assert {}) = False
 hasNoSideEffect (Switch {}) = False
 hasNoSideEffect (Do {}) = False
