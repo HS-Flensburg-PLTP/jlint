@@ -14,17 +14,24 @@ check cUnit path = do
   exp <- universeBi cUnit
   maybeToList (fmap (message path exp) (alternativeExp exp))
   where
-    alternativeExp (Assign _ (NameLhs name1) EqualA (BinOp _ (ExpName name2) op (Lit (Int _ 1)))) =
-      if eq IgnoreSourceSpan name1 name2
-        then opToPostIncDec op name1
-        else mzero
-    alternativeExp (Assign _ (NameLhs name1) EqualA (BinOp _ (Lit (Int _ 1)) op (ExpName name2))) =
-      if eq IgnoreSourceSpan name1 name2
-        then opToPostIncDec op name1
-        else mzero
-    alternativeExp (Assign _ (NameLhs name) op (Lit (Int _ 1))) =
-      assignOpToPostIncDec op name
+    alternativeExp (Assign _ lhs EqualA (BinOp _ var op (Lit (Int _ 1)))) =
+      let lhsExp = lhsToExp lhs
+       in if eq IgnoreSourceSpan lhsExp var
+            then opToPostIncDec op lhsExp
+            else mzero
+    alternativeExp (Assign _ lhs EqualA (BinOp _ (Lit (Int _ 1)) op var)) =
+      let lhsExp = lhsToExp lhs
+       in if eq IgnoreSourceSpan lhsExp var
+            then opToPostIncDec op lhsExp
+            else mzero
+    alternativeExp (Assign _ lhs op (Lit (Int _ 1))) =
+      assignOpToPostIncDec op (lhsToExp lhs)
     alternativeExp _ = mzero
+
+lhsToExp :: Lhs p -> Exp p
+lhsToExp (NameLhs name) = ExpName name
+lhsToExp (FieldLhs fieldAccess) = FieldAccess fieldAccess
+lhsToExp (ArrayLhs arrayIndex) = ArrayAccess arrayIndex
 
 message :: FilePath -> Exp Parsed -> Exp Parsed -> RDF.Diagnostic
 message path assign postIncDec =
@@ -39,12 +46,12 @@ message path assign postIncDec =
     (sourceSpan assign)
     path
 
-opToPostIncDec :: Op -> Name -> Maybe (Exp Parsed)
-opToPostIncDec Add name = Just (PostIncrement dummySourceSpan (ExpName name))
-opToPostIncDec Sub name = Just (PostDecrement dummySourceSpan (ExpName name))
+opToPostIncDec :: Op -> Exp Parsed -> Maybe (Exp Parsed)
+opToPostIncDec Add name = Just (PostIncrement dummySourceSpan name)
+opToPostIncDec Sub name = Just (PostDecrement dummySourceSpan name)
 opToPostIncDec _ _ = Nothing
 
-assignOpToPostIncDec :: AssignOp -> Name -> Maybe (Exp Parsed)
-assignOpToPostIncDec AddA name = Just (PostIncrement dummySourceSpan (ExpName name))
-assignOpToPostIncDec SubA name = Just (PostDecrement dummySourceSpan (ExpName name))
+assignOpToPostIncDec :: AssignOp -> Exp Parsed -> Maybe (Exp Parsed)
+assignOpToPostIncDec AddA name = Just (PostIncrement dummySourceSpan name)
+assignOpToPostIncDec SubA name = Just (PostDecrement dummySourceSpan name)
 assignOpToPostIncDec _ _ = Nothing
