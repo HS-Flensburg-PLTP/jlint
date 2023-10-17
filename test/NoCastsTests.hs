@@ -1,7 +1,7 @@
 module NoCastsTests (tests) where
 
-import Config (QualifiedIdent (..))
 import qualified Language.Java.Rules.NoCasts as NoCasts
+import QualifiedIdent (QualifiedIdent (..))
 import qualified RDF
 import Test.HUnit (Test, Testable (test))
 import Tests

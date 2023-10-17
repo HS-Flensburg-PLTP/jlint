@@ -1,14 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Config (Rule (..), QualifiedIdent (..)) where
+module Config (Rule (..)) where
 
 import Control.Monad (unless)
 import Data.Aeson.KeyMap (keys)
 import Data.Aeson.Types (Key, (.:!))
 import Data.List ((\\))
 import Data.List.NonEmpty (NonEmpty)
-import Data.Text (splitOn, unpack)
-import Data.Yaml (FromJSON (..), Object, Parser, Value (..), withObject, (.:))
+import Data.Yaml (FromJSON (..), Object, Parser, withObject, (.:))
+import QualifiedIdent (QualifiedIdent)
 
 data Rule
   = AvoidNegations
@@ -21,7 +21,7 @@ data Rule
   | ExplicitValue
   | FinalParameters
   | InitializeVariables
-  | MethodInvocations {called :: String, limited :: String, maxInv :: Int, explanation :: String}
+  | MethodInvocations {called :: QualifiedIdent, limited :: String, maxInv :: Int, explanation :: String}
   | MethodNames {whitelist :: [String]}
   | ModifiedControlVariable
   | MultipleStringLiterals
@@ -99,15 +99,6 @@ instance FromJSON Rule where
       "UseJavaArrayTypeStyle" -> pure UseJavaArrayTypeStyle
       "UsePostIncrementDecrement" -> pure UsePostIncrementDecrement
       _ -> fail ("Unknown Rule: " ++ rule)
-
-data QualifiedIdent = QualifiedIdent {className :: String, methodName :: String}
-
-instance FromJSON QualifiedIdent where
-  parseJSON (String text) =
-    case splitOn "." text of
-      [className, methodName] -> pure (QualifiedIdent (unpack className) (unpack methodName))
-      _ -> fail "MethodName should have the form class.name"
-  parseJSON _ = fail "MethodName should be a string"
 
 parseParameterNumber :: Object -> Parser Rule
 parseParameterNumber obj = do

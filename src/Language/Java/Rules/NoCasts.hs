@@ -1,12 +1,12 @@
 module Language.Java.Rules.NoCasts (check) where
 
-import Config (QualifiedIdent (..))
 import Control.Monad (mzero)
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Syntax
 import qualified Language.Java.Syntax.Exp as Exp
 import qualified Language.Java.Syntax.Ident as Ident
 import qualified Markdown
+import QualifiedIdent (QualifiedIdent (..))
 import qualified RDF
 
 check :: [QualifiedIdent] -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]

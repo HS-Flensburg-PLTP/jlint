@@ -1,6 +1,5 @@
 module Language.Java.Rules.SuppressWarnings (check) where
 
-import Config (QualifiedIdent (..))
 import Control.Monad (guard, mplus, mzero)
 import Data.Generics.Uniplate.Data (universeBi)
 import Language.Java.Pretty (prettyPrint)
@@ -10,6 +9,7 @@ import qualified Language.Java.Syntax.Annotation.Extra as Annotation.Extra
 import qualified Language.Java.Syntax.ClassDecl as ClassDecl
 import qualified Language.Java.Syntax.Ident as Ident
 import qualified Markdown
+import QualifiedIdent (QualifiedIdent (..))
 import qualified RDF
 
 check :: [QualifiedIdent] -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]

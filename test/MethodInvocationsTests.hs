@@ -1,6 +1,7 @@
 module MethodInvocationsTests where
 
 import qualified Language.Java.Rules.MethodInvocations as MethodInvocations
+import QualifiedIdent (QualifiedIdent (..))
 import qualified RDF
 import Test.HUnit
 import Tests
@@ -10,7 +11,7 @@ tests =
   rangesTest
     expectedRanges
     "MethodInvocations.java"
-    (MethodInvocations.check "foo" "bar" 2 "Dies ist ein Test")
+    (MethodInvocations.check (QualifiedIdent "MethodInvocations" "foo") "bar" 2 "Dies ist ein Test")
 
 expectedRanges :: [RDF.Range]
 expectedRanges =

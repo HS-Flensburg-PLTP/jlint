@@ -1,9 +1,9 @@
 module SuppressWarningsTests where
 
-import Config (QualifiedIdent (QualifiedIdent))
 import Control.Monad.Identity (zipWithM_)
 import Language.Java.Rules.SuppressWarnings as SuppressWarnings (check)
 import Language.Java.Syntax (CompilationUnit)
+import QualifiedIdent (QualifiedIdent (..))
 import qualified RDF
 import Test.HUnit
 import Tests

@@ -80,6 +80,7 @@ library
       Language.Java.Syntax.VarDecl.Extra
       Language.Java.Syntax.VarInit.Extra
       Markdown
+      QualifiedIdent
       RDF
       String
   other-modules:
