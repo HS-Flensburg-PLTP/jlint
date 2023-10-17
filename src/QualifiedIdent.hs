@@ -11,14 +11,18 @@ import Data.Yaml (FromJSON (..), Value (..))
 import Language.Java.Syntax (Ident)
 import qualified Language.Java.Syntax.Ident as Ident
 
-data QualifiedIdent = QualifiedIdent {className :: String, methodName :: String}
+data QualifiedIdent
+  = QualifiedIdent {className :: String, methodName :: String}
+  | UnqualifiedIdent {methodName :: String}
 
 instance FromJSON QualifiedIdent where
   parseJSON (String text) =
     case splitOn "." text of
       [className, methodName] -> pure (QualifiedIdent (unpack className) (unpack methodName))
-      _ -> fail "MethodName should have the form class.name"
+      [methodName] -> pure (UnqualifiedIdent (unpack methodName))
+      _ -> fail ("Not able to parse QualifiedIdent \"" ++ unpack text ++ "\"")
   parseJSON _ = fail "MethodName should be a string"
 
 hasClassName :: Ident -> QualifiedIdent -> Bool
-hasClassName ident qIdent = className qIdent == Ident.name ident
+hasClassName ident (QualifiedIdent className _) = className == Ident.name ident
+hasClassName _ (UnqualifiedIdent _) = True

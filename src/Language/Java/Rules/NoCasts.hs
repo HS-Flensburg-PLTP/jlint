@@ -6,7 +6,7 @@ import Language.Java.Syntax
 import qualified Language.Java.Syntax.Exp as Exp
 import qualified Language.Java.Syntax.Ident as Ident
 import qualified Markdown
-import QualifiedIdent (QualifiedIdent (..))
+import QualifiedIdent (QualifiedIdent (..), hasClassName)
 import qualified RDF
 
 check :: [QualifiedIdent] -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -15,11 +15,11 @@ check whitelist cUnit path =
   where
     checkClassDecl :: ClassDecl Parsed -> [RDF.Diagnostic]
     checkClassDecl (ClassDecl _ _ classIdent _ _ _ body) = do
-      let methodNames = map methodName (filter (\qualified -> className qualified == Ident.name classIdent) whitelist)
+      let methodNames = map methodName (filter (QualifiedIdent.hasClassName classIdent) whitelist)
       memberDecl <- universeBi body :: [MemberDecl Parsed]
       checkMethodDecl methodNames memberDecl
     checkClassDecl (EnumDecl _ _ enumIdent _ body) = do
-      let methodNames = map methodName (filter (\qualified -> className qualified == Ident.name enumIdent) whitelist)
+      let methodNames = map methodName (filter (QualifiedIdent.hasClassName enumIdent) whitelist)
       memberDecl <- universeBi body :: [MemberDecl Parsed]
       checkMethodDecl methodNames memberDecl
     checkClassDecl _ = mzero

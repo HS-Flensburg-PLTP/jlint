@@ -11,10 +11,16 @@ import qualified Tests
 
 tests :: Test
 tests =
-  rangesTest
-    expectedRanges
-    "SuppressWarnings.java"
-    (SuppressWarnings.check [QualifiedIdent "SuppressWarnings" "method1"])
+  TestList
+    [ rangesTest
+        expectedRanges
+        "SuppressWarnings.java"
+        (SuppressWarnings.check [QualifiedIdent "SuppressWarnings" "method1"]),
+      rangesTest
+        expectedRanges
+        "SuppressWarnings.java"
+        (SuppressWarnings.check [UnqualifiedIdent "method1"])
+    ]
 
 expectedRanges :: [RDF.Range]
 expectedRanges =

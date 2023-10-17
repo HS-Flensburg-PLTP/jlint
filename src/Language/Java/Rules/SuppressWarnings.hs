@@ -10,6 +10,7 @@ import qualified Language.Java.Syntax.ClassDecl as ClassDecl
 import qualified Language.Java.Syntax.Ident as Ident
 import qualified Markdown
 import QualifiedIdent (QualifiedIdent (..))
+import qualified QualifiedIdent
 import qualified RDF
 
 check :: [QualifiedIdent] -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
@@ -38,8 +39,7 @@ check whitelist cUnit path =
           memberDecl <- universeBi (classDeclDecls classDecl) :: [MemberDecl Parsed]
           checkMemberDecl (map methodName filteredWhitelist) memberDecl
       where
-        filteredWhitelist =
-          filter (\qualified -> className qualified == Ident.name (ClassDecl.ident classDecl)) whitelist
+        filteredWhitelist = filter (QualifiedIdent.hasClassName (ClassDecl.ident classDecl)) whitelist
 
     checkMemberDecl :: [String] -> MemberDecl Parsed -> [RDF.Diagnostic]
     checkMemberDecl methodNames (MethodDecl span modifiers _ _ ident _ _ _ methodBody)
