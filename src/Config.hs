@@ -38,7 +38,7 @@ data Rule
   | NoLoopBreak
   | NoNullPointerExceptionsForControl
   | ParameterNumber {max :: Maybe Int}
-  | Pattern {pattern :: Pattern, explanation :: String}
+  | Pattern {pattern_ :: Pattern, explanation :: String}
   | PreferExpressions
   | PrivateAttributes
   | ReduceScope

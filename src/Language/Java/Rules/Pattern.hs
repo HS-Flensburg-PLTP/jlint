@@ -60,12 +60,12 @@ instance FromJSON Pattern where
   parseJSON _ = fail "Pattern should be a string"
 
 check :: Pattern -> String -> CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-check pattern explanation cUnit path =
+check pattern_ explanation cUnit path =
   universeBi cUnit >>= checkExp
   where
     checkExp :: Exp Parsed -> [RDF.Diagnostic]
     checkExp (MethodInv invocation)
-      | Just span <- methodCallHasPattern invocation pattern =
+      | Just span <- methodCallHasPattern invocation pattern_ =
           return
             ( RDF.rangeDiagnostic
                 "Language.Java.Rules.Pattern"
