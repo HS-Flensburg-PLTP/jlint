@@ -12,7 +12,7 @@ jobs:
 
    steps:
    - name: Checkout current repository
-     uses: actions/checkout@v2.5.0
+     uses: actions/checkout@v4
 
    - name: Ormolu Check Format
      uses: mrkkrp/ormolu-action@v5
