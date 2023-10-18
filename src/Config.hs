@@ -8,6 +8,7 @@ import Data.Aeson.Types (Key, (.:!))
 import Data.List ((\\))
 import Data.List.NonEmpty (NonEmpty)
 import Data.Yaml (FromJSON (..), Object, Parser, withObject, (.:))
+import Language.Java.Rules.Pattern (Pattern)
 import QualifiedIdent (QualifiedIdent)
 
 data Rule
@@ -37,6 +38,7 @@ data Rule
   | NoLoopBreak
   | NoNullPointerExceptionsForControl
   | ParameterNumber {max :: Maybe Int}
+  | Pattern {pattern :: Pattern, explanation :: String}
   | PreferExpressions
   | PrivateAttributes
   | ReduceScope
@@ -83,6 +85,7 @@ instance FromJSON Rule where
       "NoLoopBreak" -> pure NoLoopBreak
       "NoNullPointerExceptionsForControl" -> pure NoNullPointerExceptionsForControl
       "ParameterNumber" -> parseParameterNumber obj
+      "Pattern" -> parsePattern obj
       "PreferExpressions" -> pure PreferExpressions
       "PrivateAttributes" -> pure PrivateAttributes
       "ReduceScope" -> pure ReduceScope
@@ -100,14 +103,39 @@ instance FromJSON Rule where
       "UsePostIncrementDecrement" -> pure UsePostIncrementDecrement
       _ -> fail ("Unknown Rule: " ++ rule)
 
+-- Generic methods
+
+parseMethodNameList :: Object -> Key -> Parser [QualifiedIdent]
+parseMethodNameList obj key = do
+  strings <- obj .: key
+  checkNoExtraKeys obj [key]
+  pure strings
+
+checkNoExtraKeys :: Object -> [Key] -> Parser ()
+checkNoExtraKeys obj allowedKeys = do
+  let extraKeys = keys obj \\ ("rule" : allowedKeys)
+  unless (null extraKeys) (fail ("Unexpected keys: " ++ show extraKeys))
+
+-- Parsers for rules
+
+parseMethodNames :: Object -> Parser Rule
+parseMethodNames obj = MethodNames <$> parseStringList obj "whitelist"
+
+parseNoExtraDataStructures :: Object -> Parser Rule
+parseNoExtraDataStructures obj =
+  NoExtraDataStructures <$> parseNonEmptyStringList obj "methodNames"
+
+parseNonEmptyStringList :: Object -> Key -> Parser (NonEmpty String)
+parseNonEmptyStringList obj key = do
+  strings <- obj .: key
+  checkNoExtraKeys obj [key]
+  pure strings
+
 parseParameterNumber :: Object -> Parser Rule
 parseParameterNumber obj = do
   max <- obj .:! "max"
   checkNoExtraKeys obj ["max"]
   pure (ParameterNumber max)
-
-parseMethodNames :: Object -> Parser Rule
-parseMethodNames obj = MethodNames <$> parseStringList obj "whitelist"
 
 parseNoAnnotations :: Object -> Parser Rule
 parseNoAnnotations obj = NoAnnotations <$> parseStringList obj "whitelist"
@@ -125,22 +153,6 @@ parseStringList obj key = do
   checkNoExtraKeys obj [key]
   pure strings
 
-parseMethodNameList :: Object -> Key -> Parser [QualifiedIdent]
-parseMethodNameList obj key = do
-  strings <- obj .: key
-  checkNoExtraKeys obj [key]
-  pure strings
-
-parseNoExtraDataStructures :: Object -> Parser Rule
-parseNoExtraDataStructures obj =
-  NoExtraDataStructures <$> parseNonEmptyStringList obj "methodNames"
-
-parseNonEmptyStringList :: Object -> Key -> Parser (NonEmpty String)
-parseNonEmptyStringList obj key = do
-  strings <- obj .: key
-  checkNoExtraKeys obj [key]
-  pure strings
-
 parseMethodInvocations :: Object -> Parser Rule
 parseMethodInvocations obj = do
   called <- obj .: "targetMethod"
@@ -150,13 +162,15 @@ parseMethodInvocations obj = do
   checkNoExtraKeys obj ["targetMethod", "limitedMethod", "maxInv", "explanation"]
   pure (MethodInvocations called limited maxInv explanation)
 
-checkNoExtraKeys :: Object -> [Key] -> Parser ()
-checkNoExtraKeys obj allowedKeys = do
-  let extraKeys = keys obj \\ ("rule" : allowedKeys)
-  unless (null extraKeys) (fail ("Unexpected keys: " ++ show extraKeys))
-
 parseRedundantLocalVariable :: Object -> Parser Rule
 parseRedundantLocalVariable obj = do
   activated <- obj .:! "activated"
   checkNoExtraKeys obj ["activated"]
   pure (RedundantLocalVariable activated)
+
+parsePattern :: Object -> Parser Rule
+parsePattern obj = do
+  pattern_ <- obj .: "pattern"
+  explanation <- obj .: "explanation"
+  checkNoExtraKeys obj ["pattern", "explanation"]
+  pure (Pattern pattern_ explanation)

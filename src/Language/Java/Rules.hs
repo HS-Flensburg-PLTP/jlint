@@ -28,6 +28,7 @@ import qualified Language.Java.Rules.NoIncDecInExpression as NoIncDecInExpressio
 import qualified Language.Java.Rules.NoLoopBreak as NoLoopBreak
 import qualified Language.Java.Rules.NoNullPointerExceptionsForControl as NoNullPointerExceptionsForControl
 import qualified Language.Java.Rules.ParameterNumber as ParameterNumber
+import qualified Language.Java.Rules.Pattern as Pattern
 import qualified Language.Java.Rules.PreferExpressions as PreferExpressions
 import qualified Language.Java.Rules.PrivateAttributes as PrivateAttributes
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
@@ -123,6 +124,7 @@ checkFromConfig NoIncDecInExpression = liftIO NoIncDecInExpression.check
 checkFromConfig NoLoopBreak = liftIO NoLoopBreak.check
 checkFromConfig NoNullPointerExceptionsForControl = liftIO NoNullPointerExceptionsForControl.check
 checkFromConfig (ParameterNumber maybeMax) = liftIO (ParameterNumber.check maybeMax)
+checkFromConfig (Pattern pattern explanation) = liftIO (Pattern.check pattern explanation)
 checkFromConfig PreferExpressions = liftIO PreferExpressions.check
 checkFromConfig PrivateAttributes = liftIO PrivateAttributes.check
 checkFromConfig ReduceScope = liftIO ReduceScope.check

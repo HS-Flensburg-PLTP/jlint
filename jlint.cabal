@@ -57,6 +57,7 @@ library
       Language.Java.Rules.NoLoopBreak
       Language.Java.Rules.NoNullPointerExceptionsForControl
       Language.Java.Rules.ParameterNumber
+      Language.Java.Rules.Pattern
       Language.Java.Rules.PreferExpressions
       Language.Java.Rules.PrivateAttributes
       Language.Java.Rules.ReduceScope
@@ -171,6 +172,7 @@ test-suite jlint-test
       NoNullPointerExceptionsForControlTests
       ParameterNumberTests
       ParseErrorTests
+      PatternTests
       PreferExpressionsTests
       PrivateAttributesTests
       ReduceScopeTests

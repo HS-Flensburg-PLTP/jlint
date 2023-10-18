@@ -25,6 +25,7 @@ import qualified NoLoopBreakTests
 import qualified NoNullPointerExceptionsForControlTests
 import qualified ParameterNumberTests
 import qualified ParseErrorTests
+import qualified PatternTests
 import qualified PreferExpressionsTests
 import qualified PrivateAttributesTests
 import qualified ReduceScopeTests
@@ -78,6 +79,7 @@ tests =
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,
       "ParameterNumber" ~: ParameterNumberTests.tests,
       "ParseError" ~: ParseErrorTests.tests,
+      "Pattern" ~: PatternTests.tests,
       "PreferExpressions" ~: PreferExpressionsTests.tests,
       "PrivateAttributes" ~: PrivateAttributesTests.tests,
       "ReduceScope" ~: ReduceScopeTests.tests,
