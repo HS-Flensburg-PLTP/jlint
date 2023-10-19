@@ -4,6 +4,7 @@ import Control.Monad (mzero)
 import Data.Data (Data)
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.List.NonEmpty (NonEmpty (..))
+import Debug.Trace (trace)
 import Language.Java.Pretty (prettyPrint)
 import Language.Java.SourceSpan (sourceSpan)
 import Language.Java.Syntax
@@ -60,6 +61,8 @@ readVariables parent = universeBi parent >>= ident
   where
     ident :: Exp Parsed -> [Ident]
     ident (ExpName (Name _ (ident :| []))) = [ident]
+    -- This is a workaround due to missing classification of locale variables
+    ident (MethodInv (MethodCall _ (Just (Name _ (ident :| []))) _ _)) = [ident]
     ident _ = []
 
 shouldInline :: VarDecl Parsed -> Bool
@@ -81,7 +84,11 @@ shouldInlineExp (QualInstanceCreation {}) = False
 shouldInlineExp (ArrayCreate {}) = False
 shouldInlineExp (ArrayCreateInit {}) = True
 shouldInlineExp (FieldAccess {}) = True
-shouldInlineExp (MethodInv {}) = False
+shouldInlineExp (MethodInv (MethodCall _ (Just (Name _ (Ident _ "System" :| []))) (Ident _ "nanoTime") [])) =
+  False
+shouldInlineExp (MethodInv (MethodCall _ _ (Ident _ "nextInt") [])) =
+  False
+shouldInlineExp (MethodInv _) = True
 shouldInlineExp (ArrayAccess {}) = True
 shouldInlineExp (ExpName {}) = True
 shouldInlineExp (PostIncrement _ _) = False

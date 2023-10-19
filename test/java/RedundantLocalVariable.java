@@ -117,4 +117,25 @@ public class RedundantLocalVariable {
         var value = (T) this.array[index];
         return value;
     }
+
+    public T get(int index) {
+        var node = nodeAt(index);
+        return node.value();
+    }
+
+    public T remove(int index) {
+        T nodeValue;
+        if (index == 0) {
+            nodeValue = first.value();
+            first = first.next();
+        } else {
+            var previousNode = nodeAt(index - 1);
+            var node = previousNode.next();
+            nodeValue = node.value();
+            var nextNode = node.next();
+            previousNode.setNext(nextNode);
+        }
+        size--;
+        return nodeValue;
+    }
 }

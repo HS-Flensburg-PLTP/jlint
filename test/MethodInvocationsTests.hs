@@ -8,12 +8,23 @@ import Tests
 
 tests :: Test
 tests =
-  rangesTest
-    expectedRanges
-    "MethodInvocations.java"
-    (MethodInvocations.check (QualifiedIdent "MethodInvocations" "foo") "bar" 2 "Dies ist ein Test")
+  TestList
+    [ rangesTest
+        expectedRanges1
+        "MethodInvocations.java"
+        (MethodInvocations.check (QualifiedIdent "MethodInvocations" "foo") "bar" 2 ""),
+      rangesTest
+        expectedRanges2
+        "MethodInvocations.java"
+        (MethodInvocations.check (QualifiedIdent "MethodInvocations" "remove") "nodeAt" 1 "")
+    ]
 
-expectedRanges :: [RDF.Range]
-expectedRanges =
+expectedRanges1 :: [RDF.Range]
+expectedRanges1 =
   [ RDF.mkRange (8, 5) (10, 6)
+  ]
+
+expectedRanges2 :: [RDF.Range]
+expectedRanges2 =
+  [ RDF.mkRange (24, 5) (38, 6)
   ]

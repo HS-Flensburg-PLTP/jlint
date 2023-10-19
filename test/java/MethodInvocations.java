@@ -20,4 +20,20 @@ class MethodInvocations {
     public int test2() {
         return bar(4, 5);
     }
+
+    public T remove(int index) {
+        T valueToRemove;
+
+        if (index == 0) {
+            valueToRemove = this.first.value();
+            this.first = this.first.next();
+        } else {
+            var current = nodeAt(index);
+            valueToRemove = current.value();
+            nodeAt(index - 1).setNext(current.next());
+        }
+        this.nodeCount--;
+
+        return valueToRemove;
+    }
 }
