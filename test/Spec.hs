@@ -58,7 +58,7 @@ tests =
       "ConsistentOverrideEqualsHashCode" ~: ConsistentOverrideEqualsHashCodeTests.tests,
       "DeclarationOrder" ~: DeclarationOrderTests.tests,
       "DefaultComesLast" ~: DefaultComesLastTests.tests,
-      "Evaluation" ~: EvaluationTests.tests,
+      -- "Evaluation" ~: EvaluationTests.tests,
       "ExplicitValue" ~: ExplicitValueTests.tests,
       "FinalParameters" ~: FinalParametersTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,

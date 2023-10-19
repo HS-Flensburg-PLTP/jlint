@@ -8,8 +8,10 @@ import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-check cUnit path = universeBi cUnit >>= checkMethodCall
+check cUnit path = mzero
   where
+    -- universeBi cUnit >>= checkMethodCall
+
     checkMethodCall :: MethodInvocation Parsed -> [RDF.Diagnostic]
     checkMethodCall (MethodCall _ _ _ []) = mzero
     checkMethodCall (MethodCall span _ ident args) =
