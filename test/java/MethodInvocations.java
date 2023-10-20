@@ -21,6 +21,10 @@ class MethodInvocations {
         return bar(4, 5);
     }
 
+    public int foo() {
+        return this.bar(4, 5) + this.bar(6, 7) + this.bar(1, 2);
+    }
+
     public T remove(int index) {
         T valueToRemove;
 

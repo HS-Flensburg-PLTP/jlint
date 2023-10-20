@@ -4,7 +4,6 @@ import Control.Monad (mzero)
 import Data.Data (Data)
 import Data.Generics.Uniplate.Data (universeBi)
 import Data.List.NonEmpty (NonEmpty (..))
-import Debug.Trace (trace)
 import Language.Java.Pretty (prettyPrint)
 import Language.Java.SourceSpan (sourceSpan)
 import Language.Java.Syntax

@@ -58,5 +58,6 @@ check targetMethod limitedMethod maxInv explanation cUnit path = do
     checkMethodDecl _ _ = mzero
 
 isInvocationOf :: String -> MethodInvocation Parsed -> Bool
+isInvocationOf limited (PrimaryMethodCall _ (This {}) _ (Ident _ name) _) = name == limited
 isInvocationOf limited (MethodCall _ _ (Ident _ name) _) = name == limited
 isInvocationOf _ _ = False
