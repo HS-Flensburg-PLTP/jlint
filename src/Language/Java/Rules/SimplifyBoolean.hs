@@ -107,6 +107,30 @@ check cUnit path = mapMaybe checkStmt (universeBi cUnit) `mplus` mapMaybe checkE
                 path
             )
       | otherwise = mzero
+    checkExp (BinOp span leftExp NotEq rightExp)
+      | isBoolLiteral True leftExp || isBoolLiteral True rightExp =
+          return
+            ( RDF.rangeDiagnostic
+                "Language.Java.Rules.SimplifyBoolean"
+                [ "Statt mit",
+                  Markdown.code "true",
+                  "zu vergleichen sollte die Negation verwendet werden."
+                ]
+                span
+                path
+            )
+      | isBoolLiteral False leftExp || isBoolLiteral False rightExp =
+          return
+            ( RDF.rangeDiagnostic
+                "Language.Java.Rules.SimplifyBoolean"
+                [ "Der Vergleich mit",
+                  Markdown.code "false",
+                  "ist unnötig und sollte entfernt werden."
+                ]
+                span
+                path
+            )
+      | otherwise = mzero
     checkExp _ = mzero
 
 isBoolLiteralReturn :: Bool -> Stmt Parsed -> Bool

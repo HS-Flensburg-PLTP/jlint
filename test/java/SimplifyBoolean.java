@@ -33,6 +33,14 @@ class SimplifyBoolean {
     }
 
     public boolean method5() {
+        if (cond != true) {
+            return 1;
+        } else {
+            return 2;
+       }
+    }
+
+    public boolean method6() {
         if (false == cond) {
             return 1;
         } else {
@@ -40,7 +48,7 @@ class SimplifyBoolean {
        }
     }
 
-    public Foo method6() {
+    public Foo method7() {
         if (cond) {
             return a;
         } else {
@@ -48,15 +56,15 @@ class SimplifyBoolean {
         }
     }
 
-    public boolean method7() {
+    public boolean method8() {
         return cond ? true : false;
     }
 
-    public boolean method8() {
+    public boolean method9() {
         return cond ? false : true;
     }
 
-    public Foo method9() {
+    public Foo method10() {
         return cond ? a: b;
     }
 }
