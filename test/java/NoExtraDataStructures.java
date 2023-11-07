@@ -55,4 +55,14 @@ class NoExtraDataStructures {
             array[i + 1] = clone[i];
         }
     }
+
+     static void shiftElements(Object[] array, int start, int end) {
+        if (array == null || start < 1 || end > array.length - 1 || start > end) {
+            throw new IllegalArgumentException("Invalid Input for shiftElementsBack");
+        } else {
+            for (int i = end; i >= start; i--) {
+                array[i - 1] = array[i];
+            }
+        }
+    }
 }
