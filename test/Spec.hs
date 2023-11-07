@@ -4,6 +4,7 @@ import qualified AvoidStarImportTests
 import qualified ConsistentOverrideEqualsHashCodeTests
 import qualified DeclarationOrderTests
 import qualified DefaultComesLastTests
+import qualified DuplicateInConditionalTests
 import qualified EvaluationTests
 import qualified ExplicitValueTests
 import qualified FinalParametersTests
@@ -58,6 +59,7 @@ tests =
       "ConsistentOverrideEqualsHashCode" ~: ConsistentOverrideEqualsHashCodeTests.tests,
       "DeclarationOrder" ~: DeclarationOrderTests.tests,
       "DefaultComesLast" ~: DefaultComesLastTests.tests,
+      "DuplicateInConditional" ~: DuplicateInConditionalTests.tests,
       -- "Evaluation" ~: EvaluationTests.tests,
       "ExplicitValue" ~: ExplicitValueTests.tests,
       "FinalParameters" ~: FinalParametersTests.tests,

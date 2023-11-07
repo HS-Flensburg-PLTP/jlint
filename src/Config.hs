@@ -18,6 +18,7 @@ data Rule
   | ConsistentOverrideEqualsHashCode
   | DeclarationOrder
   | DefaultComesLast
+  | DuplicateInConditional
   | Evaluation
   | ExplicitValue
   | FinalParameters
