@@ -10,23 +10,31 @@ import qualified Data.List.NonEmpty as NonEmpty
 import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
 import qualified Language.Java.Syntax.VarDecl as VarDecl
+import qualified Markdown
 import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
   IfThenElse span _ ifStmt elseStmt <- universeBi cUnit
-  checkStmts (blockStmts ifStmt) (blockStmts elseStmt) (gatherTopLevelVars ifStmt) (gatherTopLevelVars elseStmt) span path
+  checkStmts (blockStmts ifStmt) (blockStmts elseStmt) span path
   where
     blockStmts :: Stmt Parsed -> [BlockStmt Parsed]
     blockStmts (StmtBlock (Block _ blockStmts)) = blockStmts
     blockStmts stmt = [BlockStmt stmt]
 
-checkStmts :: [BlockStmt Parsed] -> [BlockStmt Parsed] -> [Ident] -> [Ident] -> SourceSpan -> FilePath -> [RDF.Diagnostic]
-checkStmts [] _ _ _ _ _ = mzero
-checkStmts _ [] _ _ _ _ = mzero
-checkStmts ifBlockStmts@(firstIfStmt : _) elseBlockStmts@(firstElseStmt : _) ifVars elseVars span path =
+checkStmts :: [BlockStmt Parsed] -> [BlockStmt Parsed] -> SourceSpan -> FilePath -> [RDF.Diagnostic]
+checkStmts [] _ _ _ = mzero
+checkStmts _ [] _ _ = mzero
+checkStmts [ifBlockStmt] [elseBlockStmt] span path =
+  checkFirstStmts ifBlockStmt elseBlockStmt span path
+checkStmts ifBlockStmts@(firstIfStmt : _) elseBlockStmts@(firstElseStmt : _) span path =
   checkFirstStmts firstIfStmt firstElseStmt span path
-    ++ checkLastStmts (last ifBlockStmts) (last elseBlockStmts) ifVars elseVars span path
+    ++ checkLastStmts (last ifBlockStmts) (last elseBlockStmts) (declaredVars ifBlockStmts) (declaredVars elseBlockStmts) span path
+  where
+    declaredVars :: [BlockStmt Parsed] -> [Ident]
+    declaredVars blockStmts = do
+      LocalVars _ _ _ varDecls <- blockStmts
+      NonEmpty.toList (NonEmpty.map VarDecl.ident varDecls)
 
 checkFirstStmts :: BlockStmt Parsed -> BlockStmt Parsed -> SourceSpan -> FilePath -> [RDF.Diagnostic]
 checkFirstStmts ifBlockStmt@(BlockStmt _) elseBlockStmt@(BlockStmt _) span path =
@@ -35,8 +43,11 @@ checkFirstStmts ifBlockStmt@(BlockStmt _) elseBlockStmt@(BlockStmt _) span path 
       return
         ( RDF.rangeDiagnostic
             "Language.Java.Rules.DuplicateInConditional"
-            [ "Die jeweils erste Anweisung im then- und else-Zweig der if-Anweisung sind gleich.",
-              "Die Anweisung kann aus beiden Zweigen vor das if heraugezogen werden."
+            [ "Die jeweils erste Anweisung im then- und else-Zweig der",
+              Markdown.code "if" ++ "-Anweisung",
+              "sind gleich. Die Anweisung kann aus beiden Zweigen vor das",
+              Markdown.code "if",
+              "heraugezogen werden."
             ]
             span
             path
@@ -53,8 +64,11 @@ checkLastStmts ifBlockStmt@(BlockStmt _) elseBlockStmt@(BlockStmt _) ifVars else
       return
         ( RDF.rangeDiagnostic
             "Language.Java.Rules.DuplicateInConditional"
-            [ "Die jeweils letzte Anweisung im then- und else-Zweig der if-Anweisung sind gleich.",
-              "Die Anweisung kann aus beiden Zweigen hinter das else heraugezogen werden."
+            [ "Die jeweils letzte Anweisung im then- und else-Zweig der",
+              Markdown.code "if" ++ "-Anweisung",
+              "sind gleich. Die Anweisung kann aus beiden Zweigen hinter das",
+              Markdown.code "else",
+              "heraugezogen werden."
             ]
             span
             path
@@ -62,13 +76,10 @@ checkLastStmts ifBlockStmt@(BlockStmt _) elseBlockStmt@(BlockStmt _) ifVars else
     else mzero
 checkLastStmts _ _ _ _ _ _ = mzero
 
-gatherTopLevelVars :: Stmt Parsed -> [Ident]
-gatherTopLevelVars (StmtBlock (Block _ blockStmts)) = do
-  LocalVars _ _ _ varDecls :: BlockStmt Parsed <- childrenBi blockStmts
-  NonEmpty.toList (NonEmpty.map VarDecl.ident varDecls)
--- [VarDeclId.ident varDeclId | VarDecl _ varDeclId _ :: VarDecl Parsed <- universeBi stmt]
-gatherTopLevelVars _ = mzero
-
 varUsedInBlockStmt :: BlockStmt Parsed -> Ident -> Bool
 varUsedInBlockStmt blockStmt var =
-  any (eq IgnoreSourceSpan var) [ident | ExpName (Name _ (ident :| [])) :: Exp Parsed <- universeBi blockStmt]
+  any (eq IgnoreSourceSpan var) (variables blockStmt)
+
+variables :: BlockStmt Parsed -> [Ident]
+variables blockStmt =
+  [ident | ExpName (Name _ (ident :| [])) :: Exp Parsed <- universeBi blockStmt]

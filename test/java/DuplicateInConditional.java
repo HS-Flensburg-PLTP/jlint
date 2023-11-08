@@ -103,20 +103,31 @@ class DuplicateInConditional {
     }
 
     private DLNode<T> nodeAt(int index) {
-    if (index < 0 || index >= this.size) {
-        throw new IndexOutOfBoundsException();
-    } else if (index <= this.size / 2) {
-        var current = this.first;
-        for (int i = 0; i < index; i++) {
-            current = current.next();
+        if (index < 0 || index >= this.size) {
+            throw new IndexOutOfBoundsException();
+        } else if (index <= this.size / 2) {
+            var current = this.first;
+            for (int i = 0; i < index; i++) {
+                current = current.next();
+            }
+            return current;
+        } else {
+            var current = this.last;
+            for (int i = 0; i < this.size - index; i++) {
+                current = current.prev();
+            }
+            return current;
         }
-        return current;
-    } else {
-        var current = this.last;
-        for (int i = 0; i < this.size - index; i++) {
-            current = current.prev();
-        }
-        return current;
     }
-}
+
+    public func(boolean b) {
+        var x = 5;
+        if (b) {
+            System.out.println("Ok");
+            this.shadowed(x);
+        } else {
+            System.out.println("Failed");
+            this.shadowed(x);
+        }
+    }
 }
