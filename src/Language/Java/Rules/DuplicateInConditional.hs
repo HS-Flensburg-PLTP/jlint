@@ -44,7 +44,7 @@ checkFirstStmts ifBlockStmt@(BlockStmt _) elseBlockStmt@(BlockStmt _) span path 
         ( RDF.rangeDiagnostic
             "Language.Java.Rules.DuplicateInConditional"
             [ "Die jeweils erste Anweisung im then- und else-Zweig der if-Anweisung sind gleich.",
-              "Die Anweisung kann aus beiden Zweigen vor das if heraugezogen werden"
+              "Die Anweisung kann aus beiden Zweigen vor das if heraugezogen werden."
             ]
             span
             path
