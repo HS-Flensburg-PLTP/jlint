@@ -49,8 +49,4 @@ class FinalParameters {
             throw ex;
         }
     }
-
-    public void constTest() {
-        final List<String> list = new LinkedList<>();
-    }
 }

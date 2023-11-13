@@ -2,15 +2,15 @@ module FinalParametersTests (tests) where
 
 import qualified Language.Java.Rules.FinalParameters as FinalParameters
 import qualified RDF
-import Test.HUnit (Test)
+import Test.HUnit (Test (..))
 import Tests
 
 tests :: Test
 tests =
-  rangesTest
-    expectedRanges
-    "FinalParameters.java"
-    FinalParameters.check
+  TestList
+    [ rangesTest expectedRanges "FinalParameters.java" FinalParameters.check,
+      rangesTest [] "FinalParametersInterface.java" FinalParameters.check
+    ]
 
 expectedRanges :: [RDF.Range]
 expectedRanges =

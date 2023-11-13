@@ -37,6 +37,7 @@ library
       Language.Java.Rules.ConsistentOverrideEqualsHashCode
       Language.Java.Rules.DeclarationOrder
       Language.Java.Rules.DefaultComesLast
+      Language.Java.Rules.DuplicateInConditional
       Language.Java.Rules.Evaluation
       Language.Java.Rules.ExplicitValue
       Language.Java.Rules.FinalParameters
@@ -151,6 +152,7 @@ test-suite jlint-test
       ConsistentOverrideEqualsHashCodeTests
       DeclarationOrderTests
       DefaultComesLastTests
+      DuplicateInConditionalTests
       EvaluationTests
       ExplicitValueTests
       FinalParametersTests
