@@ -13,7 +13,7 @@ import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  LocalVars _ _ type_ (VarDecl span _ (Just varInit) :| []) :: BlockStmt Parsed <- universeBi cUnit
+  LocalVars span _ type_ (VarDecl _ _ (Just varInit) :| []) :: BlockStmt Parsed <- universeBi cUnit
   if localTypeInferenceUsed type_
     then
       if null [() | Diamond <- universeBi varInit]
