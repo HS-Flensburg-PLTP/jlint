@@ -8,6 +8,7 @@ import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
 import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
 import qualified Language.Java.Rules.DeclarationOrder as DeclarationOrder
 import qualified Language.Java.Rules.DefaultComesLast as DefaultComesLast
+import qualified Language.Java.Rules.DuplicateInConditional as DuplicateInConditional
 import qualified Language.Java.Rules.Evaluation as Evaluation
 import qualified Language.Java.Rules.ExplicitValue as ExplicitValue
 import qualified Language.Java.Rules.FinalParameters as FinalParameters
@@ -55,6 +56,7 @@ defaultConfig =
     ConsistentOverrideEqualsHashCode,
     DeclarationOrder,
     DefaultComesLast,
+    DuplicateInConditional,
     Evaluation,
     ExplicitValue,
     FinalParameters,
@@ -103,6 +105,7 @@ checkFromConfig AvoidStarImport = liftIO AvoidStarImport.check
 checkFromConfig ConsistentOverrideEqualsHashCode = liftIO ConsistentOverrideEqualsHashCode.check
 checkFromConfig DeclarationOrder = liftIO DeclarationOrder.check
 checkFromConfig DefaultComesLast = liftIO DefaultComesLast.check
+checkFromConfig DuplicateInConditional = liftIO DuplicateInConditional.check
 checkFromConfig ExplicitValue = liftIO ExplicitValue.check
 checkFromConfig Evaluation = liftIO Evaluation.check
 checkFromConfig FinalParameters = liftIO FinalParameters.check
