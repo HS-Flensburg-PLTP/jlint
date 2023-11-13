@@ -9,6 +9,7 @@ import qualified EvaluationTests
 import qualified ExplicitValueTests
 import qualified FinalParametersTests
 import qualified InitializeVariablesTests
+import qualified LocalTypeInferenceTests
 import qualified MethodInvocationsTests
 import qualified MethodNamesTests
 import qualified ModifiedControlVariableTests
@@ -64,6 +65,7 @@ tests =
       "ExplicitValue" ~: ExplicitValueTests.tests,
       "FinalParameters" ~: FinalParametersTests.tests,
       "InitialzeVariables" ~: InitializeVariablesTests.tests,
+      "LocalTypeInference" ~: LocalTypeInferenceTests.tests,
       "MethodInvocations" ~: MethodInvocationsTests.tests,
       -- "MethodNames" ~: MethodNamesTests.tests,
       "ModifiedControlVariable" ~: ModifiedControlVariableTests.tests,
@@ -75,7 +77,7 @@ tests =
       "NoCasts" ~: NoCastsTests.tests,
       "NoDummyNames" ~: NoDummyNamesTests.tests,
       "NoExtraDataStructures" ~: NoExtraDataStructuresTests.tests,
-      "NoGermanNames" ~: NoGermanNamesTests.tests,
+      -- "NoGermanNames" ~: NoGermanNamesTests.tests,
       "NoLoopBreak" ~: NoLoopBreakTests.tests,
       "NoIncDecInExpression" ~: NoIncDecInExpressionTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,

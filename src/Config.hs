@@ -23,6 +23,7 @@ data Rule
   | ExplicitValue
   | FinalParameters
   | InitializeVariables
+  | LocalTypeInference
   | MethodInvocations {called :: QualifiedIdent, limited :: String, maxInv :: Int, explanation :: String}
   | MethodNames {whitelist :: [String]}
   | ModifiedControlVariable
@@ -71,6 +72,7 @@ instance FromJSON Rule where
       "ExplicitValue" -> pure ExplicitValue
       "FinalParameters" -> pure FinalParameters
       "InitializeVariables" -> pure InitializeVariables
+      "LocalTypeInference" -> pure LocalTypeInference
       "MethodInvocations" -> parseMethodInvocations obj
       "MethodNames" -> parseMethodNames obj
       "ModifiedControlVariable" -> pure ModifiedControlVariable

@@ -3,9 +3,9 @@
 module Language.Java.Rules.DuplicateInConditional (check) where
 
 import Control.Monad (mzero)
-import Data.Generics.Uniplate.Data (childrenBi, universeBi)
+import Data.Generics.Uniplate.Data (universeBi)
 import Data.List.Extra (none)
-import Data.List.NonEmpty (NonEmpty ((:|)))
+import Data.List.NonEmpty (NonEmpty (..))
 import qualified Data.List.NonEmpty as NonEmpty
 import Language.Java.SourceSpan (SourceSpan)
 import Language.Java.Syntax
