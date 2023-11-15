@@ -22,13 +22,14 @@ check cUnit path = do
           return
             ( RDF.rangeDiagnostic
                 "Language.Java.Rules.LocalTypeInference"
-                [ "Durch die Verwendung des Diamantoperators",
+                [ "Hier wird der Diamantoperator",
                   Markdown.code (prettyPrint Diamond),
-                  "statt des konkreten Typs in der Variableninitialisierung wird durch",
-                  Markdown.code "var",
-                  "der unspezifische Typ",
-                  Markdown.code "Object",
-                  "abgeleitet."
+                  "zusammen mit der lokalen Typinferenz verwendet."
+                  "Dadurch ist der Compiler nicht in der Lage, den Typ, der für den Diamantoperator eingesetzt werden soll, zu ermitteln und verwendet",
+                  Markdown.code "Object" ++ "."
+                  "Daher sollte der Diamantoperator"
+                  Markdown.code (prettyPrint Diamond),
+                  "durch einen konkreten Typ ersetzt werden."
                 ]
                 (sourceSpan varInit)
                 path
