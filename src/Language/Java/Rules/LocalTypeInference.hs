@@ -56,9 +56,9 @@ check cUnit path = do
                   Markdown.code (prettyPrint type_),
                   "kann durch lokale Typinferenz mit",
                   Markdown.code "var",
-                  "ersetzt werden. Dabei muss allerdings statt des Diamantoperators",
+                  "ersetzt werden. Dabei muss allerdings der Diamantoperator",
                   Markdown.code (prettyPrint Diamond),
-                  "der konkrete Typ in der Variableninitialisierung angegeben werden."
+                  "durch einen konkreten Typ ersetzt werden."
                 ]
                 span
                 path
