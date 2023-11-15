@@ -12,5 +12,9 @@ class LocalTypeInference {
         List<String> list4 = new List<>();
 
         var[] arr = new int[5];
+
+        for (int i = 0; i < a; i++) {
+            a++;
+        }
     }
 }

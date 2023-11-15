@@ -45,10 +45,10 @@ filterDataCreation (QualInstanceCreation span _ _ ident _ _)
 filterDataCreation _ = Nothing
 
 isForbidden :: TypeDeclSpecifier -> Bool
-isForbidden (TypeDeclSpecifier (ClassType ((ident, []) :| []))) = Ident.name ident `elem` blacklist
-isForbidden (TypeDeclSpecifier (ClassType _)) = False
-isForbidden (TypeDeclSpecifierWithDiamond (ClassType ((ident, []) :| [])) _ _) = Ident.name ident `elem` blacklist
-isForbidden (TypeDeclSpecifierWithDiamond (ClassType _) _ _) = False
+isForbidden (TypeDeclSpecifier (ClassType _ ((ident, []) :| []))) = Ident.name ident `elem` blacklist
+isForbidden (TypeDeclSpecifier (ClassType _ _)) = False
+isForbidden (TypeDeclSpecifierWithDiamond (ClassType _ ((ident, []) :| [])) _ _) = Ident.name ident `elem` blacklist
+isForbidden (TypeDeclSpecifierWithDiamond (ClassType _ _) _ _) = False
 isForbidden (TypeDeclSpecifierUnqualifiedWithDiamond ident _) = Ident.name ident `elem` blacklist
 
 filterCloneInvoke :: MethodInvocation p -> Maybe SourceSpan

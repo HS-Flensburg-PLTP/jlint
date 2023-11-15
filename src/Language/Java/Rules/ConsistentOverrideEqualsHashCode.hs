@@ -47,11 +47,11 @@ extractEqualsHashCode classDecl = mapMaybe filterEqualsAndHashCode (universeBi c
 
 -- checks if a MembderDecl overrides equals or hashcode
 filterEqualsAndHashCode :: MemberDecl Parsed -> Maybe (Method, Method, SourceSpan)
-filterEqualsAndHashCode (MethodDecl span [Public _] [] (Just (PrimType IntT)) ident [] [] _ _) =
+filterEqualsAndHashCode (MethodDecl span [Public _] [] (Just (PrimType (IntT _))) ident [] [] _ _) =
   if Ident.name ident == "hashCode"
     then return (HashCode, Equals, span)
     else mzero
-filterEqualsAndHashCode (MethodDecl span [Public _] [] (Just (PrimType BooleanT)) ident params [] _ _) =
+filterEqualsAndHashCode (MethodDecl span [Public _] [] (Just (PrimType (BooleanT _))) ident params [] _ _) =
   if Ident.name ident == "equals" && takesJavaLangObject params
     then return (Equals, HashCode, span)
     else mzero
@@ -64,6 +64,6 @@ takesJavaLangObject _ = False
 
 -- checks if a classType is of Type Object or java.lang.Object
 isJavaLangObject :: ClassType -> Bool
-isJavaLangObject (ClassType ((Ident _ "Object", []) :| [])) = True
-isJavaLangObject (ClassType ((Ident _ "java", []) :| [(Ident _ "lang", []), (Ident _ "Object", [])])) = True
+isJavaLangObject (ClassType _ ((Ident _ "Object", []) :| [])) = True
+isJavaLangObject (ClassType _ ((Ident _ "java", []) :| [(Ident _ "lang", []), (Ident _ "Object", [])])) = True
 isJavaLangObject _ = False

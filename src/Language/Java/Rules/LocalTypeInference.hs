@@ -13,12 +13,11 @@ import qualified RDF
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
-  LocalVars span _ type_ (VarDecl _ _ (Just varInit) :| []) :: BlockStmt Parsed <- universeBi cUnit
+  LocalVars _ _ type_ (VarDecl _ _ (Just varInit) :| []) :: BlockStmt Parsed <- universeBi cUnit
   if localTypeInferenceUsed type_
     then
-      if null [() | Diamond <- universeBi varInit]
-        then mzero
-        else
+      if any isDiamond (universeBi varInit)
+        then
           return
             ( RDF.rangeDiagnostic
                 "Language.Java.Rules.LocalTypeInference"
@@ -33,22 +32,10 @@ check cUnit path = do
                 (sourceSpan varInit)
                 path
             )
+        else mzero
     else
-      if null [() | Diamond <- universeBi varInit]
+      if any isDiamond (universeBi varInit)
         then
-          return
-            ( RDF.rangeDiagnostic
-                "Language.Java.Rules.LocalTypeInference"
-                [ "Die explizite Typ-Angabe",
-                  Markdown.code (prettyPrint type_),
-                  "kann durch lokale Typinferenz mit",
-                  Markdown.code "var",
-                  "ersetzt werden."
-                ]
-                span
-                path
-            )
-        else
           return
             ( RDF.rangeDiagnostic
                 "Language.Java.Rules.LocalTypeInference"
@@ -60,10 +47,26 @@ check cUnit path = do
                   Markdown.code (prettyPrint Diamond),
                   "der konkrete Typ in der Variableninitialisierung angegeben werden."
                 ]
-                span
+                (sourceSpan type_)
+                path
+            )
+        else
+          return
+            ( RDF.rangeDiagnostic
+                "Language.Java.Rules.LocalTypeInference"
+                [ "Die explizite Typ-Angabe",
+                  Markdown.code (prettyPrint type_),
+                  "kann durch lokale Typinferenz mit",
+                  Markdown.code "var",
+                  "ersetzt werden."
+                ]
+                (sourceSpan type_)
                 path
             )
 
 localTypeInferenceUsed :: Type -> Bool
-localTypeInferenceUsed (RefType (ClassRefType (ClassType ((Ident _ "var", []) :| [])))) = True
+localTypeInferenceUsed (RefType (ClassRefType (ClassType _ ((Ident _ "var", []) :| [])))) = True
 localTypeInferenceUsed _ = False
+
+isDiamond :: Diamond -> Bool
+isDiamond Diamond = True
