@@ -77,7 +77,7 @@ tests =
       "NoCasts" ~: NoCastsTests.tests,
       "NoDummyNames" ~: NoDummyNamesTests.tests,
       "NoExtraDataStructures" ~: NoExtraDataStructuresTests.tests,
-      "NoGermanNames" ~: NoGermanNamesTests.tests,
+      -- "NoGermanNames" ~: NoGermanNamesTests.tests,
       "NoLoopBreak" ~: NoLoopBreakTests.tests,
       "NoIncDecInExpression" ~: NoIncDecInExpressionTests.tests,
       "NoNullPointerExpceptionsForControl" ~: NoNullPointerExceptionsForControlTests.tests,

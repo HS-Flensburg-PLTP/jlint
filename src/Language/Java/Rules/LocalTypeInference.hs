@@ -16,7 +16,7 @@ check cUnit path = do
   LocalVars _ _ type_ (VarDecl _ _ (Just varInit) :| []) :: BlockStmt Parsed <- universeBi cUnit
   if localTypeInferenceUsed type_
     then
-      if any isDiamond (universeBi varInit)
+      if isParameterLessConstructorWithDiamond varInit
         then
           return
             ( RDF.rangeDiagnostic
@@ -35,39 +35,48 @@ check cUnit path = do
             )
         else mzero
     else
-      if any isDiamond (universeBi varInit)
-        then
-          return
-            ( RDF.rangeDiagnostic
-                "Language.Java.Rules.LocalTypeInference"
-                [ "Die explizite Typ-Angabe",
-                  Markdown.code (prettyPrint type_),
-                  "kann durch lokale Typinferenz mit",
-                  Markdown.code "var",
-                  "ersetzt werden. Dabei muss allerdings der Diamantoperator",
-                  Markdown.code (prettyPrint Diamond),
-                  "durch einen konkreten Typ ersetzt werden."
-                ]
-                (sourceSpan type_)
-                path
-            )
+      if isNullInit varInit
+        then mzero
         else
-          return
-            ( RDF.rangeDiagnostic
-                "Language.Java.Rules.LocalTypeInference"
-                [ "Die explizite Typ-Angabe",
-                  Markdown.code (prettyPrint type_),
-                  "kann durch lokale Typinferenz mit",
-                  Markdown.code "var",
-                  "ersetzt werden."
-                ]
-                (sourceSpan type_)
-                path
-            )
+          if isParameterLessConstructorWithDiamond varInit
+            then
+              return
+                ( RDF.rangeDiagnostic
+                    "Language.Java.Rules.LocalTypeInference"
+                    [ "Die explizite Typ-Angabe",
+                      Markdown.code (prettyPrint type_),
+                      "kann durch lokale Typinferenz mit",
+                      Markdown.code "var",
+                      "ersetzt werden. Dabei muss allerdings der Diamantoperator",
+                      Markdown.code (prettyPrint Diamond),
+                      "durch einen konkreten Typ ersetzt werden."
+                    ]
+                    (sourceSpan type_)
+                    path
+                )
+            else
+              return
+                ( RDF.rangeDiagnostic
+                    "Language.Java.Rules.LocalTypeInference"
+                    [ "Die explizite Typ-Angabe",
+                      Markdown.code (prettyPrint type_),
+                      "kann durch lokale Typinferenz mit",
+                      Markdown.code "var",
+                      "ersetzt werden."
+                    ]
+                    (sourceSpan type_)
+                    path
+                )
+
+isNullInit :: VarInit Parsed -> Bool
+isNullInit (InitExp (Lit (Null _))) = True
+isNullInit _ = False
 
 localTypeInferenceUsed :: Type -> Bool
 localTypeInferenceUsed (RefType (ClassRefType (ClassType _ ((Ident _ "var", []) :| [])))) = True
 localTypeInferenceUsed _ = False
 
-isDiamond :: Diamond -> Bool
-isDiamond Diamond = True
+isParameterLessConstructorWithDiamond :: VarInit Parsed -> Bool
+isParameterLessConstructorWithDiamond (InitExp (InstanceCreation _ _ (TypeDeclSpecifierUnqualifiedWithDiamond _ _) [] _)) = True
+isParameterLessConstructorWithDiamond (InitExp (InstanceCreation _ _ (TypeDeclSpecifierWithDiamond {}) [] _)) = True
+isParameterLessConstructorWithDiamond _ = False
