@@ -218,4 +218,20 @@ class ReduceScoope<T> {
         this.elements--;
         return removed.getValue();
     }
+
+    private static boolean contains(final String value, final String[] array, final int start, final int end) {
+        var found = false;
+        var mid = start + (end - start) / 2;
+        if (start <= end) {
+            var compare = value.compareTo(array[mid]);
+            if (compare > 0) {
+                return contains(value, array, mid + 1, end);
+            } else if (compare < 0) {
+                return contains(value, array, start, mid - 1);
+            } else {
+                found = true;
+            }
+        }
+        return found;
+    }
 }

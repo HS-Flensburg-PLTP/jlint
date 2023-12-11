@@ -77,6 +77,23 @@ reduceScopeInIf declVars (IfThenElse span condition thenStmt elseStmt) path =
                         )
                         varsNotInThenOrElse
         else mzero
+reduceScopeInIf declVars (IfThen span condition thenStmt) path =
+  let varsNotInCondition = filter (\declVar -> none (eq IgnoreSourceSpan declVar) (variables condition)) declVars
+   in if Exp.Extra.hasNoSideEffect condition
+        then
+          if null varsNotInCondition
+            then mzero
+            else
+              map
+                ( \var ->
+                    RDF.rangeDiagnostic
+                      "Language.Java.Rules.ReduceScope"
+                      (message var)
+                      span
+                      path
+                )
+                varsNotInCondition
+        else mzero
 reduceScopeInIf _ _ _ = mzero
 
 message :: Ident -> [String]
