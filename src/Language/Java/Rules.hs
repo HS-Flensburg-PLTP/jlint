@@ -13,6 +13,7 @@ import qualified Language.Java.Rules.Evaluation as Evaluation
 import qualified Language.Java.Rules.ExplicitValue as ExplicitValue
 import qualified Language.Java.Rules.FinalParameters as FinalParameters
 import qualified Language.Java.Rules.InitializeVariables as InitializeVariables
+import qualified Language.Java.Rules.LocalTypeInference as LocalTypeInference
 import qualified Language.Java.Rules.MethodInvocations as MethodInvocations
 import qualified Language.Java.Rules.MethodNames as MethodNames
 import qualified Language.Java.Rules.ModifiedControlVariable as ModifiedControlVariable
@@ -61,6 +62,7 @@ defaultConfig =
     ExplicitValue,
     FinalParameters,
     InitializeVariables,
+    LocalTypeInference,
     -- MethodInvocations
     -- MethodNames,
     ModifiedControlVariable,
@@ -110,6 +112,7 @@ checkFromConfig ExplicitValue = liftIO ExplicitValue.check
 checkFromConfig Evaluation = liftIO Evaluation.check
 checkFromConfig FinalParameters = liftIO FinalParameters.check
 checkFromConfig InitializeVariables = liftIO InitializeVariables.check
+checkFromConfig LocalTypeInference = liftIO LocalTypeInference.check
 checkFromConfig (MethodInvocations called limited maxInv explanation) =
   liftIO (MethodInvocations.check called limited maxInv explanation)
 checkFromConfig (MethodNames methods) = MethodNames.check methods
