@@ -14,6 +14,7 @@ import qualified Language.Java.Syntax.Ident as Ident
 data QualifiedIdent
   = QualifiedIdent {className :: String, methodName :: String}
   | UnqualifiedIdent {methodName :: String}
+  deriving (Eq)
 
 instance FromJSON QualifiedIdent where
   parseJSON (String text) =

@@ -54,6 +54,7 @@ data Rule
   | UseElse
   | UseIncrementDecrementOperator
   | UseJavaArrayTypeStyle
+  | UseLocalTypeInference
   | UsePostIncrementDecrement
 
 instance FromJSON Rule where
@@ -102,6 +103,7 @@ instance FromJSON Rule where
       "UseElse" -> pure UseElse
       "UseIncrementDecrementOperator" -> pure UseIncrementDecrementOperator
       "UseJavaArrayTypeStyle" -> pure UseJavaArrayTypeStyle
+      "UseLocalTypeInference" -> pure UseLocalTypeInference
       "UsePostIncrementDecrement" -> pure UsePostIncrementDecrement
       _ -> fail ("Unknown Rule: " ++ rule)
 

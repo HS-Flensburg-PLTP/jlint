@@ -44,6 +44,7 @@ import qualified Language.Java.Rules.UseAssignOp as UseAssignOp
 import Language.Java.Rules.UseElse as UseElse (check)
 import qualified Language.Java.Rules.UseIncrementDecrementOperator as UseIncrementDecrementOperator
 import qualified Language.Java.Rules.UseJavaArrayTypeStyle as UseJavaArrayTypeStyle
+import qualified Language.Java.Rules.UseLocalTypeInference as UseLocalTypeInference
 import qualified Language.Java.Rules.UsePostIncrementDecrement as UsePostIncrementDecrement
 import Language.Java.Syntax (CompilationUnit, Parsed)
 import qualified RDF
@@ -92,6 +93,7 @@ defaultConfig =
     UseElse,
     UseIncrementDecrementOperator,
     UseJavaArrayTypeStyle,
+    UseLocalTypeInference,
     UsePostIncrementDecrement
   ]
 
@@ -142,6 +144,7 @@ checkFromConfig UseAssignOp = liftIO UseAssignOp.check
 checkFromConfig UseElse = liftIO UseElse.check
 checkFromConfig UseIncrementDecrementOperator = liftIO UseIncrementDecrementOperator.check
 checkFromConfig UseJavaArrayTypeStyle = liftIO UseJavaArrayTypeStyle.check
+checkFromConfig UseLocalTypeInference = liftIO UseLocalTypeInference.check
 checkFromConfig UsePostIncrementDecrement = liftIO UsePostIncrementDecrement.check
 
 liftIO :: (a -> b -> c) -> a -> b -> IO c

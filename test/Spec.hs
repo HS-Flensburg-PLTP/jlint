@@ -44,6 +44,7 @@ import qualified UseElseTests
 import qualified UseIncrementDecrementOperatorTests
 import qualified UseJavaArrayTypeStyleTests
 import qualified UsePostIncrementDecrementTests
+import qualified UseLocalTypeInferenceTests
 
 main :: IO ()
 main = do
@@ -96,5 +97,6 @@ tests =
       "UseElse" ~: UseElseTests.tests,
       "UseIncrementDecrementOperator" ~: UseIncrementDecrementOperatorTests.tests,
       "UseJavaArrayTypeStyle" ~: UseJavaArrayTypeStyleTests.tests,
+      "UseLocalTypeInference" ~: UseLocalTypeInferenceTests.tests,
       "UsePostIncrementDecrement" ~: UsePostIncrementDecrementTests.tests
     ]

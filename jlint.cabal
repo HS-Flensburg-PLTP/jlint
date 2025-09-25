@@ -74,6 +74,7 @@ library
       Language.Java.Rules.UseElse
       Language.Java.Rules.UseIncrementDecrementOperator
       Language.Java.Rules.UseJavaArrayTypeStyle
+      Language.Java.Rules.UseLocalTypeInference
       Language.Java.Rules.UsePostIncrementDecrement
       Language.Java.Syntax.Annotation.Extra
       Language.Java.Syntax.BlockStmt.Extra
@@ -190,6 +191,7 @@ test-suite jlint-test
       UseElseTests
       UseIncrementDecrementOperatorTests
       UseJavaArrayTypeStyleTests
+      UseLocalTypeInferenceTests
       UsePostIncrementDecrementTests
       Paths_jlint
   hs-source-dirs:
