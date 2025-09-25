@@ -1,6 +1,5 @@
 module SuppressWarningsTests where
 
-import Control.Monad.Identity (zipWithM_)
 import Language.Java.Rules.SuppressWarnings as SuppressWarnings (check)
 import Language.Java.Syntax (CompilationUnit)
 import QualifiedIdent (QualifiedIdent (..))

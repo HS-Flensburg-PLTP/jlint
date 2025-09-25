@@ -1,6 +1,5 @@
 module NoAnnotationsTests where
 
-import Control.Monad.Identity (zipWithM_)
 import Language.Java.Rules.NoAnnotations as NoAnnotations (check)
 import Language.Java.Syntax (CompilationUnit)
 import qualified RDF
