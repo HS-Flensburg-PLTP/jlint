@@ -31,7 +31,7 @@ check cUnit path = mapMaybe checkStatement (universeBi cUnit)
     checkStatement _ = mzero
 
 catchesNullPointerException :: Catch Parsed -> Bool
-catchesNullPointerException (Catch (FormalParam _ _ (RefType (ClassRefType (ClassType typeName))) _ _) _) =
+catchesNullPointerException (Catch (FormalParam _ _ (RefType (ClassRefType (ClassType _ typeName))) _ _) _) =
   isNullPointerExceptionName (fmap fst typeName)
 catchesNullPointerException _ = False
 
