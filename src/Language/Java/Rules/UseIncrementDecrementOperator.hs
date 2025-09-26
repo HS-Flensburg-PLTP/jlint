@@ -28,7 +28,7 @@ check cUnit path = do
       assignOpToPostIncDec op (lhsToExp lhs)
     alternativeExp _ = mzero
 
-lhsToExp :: Lhs p -> Exp p
+lhsToExp :: Lhs Parsed -> Exp Parsed
 lhsToExp (NameLhs name) = ExpName name
 lhsToExp (FieldLhs fieldAccess) = FieldAccess fieldAccess
 lhsToExp (ArrayLhs arrayIndex) = ArrayAccess arrayIndex

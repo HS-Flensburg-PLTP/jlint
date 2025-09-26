@@ -43,8 +43,8 @@ import qualified UseAssignOpTests
 import qualified UseElseTests
 import qualified UseIncrementDecrementOperatorTests
 import qualified UseJavaArrayTypeStyleTests
-import qualified UsePostIncrementDecrementTests
 import qualified UseLocalTypeInferenceTests
+import qualified UsePostIncrementDecrementTests
 
 main :: IO ()
 main = do

@@ -14,21 +14,21 @@ check cUnit path =
     checkMemberDecl :: MemberDecl Parsed -> Maybe RDF.Diagnostic
     checkMemberDecl (FieldDecl span _ _ fieldDecls) =
       if length fieldDecls > 1
-        then return (message Field span path)
+        then return (message FieldVar span path)
         else mzero
     checkMemberDecl _ = mzero
     checkBlockStmt :: BlockStmt Parsed -> Maybe RDF.Diagnostic
     checkBlockStmt (LocalVars span _ _ varDecls) =
       if length varDecls > 1
-        then return (message Variable span path)
+        then return (message LocalVar span path)
         else mzero
     checkBlockStmt _ = mzero
 
-data VarType = Variable | Field
+data VarType = LocalVar | FieldVar
 
 varTypeToString :: VarType -> String
-varTypeToString Variable = "Variablen"
-varTypeToString Field = "Attribute"
+varTypeToString LocalVar = "Variablen"
+varTypeToString FieldVar = "Attribute"
 
 message :: VarType -> SourceSpan -> FilePath -> RDF.Diagnostic
 message varType =
