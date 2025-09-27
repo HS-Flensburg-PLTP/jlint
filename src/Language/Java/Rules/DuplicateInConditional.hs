@@ -2,8 +2,8 @@
 
 module Language.Java.Rules.DuplicateInConditional (check) where
 
-import Control.Monad (mzero)
-import Data.Generics.Uniplate.Data (childrenBi, universeBi)
+import Control.Monad (guard, mzero)
+import Data.Generics.Uniplate.Data (universeBi)
 import Data.List.Extra (none)
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.List.NonEmpty as NonEmpty
@@ -12,6 +12,9 @@ import Language.Java.Syntax
 import qualified Language.Java.Syntax.VarDecl as VarDecl
 import qualified Markdown
 import qualified RDF
+
+ruleName :: String
+ruleName = "Language.Java.Rules.DuplicateInConditional"
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
@@ -37,44 +40,31 @@ checkStmts ifBlockStmts@(firstIfStmt : _) elseBlockStmts@(firstElseStmt : _) spa
       NonEmpty.toList (NonEmpty.map VarDecl.ident varDecls)
 
 checkFirstStmts :: BlockStmt Parsed -> BlockStmt Parsed -> SourceSpan -> FilePath -> [RDF.Diagnostic]
-checkFirstStmts ifBlockStmt@(BlockStmt _) elseBlockStmt@(BlockStmt _) span path =
-  if eq IgnoreSourceSpan ifBlockStmt elseBlockStmt
-    then
-      return
-        ( RDF.rangeDiagnostic
-            "Language.Java.Rules.DuplicateInConditional"
-            [ "Die jeweils erste Anweisung im then- und else-Zweig der",
-              Markdown.code "if" ++ "-Anweisung",
-              "sind gleich. Die Anweisung kann aus beiden Zweigen vor das",
-              Markdown.code "if",
-              "heraugezogen werden."
-            ]
-            span
-            path
-        )
-    else mzero
+checkFirstStmts ifBlockStmt@(BlockStmt _) elseBlockStmt@(BlockStmt _) span path = do
+  guard (eq IgnoreSourceSpan ifBlockStmt elseBlockStmt)
+  return (RDF.rangeDiagnostic ruleName (message "vor") span path)
 checkFirstStmts _ _ _ _ = mzero
 
 checkLastStmts :: BlockStmt Parsed -> BlockStmt Parsed -> [Ident] -> [Ident] -> SourceSpan -> FilePath -> [RDF.Diagnostic]
-checkLastStmts ifBlockStmt@(BlockStmt _) elseBlockStmt@(BlockStmt _) ifVars elseVars span path =
-  if eq IgnoreSourceSpan ifBlockStmt elseBlockStmt
-    && none (varUsedInBlockStmt ifBlockStmt) ifVars
-    && none (varUsedInBlockStmt elseBlockStmt) elseVars
-    then
-      return
-        ( RDF.rangeDiagnostic
-            "Language.Java.Rules.DuplicateInConditional"
-            [ "Die jeweils letzte Anweisung im then- und else-Zweig der",
-              Markdown.code "if" ++ "-Anweisung",
-              "sind gleich. Die Anweisung kann aus beiden Zweigen hinter das",
-              Markdown.code "else",
-              "heraugezogen werden."
-            ]
-            span
-            path
-        )
-    else mzero
+checkLastStmts ifBlockStmt@(BlockStmt _) elseBlockStmt@(BlockStmt _) ifVars elseVars span path = do
+  guard
+    ( eq IgnoreSourceSpan ifBlockStmt elseBlockStmt
+        && none (varUsedInBlockStmt ifBlockStmt) ifVars
+        && none (varUsedInBlockStmt elseBlockStmt) elseVars
+    )
+  return (RDF.rangeDiagnostic ruleName (message "hinter") span path)
 checkLastStmts _ _ _ _ _ _ = mzero
+
+message :: String -> [String]
+message preposition =
+  [ "Die jeweils letzte Anweisung im then- und else-Zweig der",
+    Markdown.code "if" ++ "-Anweisung",
+    "sind identisch. Die Anweisung kann aus beiden Zweigen",
+    preposition,
+    "das",
+    Markdown.code "else",
+    "herausgezogen werden."
+  ]
 
 varUsedInBlockStmt :: BlockStmt Parsed -> Ident -> Bool
 varUsedInBlockStmt blockStmt var =

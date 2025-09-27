@@ -19,6 +19,9 @@ check cUnit path = universeBi cUnit >>= checkStmt
     checkStmt (Do span bodyStmt _) = checkLoopBody bodyStmt span path
     checkStmt _ = mzero
 
+ruleName :: String
+ruleName = "Language.Java.Rules.NeedBraces"
+
 checkConditionalThen :: Stmt Parsed -> FilePath -> [RDF.Diagnostic]
 checkConditionalThen = checkConditionalBody
 
@@ -30,20 +33,22 @@ checkConditionalElse stmt path = checkConditionalBody stmt path
 checkConditionalBody :: Stmt Parsed -> FilePath -> [RDF.Diagnostic]
 checkConditionalBody (StmtBlock _) _ = mzero
 checkConditionalBody (Empty _) _ = mzero
-checkConditionalBody stmt path = return (diagnostic bracesMessage (sourceSpan stmt) path)
+checkConditionalBody stmt path =
+  return (RDF.rangeDiagnostic ruleName bracesMessage (sourceSpan stmt) path)
 
 checkLoopBody :: Stmt Parsed -> SourceSpan -> FilePath -> [RDF.Diagnostic]
 checkLoopBody (StmtBlock _) _ _ = mzero
-checkLoopBody (Empty _) loopSpan path = return (diagnostic emptyLoopMessage loopSpan path)
-checkLoopBody stmt _ path = return (diagnostic bracesMessage (sourceSpan stmt) path)
-
-diagnostic :: [String] -> SourceSpan -> FilePath -> RDF.Diagnostic
-diagnostic =
-  RDF.rangeDiagnostic "Language.Java.Rules.NeedBraces"
+checkLoopBody (Empty _) loopSpan path =
+  return
+    ( RDF.rangeDiagnostic
+        ruleName
+        ["Schleifen sollten Anweisungen enthalten."]
+        loopSpan
+        path
+    )
+checkLoopBody stmt _ path =
+  return (RDF.rangeDiagnostic ruleName bracesMessage (sourceSpan stmt) path)
 
 bracesMessage :: [String]
 bracesMessage =
-  ["Code-Blöcke sollten auch dann geklammert werden, wenn sie weniger als zwei Anweisungen enthalten."]
-
-emptyLoopMessage :: [String]
-emptyLoopMessage = ["Schleifen sollten Anweisungen enthalten."]
+  ["Blöcke sollten auch dann geklammert werden, wenn sie weniger als zwei Anweisungen enthalten."]

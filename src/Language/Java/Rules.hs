@@ -35,8 +35,6 @@ import qualified Language.Java.Rules.PrivateAttributes as PrivateAttributes
 import qualified Language.Java.Rules.ReduceScope as ReduceScope
 import qualified Language.Java.Rules.RedundantLocalVariable as RedundantLocalVariable
 import qualified Language.Java.Rules.RedundantModifiers as RedundantModifiers
-import qualified Language.Java.Rules.SameExecutionsInIf as SameExecutionsInIf
-import qualified Language.Java.Rules.Simplify as Simplify
 import qualified Language.Java.Rules.SimplifyBoolean as SimplifyBoolean
 import qualified Language.Java.Rules.SingleTopLevelClass as SingleTopLevelClass
 import qualified Language.Java.Rules.SuppressWarnings as SuppressWarnings
@@ -84,8 +82,6 @@ defaultConfig =
     ReduceScope,
     RedundantLocalVariable (Just True),
     RedundantModifiers,
-    SameExecutionsInIf,
-    Simplify,
     SimplifyBoolean,
     SingleTopLevelClass,
     SuppressWarnings [],
@@ -135,8 +131,6 @@ checkFromConfig PrivateAttributes = liftIO PrivateAttributes.check
 checkFromConfig ReduceScope = liftIO ReduceScope.check
 checkFromConfig (RedundantLocalVariable maybeActivated) = liftIO (RedundantLocalVariable.check maybeActivated)
 checkFromConfig RedundantModifiers = liftIO RedundantModifiers.check
-checkFromConfig SameExecutionsInIf = liftIO SameExecutionsInIf.check
-checkFromConfig Simplify = liftIO Simplify.check
 checkFromConfig SimplifyBoolean = liftIO SimplifyBoolean.check
 checkFromConfig SingleTopLevelClass = liftIO SingleTopLevelClass.check
 checkFromConfig (SuppressWarnings whitelist) = liftIO (SuppressWarnings.check whitelist)
