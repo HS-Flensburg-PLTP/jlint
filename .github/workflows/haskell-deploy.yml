@@ -2,7 +2,7 @@ name: Haskell deployment
 
 on:
   push:
-    branches: [main]
+    branches: [release]
 
 jobs:
   stack-deploy:
@@ -45,6 +45,11 @@ jobs:
           sha512sum --tag "${FILENAME}" > sha512sum
           echo "${PRIVKEY}" | openssl dgst -sign /dev/stdin -keyform PEM -sha512 -out signature "${FILENAME}"
 
+      - name: Update tag
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: release
+
       - name: Release artifacts
         uses: ncipollo/release-action@v1
         with:
@@ -53,4 +58,4 @@ jobs:
             signature
             jlint
           allowUpdates: true
-          tag: latest
+          tag: release
