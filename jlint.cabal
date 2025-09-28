@@ -30,7 +30,6 @@ library
       Control.Monad.Extra
       Data.List.Extra
       Language.Java.AST
-      Language.Java.Rules
       Language.Java.Rules.AvoidNegations
       Language.Java.Rules.AvoidOuterNegations
       Language.Java.Rules.AvoidStarImport
@@ -83,6 +82,7 @@ library
       Markdown
       QualifiedIdent
       RDF
+      Rule
       String
   other-modules:
       Paths_jlint

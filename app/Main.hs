@@ -1,7 +1,7 @@
 module Main where
 
 import CheckstyleXML (toRDF)
-import Config (Rule)
+import qualified Config
 import Control.Exception
 import Control.Monad (MonadPlus (..), unless, when)
 import Control.Monad.Extra (concatMapM)
@@ -11,10 +11,10 @@ import Data.Yaml (ParseException, decodeFileEither)
 import GHC.IO.Encoding (setLocaleEncoding, utf8)
 import Language.Java.Parser (compilationUnit, modifier, parser)
 import Language.Java.Pretty (pretty, prettyPrint)
-import Language.Java.Rules (checkWithConfig, defaultConfig)
 import Language.Java.Syntax (CompilationUnit, Parsed)
 import Options.Applicative
 import RDF
+import Rule (Rule)
 import System.Directory
 import System.Exit (ExitCode (ExitFailure), exitFailure, exitSuccess, exitWith)
 import System.FilePath.Find (always, extension, find, (==?))
@@ -140,13 +140,13 @@ parseJava rootDir showAST maybeConfigFile checkstyleDiags = do
                 Right config -> return (Right config)
             else do
               return (Left ("Angegebene Config-Datei " ++ configFile ++ " existiert nicht."))
-        Nothing -> return (Right defaultConfig)
+        Nothing -> return (Right Config.default_)
       case eitherConfig of
         Left error -> do
           hPutStrLn stderr error
           exitFailure
         Right config -> do
-          diagnostics <- concatMapM (uncurry (checkWithConfig config)) cUnitResults
+          diagnostics <- concatMapM (uncurry (Config.checkWith config)) cUnitResults
           let parseErrors = map (uncurry RDF.parseErrorDiagnostic) parsingErrors
           let diagnosticResults = checkstyleDiags ++ diagnostics ++ parseErrors
           C.putStrLn
