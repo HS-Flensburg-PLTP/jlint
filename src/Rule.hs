@@ -14,7 +14,6 @@ import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
 import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
 import qualified Language.Java.Rules.DeclarationOrder as DeclarationOrder
 import qualified Language.Java.Rules.DefaultComesLast as DefaultComesLast
-import qualified Language.Java.Rules.DuplicateInConditional as DuplicateInConditional
 import qualified Language.Java.Rules.Evaluation as Evaluation
 import qualified Language.Java.Rules.ExplicitValue as ExplicitValue
 import qualified Language.Java.Rules.FinalParameters as FinalParameters
@@ -28,6 +27,7 @@ import qualified Language.Java.Rules.NamingConventions as NamingConventions
 import qualified Language.Java.Rules.NeedBraces as NeedBraces
 import qualified Language.Java.Rules.NoAnnotations as NoAnnotations
 import qualified Language.Java.Rules.NoCasts as NoCasts
+import qualified Language.Java.Rules.NoCommonCodeInIf as NoCommonCodeInIf
 import qualified Language.Java.Rules.NoDummyNames as NoDummyNames
 import qualified Language.Java.Rules.NoExtraDataStructures as NoExtraDataStructures
 import qualified Language.Java.Rules.NoGermanNames as NoGermanNames
@@ -66,7 +66,6 @@ instance FromJSON Rule where
       "ConsistentOverrideEqualsHashCode" -> pure (Rule (liftIO ConsistentOverrideEqualsHashCode.check))
       "DeclarationOrder" -> pure (Rule (liftIO DeclarationOrder.check))
       "DefaultComesLast" -> pure (Rule (liftIO DefaultComesLast.check))
-      "DuplicateInConditional" -> pure (Rule (liftIO DuplicateInConditional.check))
       "Evaluation" -> pure (Rule (liftIO Evaluation.check))
       "ExplicitValue" -> pure (Rule (liftIO ExplicitValue.check))
       "FinalParameters" -> pure (Rule (liftIO FinalParameters.check))
@@ -80,6 +79,7 @@ instance FromJSON Rule where
       "NeedBraces" -> pure (Rule (liftIO NeedBraces.check))
       "NoAnnotations" -> Rule . liftIO <$> parseNoAnnotations obj
       "NoCasts" -> Rule . liftIO <$> parseNoCasts obj
+      "NoCommonCodeInIf" -> pure (Rule (liftIO NoCommonCodeInIf.check))
       "NoDummyNames" -> pure (Rule (liftIO NoDummyNames.check))
       "NoExtraDataStructures" -> Rule . liftIO <$> parseNoExtraDataStructures obj
       "NoGermanNames" -> pure (Rule NoGermanNames.check)

@@ -1,4 +1,4 @@
-class DuplicateInConditional {
+class NoCommonCodeInIf {
 
     private int a;
 

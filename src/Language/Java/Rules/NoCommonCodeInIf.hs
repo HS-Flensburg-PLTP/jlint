@@ -1,6 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Language.Java.Rules.DuplicateInConditional (check) where
+module Language.Java.Rules.NoCommonCodeInIf (check) where
 
 import Control.Monad (guard, mzero)
 import Data.Generics.Uniplate.Data (universeBi)
@@ -14,7 +14,7 @@ import qualified Markdown
 import qualified RDF
 
 ruleName :: String
-ruleName = "Language.Java.Rules.DuplicateInConditional"
+ruleName = "Language.Java.Rules.NoCommonCodeInIf"
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 check cUnit path = do
@@ -57,12 +57,12 @@ checkLastStmts _ _ _ _ _ _ = mzero
 
 message :: String -> [String]
 message preposition =
-  [ "Die jeweils letzte Anweisung im then- und else-Zweig der",
+  [ "Die jeweils letzten Anweisungen im `then`- und `else`-Zweig der",
     Markdown.code "if" ++ "-Anweisung",
-    "sind identisch. Die Anweisung kann aus beiden Zweigen",
+    "sind identisch. Diese identische Anweisung kann aus beiden Zweigen",
     preposition,
-    "das",
-    Markdown.code "else",
+    "die",
+    Markdown.code "if" ++ "-Anweisung",
     "herausgezogen werden."
   ]
 

@@ -1,6 +1,6 @@
-module DuplicateInConditionalTests where
+module NoCommonCodeInIfTests where
 
-import qualified Language.Java.Rules.DuplicateInConditional as DuplicateInConditional
+import qualified Language.Java.Rules.NoCommonCodeInIf as NoCommonCodeInIf
 import qualified RDF
 import Test.HUnit
 import Tests (rangesTest)
@@ -9,8 +9,8 @@ tests :: Test
 tests =
   rangesTest
     expectedRanges
-    "DuplicateInConditional.java"
-    DuplicateInConditional.check
+    "NoCommonCodeInIf.java"
+    NoCommonCodeInIf.check
 
 expectedRanges :: [RDF.Range]
 expectedRanges =

@@ -36,13 +36,13 @@ library
       Language.Java.Rules.ConsistentOverrideEqualsHashCode
       Language.Java.Rules.DeclarationOrder
       Language.Java.Rules.DefaultComesLast
-      Language.Java.Rules.DuplicateInConditional
       Language.Java.Rules.Evaluation
       Language.Java.Rules.ExplicitValue
       Language.Java.Rules.FinalParameters
       Language.Java.Rules.InitializeVariables
       Language.Java.Rules.MethodInvocations
       Language.Java.Rules.MethodNames
+      Language.Java.Rules.MissingTypeArgument
       Language.Java.Rules.ModifiedControlVariable
       Language.Java.Rules.MultipleStringLiterals
       Language.Java.Rules.MultipleVariableDeclarations
@@ -50,6 +50,7 @@ library
       Language.Java.Rules.NeedBraces
       Language.Java.Rules.NoAnnotations
       Language.Java.Rules.NoCasts
+      Language.Java.Rules.NoCommonCodeInIf
       Language.Java.Rules.NoDummyNames
       Language.Java.Rules.NoExtraDataStructures
       Language.Java.Rules.NoGermanNames
@@ -59,6 +60,7 @@ library
       Language.Java.Rules.ParameterNumber
       Language.Java.Rules.Pattern
       Language.Java.Rules.PreferExpressions
+      Language.Java.Rules.PreferStatic
       Language.Java.Rules.PrivateAttributes
       Language.Java.Rules.ReduceScope
       Language.Java.Rules.RedundantLocalVariable
@@ -151,7 +153,6 @@ test-suite jlint-test
       ConsistentOverrideEqualsHashCodeTests
       DeclarationOrderTests
       DefaultComesLastTests
-      DuplicateInConditionalTests
       EvaluationTests
       ExplicitValueTests
       FinalParametersTests
@@ -165,6 +166,7 @@ test-suite jlint-test
       NeedBracesTests
       NoAnnotationsTests
       NoCastsTests
+      NoCommonCodeInIfTests
       NoDummyNamesTests
       NoExtraDataStructuresTests
       NoGermanNamesTests
@@ -175,6 +177,7 @@ test-suite jlint-test
       ParseErrorTests
       PatternTests
       PreferExpressionsTests
+      PreferStaticTests
       PrivateAttributesTests
       ReduceScopeTests
       RedundantLocalVariableTests

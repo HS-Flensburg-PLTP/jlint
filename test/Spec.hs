@@ -4,7 +4,6 @@ import qualified AvoidStarImportTests
 import qualified ConsistentOverrideEqualsHashCodeTests
 import qualified DeclarationOrderTests
 import qualified DefaultComesLastTests
-import qualified DuplicateInConditionalTests
 import qualified EvaluationTests
 import qualified ExplicitValueTests
 import qualified FinalParametersTests
@@ -18,6 +17,7 @@ import qualified NamingConventionsTests
 import qualified NeedBracesTests
 import qualified NoAnnotationsTests
 import qualified NoCastsTests
+import qualified NoCommonCodeInIfTests
 import qualified NoDummyNamesTests
 import qualified NoExtraDataStructuresTests
 import qualified NoGermanNamesTests
@@ -58,7 +58,6 @@ tests =
       "ConsistentOverrideEqualsHashCode" ~: ConsistentOverrideEqualsHashCodeTests.tests,
       "DeclarationOrder" ~: DeclarationOrderTests.tests,
       "DefaultComesLast" ~: DefaultComesLastTests.tests,
-      "DuplicateInConditional" ~: DuplicateInConditionalTests.tests,
       -- "Evaluation" ~: EvaluationTests.tests,
       "ExplicitValue" ~: ExplicitValueTests.tests,
       "FinalParameters" ~: FinalParametersTests.tests,
@@ -72,6 +71,7 @@ tests =
       "NeedBraces" ~: NeedBracesTests.tests,
       "NoAnnotations" ~: NoAnnotationsTests.tests,
       "NoCasts" ~: NoCastsTests.tests,
+      "NoCommonCodeInIf" ~: NoCommonCodeInIfTests.tests,
       "NoDummyNames" ~: NoDummyNamesTests.tests,
       "NoExtraDataStructures" ~: NoExtraDataStructuresTests.tests,
       "NoGermanNames" ~: NoGermanNamesTests.tests,
