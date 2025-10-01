@@ -66,6 +66,7 @@ instance FromJSON Rule where
       "ConsistentOverrideEqualsHashCode" -> pure (Rule (liftIO ConsistentOverrideEqualsHashCode.check))
       "DeclarationOrder" -> pure (Rule (liftIO DeclarationOrder.check))
       "DefaultComesLast" -> pure (Rule (liftIO DefaultComesLast.check))
+      "DuplicateInConditional" -> pure (Rule (liftIO NoCommonCodeInIf.check))
       "Evaluation" -> pure (Rule (liftIO Evaluation.check))
       "ExplicitValue" -> pure (Rule (liftIO ExplicitValue.check))
       "FinalParameters" -> pure (Rule (liftIO FinalParameters.check))
