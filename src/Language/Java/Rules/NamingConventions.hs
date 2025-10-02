@@ -217,8 +217,8 @@ data Convention
   | UnderscoreCase
 
 conventionToString :: Convention -> String
-conventionToString PascalCase = "\"Pascal Case\""
-conventionToString CamelCase = "\"Camel Case\""
+conventionToString PascalCase = "\"Camel Case\" mit einem großen Anfangsbuchstaben"
+conventionToString CamelCase = "\"Camel Case\" mit einem kleinen Anfangsbuchstaben"
 conventionToString (PackageCase letterCase) = "Java-Paket-Stil mit " ++ letterCaseToString letterCase ++ " Buchstaben"
   where
     letterCaseToString Lower = "kleinen"
