@@ -62,6 +62,7 @@ rightHandSide (VarDecl _ _ maybeVarInit) = maybeVarInit
 isGoodVarInit :: Maybe (VarInit Parsed) -> Bool
 isGoodVarInit Nothing = False
 isGoodVarInit (Just (InitArray _)) = False
+isGoodVarInit (Just (InitExp (Lit (Null _)))) = False
 isGoodVarInit (Just (InitExp Lambda {})) = False
 isGoodVarInit (Just (InitExp MethodRef {})) = False
 isGoodVarInit (Just (InitExp (MethodInv invocation))) = isGoodMethodInvocation invocation
