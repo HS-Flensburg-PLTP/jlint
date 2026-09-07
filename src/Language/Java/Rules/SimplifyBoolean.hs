@@ -33,9 +33,7 @@ check cUnit path = mapMaybe checkStmt (universeBi cUnit) `mplus` mapMaybe checkE
                   Markdown.code "if" ++ "-Anweisung",
                   "den Wert",
                   Markdown.code "false" ++ ".",
-                  "Daher kann die",
-                  Markdown.code "if" ++ "-Anweisung",
-                  "zur Bedingung vereinfacht werden."
+                  "Daher kann an dieser Stelle der Wert der Bedingung zurückgegeben werden."
                 ]
                 span
                 path
