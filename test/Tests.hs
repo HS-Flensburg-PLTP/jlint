@@ -1,6 +1,8 @@
 module Tests (rangesTest, rangesIOTest) where
 
 import Control.Monad (zipWithM_)
+import Data.Function (on)
+import qualified Data.List as List
 import Language.Java.Parser (compilationUnit, parser)
 import Language.Java.Syntax (CompilationUnit, Parsed)
 import qualified RDF
@@ -13,7 +15,7 @@ javaTestDirectory = "test" </> "java"
 
 rangesTest :: [RDF.Range] -> FilePath -> (CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]) -> Test
 rangesTest testRanges path check =
-  rangesIOTest testRanges path (\cUnit path -> return (check cUnit path))
+  rangesIOTest testRanges path (\cUnit path -> return (List.sortBy (compare `on` RDF.location) (check cUnit path)))
 
 rangesIOTest :: [RDF.Range] -> FilePath -> (CompilationUnit Parsed -> FilePath -> IO [RDF.Diagnostic]) -> Test
 rangesIOTest testRanges =

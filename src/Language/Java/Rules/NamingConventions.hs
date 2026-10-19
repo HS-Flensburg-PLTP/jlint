@@ -2,6 +2,7 @@
 
 module Language.Java.Rules.NamingConventions (check) where
 
+import Control.Applicative ((<|>))
 import Control.Monad (mzero)
 import Data.Foldable (toList)
 import Data.Generics.Uniplate.Data (universeBi)
@@ -76,7 +77,7 @@ checkStaticVariableNames cUnit path = do
     extractMemberDecl :: MemberDecl Parsed -> [(Ident, VariableModifier)]
     extractMemberDecl (FieldDecl _ modifier _ varDecls)
       | any Modifier.isStatic modifier =
-          map (\varDecl -> (VarDecl.ident varDecl, if any Modifier.isFinal modifier then FinalVariable else NonFinalVariable)) (NonEmpty.toList varDecls)
+          map (\varDecl -> (VarDecl.ident varDecl, variableModifier modifier)) (NonEmpty.toList varDecls)
       | otherwise = mzero
     extractMemberDecl _ = mzero
 
@@ -84,15 +85,30 @@ checkStaticVariableNames cUnit path = do
 
 checkLocalNames :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
 checkLocalNames cUnit path = do
-  MethodDecl _ _ _ _ _ _ _ _ body <- universeBi cUnit :: [MemberDecl Parsed]
-  fieldNames <- universeBi body
-  (ident, modifier) <- extractMemberDecl fieldNames
+  (ident, modifier) <- localVars cUnit <|> forVars cUnit
   checkIdent path (LocalVariable modifier) ident
+
+localVars :: CompilationUnit Parsed -> [(Ident, VariableModifier)]
+localVars cUnit = do
+  blockStmt <- universeBi cUnit
+  extractLocalVars blockStmt
   where
-    extractMemberDecl :: BlockStmt Parsed -> [(Ident, VariableModifier)]
-    extractMemberDecl (LocalVars _ modifier _ varDecls) =
-      toList (fmap (\varDecl -> (VarDecl.ident varDecl, if any Modifier.isFinal modifier then FinalVariable else NonFinalVariable)) varDecls)
-    extractMemberDecl _ = mzero
+    extractLocalVars :: BlockStmt Parsed -> [(Ident, VariableModifier)]
+    extractLocalVars (LocalVars _ modifiers _ varDecls) =
+      toList (fmap (\varDecl -> (VarDecl.ident varDecl, variableModifier modifiers)) varDecls)
+    extractLocalVars _ = mzero
+
+forVars :: CompilationUnit Parsed -> [(Ident, VariableModifier)]
+forVars cUnit = do
+  stmt <- universeBi cUnit
+  extractForVars stmt
+  where
+    extractForVars :: Stmt Parsed -> [(Ident, VariableModifier)]
+    extractForVars (BasicFor _ (Just (ForLocalVars modifiers _ varDecls)) _ _ _) =
+      toList (fmap (\varDecl -> (VarDecl.ident varDecl, variableModifier modifiers)) varDecls)
+    extractForVars (EnhancedFor _ modifiers _ ident _ _) =
+      pure (ident, variableModifier modifiers)
+    extractForVars _ = mzero
 
 {- MemberName -}
 
@@ -121,8 +137,8 @@ extractCLassesAndInterfaces cUnit = do
   extractClassAndInterface classesAndInterfaces
   where
     extractClassAndInterface :: TypeDecl Parsed -> [Ident]
-    extractClassAndInterface (ClassTypeDecl (ClassDecl _ _ ident _ _ _ _)) = return ident
-    extractClassAndInterface (InterfaceTypeDecl (InterfaceDecl _ _ _ ident _ _ _ _)) = return ident
+    extractClassAndInterface (ClassTypeDecl (ClassDecl _ _ ident _ _ _ _)) = pure ident
+    extractClassAndInterface (InterfaceTypeDecl (InterfaceDecl _ _ _ ident _ _ _ _)) = pure ident
     extractClassAndInterface _ = mzero
 
 extractEnums :: CompilationUnit Parsed -> [Ident]
@@ -131,7 +147,7 @@ extractEnums cUnit = do
   extractEnum enums
   where
     extractEnum :: ClassDecl Parsed -> [Ident]
-    extractEnum (EnumDecl _ _ ident _ _) = return ident
+    extractEnum (EnumDecl _ _ ident _ _) = pure ident
     extractEnum _ = mzero
 
 nameDiagnostic :: FilePath -> VariableKind -> Convention -> Ident -> RDF.Diagnostic
@@ -155,7 +171,7 @@ nameDiagnostic path variableKind convention ident =
 checkIdent :: FilePath -> VariableKind -> Ident -> [RDF.Diagnostic]
 checkIdent path variableKind ident
   | matched (Ident.name ident ?=~ regex conv) = mzero
-  | otherwise = return (nameDiagnostic path variableKind conv ident)
+  | otherwise = pure (nameDiagnostic path variableKind conv ident)
   where
     conv = convention variableKind
 
@@ -164,6 +180,11 @@ checkIdent path variableKind ident
 data VariableModifier
   = FinalVariable
   | NonFinalVariable
+
+variableModifier :: [Modifier p] -> VariableModifier
+variableModifier modifiers
+  | any Modifier.isFinal modifiers = FinalVariable
+  | otherwise = NonFinalVariable
 
 data Part
   = First

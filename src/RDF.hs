@@ -37,7 +37,7 @@ data Position = Position
   { line :: Int,
     column :: Maybe Int
   }
-  deriving (Generic, Show, Eq)
+  deriving (Generic, Show, Eq, Ord)
 
 instance ToJSON Position where
   toEncoding = genericToEncoding defaultOptions
@@ -46,7 +46,7 @@ data Range = Range
   { start :: Position,
     end :: Maybe Position
   }
-  deriving (Generic, Show, Eq)
+  deriving (Generic, Show, Eq, Ord)
 
 instance ToJSON Range where
   toEncoding = genericToEncoding defaultOptions
@@ -82,7 +82,7 @@ data Location = Location
   { path :: String,
     range :: Maybe Range
   }
-  deriving (Generic, Show, Eq)
+  deriving (Generic, Show, Eq, Ord)
 
 instance ToJSON Location where
   toEncoding = genericToEncoding defaultOptions
@@ -101,20 +101,13 @@ data Diagnostic = Diagnostic
 instance ToJSON Diagnostic where
   toEncoding (Diagnostic message location severity source code suggestions originalOutput) =
     pairs
-      ( "message"
-          .= message
-          <> "location"
-          .= location
-          <> "severity"
-          .= severity
-          <> "source"
-          .= source
-          <> "code"
-          .= code
-          <> "suggestions"
-          .= suggestions
-          <> "original_output"
-          .= originalOutput
+      ( "message" .= message
+          <> "location" .= location
+          <> "severity" .= severity
+          <> "source" .= source
+          <> "code" .= code
+          <> "suggestions" .= suggestions
+          <> "original_output" .= originalOutput
       )
 
 data DiagnosticResult = DiagnosticResult
@@ -129,19 +122,14 @@ instance ToJSON DiagnosticResult where
     case maybeSeverity of
       Just resSeverity ->
         pairs
-          ( "diagnostics"
-              .= diagnostics
-              <> "source"
-              .= resultSource
-              <> "severity"
-              .= resSeverity
+          ( "diagnostics" .= diagnostics
+              <> "source" .= resultSource
+              <> "severity" .= resSeverity
           )
       Nothing ->
         pairs
-          ( "diagnostics"
-              .= diagnostics
-              <> "source"
-              .= resultSource
+          ( "diagnostics" .= diagnostics
+              <> "source" .= resultSource
           )
 
 data Severity

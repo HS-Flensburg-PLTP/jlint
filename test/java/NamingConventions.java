@@ -19,7 +19,7 @@ class NamingConventions {
     enum inner_Enum {}
     //interface inner_Interface {} -> *
 
-    // * - rule doesnt find nested class/interface decls 
+    // * - rule doesnt find nested class/interface decls
 
     static int Static;
     static int sta_tic;
@@ -28,7 +28,7 @@ class NamingConventions {
     int Member;
     int mem_ber;
     int _member;
-    
+
     void variables() {
 
         final int FinalVar;
@@ -37,8 +37,8 @@ class NamingConventions {
 
         int Var;
         int var_2;
-        int _var; 
-    } 
+        int _var;
+    }
 
     void Method() {}
     void met_hod() {}
@@ -46,4 +46,9 @@ class NamingConventions {
 
     void params(int Param, int pa_ram, int _param) {}
 
+    public text {
+        for (var I = 0; I < 10; I++) {
+            System.out.printLn(I);
+        }
+    }
 }
