@@ -11,6 +11,7 @@ import Data.Yaml (FromJSON (..), Object, Parser, withObject, (.:))
 import qualified Language.Java.Rules.AvoidNegations as AvoidNegations
 import qualified Language.Java.Rules.AvoidOuterNegations as AvoidOuterNegations
 import qualified Language.Java.Rules.AvoidStarImport as AvoidStarImport
+import qualified Language.Java.Rules.AvoidStaticImport as AvoidStaticImport
 import qualified Language.Java.Rules.ConsistentOverrideEqualsHashCode as ConsistentOverrideEqualsHashCode
 import qualified Language.Java.Rules.DeclarationOrder as DeclarationOrder
 import qualified Language.Java.Rules.DefaultComesLast as DefaultComesLast
@@ -63,6 +64,7 @@ instance FromJSON Rule where
       "AvoidNegations" -> pure (Rule (liftIO AvoidNegations.check))
       "AvoidOuterNegations" -> pure (Rule (liftIO AvoidOuterNegations.check))
       "AvoidStarImport" -> pure (Rule (liftIO AvoidStarImport.check))
+      "AvoidStaticImport" -> pure (Rule (liftIO AvoidStaticImport.check))
       "ConsistentOverrideEqualsHashCode" -> pure (Rule (liftIO ConsistentOverrideEqualsHashCode.check))
       "DeclarationOrder" -> pure (Rule (liftIO DeclarationOrder.check))
       "DefaultComesLast" -> pure (Rule (liftIO DefaultComesLast.check))

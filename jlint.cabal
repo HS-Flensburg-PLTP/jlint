@@ -33,6 +33,7 @@ library
       Language.Java.Rules.AvoidNegations
       Language.Java.Rules.AvoidOuterNegations
       Language.Java.Rules.AvoidStarImport
+      Language.Java.Rules.AvoidStaticImport
       Language.Java.Rules.ConsistentOverrideEqualsHashCode
       Language.Java.Rules.DeclarationOrder
       Language.Java.Rules.DefaultComesLast
@@ -150,6 +151,7 @@ test-suite jlint-test
       AvoidNegationsTests
       AvoidOuterNegationsTests
       AvoidStarImportTests
+      AvoidStaticImportTests
       ConsistentOverrideEqualsHashCodeTests
       DeclarationOrderTests
       DefaultComesLastTests
