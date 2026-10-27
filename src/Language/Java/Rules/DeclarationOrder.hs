@@ -16,13 +16,12 @@ import qualified RDF
 import qualified String
 
 check :: CompilationUnit Parsed -> FilePath -> [RDF.Diagnostic]
-check cUnit path = checkRank path (extractMemberDecls cUnit)
+check cUnit path = do
+  ClassBody decls <- universeBi cUnit
+  checkRank path (mapMaybe checkDeclaration decls)
 
-extractMemberDecls :: CompilationUnit Parsed -> [RankedIdents]
-extractMemberDecls cUnit = mapMaybe checkTopLevelDeclaration (universeBi cUnit)
-
-checkTopLevelDeclaration :: MemberDecl Parsed -> Maybe RankedIdents
-checkTopLevelDeclaration (FieldDecl sourceSpan mods _ varDecls)
+checkDeclaration :: Decl Parsed -> Maybe RankedIdents
+checkDeclaration (MemberDecl (FieldDecl sourceSpan mods _ varDecls))
   | any Modifier.isStatic mods =
       if any Modifier.isPublic mods
         then return (RankedIdents idents StaticPublicField sourceSpan)
@@ -39,11 +38,11 @@ checkTopLevelDeclaration (FieldDecl sourceSpan mods _ varDecls)
   | otherwise = return (RankedIdents idents InstancePackageField sourceSpan)
   where
     idents = fmap VarDecl.ident varDecls
-checkTopLevelDeclaration (ConstructorDecl sourceSpan _ _ ident _ _ _) =
+checkDeclaration (MemberDecl (ConstructorDecl sourceSpan _ _ ident _ _ _))=
   return (RankedIdents (return ident) Constructor sourceSpan)
-checkTopLevelDeclaration (MethodDecl sourceSpan _ _ _ ident _ _ _ _) =
+checkDeclaration (MemberDecl (MethodDecl sourceSpan _ _ _ ident _ _ _ _)) =
   return (RankedIdents (return ident) Method sourceSpan)
-checkTopLevelDeclaration _ = mzero
+checkDeclaration _ = mzero
 
 data Rank
   = StaticPublicField
